@@ -1,0 +1,11 @@
+<launch>
+
+  <!-- Launch pick and place -->
+  <node name="baxter_simple_pick_place" pkg="baxter_pick_place" type="simple_pick_place" output="screen">
+    <rosparam command="load" file="$(find baxter_moveit_config)/config/kinematics.yaml"/>
+  </node>
+
+  <node name="face" pkg="baxter_head_control" type="xdisplay_image.py" 
+	args="--file=/home/dave/Downloads/smile.jpg" />
+
+</launch>

@@ -1,0 +1,38 @@
+# Compiled Object files
+*.slo
+*.lo
+*.o
+
+# Compiled Dynamic libraries
+*.so
+*.dylib
+
+# Compiled Static libraries
+*.lai
+*.la
+*.a
+
+# Python stuff
+*.pyc
+
+# Data files
+*.dat
+
+# Emacs temp files
+.#*
+
+# Silly OSX Files
+.DS_Store
+
+# CSV Files of Data
+*.csv
+
+# MongoDB Temp Files
+baxter_moveit_config/default_warehouse_mongo_db
+
+# Dynamic Reconfigure
+baxter_interface/cfg/cpp
+
+# Subfolders
+block_grasp_generator/
+rethink/

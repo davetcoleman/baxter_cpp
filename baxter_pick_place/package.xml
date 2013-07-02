@@ -1,0 +1,31 @@
+<package>
+  <name>baxter_pick_place</name>
+  <version>0.0.1</version>
+  <description>Code for running MoveIt pick and place</description>
+
+  <maintainer email="davetcoleman@gmail.com">Dave Coleman</maintainer>
+
+  <license>BSD</license>
+
+  <url type="website">https://github.com/davetcoleman/baxter/</url>
+  <url type="bugtracker">https://github.com/davetcoleman/baxter/issues</url>
+  <url type="repository">https://github.com/davetcoleman/baxter</url>
+
+  <author>Dave Coleman</author>
+
+  <buildtool_depend>catkin</buildtool_depend>
+  <build_depend>moveit_core</build_depend>
+  <build_depend>moveit_ros_planning</build_depend>
+  <build_depend>moveit_ros_planning_interface</build_depend>
+  <build_depend>block_grasp_generator</build_depend>
+  <build_depend>baxter_msgs</build_depend>
+
+  <run_depend>moveit_core</run_depend>
+  <run_depend>moveit_ros_planning</run_depend>
+  <run_depend>moveit_ros_planning_interface</run_depend>
+  <run_depend>block_grasp_generator</run_depend>
+  <run_depend>baxter_msgs</run_depend>
+
+  <export>
+  </export>
+</package>
