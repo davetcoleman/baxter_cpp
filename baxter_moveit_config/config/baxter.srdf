@@ -38,8 +38,6 @@
     </group>
     <group name="right_hand">
         <link name="right_hand" />
-        <link name="right_hand_camera" />
-        <link name="right_hand_camera_axis" />
         <link name="right_hand_range" />
         <link name="right_gripper" />
     </group>
