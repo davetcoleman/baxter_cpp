@@ -1,25 +1,25 @@
 baxter
 ======
 
-ROS Groovy Catkinized version of Baxter.
+Non-SDK packages for Baxter - you need access to RethinkRobotics [sdk-examples](https://github.com/RethinkRobotics/sdk-examples) to use the rest of these packages. Currently their SDK is closed source.
 
-**Beta release!**
-
-### Changes from RethinkRobotics/sdk-examples
-
-* Uses catkin instead of rosbuild (a few baxter_examples are still using rosbuild)
-* All packages are prefixed with 'baxter_' - i.e. ``rosrun baxter_tools enable.py -e``
-* Integration of MoveIt!
 
 ### Installation
 
 * Create a catkin workspace and cd into it:
+
     cd ~/catkin_ws/src
+
 * Checkout this repo
+
     git clone git@github.com:osrf/baxter.git
+
 * Install dependencies
+
     rosdep install --from-paths src --ignore-src --rosdistro groovy -y
+
 * Build
+
     cd ..
     catkin_make
 
