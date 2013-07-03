@@ -68,9 +68,8 @@ protected:
 
   // Action messages
   //control_msgs::GripperCommandActionGoalConstPtr action_goal_;
-  /*  control_msgs::GripperCommandActionResult action_result_;
-      control_msgs::GripperCommandActionFeedback action_feedback_;
-  */
+  control_msgs::GripperCommandActionResult action_result_;
+  //    control_msgs::GripperCommandActionFeedback action_feedback_;
 
   std_msgs::Empty empty_msg_;
 
@@ -126,7 +125,6 @@ public:
   // Action server sends goals here
   void goalCB()
   {
-    //action_goal_ = action_server_.acceptNewGoal()
     double position = action_server_.acceptNewGoal()->command.position;
 
     ROS_INFO_STREAM_NAMED("gripper_action_server","Recieved goal: " << position);
@@ -142,8 +140,9 @@ public:
     }
 
     // Report success
-    //action_result_.result.reached_goal = true;
-    //    action_server_.setSucceeded(action_result_);
+    action_result_.result.reached_goal = true;
+    //action_server_.setSucceeded(action_result_,"");
+    action_server_.setSucceeded();
   }
 
   bool openRight()

@@ -63,7 +63,7 @@ static const std::string BLOCK_NAME = "block";
 static const double BLOCK_SIZE = 0.04;
 
 // table dimensions
-static const double TABLE_HEIGHT = .92;
+static const double TABLE_HEIGHT = 1.0; // .92
 static const double TABLE_WIDTH = .85;
 static const double TABLE_DEPTH = .47;
 static const double TABLE_X = 0.66;
@@ -402,10 +402,6 @@ int main(int argc, char **argv)
     {
       generateRandomPose(start_block_pose);
 
-      //static int blocker_id = 0;
-      //nblocker_id ++;
-      //std::string temp_block_name = "block " + boost::lexical_cast<std::string>(blocker_id);
-
       publishCollisionBlock(start_block_pose, goal_block_locations[goal_id].first);
 
       ROS_INFO_STREAM_NAMED("simple_pick_place","Published collision object here " 
@@ -424,7 +420,9 @@ int main(int argc, char **argv)
         foundBlock = true;
       }
 
+      ros::Duration(2.0).sleep();
     }
+
 
     ROS_INFO_STREAM_NAMED("simple_pick_place","Found block!\n\n\n\n\n\n\nWaiting to put...");
     ros::Duration(10.0).sleep();
@@ -461,21 +459,3 @@ int main(int argc, char **argv)
   ros::shutdown();
   return 0;
 }
-
-// add path constraints
-/*
-  moveit_msgs::Constraints constr;
-  constr.orientation_constraints.resize(1);
-  moveit_msgs::OrientationConstraint &ocm = constr.orientation_constraints[0];
-  ocm.link_name = "r_wrist_roll_link";
-  ocm.header.frame_id = p.header.frame_id;
-  ocm.orientation.x = 0.0;
-  ocm.orientation.y = 0.0;
-  ocm.orientation.z = 0.0;
-  ocm.orientation.w = 1.0;
-  ocm.absolute_x_axis_tolerance = 0.2;
-  ocm.absolute_y_axis_tolerance = 0.2;
-  ocm.absolute_z_axis_tolerance = M_PI;
-  ocm.weight = 1.0;
-  group.setPathConstraints(constr);
-*/
