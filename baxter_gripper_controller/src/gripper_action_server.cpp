@@ -89,14 +89,17 @@ public:
     ROS_DEBUG_STREAM_NAMED("gripper_action_serer","Starting open publisher");
     release_topic_ = nh_.advertise<std_msgs::Empty>("/robot/limb/right/accessory/gripper/command_release",10);
 
-    // Calibrate
-    ROS_INFO_STREAM_NAMED("gripper_action_serer","Calibrating gripper");
-    calibrate_topic_.publish(empty_msg_);
-    ros::Duration(1.0).sleep();
-
     // Register the goal and start
     action_server_.registerGoalCallback(boost::bind(&GripperActionServer::goalCB, this));
     action_server_.start();
+
+    // Calibrate
+    ROS_INFO_STREAM_NAMED("gripper_action_serer","Calibrating gripper");
+    std_msgs::Empty empty_msg;
+    ros::Duration(1.0).sleep();
+    calibrate_topic_.publish(empty_msg);
+    ros::Duration(5.0).sleep();
+    ROS_INFO_STREAM_NAMED("gripper_action_serer","Done calibrating gripper");
 
     // Test Run
     if(false) // todo make this a command line argument

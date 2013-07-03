@@ -66,7 +66,7 @@ static const double BLOCK_SIZE = 0.04;
 static const double TABLE_HEIGHT = 1.0; // .92
 static const double TABLE_WIDTH = .85;
 static const double TABLE_DEPTH = .47;
-static const double TABLE_X = 0.66;
+static const double TABLE_X = 0.68; //.66
 static const double TABLE_Y = 0;
 static const double TABLE_Z = -0.9/2+0.01;
 
@@ -129,7 +129,7 @@ void loadRobotGraspData()
   grasp_data_.approach_retreat_min_dist_ = 0.001;
 
 
-  grasp_data_.grasp_depth_ = 0.05; // default 0.12
+  grasp_data_.grasp_depth_ = 0.15; // default 0.12
   
   // Debug
 
@@ -235,10 +235,8 @@ bool pick(const geometry_msgs::Pose& block_pose, std::string block_name)
   // Prevent collision with table
   group_->setSupportSurfaceName(SUPPORT_SURFACE_NAME);
 
-  ROS_WARN_STREAM_NAMED("","testing grasp 1:\n" << grasps[0]);
-
-
-  ros::Duration(100).sleep();
+  //ROS_WARN_STREAM_NAMED("","testing grasp 1:\n" << grasps[0]);
+  //ros::Duration(100).sleep();
 
   //ROS_INFO_STREAM_NAMED("","Grasp 0\n" << grasps[0]);
   //ROS_INFO_STREAM_NAMED("","\n\n\nGrasp 10\n" << grasps[10]);
@@ -247,7 +245,6 @@ bool pick(const geometry_msgs::Pose& block_pose, std::string block_name)
 }
 
 bool place(const geometry_msgs::Pose& block_pose, std::string block_name)
-//bool place(const MetaBlock block)
 {
   ROS_WARN_STREAM_NAMED("","placing block "<< block_name);
 
@@ -273,14 +270,14 @@ bool place(const geometry_msgs::Pose& block_pose, std::string block_name)
     place_loc.place_pose = pose_stamped;
 
     // Publish to Rviz
-    rviz_tools_->publishArrow(pose_stamped.pose);
+    //rviz_tools_->publishArrow(pose_stamped.pose);
 
     // Approach & Retreat
     place_loc.approach = grasps[i].approach;
     //ROS_WARN_STREAM_NAMED("","is the same? \n" << place_loc.approach);
     place_loc.retreat = grasps[i].retreat;
 
-    // Post place posture - use same as pre-grasp posture (the OPEN command_
+    // Post place posture - use same as pre-grasp posture (the OPEN command)
     place_loc.post_place_posture = grasp_data_.pre_grasp_posture_;
 
     place_locations.push_back(place_loc);
@@ -290,7 +287,7 @@ bool place(const geometry_msgs::Pose& block_pose, std::string block_name)
   // Prevent collision with table
   group_->setSupportSurfaceName(SUPPORT_SURFACE_NAME);
 
-  group_->setPlannerId("RRTConnectkConfigDefault");
+  //group_->setPlannerId("RRTConnectkConfigDefault");
 
   return group_->place(block_name, place_locations);
 }
@@ -384,7 +381,7 @@ int main(int argc, char **argv)
 
   // Position
   start_block_pose.position.x = 0.0;
-  start_block_pose.position.y = -0.6;
+  start_block_pose.position.y = -0.5;
   start_block_pose.position.z = -0.6;
 
   // Orientation
@@ -399,8 +396,8 @@ int main(int argc, char **argv)
   // Create goal block
 
   // Position
-  end_block_pose.position.x = 0.8; // table depth
-  end_block_pose.position.y = -TABLE_WIDTH/2; // table width
+  end_block_pose.position.x = 0.6; // table depth
+  end_block_pose.position.y = -TABLE_WIDTH/2 + 0.1; // table width
   end_block_pose.position.z = TABLE_Z + TABLE_HEIGHT / 2.0 + BLOCK_SIZE / 2.0; // table height
 
   // Orientation
@@ -418,21 +415,24 @@ int main(int argc, char **argv)
 
   // --------------------------------------------------------------------------------------------------------
   // Add objects to scene
-  publishCollisionTable();
+  //publishCollisionTable();
 
   // TESTING
-  //publishCollisionBlock(start_block_pose, block_name);
+  publishCollisionBlock(start_block_pose, block_name);
+  //publishCollisionBlock(end_block_pose, block_name+"2");
 
   // --------------------------------------------------------------------------------------------------------
   // Start pick and place
 
   while(ros::ok())
   {
+    cleanupCO(block_name);
+
     bool foundBlock = false;
     while(!foundBlock && ros::ok())
     {
       //generateRandomPose(start_block_pose);
-      publishCollisionBlock(start_block_pose, block_name);
+      //publishCollisionBlock(start_block_pose, block_name);
 
       if( !pick(start_block_pose, block_name) )
       {
@@ -450,7 +450,7 @@ int main(int argc, char **argv)
 
 
     ROS_INFO_STREAM_NAMED("simple_pick_place","Found block!\n\n\n\n\n\n\nWaiting to put...");
-    ros::Duration(10.0).sleep();
+    ros::Duration(1.0).sleep();
 
     bool putBlock = false;
     while(!putBlock && ros::ok())
@@ -459,7 +459,8 @@ int main(int argc, char **argv)
 
       if( !place(end_block_pose, block_name) )
       {
-        ROS_ERROR_STREAM_NAMED("simple_pick_place","Place failed. Retrying.");
+        ROS_ERROR_STREAM_NAMED("simple_pick_place","Place failed.");
+        break;
       }
       else
       {
@@ -468,8 +469,8 @@ int main(int argc, char **argv)
       }
     }
 
-    ROS_WARN_STREAM_NAMED("temp","breaking...");
-    break;    
+    ROS_INFO_STREAM_NAMED("simple_pick_place","Cycle completed!\n\n\n\n\n\n\nWaiting to restart...");
+    ros::Duration(1.0).sleep();
   }
 
   ros::shutdown();
