@@ -95,9 +95,8 @@ public:
 
     // Calibrate
     ROS_INFO_STREAM_NAMED("gripper_action_serer","Calibrating gripper");
-    std_msgs::Empty empty_msg;
     ros::Duration(1.0).sleep();
-    calibrate_topic_.publish(empty_msg);
+    calibrate_topic_.publish(empty_msg_);
     ros::Duration(5.0).sleep();
     ROS_INFO_STREAM_NAMED("gripper_action_serer","Done calibrating gripper");
 

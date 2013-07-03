@@ -130,7 +130,7 @@ void loadRobotGraspData()
 
 
   grasp_data_.grasp_depth_ = 0.15; // default 0.12
-  
+
   // Debug
 
   block_grasp_generator::BlockGraspGenerator::printBlockGraspData(grasp_data_);
@@ -183,7 +183,7 @@ void publishCollisionBlock(geometry_msgs::Pose block_pose, std::string block_nam
 
   pub_collision_obj_.publish(collision_obj);
 
-  ROS_DEBUG_STREAM_NAMED("simple_pick_place","Published collision object " << block_name);        
+  ROS_DEBUG_STREAM_NAMED("simple_pick_place","Published collision object " << block_name);
 }
 
 void publishCollisionTable()
@@ -321,7 +321,7 @@ void cleanupCO(std::string name)
 }
 
 /*void getGoalBlocks(std::vector<MetaBlock>& block_locations)
-{
+  {
   // Position
   geometry_msgs::Pose block_pose;
   block_pose.position.x = 0.3;
@@ -338,7 +338,7 @@ void cleanupCO(std::string name)
 
   MetaBlock block1 = MetaBlock("Block1", block_pose);
   block_locations.push_back(block1);
-}
+  }
 */
 
 int main(int argc, char **argv)
@@ -368,6 +368,16 @@ int main(int argc, char **argv)
   // Create MoveGroup
   group_.reset(new move_group_interface::MoveGroup(PLANNING_GROUP_NAME));
   group_->setPlanningTime(30.0);
+
+  // TESTING
+  while(ros::ok())
+  {
+    ROS_INFO_STREAM_NAMED("","Random target...");
+    group_->setRandomTarget();
+
+    group_->move();
+    ros::Duration(2).sleep();
+  }
 
   // --------------------------------------------------------------------------------------------------------
   // Start pick and place loop
@@ -421,6 +431,11 @@ int main(int argc, char **argv)
   publishCollisionBlock(start_block_pose, block_name);
   //publishCollisionBlock(end_block_pose, block_name+"2");
 
+
+  // --------------------------------------------------------------------------------------------------------
+  // Send arm to home location
+
+
   // --------------------------------------------------------------------------------------------------------
   // Start pick and place
 
@@ -448,29 +463,31 @@ int main(int argc, char **argv)
       ros::Duration(2.0).sleep();
     }
 
+    /*
+      ROS_INFO_STREAM_NAMED("simple_pick_place","Found block!\n\n\n\n\n\n\nWaiting to put...");
+      ros::Duration(1.0).sleep();
 
-    ROS_INFO_STREAM_NAMED("simple_pick_place","Found block!\n\n\n\n\n\n\nWaiting to put...");
-    ros::Duration(1.0).sleep();
-
-    bool putBlock = false;
-    while(!putBlock && ros::ok())
-    {
+      bool putBlock = false;
+      while(!putBlock && ros::ok())
+      {
       //generateRandomPose(end_block_pose);
 
       if( !place(end_block_pose, block_name) )
       {
-        ROS_ERROR_STREAM_NAMED("simple_pick_place","Place failed.");
-        break;
+      ROS_ERROR_STREAM_NAMED("simple_pick_place","Place failed.");
+      break;
       }
       else
       {
-        ROS_INFO_STREAM_NAMED("simple_pick_place","Done with place");
-        putBlock = true;
+      ROS_INFO_STREAM_NAMED("simple_pick_place","Done with place");
+      putBlock = true;
       }
-    }
+      }
 
-    ROS_INFO_STREAM_NAMED("simple_pick_place","Cycle completed!\n\n\n\n\n\n\nWaiting to restart...");
-    ros::Duration(1.0).sleep();
+      ROS_INFO_STREAM_NAMED("simple_pick_place","Cycle completed!\n\n\n\n\n\n\nWaiting to restart...");
+      ros::Duration(1.0).sleep();
+    */
+
   }
 
   ros::shutdown();
