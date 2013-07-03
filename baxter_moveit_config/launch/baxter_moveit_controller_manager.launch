@@ -18,4 +18,10 @@
   <!-- load controller_list and controller_manager_ns -->
   <rosparam file="$(find baxter_moveit_config)/config/baxter_controllers.yaml"/>
 
+  <!-- Enable Baxter -->
+  <node name="baxter_enable" pkg="baxter_tools" type="enable_robot.py" args="-e" respawn="false" output="screen" />
+
+  <!-- Load Baxter's trajectory execution controller -->
+  <node name="baxter_trajectory_controller" pkg="baxter_interface" type="trajectory_controller.py" respawn="false" output="screen" />
+
 </launch>

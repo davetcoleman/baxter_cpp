@@ -10,11 +10,7 @@ Panels:
         - /MotionPlanning1/Planning Request1
         - /MotionPlanning1/Planning Metrics1
         - /MotionPlanning1/Planned Path1
-        - /EndEffector1
-        - /RecognizedBlocks1
-        - /EE Grasp Poses1
         - /EE Grasp Poses1/Namespaces1
-        - /MarkerArray1
       Splitter Ratio: 0.711462
     Tree Height: 469
   - Class: rviz/Help
@@ -445,6 +441,7 @@ Visualization Manager:
       Namespaces:
         Arrow: true
         Sphere: true
+        right_hand: true
       Queue Size: 100
       Value: true
     - Arrow Length: 0.1
@@ -469,6 +466,7 @@ Visualization Manager:
       Namespaces:
         Arrow: true
         Sphere: true
+        right_hand: true
       Queue Size: 100
       Value: true
     - Class: rviz/MarkerArray
@@ -493,17 +491,17 @@ Visualization Manager:
   Views:
     Current:
       Class: rviz/XYOrbit
-      Distance: 2.54696
+      Distance: 1.11615
       Focal Point:
-        X: 0.620686
-        Y: 0.333801
-        Z: 2.73384e-05
+        X: 0.32324
+        Y: 0.089203
+        Z: 2.72788e-05
       Name: Current View
       Near Clip Distance: 0.01
-      Pitch: 0.444797
+      Pitch: 0.119797
       Target Frame: /base_link
       Value: XYOrbit (rviz)
-      Yaw: 6.14991
+      Yaw: 5.89991
     Saved: ~
 Window Geometry:
   Displays:
@@ -515,7 +513,7 @@ Window Geometry:
   Hide Right Dock: false
   Motion Planning:
     collapsed: false
-  QMainWindow State: 000000ff00000000fd0000000100000000000002b20000039bfc0200000005fb000000100044006900730070006c006100790073010000004100000216000000dd00fffffffb0000000800480065006c00700000000342000000bb0000007600fffffffb0000000a0056006900650077007300000003b0000000b0000000b000fffffffb0000000c00430061006d00650072006100000002ff000001610000000000000000fb0000001e004d006f00740069006f006e00200050006c0061006e006e0069006e0067010000025d0000017f0000017400ffffff000003d00000039b00000001000000020000000100000002fc0000000100000002000000010000000a0054006f006f006c00730100000000ffffffff0000000000000000
+  QMainWindow State: 000000ff00000000fd0000000100000000000002a20000039bfc0200000005fb000000100044006900730070006c006100790073010000004100000216000000dd00fffffffb0000000800480065006c00700000000342000000bb0000007600fffffffb0000000a0056006900650077007300000003b0000000b0000000b000fffffffb0000000c00430061006d00650072006100000002ff000001610000000000000000fb0000001e004d006f00740069006f006e00200050006c0061006e006e0069006e0067010000025d0000017f0000017400ffffff000003e00000039b00000001000000020000000100000002fc0000000100000002000000010000000a0054006f006f006c00730100000000ffffffff0000000000000000
   Views:
     collapsed: false
   Width: 1672

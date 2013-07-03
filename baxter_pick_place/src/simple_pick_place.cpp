@@ -125,8 +125,8 @@ void loadRobotGraspData()
      grasp_data_.approach_retreat_desired_dist_ = 0.05;
      grasp_data_.approach_retreat_min_dist_ = 0.025;
   */
-     grasp_data_.approach_retreat_desired_dist_ = 0.1;
-     grasp_data_.approach_retreat_min_dist_ = 0.1;
+  grasp_data_.approach_retreat_desired_dist_ = 0.1;
+  grasp_data_.approach_retreat_min_dist_ = 0.001;
 }
 
 double fRand(double fMin, double fMax)
@@ -138,8 +138,15 @@ double fRand(double fMin, double fMax)
 void generateRandomPose(geometry_msgs::Pose& block_pose)
 {
   // Position
+  /*
   block_pose.position.x = fRand(0.7,TABLE_DEPTH);
   block_pose.position.y = fRand(-TABLE_WIDTH/2,TABLE_WIDTH/2);
+  block_pose.position.z = TABLE_Z + TABLE_HEIGHT / 2.0 + BLOCK_SIZE / 2.0;
+  */
+
+  // Position
+  block_pose.position.x = fRand(0.7,TABLE_DEPTH);
+  block_pose.position.y = fRand(-TABLE_WIDTH/2,-0.1);
   block_pose.position.z = TABLE_Z + TABLE_HEIGHT / 2.0 + BLOCK_SIZE / 2.0;
 
   // Orientation
@@ -217,7 +224,7 @@ bool pick(const geometry_msgs::Pose& block_pose, std::string block_name)
   block_grasp_generator_->generateGrasps( block_pose, grasp_data_, grasps );
 
   // Prevent collision with table
-  group_->setSupportSurfaceName(SUPPORT_SURFACE_NAME);
+  //group_->setSupportSurfaceName(SUPPORT_SURFACE_NAME);
 
   //ROS_WARN_STREAM_NAMED("","testing grasp 1:\n" << grasps[0]);
 
@@ -242,7 +249,7 @@ bool place(const MetaBlock block)
   // Generate grasps
   block_grasp_generator_->generateGrasps( block.second, grasp_data_, grasps );
 
-  // Convert 'grasps' to palce_locations format
+  // Convert 'grasps' to place_locations format
   for (std::size_t i = 0; i < grasps.size(); ++i)
   {
     // Create new place location
@@ -268,7 +275,7 @@ bool place(const MetaBlock block)
   ROS_INFO_STREAM_NAMED("pick_place","Created " << place_locations.size() << " place locations");
 
   // Prevent collision with table
-  group_->setSupportSurfaceName(SUPPORT_SURFACE_NAME);
+  //group_->setSupportSurfaceName(SUPPORT_SURFACE_NAME);
 
   group_->setPlannerId("RRTConnectkConfigDefault");
 
@@ -385,7 +392,7 @@ int main(int argc, char **argv)
   cleanupCO("Block3");
   cleanupCO("Block4");
 
-  publishCollisionTable();
+  //publishCollisionTable();
 
   int goal_id = 0;
   while(ros::ok())
@@ -417,8 +424,10 @@ int main(int argc, char **argv)
         foundBlock = true;
       }
 
-      ros::Duration(1.0).sleep();
     }
+
+    ROS_INFO_STREAM_NAMED("simple_pick_place","Found block!\n\n\n\n\n\n\nWaiting to put...");
+    ros::Duration(10.0).sleep();
 
     bool putBlock = false;
     while(!putBlock && ros::ok())
