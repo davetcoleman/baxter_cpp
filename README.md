@@ -7,22 +7,31 @@ Non-SDK packages for Baxter - you need access to RethinkRobotics [sdk-examples](
 ### Installation
 
 * Create a catkin workspace and cd into it:
+
 ```
 cd ~/catkin_ws/src
 ```
+
 * Checkout this repo
+
 ```
     git clone git@github.com:davetcoleman/baxter.git
 ```
+
 * Also install from source moveit_plugins
+
 ```
     git@github.com:ros-planning/moveit_plugins.git
 ```
+
 * Install dependencies
+
 ```
     rosdep install --from-paths src --ignore-src --rosdistro groovy -y
 ```
+
 * Build
+
 ```
     cd ..
     catkin_make
