@@ -60,7 +60,7 @@ public:
   BaxterMimicPhysical() :
     publishers_init_(false)
   {
-    joint_position_sub_ = nh_.subscribe<sensor_msgs::JointState>("/robot/joint_states", 10, &BaxterMimicPhysical::jointPositionCallback, this);
+    joint_position_sub_ = nh_.subscribe("/robot/joint_states", 10, &BaxterMimicPhysical::jointPositionCallback, this);
 
     ROS_WARN_STREAM_NAMED("temp","subscribed");
   }
