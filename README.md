@@ -21,7 +21,7 @@ cd ~/catkin_ws/src
 * Also install from source moveit_plugins
 
 ```
-    git@github.com:ros-planning/moveit_plugins.git
+    git clone git@github.com:ros-planning/moveit_plugins.git
 ```
 
 * Install dependencies
