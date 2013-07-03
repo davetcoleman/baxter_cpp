@@ -3,8 +3,8 @@
   <arg name="load_robot_description" default="false"/>
 
   <!-- Load universal robotic description format (URDF) -->
-  <param if="$(arg load_robot_description)" name="robot_description" textfile="$(find baxter_description)/urdf/baxter.urdf" />
-      
+  <param if="$(arg load_robot_description)" name="robot_description" textfile="$(find baxter_description)/urdf/baxter.urdf"/>
+
   <!-- The semantic description that corresponds to the URDF -->
   <param name="robot_description_semantic" textfile="$(find baxter_moveit_config)/config/baxter.srdf" />
   

@@ -5,6 +5,7 @@ Panels:
     Property Tree Widget:
       Expanded:
         - /Grid1/Offset1
+        - /MotionPlanning1
         - /MotionPlanning1/Scene Geometry1
         - /MotionPlanning1/Scene Robot1
         - /MotionPlanning1/Planning Request1
@@ -141,7 +142,12 @@ Visualization Manager:
             Show Axes: false
             Show Trail: false
             Value: true
-          right_hand:
+          right_gripper_l_finger:
+            Alpha: 1
+            Show Axes: false
+            Show Trail: false
+            Value: true
+          right_gripper_r_finger:
             Alpha: 1
             Show Axes: false
             Show Trail: false
@@ -237,7 +243,7 @@ Visualization Manager:
         Interactive Marker Size: 0.3
         Joint Violation Color: 255; 0; 255
         Planning Group: both_arms
-        Query Goal State: false
+        Query Goal State: true
         Query Start State: false
         Show Workspace: false
         Start State Alpha: 1
@@ -344,7 +350,12 @@ Visualization Manager:
             Show Axes: false
             Show Trail: false
             Value: true
-          right_hand:
+          right_gripper_l_finger:
+            Alpha: 1
+            Show Axes: false
+            Show Trail: false
+            Value: true
+          right_gripper_r_finger:
             Alpha: 1
             Show Axes: false
             Show Trail: false
@@ -440,7 +451,6 @@ Visualization Manager:
       Name: EndEffector
       Namespaces:
         Arrow: true
-        Sphere: true
         right_hand: true
       Queue Size: 100
       Value: true
@@ -465,7 +475,6 @@ Visualization Manager:
       Name: EE Grasp Poses
       Namespaces:
         Arrow: true
-        Sphere: true
         right_hand: true
       Queue Size: 100
       Value: true
@@ -491,17 +500,17 @@ Visualization Manager:
   Views:
     Current:
       Class: rviz/XYOrbit
-      Distance: 1.11615
+      Distance: 3.09517
       Focal Point:
         X: 0.32324
         Y: 0.089203
         Z: 2.72788e-05
       Name: Current View
       Near Clip Distance: 0.01
-      Pitch: 0.119797
+      Pitch: 0.319797
       Target Frame: /base_link
       Value: XYOrbit (rviz)
-      Yaw: 5.89991
+      Yaw: 5.77991
     Saved: ~
 Window Geometry:
   Displays:
