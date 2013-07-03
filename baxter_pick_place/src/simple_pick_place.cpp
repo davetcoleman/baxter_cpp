@@ -55,7 +55,7 @@ static const std::string ROBOT_DESCRIPTION="robot_description";
 static const std::string RVIZ_MARKER_TOPIC = "/end_effector_marker";
 static const std::string PLANNING_GROUP_NAME = "right_arm";
 static const std::string SUPPORT_SURFACE_NAME = "workbench";
-static const std::string BASE_LINK = "/base";
+static const std::string BASE_LINK = "base"; //"/base";
 static const std::string EE_GROUP = "right_hand";
 static const std::string EE_JOINT = "right_endpoint";
 static const std::string EE_PARENT_LINK = "right_wrist";
@@ -87,7 +87,7 @@ block_grasp_generator::RobotGraspData grasp_data_;
 boost::scoped_ptr<move_group_interface::MoveGroup> group_;
 
 // block description
-typedef std::pair<std::string,geometry_msgs::Pose> MetaBlock;
+//typedef std::pair<std::string,geometry_msgs::Pose> MetaBlock;
 
 
 void loadRobotGraspData()
@@ -127,6 +127,13 @@ void loadRobotGraspData()
   */
   grasp_data_.approach_retreat_desired_dist_ = 0.1;
   grasp_data_.approach_retreat_min_dist_ = 0.001;
+
+
+  grasp_data_.grasp_depth_ = 0.05; // default 0.12
+  
+  // Debug
+
+  block_grasp_generator::BlockGraspGenerator::printBlockGraspData(grasp_data_);
 }
 
 double fRand(double fMin, double fMax)
@@ -139,9 +146,9 @@ void generateRandomPose(geometry_msgs::Pose& block_pose)
 {
   // Position
   /*
-  block_pose.position.x = fRand(0.7,TABLE_DEPTH);
-  block_pose.position.y = fRand(-TABLE_WIDTH/2,TABLE_WIDTH/2);
-  block_pose.position.z = TABLE_Z + TABLE_HEIGHT / 2.0 + BLOCK_SIZE / 2.0;
+    block_pose.position.x = fRand(0.7,TABLE_DEPTH);
+    block_pose.position.y = fRand(-TABLE_WIDTH/2,TABLE_WIDTH/2);
+    block_pose.position.z = TABLE_Z + TABLE_HEIGHT / 2.0 + BLOCK_SIZE / 2.0;
   */
 
   // Position
@@ -175,6 +182,8 @@ void publishCollisionBlock(geometry_msgs::Pose block_pose, std::string block_nam
   collision_obj.primitive_poses[0] = block_pose;
 
   pub_collision_obj_.publish(collision_obj);
+
+  ROS_DEBUG_STREAM_NAMED("simple_pick_place","Published collision object " << block_name);        
 }
 
 void publishCollisionTable()
@@ -202,7 +211,7 @@ void publishCollisionTable()
   collision_obj.primitives.resize(1);
   collision_obj.primitives[0].type = shape_msgs::SolidPrimitive::BOX;
   collision_obj.primitives[0].dimensions.resize(shape_tools::SolidPrimitiveDimCount<shape_msgs::SolidPrimitive::BOX>::value);
-  
+
   // Size
   collision_obj.primitives[0].dimensions[shape_msgs::SolidPrimitive::BOX_X] = TABLE_DEPTH;
   collision_obj.primitives[0].dimensions[shape_msgs::SolidPrimitive::BOX_Y] = TABLE_WIDTH;
@@ -226,7 +235,10 @@ bool pick(const geometry_msgs::Pose& block_pose, std::string block_name)
   // Prevent collision with table
   group_->setSupportSurfaceName(SUPPORT_SURFACE_NAME);
 
-  //ROS_WARN_STREAM_NAMED("","testing grasp 1:\n" << grasps[0]);
+  ROS_WARN_STREAM_NAMED("","testing grasp 1:\n" << grasps[0]);
+
+
+  ros::Duration(100).sleep();
 
   //ROS_INFO_STREAM_NAMED("","Grasp 0\n" << grasps[0]);
   //ROS_INFO_STREAM_NAMED("","\n\n\nGrasp 10\n" << grasps[10]);
@@ -234,9 +246,10 @@ bool pick(const geometry_msgs::Pose& block_pose, std::string block_name)
   return group_->pick(block_name, grasps);
 }
 
-bool place(const MetaBlock block)
+bool place(const geometry_msgs::Pose& block_pose, std::string block_name)
+//bool place(const MetaBlock block)
 {
-  ROS_WARN_STREAM_NAMED("","placing block "<< block.first);
+  ROS_WARN_STREAM_NAMED("","placing block "<< block_name);
 
   std::vector<manipulation_msgs::PlaceLocation> place_locations;
   std::vector<manipulation_msgs::Grasp> grasps;
@@ -247,7 +260,7 @@ bool place(const MetaBlock block)
   pose_stamped.header.stamp = ros::Time::now();
 
   // Generate grasps
-  block_grasp_generator_->generateGrasps( block.second, grasp_data_, grasps );
+  block_grasp_generator_->generateGrasps( block_pose, grasp_data_, grasps );
 
   // Convert 'grasps' to place_locations format
   for (std::size_t i = 0; i < grasps.size(); ++i)
@@ -279,7 +292,7 @@ bool place(const MetaBlock block)
 
   group_->setPlannerId("RRTConnectkConfigDefault");
 
-  return group_->place(block.first, place_locations);
+  return group_->place(block_name, place_locations);
 }
 
 void cleanupACO()
@@ -290,9 +303,9 @@ void cleanupACO()
   aco.object.header.frame_id = BASE_LINK;
   aco.object.operation = moveit_msgs::CollisionObject::REMOVE;
   aco.link_name = EE_PARENT_LINK;
-  ros::WallDuration(0.5).sleep();
+  ros::WallDuration(0.1).sleep();
   pub_attch_collision_obj_.publish(aco);
-  ros::WallDuration(0.5).sleep();
+  ros::WallDuration(0.1).sleep();
   pub_attch_collision_obj_.publish(aco);
 
 }
@@ -304,18 +317,18 @@ void cleanupCO(std::string name)
   co.header.frame_id = BASE_LINK;
   co.id = name;
   co.operation = moveit_msgs::CollisionObject::REMOVE;
-  ros::WallDuration(0.5).sleep();
+  ros::WallDuration(0.1).sleep();
   pub_collision_obj_.publish(co);
-  ros::WallDuration(0.5).sleep();
+  ros::WallDuration(0.1).sleep();
   pub_collision_obj_.publish(co);
 }
 
-void getGoalBlocks(std::vector<MetaBlock>& block_locations)
+/*void getGoalBlocks(std::vector<MetaBlock>& block_locations)
 {
   // Position
   geometry_msgs::Pose block_pose;
   block_pose.position.x = 0.3;
-  block_pose.position.y = 0.2;
+  block_pose.position.y = 0.6;
   block_pose.position.z = BLOCK_SIZE/2 * 0.9;
 
   // Orientation
@@ -326,25 +339,10 @@ void getGoalBlocks(std::vector<MetaBlock>& block_locations)
   block_pose.orientation.z = quat.z();
   block_pose.orientation.w = quat.w();
 
-  // Block1
   MetaBlock block1 = MetaBlock("Block1", block_pose);
   block_locations.push_back(block1);
-
-  // Block2
-  block_pose.position.z = block_pose.position.z + BLOCK_SIZE + BLOCK_SIZE*0.4;  // Stack ontop
-  MetaBlock block2 = MetaBlock("Block2", block_pose);
-  block_locations.push_back(block2);
-
-  // Block3
-  block_pose.position.z = block_pose.position.z + BLOCK_SIZE + BLOCK_SIZE*0.4;  // Stack ontop
-  MetaBlock block3 = MetaBlock("Block3", block_pose);
-  block_locations.push_back(block3);
-
-  // Block4
-  block_pose.position.z = block_pose.position.z + BLOCK_SIZE + BLOCK_SIZE*0.4;  // Stack ontop
-  MetaBlock block4 = MetaBlock("Block4", block_pose);
-  block_locations.push_back(block3);
 }
+*/
 
 int main(int argc, char **argv)
 {
@@ -374,45 +372,72 @@ int main(int argc, char **argv)
   group_.reset(new move_group_interface::MoveGroup(PLANNING_GROUP_NAME));
   group_->setPlanningTime(30.0);
 
-  ros::Duration(1.0).sleep();
-
   // --------------------------------------------------------------------------------------------------------
   // Start pick and place loop
 
+  std::string block_name = "Block1";
   geometry_msgs::Pose start_block_pose;
   geometry_msgs::Pose end_block_pose;
 
-  std::vector<MetaBlock> goal_block_locations;
-  getGoalBlocks(goal_block_locations);
+  // --------------------------------------------------------------------------------------------------------
+  // Create start block
 
+  // Position
+  start_block_pose.position.x = 0.0;
+  start_block_pose.position.y = -0.6;
+  start_block_pose.position.z = -0.6;
+
+  // Orientation
+  double angle = M_PI / 1.5;
+  Eigen::Quaterniond quat1(Eigen::AngleAxis<double>(double(angle), Eigen::Vector3d::UnitZ()));
+  start_block_pose.orientation.x = quat1.x();
+  start_block_pose.orientation.y = quat1.y();
+  start_block_pose.orientation.z = quat1.z();
+  start_block_pose.orientation.w = quat1.w();
+
+  // --------------------------------------------------------------------------------------------------------
+  // Create goal block
+
+  // Position
+  end_block_pose.position.x = 0.8; // table depth
+  end_block_pose.position.y = -TABLE_WIDTH/2; // table width
+  end_block_pose.position.z = TABLE_Z + TABLE_HEIGHT / 2.0 + BLOCK_SIZE / 2.0; // table height
+
+  // Orientation
+  angle = M_PI / 1.5;
+  Eigen::Quaterniond quat2(Eigen::AngleAxis<double>(double(angle), Eigen::Vector3d::UnitZ()));
+  end_block_pose.orientation.x = quat2.x();
+  end_block_pose.orientation.y = quat2.y();
+  end_block_pose.orientation.z = quat2.z();
+  end_block_pose.orientation.w = quat2.w();
+
+  // --------------------------------------------------------------------------------------------------------
   // Removed attached objects
   cleanupACO();
-  cleanupCO("Block1");
-  cleanupCO("Block2");
-  cleanupCO("Block3");
-  cleanupCO("Block4");
+  cleanupCO(block_name);
 
+  // --------------------------------------------------------------------------------------------------------
+  // Add objects to scene
   publishCollisionTable();
 
-  int goal_id = 0;
+  // TESTING
+  //publishCollisionBlock(start_block_pose, block_name);
+
+  // --------------------------------------------------------------------------------------------------------
+  // Start pick and place
+
   while(ros::ok())
   {
     bool foundBlock = false;
     while(!foundBlock && ros::ok())
     {
-      generateRandomPose(start_block_pose);
+      //generateRandomPose(start_block_pose);
+      publishCollisionBlock(start_block_pose, block_name);
 
-      publishCollisionBlock(start_block_pose, goal_block_locations[goal_id].first);
-
-      ROS_INFO_STREAM_NAMED("simple_pick_place","Published collision object here " 
-        << goal_block_locations[goal_id].first);
-
-      //MetaBlock start_block = MetaBlock(goal_block_locations[goal_id].first,start_block_pose);
-
-      if( !pick(start_block_pose, goal_block_locations[goal_id].first) )
+      if( !pick(start_block_pose, block_name) )
       {
         ROS_ERROR_STREAM_NAMED("simple_pick_place","Pick failed. Retrying.");
-        cleanupCO(goal_block_locations[goal_id].first);
+        cleanupCO(block_name);
       }
       else
       {
@@ -431,9 +456,8 @@ int main(int argc, char **argv)
     while(!putBlock && ros::ok())
     {
       //generateRandomPose(end_block_pose);
-      end_block_pose = goal_block_locations[goal_id].second;
 
-      if( !place(goal_block_locations[goal_id]) )
+      if( !place(end_block_pose, block_name) )
       {
         ROS_ERROR_STREAM_NAMED("simple_pick_place","Place failed. Retrying.");
       }
@@ -441,19 +465,11 @@ int main(int argc, char **argv)
       {
         ROS_INFO_STREAM_NAMED("simple_pick_place","Done with place");
         putBlock = true;
-        ++goal_id;
-        if( goal_id > goal_block_locations.size() )
-        {
-          ROS_WARN_STREAM_NAMED("","Out of goal locations");
-          ros::shutdown();
-          return 0;
-        }
       }
     }
 
-    // Cycle placed block to become pick block
-    start_block_pose = end_block_pose;
-
+    ROS_WARN_STREAM_NAMED("temp","breaking...");
+    break;    
   }
 
   ros::shutdown();
