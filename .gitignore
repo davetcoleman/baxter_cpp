@@ -36,3 +36,4 @@ baxter_interface/cfg/cpp
 # Subfolders
 block_grasp_generator/
 rethink/
+moveit_plugins

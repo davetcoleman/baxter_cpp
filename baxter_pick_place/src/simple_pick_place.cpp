@@ -224,7 +224,7 @@ bool pick(const geometry_msgs::Pose& block_pose, std::string block_name)
   block_grasp_generator_->generateGrasps( block_pose, grasp_data_, grasps );
 
   // Prevent collision with table
-  //group_->setSupportSurfaceName(SUPPORT_SURFACE_NAME);
+  group_->setSupportSurfaceName(SUPPORT_SURFACE_NAME);
 
   //ROS_WARN_STREAM_NAMED("","testing grasp 1:\n" << grasps[0]);
 
@@ -275,7 +275,7 @@ bool place(const MetaBlock block)
   ROS_INFO_STREAM_NAMED("pick_place","Created " << place_locations.size() << " place locations");
 
   // Prevent collision with table
-  //group_->setSupportSurfaceName(SUPPORT_SURFACE_NAME);
+  group_->setSupportSurfaceName(SUPPORT_SURFACE_NAME);
 
   group_->setPlannerId("RRTConnectkConfigDefault");
 
@@ -392,7 +392,7 @@ int main(int argc, char **argv)
   cleanupCO("Block3");
   cleanupCO("Block4");
 
-  //publishCollisionTable();
+  publishCollisionTable();
 
   int goal_id = 0;
   while(ros::ok())
