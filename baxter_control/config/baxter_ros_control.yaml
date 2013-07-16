@@ -1,30 +1,30 @@
 baxter:
-  left_s0_position_controller:
+  right_s0_position_controller:
     type: effort_controllers/JointPositionController
-    joint: left_s0
-    pid: {p: 100.0, i: 0.01, d: 10.0}
-  left_s1_position_controller:
+    joint: right_s0
+    pid: {p: 100.0, i: 0.01, d: 5.0}
+  right_s1_position_controller:
     type: effort_controllers/JointPositionController
-    joint: left_s1
-    pid: {p: 100.0, i: 0.01, d: 10.0}
-  left_e0_position_controller:
+    joint: right_s1
+    pid: {p: 100.0, i: 0.01, d: 5.0}
+  right_e0_position_controller:
     type: effort_controllers/JointPositionController
-    joint: left_e0
-    pid: {p: 100.0, i: 0.01, d: 10.0}
-  left_e1_position_controller:
+    joint: right_e0
+    pid: {p: 100.0, i: 0.01, d: 5.0}
+  right_e1_position_controller:
     type: effort_controllers/JointPositionController
-    joint: left_e1
-    pid: {p: 100.0, i: 0.01, d: 10.0}
-  left_w0_position_controller:
+    joint: right_e1
+    pid: {p: 100.0, i: 0.01, d: 5.0}
+  right_w0_position_controller:
     type: effort_controllers/JointPositionController
-    joint: left_w0
-    pid: {p: 100.0, i: 0.01, d: 10.0}
-  left_w1_position_controller:
+    joint: right_w0
+    pid: {p: 100.0, i: 0.01, d: 5.0}
+  right_w1_position_controller:
     type: effort_controllers/JointPositionController
-    joint: left_w1
-    pid: {p: 10.0, i: 0.01, d: 1.0}
-  left_w2_position_controller:
+    joint: right_w1
+    pid: {p: 100.0, i: 0.01, d: 5.0}
+  right_w2_position_controller:
     type: effort_controllers/JointPositionController
-    joint: left_w2
-    pid: {p: 100.0, i: 0.01, d: 10.0}
+    joint: right_w2
+    pid: {p: 100.0, i: 0.01, d: 5.0}
 

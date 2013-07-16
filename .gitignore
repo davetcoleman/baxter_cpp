@@ -37,3 +37,4 @@ baxter_interface/cfg/cpp
 block_grasp_generator/
 rethink/
 moveit_plugins
+baxter_common

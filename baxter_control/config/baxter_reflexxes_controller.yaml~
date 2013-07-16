@@ -1,0 +1,41 @@
+baxter:
+right_arm_joint_position_controller:
+  type: reflexxes_effort_controllers/JointTrajectoryController
+  sampling_resolution: 0.001
+  joint_names: 
+    - 'right_s0'
+    - 'right_s1'
+    - 'right_e0'
+    - 'right_e1'
+    - 'right_w0'
+    - 'right_w1'
+    - 'right_w2'
+  joints:
+    right_s0:
+      pid: {p: 100.0, i: 0.1, d: 10.0}
+      position_tolerance: 0.1
+      max_acceleration: 0.5
+    right_s1:
+      pid: {p: 100.0, i: 0.1, d: 10.0}
+      position_tolerance: 0.1
+      max_acceleration: 0.5
+    right_e0:
+      pid: {p: 100.0, i: 0.1, d: 10.0}
+      position_tolerance: 0.1
+      max_acceleration: 0.5
+    right_e1:
+      pid: {p: 100.0, i: 0.1, d: 10.0}
+      position_tolerance: 0.1
+      max_acceleration: 0.5
+    right_w0:
+      pid: {p: 100.0, i: 0.1, d: 10.0}
+      position_tolerance: 0.1
+      max_acceleration: 0.5
+    right_w1:
+      pid: {p: 100.0, i: 0.1, d: 10.0}
+      position_tolerance: 0.1
+      max_acceleration: 0.5
+    right_w2:
+      pid: {p: 100.0, i: 0.1, d: 10.0}
+      position_tolerance: 0.1
+      max_acceleration: 0.5      

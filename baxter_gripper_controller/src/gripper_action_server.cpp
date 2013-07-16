@@ -131,14 +131,21 @@ public:
 
     ROS_INFO_STREAM_NAMED("gripper_action_server","Recieved goal: " << position);
 
-    // Open command
-    if(position == 1)
+    // Try many times
+    for (std::size_t i = 0; i < 10; ++i)
     {
-      openRight();
-    }
-    else // Close command
-    {
-      closeRight();
+      ROS_DEBUG_STREAM_NAMED("gripper","Publishing command " << i);
+      // Open command
+      if(position == 1)
+      {
+        openRight();
+      }
+      else // Close command
+      {
+        closeRight();
+      }
+      ros::Duration(0.1).sleep();
+      ros::spinOnce(); //todo remove
     }
 
     // Report success
