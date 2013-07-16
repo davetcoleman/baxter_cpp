@@ -18,10 +18,11 @@ cd ~/catkin_ws/src
     git clone git@github.com:davetcoleman/baxter.git
 ```
 
-* Also install from source moveit_plugins
+* Also install from source moveit_plugins and some grasping code
 
 ```
     git clone git@github.com:ros-planning/moveit_plugins.git
+    git clone git@github.com:davetcoleman/block_grasp_generator.git
 ```
 
 * Install dependencies
