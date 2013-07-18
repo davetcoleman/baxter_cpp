@@ -1,15 +1,16 @@
 <launch>
 
+  <!-- Load joint controller configurations from YAML file to parameter server -->
+  <rosparam file="$(find baxter_control)/config/baxter_reflexxes_controller.yaml" command="load"/>
+
   <!-- load the controllers -->
   <node name="controller_spawner" pkg="controller_manager" type="spawner" respawn="false"
 	output="screen" ns="/baxter" args="--namespace=/baxter
+					   left_arm_joint_position_controller" />
+					   <!--right_arm_joint_position_controller
+					   right_gripper_position_controller-->
 					   
-					   right_gripper_position_controller" />
-<!--					   left_arm_joint_position_controller-->
 
-
-  <!-- Load joint controller configurations from YAML file to parameter server -->
-  <rosparam file="$(find baxter_control)/config/baxter_reflexxes_controller.yaml" command="load"/>
 
   <!-- Load gripper controller -->
   <!--node name="baxter_gripper_controller" pkg="baxter_gripper_controller" type="gripper_action_server" 

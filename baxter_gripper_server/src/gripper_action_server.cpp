@@ -46,10 +46,10 @@
 #include <std_msgs/Empty.h>
 #include <control_msgs/GripperCommandAction.h>
 
-namespace baxter_gripper_controller
+namespace baxter_gripper_action
 {
 
-static const std::string GRIPPER_COMMAND_ACTION_TOPIC="baxter_gripper_controller";
+static const std::string GRIPPER_COMMAND_ACTION_TOPIC="baxter_gripper_action";
 
 class GripperActionServer
 {
@@ -101,7 +101,7 @@ public:
     ROS_INFO_STREAM_NAMED("gripper_action_serer","Done calibrating gripper");
 
     // Test Run
-    if(false) // todo make this a command line argument
+    if(true) // todo make this a command line argument
     {
       bool open = true;
       while(ros::ok())
@@ -185,11 +185,11 @@ public:
 
 int main(int argc, char** argv)
 {
-  ros::init(argc, argv, "baxter_gripper_controller");
+  ros::init(argc, argv, "baxter_gripper_action");
 
   ROS_INFO_STREAM_NAMED("gripper_action_server", "Baxter Gripper Action Server Starting");
 
-  baxter_gripper_controller::GripperActionServer server("baxter_gripper_controller/gripper_action");
+  baxter_gripper_action::GripperActionServer server("baxter_gripper_action/gripper_action");
 
   // Allow the action server to recieve and send ros messages
   ros::AsyncSpinner spinner(1);

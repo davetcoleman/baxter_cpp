@@ -3,6 +3,7 @@
  *
  *  Copyright (c) 2008, Willow Garage, Inc.
  *  Copyright (c) 2012, hiDOF, Inc.
+ *  Copyright (c) 2013, Open Source Robotics Foundation
  *  All rights reserved.
  *
  *  Redistribution and use in source and binary forms, with or without
@@ -51,7 +52,9 @@ BaxterGripperController::BaxterGripperController()
 
 BaxterGripperController::~BaxterGripperController()
 {
-  sub_command_.shutdown();
+  calibrate_sub_.shutdown();
+  position_sub_.shutdown();
+  release_sub_.shutdown();
 }
 
 bool BaxterGripperController::init(hardware_interface::EffortJointInterface *robot, 
@@ -74,8 +77,17 @@ bool BaxterGripperController::init(hardware_interface::EffortJointInterface *rob
   controller_state_publisher_.reset(
     new realtime_tools::RealtimePublisher<control_msgs::JointControllerState>(n, "state", 1));
 
-  // Start command subscriber
-  sub_command_ = n.subscribe<std_msgs::Float64>("command", 1, &BaxterGripperController::setCommandCB, this);
+  // Start the subscribers
+
+  // in namespace robot/limb/right/accessory/gripper/
+  ROS_DEBUG_STREAM_NAMED("gripper_controller","Starting calibration listener");
+  calibrate_sub_ = n.subscribe<std_msgs::Empty>("command_calibrate",1, &BaxterGripperController::calibrateCB, this);
+
+  ROS_DEBUG_STREAM_NAMED("gripper_controller","Starting close listener");
+  position_sub_ = n.subscribe<std_msgs::Float32>("command_grip",1, &BaxterGripperController::positionCB, this);
+
+  ROS_DEBUG_STREAM_NAMED("gripper_controller","Starting open listener");
+  release_sub_ = n.subscribe<std_msgs::Empty>("command_release",1, &BaxterGripperController::releaseCB, this);
 
   // Get joint handle from hardware interface
   joint_ = robot->getHandle(joint_name);
@@ -115,7 +127,6 @@ std::string BaxterGripperController::getJointName()
 // Set the joint position command
 void BaxterGripperController::setCommand(double cmd)
 {
-  ROS_DEBUG_STREAM_NAMED("setCommand",cmd);
   // the writeFromNonRT can be used in RT, if you have the guarantee that
   //  * no non-rt thread is calling the same function (we're not subscribing to ros callbacks)
   //  * there is only one single rt thread
@@ -150,7 +161,6 @@ void BaxterGripperController::update(const ros::Time& time, const ros::Duration&
   else //prismatic
   {
     error = command - joint_.getPosition();
-    ROS_DEBUG_STREAM_NAMED("update","error = " << error);
   }
 
   // Compute velocity error assuming desired velocity is 0
@@ -159,7 +169,13 @@ void BaxterGripperController::update(const ros::Time& time, const ros::Duration&
   // Set the PID error and compute the PID command with nonuniform
   // time step size. This also allows the user to pass in a precomputed derivative error.
   double commanded_effort = pid_controller_->computeCommand(error, vel_error, period);
-  ROS_INFOy_STREAM_NAMED("update","commanded effort = " << error);
+
+  /*
+  static int i = 0;
+  i++;
+  if( i % 500 )
+    ROS_INFO_STREAM_NAMED("update","command = " << command << ", effort = " << error);
+  */
   joint_.setCommand(commanded_effort);
 
 
@@ -188,9 +204,24 @@ void BaxterGripperController::update(const ros::Time& time, const ros::Duration&
   loop_count_++;
 }
 
-void BaxterGripperController::setCommandCB(const std_msgs::Float64ConstPtr& msg)
+void BaxterGripperController::calibrateCB(const std_msgs::EmptyConstPtr& msg)
 {
-  setCommand(msg->data);
+  setCommand(0.0);
+}
+
+void BaxterGripperController::positionCB(const std_msgs::Float32ConstPtr& msg)
+{
+  ROS_DEBUG_STREAM_NAMED("gripper_controller","data="<<msg->data);
+
+  //setCommand(msg->data);
+  
+  // \todo remove this hack
+  setCommand(-0.045);
+}
+
+void BaxterGripperController::releaseCB(const std_msgs::EmptyConstPtr& msg)
+{
+  setCommand(0.0);
 }
 
 } // namespace

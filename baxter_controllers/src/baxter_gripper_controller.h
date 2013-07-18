@@ -70,6 +70,8 @@
 #include <controller_interface/controller.h>
 #include <control_msgs/JointControllerState.h>
 #include <std_msgs/Float64.h>
+#include <std_msgs/Float32.h>
+#include <std_msgs/Empty.h>
 #include <control_msgs/JointControllerState.h>
 #include <realtime_tools/realtime_buffer.h>
 
@@ -144,12 +146,24 @@ private:
     realtime_tools::RealtimePublisher<
       control_msgs::JointControllerState> > controller_state_publisher_ ;
 
-  ros::Subscriber sub_command_;
+  ros::Subscriber calibrate_sub_;
+  ros::Subscriber position_sub_;
+  ros::Subscriber release_sub_;
 
   /**
-   * \brief Callback from /command subscriber for setpoint
+   * \brief Callback from Baxter topic subscriber
    */
-  void setCommandCB(const std_msgs::Float64ConstPtr& msg);
+  void calibrateCB(const std_msgs::EmptyConstPtr& msg);
+
+  /**
+   * \brief Callback from Baxter topic subscriber
+   */
+  void positionCB(const std_msgs::Float32ConstPtr& msg);
+
+  /**
+   * \brief Callback from Baxter topic subscriber
+   */
+  void releaseCB(const std_msgs::EmptyConstPtr& msg);
 
 };
 

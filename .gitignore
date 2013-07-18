@@ -38,3 +38,6 @@ block_grasp_generator/
 rethink/
 moveit_plugins
 baxter_common
+
+# Catkin Workspace
+CMakeLists.txt
