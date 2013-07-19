@@ -3,13 +3,13 @@ baxter
 
 Unofficial Baxter packages that add-on to the Rethink SDK. Currently it mostly contains Gazebo interface stuff, though also some MoveIt code.
 
-### Prequisites
+## Prequisites
 
  * ROS Groovy or Hydro
  * [gazebo_ros_pkgs](gazebosim.org/wiki/Tutorials#ROS_Integration) installed with the latest stand-alone version of Gazebo
  * A catkinized version of baxter_msgs (Rethink will officially release this soon to baxter_common, otherwise email davetcoleman@gmail.com)
 
-### Installation
+## Installation
 
 * Create a catkin workspace and cd into it:
 
@@ -50,38 +50,38 @@ Hydro:
     catkin_make
 ```
 
-### Run
+## Run
 
-#### Launch Baxter in Gazebo:
+### Launch Baxter in Gazebo:
 
 ```
 roslaunch baxter_gazebo baxter_world.launch
 ```
 
-#### Launch Baxter' simulated controllers: 
+### Launch Baxter' simulated controllers: 
 Note: currently only accepts individual std_msgs/Float32 commands
 
 ```
 roslaunch baxter_control baxter_control.launch 
 ```
 
-#### Launch RQT (the ROS GUI) to see a "dashboard" for controlling Baxter:
+### Launch RQT (the ROS GUI) to see a "dashboard" for controlling Baxter:
 
 ```
 roslaunch baxter_control baxter_rqt_control.launch 
 ```
 
-#### Run a Baxter gripper action server:
+### Run a Baxter gripper action server:
 Note: requires you have a gripper modeled in the Baxter URDF. This version of the URDF is available [here](https://github.com/davetcoleman/baxter_common/commits/baxter_with_gripper)
 
 ```
 rosrun baxter_gripper_server gripper_action_server
 ```
 
-### Run Experimental 
+## Run Experimental 
 aka not working
 
-#### Launch a trajectory controller that runs a FollowJointTrajectoryAction:
+### Launch a trajectory controller that runs a FollowJointTrajectoryAction:
 
 ```
 roslaunch baxter_control baxter_reflexxes_control.launch
@@ -89,6 +89,6 @@ roslaunch baxter_control baxter_reflexxes_control.launch
 
 
 
-### Develop and Contribute
+## Develop and Contribute
 
 See [Contribute](https://github.com/osrf/baxter/blob/master/CONTRIBUTING.md) page.
