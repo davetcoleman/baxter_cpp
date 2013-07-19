@@ -23,6 +23,6 @@
 	args="-file $(find baxter_description)/urdf/baxter.urdf -urdf -z 0.93 -model baxter" />
 
   <!-- ros_control baxter launch file -->
-  <include file="$(find baxter_control)/launch/baxter_reflexxes_control.launch" />
+  <!--include file="$(find baxter_control)/launch/baxter_reflexxes_control.launch" /-->
 
 </launch>

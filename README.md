@@ -65,14 +65,15 @@ Note: currently only accepts individual std_msgs/Float32 commands
 roslaunch baxter_control baxter_control.launch 
 ```
 
-### Launch RQT (the ROS GUI) to see a "dashboard" for controlling Baxter:
+### Launch RQT 
+to see a "dashboard" for controlling Baxter:
 
 ```
 roslaunch baxter_control baxter_rqt_control.launch 
 ```
 
 ### Run a Baxter gripper action server:
-Note: requires you have a gripper modeled in the Baxter URDF. This version of the URDF is available [here](https://github.com/davetcoleman/baxter_common/commits/baxter_with_gripper)
+Note: requires you have a gripper modeled in the Baxter URDF. This version of the URDF is available in the [baxter_with_gripper](https://github.com/davetcoleman/baxter_common/commits/baxter_with_gripper) branch of davetcoleman/baxter_common
 
 ```
 rosrun baxter_gripper_server gripper_action_server
