@@ -1,12 +1,12 @@
 baxter
 ======
 
-Non-SDK packages for Baxter - you need access to RethinkRobotics [sdk-examples](https://github.com/RethinkRobotics/sdk-examples) to use the rest of these packages. Currently their SDK is closed source. The version of sdk-examples must also be catkinized, which I can provide if you already have the SDK.
+Unofficial Baxter packages that add-on to the Rethink SDK. Currently it mostly contains Gazebo interface stuff, though also some MoveIt code.
 
 ### Prequisites
 
  * ROS Groovy or Hydro
- * gazebo_ros_pkgs installed with the latest stand-alone version of Gazebo
+ * [gazebo_ros_pkgs](gazebosim.org/wiki/Tutorials#ROS_Integration) installed with the latest stand-alone version of Gazebo
  * A catkinized version of baxter_msgs (Rethink will officially release this soon to baxter_common, otherwise email davetcoleman@gmail.com)
 
 ### Installation
@@ -14,7 +14,7 @@ Non-SDK packages for Baxter - you need access to RethinkRobotics [sdk-examples](
 * Create a catkin workspace and cd into it:
 
 ```
-cd ~/catkin_ws/src
+    cd ~/catkin_ws/src
 ```
 
 * Checkout this repo
@@ -23,9 +23,10 @@ cd ~/catkin_ws/src
     git clone git@github.com:davetcoleman/baxter.git
 ```
 
-* Also install from source moveit_plugins and (optional) some grasping code
+* Also install from source a transmission version of Baxter, moveit_plugins and (optional) some grasping code
 
 ```
+    git clone git@github.com:davetcoleman/baxter_common.git
     git clone git@github.com:ros-planning/moveit_plugins.git
     git clone git@github.com:davetcoleman/block_grasp_generator.git
 ```
