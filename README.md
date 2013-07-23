@@ -58,11 +58,11 @@ Hydro:
 roslaunch baxter_gazebo baxter_world.launch
 ```
 
-### Launch Baxter' simulated controllers: 
-Note: currently only accepts individual std_msgs/Float32 commands
+### Launch Individual Generic Simulated controllers for Baxter:
+Only accepts individual std_msgs/Float32 commands
 
 ```
-roslaunch baxter_control baxter_control.launch 
+roslaunch baxter_control baxter_individual_control.launch 
 ```
 
 ### Launch RQT 
@@ -71,6 +71,7 @@ to see a "dashboard" for controlling Baxter:
 ```
 roslaunch baxter_control baxter_rqt_control.launch 
 ```
+This will provide you with easy ways to publish sine wave commands to the actuators, tune the PID controllers and visualize the performance.
 
 ### Run a Baxter gripper action server:
 Note: requires you have a gripper modeled in the Baxter URDF. This version of the URDF is available in the [baxter_with_gripper](https://github.com/davetcoleman/baxter_common/commits/baxter_with_gripper) branch of davetcoleman/baxter_common
