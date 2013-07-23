@@ -74,7 +74,10 @@ namespace reflexxes_effort_controllers {
   template<class T>
   std::ostream& operator<< (std::ostream& stream, const RMLVector<T>& rml_vec) {
     stream<<"[ ";
-    for(int i=0; i<rml_vec.VectorDimension; i++) { stream<<(rml_vec.VecData[i])<<", "; }
+    for(int i=0; i<rml_vec.VectorDimension; i++) 
+    { 
+      stream<<(rml_vec.VecData[i])<<", "; 
+    }
     stream<<"]";
     return stream;
   }
@@ -164,7 +167,7 @@ namespace reflexxes_effort_controllers {
       // Get the joint-namespace nodehandle
       {
         ros::NodeHandle joint_nh(nh_, "joints/"+joint_names_[i]);
-        ROS_INFO("Loading joint information for joint '%s' (namespace: %s)", joint_names_[i].c_str(), joint_nh.getNamespace().c_str());
+        ROS_INFO("Loading joint info for joint '%s' (namespace: %s)", joint_names_[i].c_str(), joint_nh.getNamespace().c_str());
 
         // Initialize PID from rosparam
         control_toolbox::Pid pid;
