@@ -30,7 +30,9 @@
 
   <node name="move_group" launch-prefix="$(arg launch_prefix)" pkg="moveit_ros_move_group" 
 	type="move_group" respawn="false" output="screen"
-	args="joint_states:=/robot/joint_states $(arg command_args)">
+	args="$(arg command_args)">
+    <remap from="/joint_states" to="/baxter/joint_states" />
+
     <!-- Set the display variable, in case OpenGL code is used internally -->
     <env name="DISPLAY" value="$(optenv DISPLAY :0)" />
 

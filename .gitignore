@@ -40,4 +40,4 @@ moveit_plugins
 baxter_common
 
 # Catkin Workspace
-CMakeLists.txt
+/CMakeLists.txt
