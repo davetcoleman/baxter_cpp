@@ -232,7 +232,7 @@ namespace reflexxes_effort_controllers {
     // Create state publisher
     // TODO: create state publisher
     //controller_state_publisher_.reset(
-    //new realtime_tools::RealtimePublisher<controllers_msgs::JointControllerState>(n, "state", 1));
+    //new realtime_tools::RealtimePublisher<control_msgs::JointControllerState>(n, "state", 1));
 
     // Create command subscriber
     trajectory_command_sub_ = nh_.subscribe<trajectory_msgs::JointTrajectory>(

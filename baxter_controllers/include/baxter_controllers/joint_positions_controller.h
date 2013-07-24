@@ -52,9 +52,9 @@
 #include <realtime_tools/realtime_publisher.h>
 #include <hardware_interface/joint_command_interface.h>
 #include <controller_interface/controller.h>
-#include <controllers_msgs/JointControllerState.h>
+#include <control_msgs/JointControllerState.h>
 #include <std_msgs/Float64.h>
-#include <controllers_msgs/JointControllerState.h>
+#include <control_msgs/JointControllerState.h>
 #include <realtime_tools/realtime_buffer.h>
 
 namespace baxter_controllers
@@ -126,7 +126,7 @@ private:
 
   boost::scoped_ptr<
     realtime_tools::RealtimePublisher<
-      controllers_msgs::JointControllerState> > controller_state_publisher_ ;
+      control_msgs::JointControllerState> > controller_state_publisher_ ;
 
   ros::Subscriber sub_command_;
 
