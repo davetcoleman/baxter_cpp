@@ -29,6 +29,7 @@ Unofficial Baxter packages that add-on to the Rethink SDK. Currently it mostly c
     git clone git@github.com:davetcoleman/baxter_common.git
     git clone git@github.com:ros-planning/moveit_plugins.git
     git clone git@github.com:davetcoleman/block_grasp_generator.git
+    git clone git@github.com:davetcoleman/reflexxes_controllers.git -b action_server
 ```
 
 * Install dependencies
