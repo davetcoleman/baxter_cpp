@@ -1,4 +1,7 @@
 baxter:
+  joint_state_controller:
+    type: joint_state_controller/JointStateController
+    publish_rate: 50
   right_arm_joint_position_controller:
     type: reflexxes_effort_controllers/JointTrajectoryController
     sampling_resolution: 0.001
