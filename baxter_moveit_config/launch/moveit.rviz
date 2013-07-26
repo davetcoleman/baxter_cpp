@@ -8,7 +8,6 @@ Panels:
         - /MotionPlanning1
         - /MotionPlanning1/Scene Geometry1
         - /MotionPlanning1/Scene Robot1
-        - /MotionPlanning1/Scene Robot1/Link Tree1
         - /MotionPlanning1/Planning Request1
         - /MotionPlanning1/Planning Metrics1
         - /MotionPlanning1/Planned Path1
@@ -282,7 +281,7 @@ Visualization Manager:
         Robot Alpha: 0.5
         Show Robot Collision: false
         Show Robot Visual: true
-        Show Trail: false
+        Show Trail: true
         State Display Time: 0.05 s
         Trajectory Topic: /move_group/display_planned_path
       Planning Metrics:
@@ -315,276 +314,230 @@ Visualization Manager:
         Voxel Rendering: Occupied Voxels
       Scene Robot:
         Attached Body Color: 150; 50; 150
-        Link Tree:
+        Links:
           All Links Enabled: true
           Expand Joint Details: false
           Expand Link Details: false
           Expand Tree: false
-          Link Tree Style: Tree of links
+          Link Tree Style: Links in Alphabetic Order
           base:
-            Details:
-              Alpha: 1
-              Show Axes: false
-              Show Trail: false
-            collision_head_link_1:
-              Details:
-                Alpha: 1
-                Show Axes: false
-                Show Trail: false
-              Value: true
-            collision_head_link_2:
-              Details:
-                Alpha: 1
-                Show Axes: false
-                Show Trail: false
-              Value: true
-            torso:
-              Details:
-                Alpha: 1
-                Show Axes: false
-                Show Trail: false
-              Value: true
-              head:
-                Details:
-                  Alpha: 1
-                  Show Axes: false
-                  Show Trail: false
-                Value: true
-                dummyhead1:
-                  Details:
-                    Alpha: 1
-                    Show Axes: false
-                    Show Trail: false
-                head_camera:
-                  Details:
-                    Alpha: 1
-                    Show Axes: false
-                    Show Trail: false
-                screen:
-                  Details:
-                    Alpha: 1
-                    Show Axes: false
-                    Show Trail: false
-                  Value: true
-              left_arm_mount:
-                Details:
-                  Alpha: 1
-                  Show Axes: false
-                  Show Trail: false
-                left_upper_shoulder:
-                  Details:
-                    Alpha: 1
-                    Show Axes: false
-                    Show Trail: false
-                  Value: true
-                  left_lower_shoulder:
-                    Details:
-                      Alpha: 1
-                      Show Axes: false
-                      Show Trail: false
-                    Value: true
-                    left_upper_elbow:
-                      Details:
-                        Alpha: 1
-                        Show Axes: false
-                        Show Trail: false
-                      Value: true
-                      left_lower_elbow:
-                        Details:
-                          Alpha: 1
-                          Show Axes: false
-                          Show Trail: false
-                        Value: true
-                        left_upper_forearm:
-                          Details:
-                            Alpha: 1
-                            Show Axes: false
-                            Show Trail: false
-                          Value: true
-                          left_arm_itb:
-                            Details:
-                              Alpha: 1
-                              Show Axes: false
-                              Show Trail: false
-                          left_lower_forearm:
-                            Details:
-                              Alpha: 1
-                              Show Axes: false
-                              Show Trail: false
-                            Value: true
-                            left_wrist:
-                              Details:
-                                Alpha: 1
-                                Show Axes: false
-                                Show Trail: false
-                              Value: true
-                              left_hand:
-                                Details:
-                                  Alpha: 1
-                                  Show Axes: false
-                                  Show Trail: false
-                                Value: true
-                                left_gripper:
-                                  Details:
-                                    Alpha: 1
-                                    Show Axes: false
-                                    Show Trail: false
-                                  Value: true
-                                left_hand_camera:
-                                  Details:
-                                    Alpha: 1
-                                    Show Axes: false
-                                    Show Trail: false
-                                  Value: true
-                                left_hand_camera_axis:
-                                  Details:
-                                    Alpha: 1
-                                    Show Axes: false
-                                    Show Trail: false
-                                left_hand_range:
-                                  Details:
-                                    Alpha: 1
-                                    Show Axes: false
-                                    Show Trail: false
-                                  Value: true
-                        left_upper_forearm_visual:
-                          Details:
-                            Alpha: 1
-                            Show Axes: false
-                            Show Trail: false
-                          Value: true
-                    left_upper_elbow_visual:
-                      Details:
-                        Alpha: 1
-                        Show Axes: false
-                        Show Trail: false
-                      Value: true
-              left_torso_itb:
-                Details:
-                  Alpha: 1
-                  Show Axes: false
-                  Show Trail: false
-              pedestal:
-                Details:
-                  Alpha: 1
-                  Show Axes: false
-                  Show Trail: false
-                Value: true
-              right_arm_mount:
-                Details:
-                  Alpha: 1
-                  Show Axes: false
-                  Show Trail: false
-                right_upper_shoulder:
-                  Details:
-                    Alpha: 1
-                    Show Axes: false
-                    Show Trail: false
-                  Value: true
-                  right_lower_shoulder:
-                    Details:
-                      Alpha: 1
-                      Show Axes: false
-                      Show Trail: false
-                    Value: true
-                    right_upper_elbow:
-                      Details:
-                        Alpha: 1
-                        Show Axes: false
-                        Show Trail: false
-                      Value: true
-                      right_lower_elbow:
-                        Details:
-                          Alpha: 1
-                          Show Axes: false
-                          Show Trail: false
-                        Value: true
-                        right_upper_forearm:
-                          Details:
-                            Alpha: 1
-                            Show Axes: false
-                            Show Trail: false
-                          Value: true
-                          right_arm_itb:
-                            Details:
-                              Alpha: 1
-                              Show Axes: false
-                              Show Trail: false
-                          right_lower_forearm:
-                            Details:
-                              Alpha: 1
-                              Show Axes: false
-                              Show Trail: false
-                            Value: true
-                            right_wrist:
-                              Details:
-                                Alpha: 1
-                                Show Axes: false
-                                Show Trail: false
-                              Value: true
-                              right_hand:
-                                Details:
-                                  Alpha: 1
-                                  Show Axes: false
-                                  Show Trail: false
-                                right_gripper:
-                                  Details:
-                                    Alpha: 1
-                                    Show Axes: false
-                                    Show Trail: false
-                                  Value: true
-                                  right_gripper_l_finger:
-                                    Details:
-                                      Alpha: 1
-                                      Show Axes: false
-                                      Show Trail: false
-                                    Value: true
-                                  right_gripper_r_finger:
-                                    Details:
-                                      Alpha: 1
-                                      Show Axes: false
-                                      Show Trail: false
-                                    Value: true
-                                right_hand_camera:
-                                  Details:
-                                    Alpha: 1
-                                    Show Axes: false
-                                    Show Trail: false
-                                  Value: true
-                                right_hand_camera_axis:
-                                  Details:
-                                    Alpha: 1
-                                    Show Axes: false
-                                    Show Trail: false
-                                right_hand_range:
-                                  Details:
-                                    Alpha: 1
-                                    Show Axes: false
-                                    Show Trail: false
-                                  Value: true
-                        right_upper_forearm_visual:
-                          Details:
-                            Alpha: 1
-                            Show Axes: false
-                            Show Trail: false
-                          Value: true
-                    right_upper_elbow_visual:
-                      Details:
-                        Alpha: 1
-                        Show Axes: false
-                        Show Trail: false
-                      Value: true
-              right_torso_itb:
-                Details:
-                  Alpha: 1
-                  Show Axes: false
-                  Show Trail: false
-              sonar_ring:
-                Details:
-                  Alpha: 1
-                  Show Axes: false
-                  Show Trail: false
-                Value: true
+            Alpha: 1
+            Show Axes: false
+            Show Trail: false
+          collision_head_link_1:
+            Alpha: 1
+            Show Axes: false
+            Show Trail: false
+            Value: true
+          collision_head_link_2:
+            Alpha: 1
+            Show Axes: false
+            Show Trail: false
+            Value: true
+          dummyhead1:
+            Alpha: 1
+            Show Axes: false
+            Show Trail: false
+          head:
+            Alpha: 1
+            Show Axes: false
+            Show Trail: false
+            Value: true
+          head_camera:
+            Alpha: 1
+            Show Axes: false
+            Show Trail: false
+          left_arm_itb:
+            Alpha: 1
+            Show Axes: false
+            Show Trail: false
+          left_arm_mount:
+            Alpha: 1
+            Show Axes: false
+            Show Trail: false
+          left_gripper:
+            Alpha: 1
+            Show Axes: false
+            Show Trail: false
+            Value: true
+          left_hand:
+            Alpha: 1
+            Show Axes: false
+            Show Trail: false
+            Value: true
+          left_hand_camera:
+            Alpha: 1
+            Show Axes: false
+            Show Trail: false
+            Value: true
+          left_hand_camera_axis:
+            Alpha: 1
+            Show Axes: false
+            Show Trail: false
+          left_hand_range:
+            Alpha: 1
+            Show Axes: false
+            Show Trail: false
+            Value: true
+          left_lower_elbow:
+            Alpha: 1
+            Show Axes: false
+            Show Trail: false
+            Value: true
+          left_lower_forearm:
+            Alpha: 1
+            Show Axes: false
+            Show Trail: false
+            Value: true
+          left_lower_shoulder:
+            Alpha: 1
+            Show Axes: false
+            Show Trail: false
+            Value: true
+          left_torso_itb:
+            Alpha: 1
+            Show Axes: false
+            Show Trail: false
+          left_upper_elbow:
+            Alpha: 1
+            Show Axes: false
+            Show Trail: false
+            Value: true
+          left_upper_elbow_visual:
+            Alpha: 1
+            Show Axes: false
+            Show Trail: false
+            Value: true
+          left_upper_forearm:
+            Alpha: 1
+            Show Axes: false
+            Show Trail: false
+            Value: true
+          left_upper_forearm_visual:
+            Alpha: 1
+            Show Axes: false
+            Show Trail: false
+            Value: true
+          left_upper_shoulder:
+            Alpha: 1
+            Show Axes: false
+            Show Trail: false
+            Value: true
+          left_wrist:
+            Alpha: 1
+            Show Axes: false
+            Show Trail: false
+            Value: true
+          pedestal:
+            Alpha: 1
+            Show Axes: false
+            Show Trail: false
+            Value: true
+          right_arm_itb:
+            Alpha: 1
+            Show Axes: false
+            Show Trail: false
+          right_arm_mount:
+            Alpha: 1
+            Show Axes: false
+            Show Trail: false
+          right_gripper:
+            Alpha: 1
+            Show Axes: false
+            Show Trail: false
+            Value: true
+          right_gripper_l_finger:
+            Alpha: 1
+            Show Axes: false
+            Show Trail: false
+            Value: true
+          right_gripper_r_finger:
+            Alpha: 1
+            Show Axes: false
+            Show Trail: false
+            Value: true
+          right_hand:
+            Alpha: 1
+            Show Axes: false
+            Show Trail: false
+          right_hand_camera:
+            Alpha: 1
+            Show Axes: false
+            Show Trail: false
+            Value: true
+          right_hand_camera_axis:
+            Alpha: 1
+            Show Axes: false
+            Show Trail: false
+          right_hand_range:
+            Alpha: 1
+            Show Axes: false
+            Show Trail: false
+            Value: true
+          right_lower_elbow:
+            Alpha: 1
+            Show Axes: false
+            Show Trail: false
+            Value: true
+          right_lower_forearm:
+            Alpha: 1
+            Show Axes: false
+            Show Trail: false
+            Value: true
+          right_lower_shoulder:
+            Alpha: 1
+            Show Axes: false
+            Show Trail: false
+            Value: true
+          right_torso_itb:
+            Alpha: 1
+            Show Axes: false
+            Show Trail: false
+          right_upper_elbow:
+            Alpha: 1
+            Show Axes: false
+            Show Trail: false
+            Value: true
+          right_upper_elbow_visual:
+            Alpha: 1
+            Show Axes: false
+            Show Trail: false
+            Value: true
+          right_upper_forearm:
+            Alpha: 1
+            Show Axes: false
+            Show Trail: false
+            Value: true
+          right_upper_forearm_visual:
+            Alpha: 1
+            Show Axes: false
+            Show Trail: false
+            Value: true
+          right_upper_shoulder:
+            Alpha: 1
+            Show Axes: false
+            Show Trail: false
+            Value: true
+          right_wrist:
+            Alpha: 1
+            Show Axes: false
+            Show Trail: false
+            Value: true
+          screen:
+            Alpha: 1
+            Show Axes: false
+            Show Trail: false
+            Value: true
+          sonar_ring:
+            Alpha: 1
+            Show Axes: false
+            Show Trail: false
+            Value: true
+          torso:
+            Alpha: 1
+            Show Axes: false
+            Show Trail: false
+            Value: true
         Robot Alpha: 0.5
         Show Scene Robot: true
       Value: true
@@ -884,17 +837,17 @@ Visualization Manager:
   Views:
     Current:
       Class: rviz/XYOrbit
-      Distance: 2.0092
+      Distance: 3.18856
       Focal Point:
-        X: 1.49976
-        Y: 0.699287
-        Z: 5.96046e-07
+        X: 0.165961
+        Y: 1.11338
+        Z: 1.19209e-06
       Name: Current View
       Near Clip Distance: 0.01
-      Pitch: 0.535398
+      Pitch: -1.2296
       Target Frame: base_link
       Value: XYOrbit (rviz)
-      Yaw: 0.2404
+      Yaw: 1.2754
     Saved: ~
 Window Geometry:
   Displays:
