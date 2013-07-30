@@ -7,8 +7,8 @@
   <node name="controller_spawner" pkg="controller_manager" type="spawner" respawn="false"
 	output="screen" ns="/baxter" args="--namespace=/baxter
 					   joint_state_controller
-					   left_arm_joint_position_controller" />
-					   <!--right_arm_joint_position_controller
+					   right_arm_joint_position_controller" />
+					   <!--left_arm_joint_position_controller
 					   right_gripper_position_controller-->
   
   <node name="robot_state_publisher" pkg="robot_state_publisher" type="state_publisher">

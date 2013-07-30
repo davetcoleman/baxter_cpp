@@ -101,7 +101,7 @@ public:
     ROS_INFO_STREAM_NAMED("gripper_action_serer","Done calibrating gripper");
 
     // Test Run
-    if(true) // todo make this a command line argument
+    if(false) // todo make this a command line argument
     {
       bool open = true;
       while(ros::ok())

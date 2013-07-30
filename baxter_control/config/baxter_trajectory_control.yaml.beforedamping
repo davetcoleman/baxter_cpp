@@ -16,43 +16,43 @@ baxter:
     joints:
       right_s0:
         joint: right_s0
-        pid: {p: 400.0, i: 0.01, d: 0.1}
+        pid: {p: 200.0, i: 0.01, d: 0.1}
         position_tolerance: 0.1
         max_acceleration: 0.5
         max_jerk: 1000.0
       right_s1:
         joint: right_s1
-        pid: {p: 3000.0, i: 0.01, d: 0.1}
+        pid: {p: 800.0, i: 0.01, d: 0.1}
         position_tolerance: 0.1
         max_acceleration: 0.5
         max_jerk: 1000.0
       right_e0:
         joint: right_e0
-        pid: {p: 600.0, i: 0.01, d: 0.1}
+        pid: {p: 300.0, i: 0.01, d: 0.1}
         position_tolerance: 0.1
         max_acceleration: 0.5
         max_jerk: 1000.0
       right_e1:
         joint: right_e1
-        pid: {p: 1000.0, i: 0.01, d: 0.1}
+        pid: {p: 500.0, i: 0.01, d: 0.1}
         position_tolerance: 0.1
         max_acceleration: 0.5
         max_jerk: 1000.0
       right_w0:
         joint: right_w0
-        pid: {p: 600.0, i: 0.01, d: 0.1}
+        pid: {p: 200.0, i: 0.01, d: 0.1}
         position_tolerance: 0.1
         max_acceleration: 0.5
         max_jerk: 1000.0
       right_w1:
         joint: right_w1
-        pid: {p: 400.0, i: 0.01, d: 0.1}
+        pid: {p: 100.0, i: 0.01, d: 0.1}
         position_tolerance: 0.1
         max_acceleration: 0.5
         max_jerk: 1000.0
       right_w2:
         joint: right_w2
-        pid: {p: 400.0, i: 0.01, d: 0.1}
+        pid: {p: 100.0, i: 0.01, d: 0.1}
         position_tolerance: 0.1
         max_acceleration: 0.5      
         max_jerk: 1000.0

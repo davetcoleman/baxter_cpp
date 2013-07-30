@@ -267,6 +267,11 @@ Visualization Manager:
             Show Axes: false
             Show Trail: false
             Value: true
+          screen_visual:
+            Alpha: 1
+            Show Axes: false
+            Show Trail: false
+            Value: true
           sonar_ring:
             Alpha: 1
             Show Axes: false
@@ -297,7 +302,7 @@ Visualization Manager:
         Goal State Color: 250; 128; 0
         Interactive Marker Size: 0.3
         Joint Violation Color: 255; 0; 255
-        Planning Group: left_arm
+        Planning Group: right_arm
         Query Goal State: true
         Query Start State: true
         Show Workspace: false
@@ -524,6 +529,11 @@ Visualization Manager:
             Show Trail: false
             Value: true
           screen:
+            Alpha: 1
+            Show Axes: false
+            Show Trail: false
+            Value: true
+          screen_visual:
             Alpha: 1
             Show Axes: false
             Show Trail: false
@@ -759,6 +769,11 @@ Visualization Manager:
           Show Axes: false
           Show Trail: false
           Value: true
+        screen_visual:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
+          Value: true
         sonar_ring:
           Alpha: 1
           Show Axes: false
@@ -837,17 +852,17 @@ Visualization Manager:
   Views:
     Current:
       Class: rviz/XYOrbit
-      Distance: 3.18856
+      Distance: 3.8667
       Focal Point:
-        X: 0.165961
-        Y: 1.11338
-        Z: 1.19209e-06
+        X: 1.17258
+        Y: -0.461878
+        Z: 1.43051e-06
       Name: Current View
       Near Clip Distance: 0.01
-      Pitch: -1.2296
+      Pitch: 0.2454
       Target Frame: base_link
       Value: XYOrbit (rviz)
-      Yaw: 1.2754
+      Yaw: 5.65357
     Saved: ~
 Window Geometry:
   Displays:
@@ -864,4 +879,4 @@ Window Geometry:
     collapsed: false
   Width: 1166
   X: 0
-  Y: 311
+  Y: 286
