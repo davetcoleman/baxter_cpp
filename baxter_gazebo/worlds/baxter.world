@@ -15,7 +15,7 @@
 	<pose>-2.0 7.0 0 0 0 0</pose>
     </include-->
     <physics type="ode">
-      <real_time_update_rate>100.0</real_time_update_rate>
+      <real_time_update_rate>1000.0</real_time_update_rate>
       <gravity>
 	0.0 0.0 -9.81
       </gravity>
