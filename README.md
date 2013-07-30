@@ -36,12 +36,12 @@ Unofficial Baxter packages that add-on to the Rethink SDK. Currently it mostly c
 
 Groovy:
 ```
-    rosdep install --from-paths src --ignore-src --rosdistro groovy -y
+    rosdep install --from-paths . --ignore-src --rosdistro groovy -y
 ```
 
 Hydro:
 ```
-    rosdep install --from-paths src --ignore-src --rosdistro hydro -y
+    rosdep install --from-paths . --ignore-src --rosdistro hydro -y
 ```
 
 * Build
@@ -70,7 +70,7 @@ roslaunch baxter_control baxter_individual_control.launch
 to see a "dashboard" for controlling Baxter:
 
 ```
-roslaunch baxter_control baxter_rqt_control.launch 
+roslaunch baxter_control baxter_individual_rqt.launch 
 ```
 This will provide you with easy ways to publish sine wave commands to the actuators, tune the PID controllers and visualize the performance.
 
@@ -86,8 +86,11 @@ aka not working
 
 ### Launch a trajectory controller that runs a FollowJointTrajectoryAction:
 
+First, restart everything and relaunch the baxter_world.launch file. Then:
+
 ```
-roslaunch baxter_control baxter_reflexxes_control.launch
+roslaunch baxter_control baxter_trajectory_control.launch
+roslaunch baxter_control baxter_trajectory_rqt.launch
 ```
 
 
