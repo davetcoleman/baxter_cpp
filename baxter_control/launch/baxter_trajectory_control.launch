@@ -6,6 +6,7 @@
   <!-- load the controllers -->
   <node name="controller_spawner" pkg="controller_manager" type="spawner" respawn="false"
 	output="screen" ns="/baxter" args="--namespace=/baxter
+					   --delay-start=5
 					   joint_state_controller
 					   right_arm_joint_position_controller" />
 					   <!--left_arm_joint_position_controller

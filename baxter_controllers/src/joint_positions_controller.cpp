@@ -1,8 +1,6 @@
 /*********************************************************************
  * Software License Agreement (BSD License)
  *
- *  Copyright (c) 2008, Willow Garage, Inc.
- *  Copyright (c) 2012, hiDOF, Inc.
  *  Copyright (c) 2013, Open Source Robotics Foundation
  *  All rights reserved.
  *
@@ -16,8 +14,9 @@
  *     copyright notice, this list of conditions and the following
  *     disclaimer in the documentation and/or other materials provided
  *     with the distribution.
- *   * Neither the name of the Willow Garage nor the names of its
- *     contributors may be used to endorse or promote products derived
+ *   * Neither the name of the Open Source Robotics Foundation
+ *     nor the names of its contributors may be
+ *     used to endorse or promote products derived
  *     from this software without specific prior written permission.
  *
  *  THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
@@ -34,162 +33,177 @@
  *  POSSIBILITY OF SUCH DAMAGE.
  *********************************************************************/
 
-/*
- Author: Dave Coleman
- Contributors: Jonathan Bohren, Wim Meeussen, Vijay Pradeep
- Desc: Effort(force)-based position controller using basic PID loop for Baxter
-*/
+/**
+ *  \author Dave Coleman
+ *  \desc   Multiple joint position controller for Baxter SDK
+ */
 
-#include "baxter_controllers/joint_positions_controller.h"
-#include <angles/angles.h>
+#include "joint_positions_controller.h"
 #include <pluginlib/class_list_macros.h>
 
 namespace baxter_controllers {
 
 JointPositionsController::JointPositionsController()
-  : loop_count_(0)
+  : new_command_(true),
+    update_counter_(0)
 {}
 
 JointPositionsController::~JointPositionsController()
 {
-  sub_command_.shutdown();
+  position_command_sub_.shutdown();
 }
 
-bool JointPositionsController::init(hardware_interface::EffortJointInterface *robot, ros::NodeHandle &n)
+bool JointPositionsController::init(
+  hardware_interface::EffortJointInterface *robot, ros::NodeHandle &nh)
 {
-  // Get joint name from parameter server
-  std::string joint_name;
-  if (!n.getParam("joint", joint_name)) 
+  // Store nodehandle
+  nh_ = nh;
+
+  // Get joint names
+  XmlRpc::XmlRpcValue xml_array;
+  if( !nh_.getParam("joint_names", xml_array) )
   {
-    ROS_ERROR("No joint given (namespace: %s)", n.getNamespace().c_str());
+    ROS_ERROR("No 'joint_names' parameter in controller (namespace '%s')", nh_.getNamespace().c_str());
+    return false;
+  }
+  // Make sure it's an array type
+  if(xml_array.getType() != XmlRpc::XmlRpcValue::TypeArray)
+  {
+    ROS_ERROR("The 'joint_names' parameter is not an array (namespace '%s')",nh_.getNamespace().c_str());
     return false;
   }
 
-  // Load PID Controller using gains set on parameter server
-  pid_controller_.reset(new control_toolbox::Pid());
-  if (!pid_controller_->init(ros::NodeHandle(n, "pid")))
-    return false;
+  // Get number of joints
+  n_joints_ = xml_array.size();
+  ROS_INFO_STREAM("Initializing JointPositionsController with "<<n_joints_<<" joints.");
 
-  // Start realtime state publisher
-  controller_state_publisher_.reset(
-    new realtime_tools::RealtimePublisher<control_msgs::JointControllerState>(n, "state", 1));
+  joint_names_.resize(n_joints_);
+  position_controllers_.resize(n_joints_);
 
-  // Start command subscriber
-  sub_command_ = n.subscribe<std_msgs::Float64>("command", 1, &JointPositionsController::setCommandCB, this);
-
-  // Get joint handle from hardware interface
-  joint_ = robot->getHandle(joint_name);
-
-  // Get URDF info about joint
-  urdf::Model urdf;
-  if (!urdf.initParam("robot_description"))
+  for(int i=0; i<n_joints_; i++)
   {
-    ROS_ERROR("Failed to parse urdf file");
-    return false;
+    // Get joint name
+    if(xml_array[i].getType() != XmlRpc::XmlRpcValue::TypeString)
+    {
+      ROS_ERROR("The 'joint_names' parameter contains a non-string element (namespace '%s')",nh_.getNamespace().c_str());
+      return false;
+    }
+    joint_names_[i] = static_cast<std::string>(xml_array[i]);
+
+    // Get the joint-namespace nodehandle
+    {
+      ros::NodeHandle joint_nh(nh_, "joints/"+joint_names_[i]);
+      ROS_INFO("Loading joint info for '%s', Namespace: %s", joint_names_[i].c_str(), joint_nh.getNamespace().c_str());
+
+      position_controllers_[i].reset(new effort_controllers::JointPositionController());
+      position_controllers_[i]->init(robot, joint_nh);
+
+      // DEBUG
+      //position_controllers_[i]->printDebug();
+
+    } // end of joint-namespaces
+
+    // Add joint name to map (allows unordered list to quickly be mapped to the ordered index)
+    joint_to_index_map_.insert(std::pair<std::string,std::size_t>(joint_names_[i],i));
   }
-  joint_urdf_ = urdf.getJoint(joint_name);
-  if (!joint_urdf_)
-  {
-    ROS_ERROR("Could not find joint '%s' in urdf", joint_name.c_str());
-    return false;
-  }
+
+  // Create command subscriber custom to baxter
+  position_command_sub_ = nh_.subscribe<baxter_msgs::JointPositions>(
+    "command", 1, &JointPositionsController::commandCB, this);
 
   return true;
 }
 
-void JointPositionsController::setGains(const double &p, const double &i, const double &d, const double &i_max, const double &i_min)
-{
-  pid_controller_->setGains(p,i,d,i_max,i_min);
-}
 
-void JointPositionsController::getGains(double &p, double &i, double &d, double &i_max, double &i_min)
-{
-  pid_controller_->getGains(p,i,d,i_max,i_min);
-}
-
-std::string JointPositionsController::getJointName()
-{
-  return joint_.getName();
-}
-
-// Set the joint position command
-void JointPositionsController::setCommand(double cmd)
-{
-  // the writeFromNonRT can be used in RT, if you have the guarantee that
-  //  * no non-rt thread is calling the same function (we're not subscribing to ros callbacks)
-  //  * there is only one single rt thread
-  command_.writeFromNonRT(cmd);
-}
 
 void JointPositionsController::starting(const ros::Time& time)
 {
-  command_.initRT(joint_.getPosition());
-  pid_controller_->reset();
+  baxter_msgs::JointPositions initial_command;
+
+  // Fill in the initial command
+  for(int i=0; i<n_joints_; i++)
+  {
+    initial_command.names.push_back( position_controllers_[i]->getJointName());
+    initial_command.angles.push_back(position_controllers_[i]->getPosition());
+  }
+  position_command_buffer_.initRT(initial_command);
+  new_command_ = true;
+}
+
+void JointPositionsController::stopping(const ros::Time& time)
+{
+
 }
 
 void JointPositionsController::update(const ros::Time& time, const ros::Duration& period)
 {
-  double command = *(command_.readFromRT());
+  // Debug info
+  verbose_ = false;
+  update_counter_ ++;
+  if( update_counter_ % 100 == 0 )
+    verbose_ = true;
 
-  double error, vel_error;
+  updateCommands();
 
-  // Compute position error
-  if (joint_urdf_->type == urdf::Joint::REVOLUTE)
+  // Apply joint commands
+  for(size_t i=0; i<n_joints_; i++)
   {
-    angles::shortest_angular_distance_with_limits(joint_.getPosition(),
-      command,
-      joint_urdf_->limits->lower,
-      joint_urdf_->limits->upper,
-      error);
+    // Update the individual joint controllers
+    position_controllers_[i]->update(time, period);
   }
-  else if (joint_urdf_->type == urdf::Joint::CONTINUOUS)
+}
+
+void JointPositionsController::updateCommands()
+{
+  // Check if we have a new command to publish
+  if( !new_command_ )
+    return;
+
+  // Go ahead and assume we have proccessed the current message
+  new_command_ = false;
+
+  // Get latest command
+  const baxter_msgs::JointPositions &command = *(position_command_buffer_.readFromRT());
+
+  // Error check message data
+  if( command.angles.count() != command.names.count() )
   {
-    error = angles::shortest_angular_distance(joint_.getPosition(), command);
+    ROS_ERROR_STREAM_NAMED("update","List of names does not match list of angles size, "
+      command.angles.count() << " != " << command.names.count() );
+    return;
   }
-  else //prismatic
+
+  std::map<std::string,std::size_t>::iterator name_it;
+
+  // Map incoming joint names and angles to the correct internal ordering
+  for(size_t i=0; i<command.names.size(); i++)
   {
-    error = command - joint_.getPosition();
-  }
+    // Check if the joint name is in our map
+    name_it = joint_to_index_map.find(command.names[i]);
 
-  // Compute velocity error assuming desired velocity is 0
-  vel_error = 0.0 - joint_.getVelocity();
-
-  // Set the PID error and compute the PID command with nonuniform
-  // time step size. This also allows the user to pass in a precomputed derivative error.
-  double commanded_effort = pid_controller_->computeCommand(error, vel_error, period);
-  joint_.setCommand(commanded_effort);
-
-
-  // publish state
-  if (loop_count_ % 10 == 0)
-  {
-    if(controller_state_publisher_ && controller_state_publisher_->trylock())
+    if( name_it != joint_to_index_map.end() )
     {
-      controller_state_publisher_->msg_.header.stamp = time;
-      controller_state_publisher_->msg_.set_point = command;
-      controller_state_publisher_->msg_.process_value = joint_.getPosition();
-      controller_state_publisher_->msg_.process_value_dot = joint_.getVelocity();
-      controller_state_publisher_->msg_.error = error;
-      controller_state_publisher_->msg_.time_step = period.toSec();
-      controller_state_publisher_->msg_.command = commanded_effort;
-
-      double dummy;
-      getGains(controller_state_publisher_->msg_.p,
-        controller_state_publisher_->msg_.i,
-        controller_state_publisher_->msg_.d,
-        controller_state_publisher_->msg_.i_clamp,
-        dummy);
-      controller_state_publisher_->unlockAndPublish();
+      // Joint is in the map, so we'll update the joint position
+      position_controllers_[i]->setCommand( command.angles[i] );
     }
   }
-  loop_count_++;
 }
 
-void JointPositionsController::setCommandCB(const std_msgs::Float64ConstPtr& msg)
+void JointPositionsController::commandCB(const baxter_msgs::JointPositionsConstPtr& msg)
 {
-  setCommand(msg->data);
+  ROS_DEBUG("Received new command");
+
+  // the writeFromNonRT can be used in RT, if you have the guarantee that
+  //  * no non-rt thread is calling the same function (we're not subscribing to ros callbacks)
+  //  * there is only one single rt thread
+  position_command_buffer_.writeFromNonRT(*msg);
+
+  new_reference_traj_ = true;
 }
+
 
 } // namespace
 
-PLUGINLIB_EXPORT_CLASS( baxter_controllers::JointPositionsController, controller_interface::ControllerBase)
+PLUGINLIB_EXPORT_CLASS(
+  baxter_controllers::JointPositionsController,
+  controller_interface::ControllerBase)
