@@ -69,26 +69,9 @@ roslaunch baxter_gazebo baxter_world.launch sdk:=true
 Test the controllers using RQT to see a "dashboard" for controlling Baxter:
 
 ```
-roslaunch baxter_control baxter_individual_rqt.launch 
+roslaunch baxter_control baxter_sdk_rqt.launch 
 ```
 
-This will provide you with easy ways to publish sine wave commands to the actuators, tune the PID controllers and visualize the performance.
-
-## Other Run Commands
-
-### Launch Individual Generic Simulated controllers for Baxter:
-Only accepts individual std_msgs/Float32 commands
-
-```
-roslaunch baxter_control baxter_individual_control.launch 
-```
-
-### Launch RQT 
-to see a "dashboard" for controlling Baxter:
-
-```
-roslaunch baxter_control baxter_individual_rqt.launch 
-```
 This will provide you with easy ways to publish sine wave commands to the actuators, tune the PID controllers and visualize the performance.
 
 ### Run a Baxter gripper action server:
@@ -96,6 +79,19 @@ Note: requires you have a gripper modeled in the Baxter URDF. This version of th
 
 ```
 rosrun baxter_gripper_server gripper_action_server
+```
+
+## Other Run Commands
+
+### Launch Individual Generic Simulated controllers for Baxter:
+
+Only accepts individual std_msgs/Float32 commands
+
+First, restart everything, then:
+
+```
+roslaunch baxter_gazebo baxter_world.launch individual:=true
+roslaunch baxter_control baxter_individual_rqt.launch 
 ```
 
 ### Launch a trajectory controller that runs a FollowJointTrajectoryAction (Experimental):
