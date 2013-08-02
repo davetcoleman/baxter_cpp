@@ -36,8 +36,13 @@ baxter_interface/cfg/cpp
 # Subfolders
 block_grasp_generator/
 rethink/
-moveit_plugins
-baxter_common
+moveit_plugins/
+baxter_common/
+reflexxes_controllers/
+reflexxes_controllers_active_server/
+ros_control/
+ros_control_demo/
+ros_controllers/
 
 # Catkin Workspace
 /CMakeLists.txt

@@ -7,6 +7,7 @@ find_package(catkin REQUIRED COMPONENTS
   controller_interface
   control_msgs
   control_toolbox
+  effort_controllers
   realtime_tools
   urdf
   )
@@ -20,9 +21,9 @@ catkin_package(
   controller_interface
   control_msgs
   control_toolbox
+  effort_controllers
   realtime_tools
   urdf
-  # forward_command_controller
   INCLUDE_DIRS include
   LIBRARIES ${PROJECT_NAME}
   )
@@ -30,8 +31,10 @@ catkin_package(
 include_directories(include ${catkin_INCLUDE_DIRS} ${Boost_INCLUDE_DIR} )
 
 add_library(${PROJECT_NAME}
-#  src/joint_positions_controller.cpp
+  src/joint_positions_controller.cpp
   src/baxter_gripper_controller.cpp
   )
 target_link_libraries(${PROJECT_NAME} ${catkin_LIBRARIES} ${Boost_LIBRARIES} )
+
+add_dependencies(${PROJECT_NAME} ${catkin_EXPORTED_TARGETS}) # wait for msgs to be generated first
 

@@ -76,7 +76,7 @@ namespace baxter_controllers
     ros::NodeHandle nh_;
 
     /**< Last commanded position. */
-    realtime_tools::RealtimeBuffer<const baxter_msgs::JointPositions> position_command_buffer_; 
+    realtime_tools::RealtimeBuffer<baxter_msgs::JointPositions> position_command_buffer_; 
 
     size_t n_joints_;
     std::vector<std::string> joint_names_;

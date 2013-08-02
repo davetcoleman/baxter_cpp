@@ -54,5 +54,9 @@
     <include file="$(find baxter_control)/launch/baxter_trajectory_control.launch" />
     <!--include file="$(find baxter_control)/launch/baxter_trajectory_rqt.launch" /-->
   </group>
+  <group if="$(arg sdk)">
+    <include file="$(find baxter_control)/launch/baxter_sdk_control.launch" />
+    <!--include file="$(find baxter_control)/launch/baxter_sdk_rqt.launch" /-->
+  </group>
 
 </launch>
