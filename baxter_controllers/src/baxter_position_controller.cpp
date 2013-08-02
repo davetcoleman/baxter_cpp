@@ -38,71 +38,179 @@
  *  \desc   Multiple joint position controller for Baxter SDK
  */
 
-#ifndef BAXTER_CONTROLLERS__JOINT_POSITIONS_CONTROLLER_H
-#define BAXTER_CONTROLLERS__JOINT_POSITIONS_CONTROLLER_H
+#include "baxter_position_controller.h"
+#include <pluginlib/class_list_macros.h>
 
-#include <ros/node_handle.h>
+namespace baxter_controllers {
 
-#include <urdf/model.h>
-#include <control_toolbox/pid.h>
-#include <boost/scoped_ptr.hpp>
-#include <boost/thread/condition.hpp>
-#include <hardware_interface/joint_command_interface.h>
-#include <controller_interface/controller.h>
-#include <realtime_tools/realtime_buffer.h>
+BaxterPositionController::BaxterPositionController()
+  : new_command_(true),
+    update_counter_(0)
+{}
 
-#include <baxter_msgs/JointPositions.h> // the input command
+BaxterPositionController::~BaxterPositionController()
+{
+  position_command_sub_.shutdown();
+}
 
-#include <effort_controllers/joint_position_controller.h> // used for controlling individual joints
+bool BaxterPositionController::init(
+  hardware_interface::EffortJointInterface *robot, ros::NodeHandle &nh)
+{
+  // Store nodehandle
+  nh_ = nh;
+
+  // Get joint sub-controllers
+  XmlRpc::XmlRpcValue xml_struct;
+  if( !nh_.getParam("joints", xml_struct) )
+  {
+    ROS_ERROR("No 'joints' parameter in controller (namespace '%s')", nh_.getNamespace().c_str());
+    return false;
+  }
+
+  // Make sure it's a struct
+  if(xml_struct.getType() != XmlRpc::XmlRpcValue::TypeStruct)
+  {
+    ROS_ERROR("The 'joints' parameter is not a struct (namespace '%s')",nh_.getNamespace().c_str());
+    return false;
+  }
+
+  // Get number of joints
+  n_joints_ = xml_struct.size();
+  ROS_INFO_STREAM("Initializing BaxterPositionController with "<<n_joints_<<" joints.");
+
+  position_controllers_.resize(n_joints_);
+
+  int i = 0; // track the joint id
+  for(XmlRpc::XmlRpcValue::iterator joint_it = xml_struct.begin(); 
+      joint_it != xml_struct.end(); ++joint_it)
+  {
+    // Get joint controller
+    if(joint_it->second.getType() != XmlRpc::XmlRpcValue::TypeStruct)
+    {
+      ROS_ERROR("The 'joints/joint_controller' parameter is not a struct (namespace '%s')",nh_.getNamespace().c_str());
+      return false;
+    }
+
+    // Get joint controller name
+    std::string joint_controller_name = joint_it->first;
+
+    // Get the joint-namespace nodehandle
+    {
+      ros::NodeHandle joint_nh(nh_, "joints/"+joint_controller_name);
+      ROS_INFO_STREAM_NAMED("init","Loading sub-controller '" << joint_controller_name 
+        << "', Namespace: " << joint_nh.getNamespace());
+
+      position_controllers_[i].reset(new effort_controllers::JointPositionController());
+      position_controllers_[i]->init(robot, joint_nh);
+
+      // DEBUG
+      //position_controllers_[i]->printDebug();
+
+    } // end of joint-namespaces
+
+    // Add joint name to map (allows unordered list to quickly be mapped to the ordered index)
+    joint_to_index_map_.insert(std::pair<std::string,std::size_t>
+      (position_controllers_[i]->getJointName(),i));
+
+    // increment joint i
+    ++i;
+  }
+
+  // Create command subscriber custom to baxter
+  position_command_sub_ = nh_.subscribe<baxter_msgs::JointPositions>(
+    "command", 1, &BaxterPositionController::commandCB, this);
+
+  return true;
+}
 
 
-namespace baxter_controllers
+
+void BaxterPositionController::starting(const ros::Time& time)
+{
+  baxter_msgs::JointPositions initial_command;
+
+  // Fill in the initial command
+  for(int i=0; i<n_joints_; i++)
+  {
+    initial_command.names.push_back( position_controllers_[i]->getJointName());
+    initial_command.angles.push_back(position_controllers_[i]->getPosition());
+  }
+  position_command_buffer_.initRT(initial_command);
+  new_command_ = true;
+}
+
+void BaxterPositionController::stopping(const ros::Time& time)
 {
 
-  class JointPositionsController: public controller_interface::Controller<hardware_interface::EffortJointInterface>
+}
+
+void BaxterPositionController::update(const ros::Time& time, const ros::Duration& period)
+{
+  // Debug info
+  verbose_ = false;
+  update_counter_ ++;
+  if( update_counter_ % 100 == 0 )
+    verbose_ = true;
+
+  updateCommands();
+
+  // Apply joint commands
+  for(size_t i=0; i<n_joints_; i++)
   {
+    // Update the individual joint controllers
+    position_controllers_[i]->update(time, period);
+  }
+}
 
-  public:
-    JointPositionsController();
-    ~JointPositionsController();
+void BaxterPositionController::updateCommands()
+{
+  // Check if we have a new command to publish
+  if( !new_command_ )
+    return;
 
-    bool init(hardware_interface::EffortJointInterface *robot, ros::NodeHandle &n);
-    void starting(const ros::Time& time);
-    void stopping(const ros::Time& time);
-    void update(const ros::Time& time, const ros::Duration& period);
-    void updateCommands();
+  // Go ahead and assume we have proccessed the current message
+  new_command_ = false;
 
-  private:
-    ros::NodeHandle nh_;
+  // Get latest command
+  const baxter_msgs::JointPositions &command = *(position_command_buffer_.readFromRT());
 
-    /**< Last commanded position. */
-    realtime_tools::RealtimeBuffer<baxter_msgs::JointPositions> position_command_buffer_; 
+  // Error check message data
+  if( command.angles.size() != command.names.size() )
+  {
+    ROS_ERROR_STREAM_NAMED("update","List of names does not match list of angles size, "
+      << command.angles.size() << " != " << command.names.size() );
+    return;
+  }
 
-    size_t n_joints_;
-    std::vector<std::string> joint_names_;
+  std::map<std::string,std::size_t>::iterator name_it;
 
-    std::map<std::string,std::size_t> joint_to_index_map_; // allows incoming messages to be quickly ordered
+  // Map incoming joint names and angles to the correct internal ordering
+  for(size_t i=0; i<command.names.size(); i++)
+  {
+    // Check if the joint name is in our map
+    name_it = joint_to_index_map_.find(command.names[i]);
 
-    bool verbose_;
-    bool new_command_; // true when an unproccessed new command is in the realtime buffer
-    size_t update_counter_;
+    if( name_it != joint_to_index_map_.end() )
+    {
+      // Joint is in the map, so we'll update the joint position
+      position_controllers_[name_it->second]->setCommand( command.angles[i] );
+    }
+  }
+}
 
-    // Command subscriber
-    ros::Subscriber position_command_sub_;
-    
-    /**
-     * @brief Callback from a recieved goal from the published topic message
-     * @param msg trajectory goal
-     */
-    void commandCB(const baxter_msgs::JointPositionsConstPtr& msg);
+void BaxterPositionController::commandCB(const baxter_msgs::JointPositionsConstPtr& msg)
+{
+  // the writeFromNonRT can be used in RT, if you have the guarantee that
+  //  * no non-rt thread is calling the same function (we're not subscribing to ros callbacks)
+  //  * there is only one single rt thread
+  position_command_buffer_.writeFromNonRT(*msg);
 
-    // Create an effort-based joint position controller for every joint
-    std::vector< 
-      boost::shared_ptr<
-        effort_controllers::JointPositionController> > position_controllers_;    
+  new_command_ = true;
+}
 
-  };
 
 } // namespace
 
-#endif
+PLUGINLIB_EXPORT_CLASS(
+  baxter_controllers::BaxterPositionController,
+  controller_interface::ControllerBase)

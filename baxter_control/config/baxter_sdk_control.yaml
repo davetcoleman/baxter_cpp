@@ -3,7 +3,7 @@ baxter:
     type: joint_state_controller/JointStateController
     publish_rate: 50
   joint_positions_controller:
-    type: baxter_controllers/JointPositionsController
+    type: baxter_controllers/BaxterPositionController
     joints:
       right_s0_controller:
         joint: right_s0

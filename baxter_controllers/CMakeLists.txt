@@ -31,7 +31,7 @@ catkin_package(
 include_directories(include ${catkin_INCLUDE_DIRS} ${Boost_INCLUDE_DIR} )
 
 add_library(${PROJECT_NAME}
-  src/joint_positions_controller.cpp
+  src/baxter_position_controller.cpp
   src/baxter_gripper_controller.cpp
   )
 target_link_libraries(${PROJECT_NAME} ${catkin_LIBRARIES} ${Boost_LIBRARIES} )
