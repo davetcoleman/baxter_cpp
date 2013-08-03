@@ -1,7 +1,7 @@
 <launch>
 
   <!-- Load joint controller configurations from YAML file to parameter server -->
-  <rosparam file="$(find baxter_control)/config/baxter_sdk_control.yaml" command="load"/>
+  <rosparam file="$(find baxter_control)/config/baxter_controllers.yaml" command="load"/>
 
   <!-- load the controllers -->
   <node name="controller_spawner" pkg="controller_manager" type="spawner" respawn="false"
@@ -9,8 +9,8 @@
 					   --delay-start=1
 					   joint_state_controller
 					   left_joint_velocity_controller
+					   right_joint_velocity_controller
 					   " />
-<!--					   right_joint_velocity_controller-->
   
   <node name="robot_state_publisher" pkg="robot_state_publisher" type="state_publisher">
     <remap from="/joint_states" to="/baxter/joint_states" />

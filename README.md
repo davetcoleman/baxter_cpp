@@ -60,19 +60,36 @@ roslaunch baxter_gazebo baxter_world.launch
 ```
 
 ### Launch Baxter in Gazebo with Rethink SDK
+
+#### Position Control
+
 Loads position controllers that accept baxter_msgs/JointPositions.msg
 
 ```
-roslaunch baxter_gazebo baxter_world.launch sdk:=true
+roslaunch baxter_gazebo baxter_world.launch position:=true
 ```
 
 Test the controllers using RQT to see a "dashboard" for controlling Baxter:
 
 ```
-roslaunch baxter_control baxter_sdk_rqt.launch 
+roslaunch baxter_control baxter_sdk_position_rqt.launch 
 ```
 
 This will provide you with easy ways to publish sine wave commands to the actuators, tune the PID controllers and visualize the performance.
+
+#### Velocity Control
+
+Loads velocity controllers that accept baxter_msgs/JointVelocities.msg
+
+```
+roslaunch baxter_gazebo baxter_world.launch velocity:=true
+```
+
+Test the controllers using RQT to see a "dashboard" for controlling Baxter:
+
+```
+roslaunch baxter_control baxter_sdk_velocity_rqt.launch 
+```
 
 ### Run a Baxter gripper action server:
 Note: requires you have a gripper modeled in the Baxter URDF. This version of the URDF is available in the [baxter_with_gripper](https://github.com/davetcoleman/baxter_common/commits/baxter_with_gripper) branch of davetcoleman/baxter_common
