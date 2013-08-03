@@ -11,6 +11,7 @@
   <!-- Custom control arguments -->
   <arg name="individual" default="false"/>
   <arg name="trajectory" default="false"/>
+  <arg name="sdk" default="false"/>
 
   <!-- We resume the logic in empty_world.launch, changing the name of the world to be launched -->
   <include file="$(find gazebo_ros)/launch/empty_world.launch">
@@ -44,6 +45,10 @@
 	      -J baxter::left_w1 -0.0610333
 	      -J baxter::left_w2 -0.0124707
 	      " />
+
+  <!-- publish to Baxter's face -->
+  <node name="face_image" pkg="head_control" type="xdisplay_image.py" respawn="false" output="screen"
+	args="--file=/home/dave/Downloads/smile.jpg --delay=5" />
 
   <!-- ros_control baxter launch file -->
   <group if="$(arg individual)">

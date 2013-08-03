@@ -35,25 +35,25 @@
 
 /**
  *  \author Dave Coleman
- *  \desc   Multiple joint position controller for Baxter SDK
+ *  \desc   Multiple joint velocity controller for Baxter SDK
  */
 
-#include <baxter_controllers/baxter_position_controller.h>
+#include <baxter_controllers/baxter_velocity_controller.h>
 #include <pluginlib/class_list_macros.h>
 
 namespace baxter_controllers {
 
-BaxterPositionController::BaxterPositionController()
+BaxterVelocityController::BaxterVelocityController()
   : new_command_(true),
     update_counter_(0)
 {}
 
-BaxterPositionController::~BaxterPositionController()
+BaxterVelocityController::~BaxterVelocityController()
 {
-  position_command_sub_.shutdown();
+  velocity_command_sub_.shutdown();
 }
 
-bool BaxterPositionController::init(
+bool BaxterVelocityController::init(
   hardware_interface::EffortJointInterface *robot, ros::NodeHandle &nh)
 {
   // Store nodehandle
@@ -76,9 +76,9 @@ bool BaxterPositionController::init(
 
   // Get number of joints
   n_joints_ = xml_struct.size();
-  ROS_INFO_STREAM("Initializing BaxterPositionController with "<<n_joints_<<" joints.");
+  ROS_INFO_STREAM("Initializing BaxterVelocityController with "<<n_joints_<<" joints.");
 
-  position_controllers_.resize(n_joints_);
+  velocity_controllers_.resize(n_joints_);
 
   int i = 0; // track the joint id
   for(XmlRpc::XmlRpcValue::iterator joint_it = xml_struct.begin(); 
@@ -100,51 +100,64 @@ bool BaxterPositionController::init(
       ROS_INFO_STREAM_NAMED("init","Loading sub-controller '" << joint_controller_name 
         << "', Namespace: " << joint_nh.getNamespace());
 
-      position_controllers_[i].reset(new effort_controllers::JointPositionController());
-      position_controllers_[i]->init(robot, joint_nh);
+      velocity_controllers_[i].reset(new effort_controllers::JointVelocityController());
+      velocity_controllers_[i]->init(robot, joint_nh);
 
       // DEBUG
-      //position_controllers_[i]->printDebug();
+      //velocity_controllers_[i]->printDebug();
 
     } // end of joint-namespaces
 
     // Add joint name to map (allows unordered list to quickly be mapped to the ordered index)
     joint_to_index_map_.insert(std::pair<std::string,std::size_t>
-      (position_controllers_[i]->getJointName(),i));
+      (velocity_controllers_[i]->getJointName(),i));
 
     // increment joint i
     ++i;
   }
 
-  // Create command subscriber custom to baxter
-  position_command_sub_ = nh_.subscribe<baxter_msgs::JointPositions>(
-    "command", 1, &BaxterPositionController::commandCB, this);
+  // Get controller topic name that it will subscribe to
+  if( nh_.getParam("topic", topic_name) ) // They provided a custom topic to subscrive to
+  {
+    // Get a node handle that is relative to the base path
+    ros::NodeHandle nh_base("~");
+
+    // Create command subscriber custom to baxter  
+    velocity_command_sub_ = nh_base.subscribe<baxter_msgs::JointVelocities>
+      (topic_name, 1, &BaxterVelocityController::commandCB, this);
+  }
+  else // default "command" topic
+  {
+    // Create command subscriber custom to baxter  
+    velocity_command_sub_ = nh_.subscribe<baxter_msgs::JointVelocities>
+      ("command", 1, &BaxterVelocityController::commandCB, this);
+  }
 
   return true;
 }
 
 
 
-void BaxterPositionController::starting(const ros::Time& time)
+void BaxterVelocityController::starting(const ros::Time& time)
 {
-  baxter_msgs::JointPositions initial_command;
+  baxter_msgs::JointVelocities initial_command;
 
   // Fill in the initial command
   for(int i=0; i<n_joints_; i++)
   {
-    initial_command.names.push_back( position_controllers_[i]->getJointName());
-    initial_command.angles.push_back(position_controllers_[i]->getPosition());
+    initial_command.names.push_back( velocity_controllers_[i]->getJointName());
+    initial_command.velocities.push_back(0);
   }
-  position_command_buffer_.initRT(initial_command);
+  velocity_command_buffer_.initRT(initial_command);
   new_command_ = true;
 }
 
-void BaxterPositionController::stopping(const ros::Time& time)
+void BaxterVelocityController::stopping(const ros::Time& time)
 {
 
 }
 
-void BaxterPositionController::update(const ros::Time& time, const ros::Duration& period)
+void BaxterVelocityController::update(const ros::Time& time, const ros::Duration& period)
 {
   // Debug info
   verbose_ = false;
@@ -158,11 +171,11 @@ void BaxterPositionController::update(const ros::Time& time, const ros::Duration
   for(size_t i=0; i<n_joints_; i++)
   {
     // Update the individual joint controllers
-    position_controllers_[i]->update(time, period);
+    velocity_controllers_[i]->update(time, period);
   }
 }
 
-void BaxterPositionController::updateCommands()
+void BaxterVelocityController::updateCommands()
 {
   // Check if we have a new command to publish
   if( !new_command_ )
@@ -172,19 +185,19 @@ void BaxterPositionController::updateCommands()
   new_command_ = false;
 
   // Get latest command
-  const baxter_msgs::JointPositions &command = *(position_command_buffer_.readFromRT());
+  const baxter_msgs::JointVelocities &command = *(velocity_command_buffer_.readFromRT());
 
   // Error check message data
-  if( command.angles.size() != command.names.size() )
+  if( command.velocities.size() != command.names.size() )
   {
-    ROS_ERROR_STREAM_NAMED("update","List of names does not match list of angles size, "
-      << command.angles.size() << " != " << command.names.size() );
+    ROS_ERROR_STREAM_NAMED("update","List of names does not match list of velocities size, "
+      << command.velocities.size() << " != " << command.names.size() );
     return;
   }
 
   std::map<std::string,std::size_t>::iterator name_it;
 
-  // Map incoming joint names and angles to the correct internal ordering
+  // Map incoming joint names and velocities to the correct internal ordering
   for(size_t i=0; i<command.names.size(); i++)
   {
     // Check if the joint name is in our map
@@ -192,18 +205,18 @@ void BaxterPositionController::updateCommands()
 
     if( name_it != joint_to_index_map_.end() )
     {
-      // Joint is in the map, so we'll update the joint position
-      position_controllers_[name_it->second]->setCommand( command.angles[i] );
+      // Joint is in the map, so we'll update the joint velocity
+      velocity_controllers_[name_it->second]->setCommand( command.velocities[i] );
     }
   }
 }
 
-void BaxterPositionController::commandCB(const baxter_msgs::JointPositionsConstPtr& msg)
+void BaxterVelocityController::commandCB(const baxter_msgs::JointVelocitiesConstPtr& msg)
 {
   // the writeFromNonRT can be used in RT, if you have the guarantee that
   //  * no non-rt thread is calling the same function (we're not subscribing to ros callbacks)
   //  * there is only one single rt thread
-  position_command_buffer_.writeFromNonRT(*msg);
+  velocity_command_buffer_.writeFromNonRT(*msg);
 
   new_command_ = true;
 }
@@ -212,5 +225,5 @@ void BaxterPositionController::commandCB(const baxter_msgs::JointPositionsConstP
 } // namespace
 
 PLUGINLIB_EXPORT_CLASS(
-  baxter_controllers::BaxterPositionController,
+  baxter_controllers::BaxterVelocityController,
   controller_interface::ControllerBase)

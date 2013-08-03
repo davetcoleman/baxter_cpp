@@ -33,16 +33,5 @@ baxter_moveit_config/default_warehouse_mongo_db
 # Dynamic Reconfigure
 baxter_interface/cfg/cpp
 
-# Subfolders
-block_grasp_generator/
-rethink/
-moveit_plugins/
-baxter_common/
-reflexxes_controllers/
-reflexxes_controllers_active_server/
-ros_control/
-ros_control_demo/
-ros_controllers/
-
 # Catkin Workspace
 /CMakeLists.txt

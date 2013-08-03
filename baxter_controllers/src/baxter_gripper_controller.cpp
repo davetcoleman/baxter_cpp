@@ -40,7 +40,7 @@
  Desc: Effort(force)-based position controller using basic PID loop
 */
 
-#include "baxter_gripper_controller.h"
+#include <baxter_controllers/baxter_gripper_controller.h>
 #include <angles/angles.h>
 #include <pluginlib/class_list_macros.h>
 

@@ -8,7 +8,9 @@
 	output="screen" ns="/baxter" args="--namespace=/baxter
 					   --delay-start=1
 					   joint_state_controller
-					   joint_positions_controller" />
+					   left_joint_velocity_controller
+					   " />
+<!--					   right_joint_velocity_controller-->
   
   <node name="robot_state_publisher" pkg="robot_state_publisher" type="state_publisher">
     <remap from="/joint_states" to="/baxter/joint_states" />
