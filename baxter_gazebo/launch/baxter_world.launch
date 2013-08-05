@@ -49,7 +49,7 @@
 
   <!-- publish to Baxter's face -->
   <node name="face_image" pkg="head_control" type="xdisplay_image.py" respawn="false" output="screen"
-	args="--file=$(find baxter_description)/media/smile.jpg --delay=5" />
+	args="--file=$(find baxter_description)/media/researchsdk.png --delay=5" />
 
   <!-- ros_control baxter launch file -->
   <group if="$(arg individual)">

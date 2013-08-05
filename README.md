@@ -7,7 +7,7 @@ Unofficial Baxter packages that add-on to the Rethink SDK. Currently it mostly c
 
  * ROS Groovy or Hydro
  * [gazebo_ros_pkgs](gazebosim.org/wiki/Tutorials#ROS_Integration) installed with the latest stand-alone version of Gazebo
- * A catkinized version of baxter_msgs (Rethink will officially release this soon to baxter_common, otherwise email davetcoleman@gmail.com)
+ * The development version of baxter_msgs (Rethink will officially release this soon to baxter_common, otherwise email davetcoleman@gmail.com)
 
 ## Installation
 
