@@ -5,7 +5,7 @@
 
   <!-- load the controllers -->
   <node name="controller_spawner" pkg="controller_manager" type="spawner" respawn="false"
-	output="screen" ns="/baxter" args="--namespace=/baxter
+	output="screen" ns="/robot" args="
 					   joint_state_controller
 
 					   right_s0_position_controller" />
