@@ -6,10 +6,9 @@
   <!-- load the controllers -->
   <node name="controller_spawner" pkg="controller_manager" type="spawner" respawn="false"
 	output="screen" ns="/baxter" args="--namespace=/baxter
-
 					   joint_state_controller
-					   left_joint_velocity_controller
-					   right_joint_velocity_controller
+					   left_joint_position_controller
+					   right_joint_position_controller
 					   " />
   
   <node name="robot_state_publisher" pkg="robot_state_publisher" type="state_publisher">

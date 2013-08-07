@@ -5,11 +5,9 @@ project(baxter_controllers)
 find_package(catkin REQUIRED COMPONENTS
   roscpp
   controller_interface
-  control_msgs
   control_toolbox
   effort_controllers
-  realtime_tools
-  urdf
+  baxter_msgs
   )
 
 ## System dependencies are found with CMake's conventions
@@ -19,11 +17,9 @@ find_package(Boost REQUIRED COMPONENTS system)
 catkin_package(
   CATKIN_DEPENDS
   controller_interface
-  control_msgs
   control_toolbox
   effort_controllers
-  realtime_tools
-  urdf
+  baxter_msgs
   INCLUDE_DIRS include
   LIBRARIES ${PROJECT_NAME}
   )
