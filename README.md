@@ -26,10 +26,8 @@ Unofficial Baxter packages that add-on to the Rethink SDK. Currently it mostly c
 * Also install from source a transmission version of Baxter, moveit_plugins and (optional) some grasping code
 
 ```
-    git clone git@github.com:davetcoleman/baxter_common.git -b development
-    git clone git@github.com:ros-planning/moveit_plugins.git
+    git clone git@github.com:davetcoleman/baxter_common.git -b baxter_with_gripper
     git clone git@github.com:davetcoleman/block_grasp_generator.git
-    git clone git@github.com:davetcoleman/reflexxes_controllers.git -b action_server
     git clone git@github.com:ros-controls/ros_controllers -b hydro-devel     #TEMP UNTIL NEXT RELEASE
 ```
 
@@ -92,7 +90,20 @@ Test the controllers using RQT to see a "dashboard" for controlling Baxter:
 roslaunch baxter_control baxter_sdk_velocity_rqt.launch 
 ```
 
-### Run a Baxter gripper action server:
+#### Velocity Control with MoveIt
+
+Load the above velocity control launch file then run Baxter's trajectory controller:
+
+```
+rosrun baxter_interface trajectory_controller.py
+```
+
+Next start Baxter with MoveIt:
+```
+roslaunch baxter_moveit_config demo_baxter.launch
+```
+
+### Run a Baxter gripper action server
 Note: requires you have a gripper modeled in the Baxter URDF. This version of the URDF is available in the [baxter_with_gripper](https://github.com/davetcoleman/baxter_common/commits/baxter_with_gripper) branch of davetcoleman/baxter_common
 
 ```
