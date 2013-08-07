@@ -1,4 +1,4 @@
-baxter:
+robot:
   # Publish all joint states -----------------------------------
 
   joint_state_controller:
@@ -8,7 +8,7 @@ baxter:
   # Baxter SDK Controllers: Position --------------------------
   right_joint_position_controller:
     type: baxter_controllers/BaxterPositionController
-    topic: /sdk/robot/limb/right/command_joint_angles
+    topic: /robot/limb/right/command_joint_angles
     joints:
       right_s0_controller:
         joint: right_s0
@@ -34,7 +34,7 @@ baxter:
 
   left_joint_position_controller:
     type: baxter_controllers/BaxterPositionController
-    topic: /sdk/robot/limb/left/command_joint_angles
+    topic: /robot/limb/left/command_joint_angles
     joints:
       left_s0_controller:
         joint: left_s0
@@ -61,7 +61,7 @@ baxter:
   # Baxter SDK Controllers: Velocity --------------------------
   right_joint_velocity_controller:
     type: baxter_controllers/BaxterVelocityController
-    topic: /sdk/robot/limb/right/command_joint_velocities
+    topic: /robot/limb/right/command_joint_velocities
     joints:
       right_s0_controller:
         joint: right_s0
@@ -87,7 +87,7 @@ baxter:
 
   left_joint_velocity_controller:
     type: baxter_controllers/BaxterVelocityController
-    topic: /sdk/robot/limb/left/command_joint_velocities
+    topic: /robot/limb/left/command_joint_velocities
     joints:
       left_s0_controller:
         joint: left_s0

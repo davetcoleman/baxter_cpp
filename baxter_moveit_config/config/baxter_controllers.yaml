@@ -1,6 +1,5 @@
 controller_list:
-#  - name: /sdk/robot/limb/left
-  - name: /baxter/right_arm_joint_position_controller
+  - name: /sdk/robot/limb/right
     ns: follow_joint_trajectory
     type: FollowJointTrajectory
     default: true
@@ -12,3 +11,20 @@ controller_list:
       - right_w0
       - right_w1
       - right_w2
+  - name: /sdk/robot/limb/left
+    ns: follow_joint_trajectory
+    type: FollowJointTrajectory
+    default: true
+    joints:
+      - left_s0
+      - left_s1
+      - left_e0
+      - left_e1
+      - left_w0
+      - left_w1
+      - left_w2
+  - name: baxter_gripper_action
+    type: GripperCommand
+    default: true
+    joints:
+      - right_endpoint
