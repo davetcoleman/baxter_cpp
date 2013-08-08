@@ -117,7 +117,7 @@ bool BaxterVelocityController::init(
   }
 
   // Get controller topic name that it will subscribe to
-  if( nh_.getParam("topic", topic_name) ) // They provided a custom topic to subscrive to
+  if( nh_.getParam("topic", topic_name) ) // They provided a custom topic to subscribe to
   {
     // Get a node handle that is relative to the base path
     ros::NodeHandle nh_base("~");
