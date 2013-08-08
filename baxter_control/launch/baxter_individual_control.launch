@@ -20,7 +20,7 @@
 					   left_w0_position_controller
 					   left_w1_position_controller
 					   left_w2_position_controller" />
--->
+
   <node name="robot_state_publisher" pkg="robot_state_publisher" type="state_publisher">
     <remap from="/joint_states" to="/robot/joint_states" />
   </node>
