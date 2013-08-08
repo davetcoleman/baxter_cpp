@@ -33,7 +33,7 @@
                 }, 
                 "topics": {
                   "type": "repr", 
-                  "repr": "[u'/baxter/right_arm_joint_position_controller/joints/right_w0/state/error', u'/baxter/right_arm_joint_position_controller/joints/right_w1/state/error', u'/baxter/right_arm_joint_position_controller/joints/right_w2/state/error', u'/baxter/right_arm_joint_position_controller/joints/right_s1/state/error', u'/baxter/right_arm_joint_position_controller/joints/right_e1/state/error', u'/baxter/right_arm_joint_position_controller/joints/right_e0/state/error', u'/baxter/right_arm_joint_position_controller/joints/right_s0/state/error']"
+                  "repr": "[u'/robot/right_arm_joint_position_controller/joints/right_w0/state/error', u'/robot/right_arm_joint_position_controller/joints/right_w1/state/error', u'/robot/right_arm_joint_position_controller/joints/right_w2/state/error', u'/robot/right_arm_joint_position_controller/joints/right_s1/state/error', u'/robot/right_arm_joint_position_controller/joints/right_e1/state/error', u'/robot/right_arm_joint_position_controller/joints/right_e0/state/error', u'/robot/right_arm_joint_position_controller/joints/right_s0/state/error']"
                 }
               }, 
               "groups": {}
@@ -64,7 +64,7 @@
                 }, 
                 "topics": {
                   "type": "repr", 
-                  "repr": "[u'/baxter/right_arm_joint_position_controller/joints/right_w0/state/set_point', u'/baxter/right_arm_joint_position_controller/joints/right_w2/state/set_point', u'/baxter/right_arm_joint_position_controller/joints/right_e1/state/set_point', u'/baxter/right_arm_joint_position_controller/joints/right_e0/state/set_point', u'/baxter/right_arm_joint_position_controller/joints/right_s0/state/set_point', u'/baxter/right_arm_joint_position_controller/joints/right_s1/state/set_point', u'/baxter/right_arm_joint_position_controller/joints/right_w1/state/set_point']"
+                  "repr": "[u'/robot/right_arm_joint_position_controller/joints/right_w0/state/set_point', u'/robot/right_arm_joint_position_controller/joints/right_w2/state/set_point', u'/robot/right_arm_joint_position_controller/joints/right_e1/state/set_point', u'/robot/right_arm_joint_position_controller/joints/right_e0/state/set_point', u'/robot/right_arm_joint_position_controller/joints/right_s0/state/set_point', u'/robot/right_arm_joint_position_controller/joints/right_s1/state/set_point', u'/robot/right_arm_joint_position_controller/joints/right_w1/state/set_point']"
                 }
               }, 
               "groups": {}

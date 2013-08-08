@@ -5,18 +5,14 @@
 
   <!-- load the controllers -->
   <node name="controller_spawner" pkg="controller_manager" type="spawner" respawn="false"
-	output="screen" ns="/baxter" args="--namespace=/baxter
-					   joint_state_controller
-
-					   right_s0_position_controller" />
-<!--
+	output="screen" ns="/robot" args=" joint_state_controller
+					   right_s0_position_controller
 					   right_s1_position_controller
 					   right_e0_position_controller
 					   right_e1_position_controller
 					   right_w0_position_controller
 					   right_w1_position_controller
 					   right_w2_position_controller
-
 					   left_s0_position_controller
 					   left_s1_position_controller
 					   left_e0_position_controller
@@ -26,7 +22,7 @@
 					   left_w2_position_controller" />
 -->
   <node name="robot_state_publisher" pkg="robot_state_publisher" type="state_publisher">
-    <remap from="/joint_states" to="/baxter/joint_states" />
+    <remap from="/joint_states" to="/robot/joint_states" />
   </node>
 
   <!-- Load gripper controller -->
