@@ -40,9 +40,6 @@
 #include <ros/ros.h>
 #include <sensor_msgs/JointState.h>
 
-// Baxter
-//#include <baxter_msgs/BaxterGripperCommandAction.h>
-
 // MoveIt!
 #include <moveit/move_group_interface/move_group.h>
 #include <shape_tools/solid_primitive_dims.h>
@@ -87,10 +84,6 @@ block_grasp_generator::RobotGraspData grasp_data_;
 // our interface with MoveIt
 boost::scoped_ptr<move_group_interface::MoveGroup> group_;
 
-// block description
-//typedef std::pair<std::string,geometry_msgs::Pose> MetaBlock;
-
-
 void loadRobotGraspData()
 {
   // -------------------------------
@@ -133,7 +126,6 @@ void loadRobotGraspData()
   grasp_data_.grasp_depth_ = 0.1; //15; // default 0.12
 
   // Debug
-
   block_grasp_generator::BlockGraspGenerator::printBlockGraspData(grasp_data_);
 }
 

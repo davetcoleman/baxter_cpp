@@ -27,4 +27,4 @@ controller_list:
     type: GripperCommand
     default: true
     joints:
-      - right_endpoint
+      - right_gripper_l_finger_joint

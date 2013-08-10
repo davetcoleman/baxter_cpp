@@ -44,6 +44,7 @@
 #include <std_msgs/Float64.h>
 #include <std_msgs/Float32.h>
 #include <std_msgs/Empty.h>
+#include <sensor_msgs/JointState.h>
 #include <control_msgs/GripperCommandAction.h>
 
 namespace baxter_gripper_action
@@ -65,6 +66,7 @@ protected:
   ros::Publisher calibrate_topic_;
   ros::Publisher position_topic_;
   ros::Publisher release_topic_;
+  ros::Publisher joint_state_topic_;
 
   // Action messages
   //control_msgs::GripperCommandActionGoalConstPtr action_goal_;
@@ -88,6 +90,8 @@ public:
     position_topic_ = nh_.advertise<std_msgs::Float32>("/robot/limb/right/accessory/gripper/command_grip",10);
     ROS_DEBUG_STREAM_NAMED("gripper_action_serer","Starting open publisher");
     release_topic_ = nh_.advertise<std_msgs::Empty>("/robot/limb/right/accessory/gripper/command_release",10);
+    ROS_DEBUG_STREAM_NAMED("gripper_action_serer","Starting joint state publisher");
+    joint_state_topic_ = nh_.advertise<sensor_msgs::JointState>("/robot/joint_states",10);
 
     // Register the goal and start
     action_server_.registerGoalCallback(boost::bind(&GripperActionServer::goalCB, this));
@@ -122,6 +126,19 @@ public:
 
     // Announce state
     ROS_INFO_STREAM_NAMED("gripper_action_server", "Baxter Gripper Action Server Ready...");
+  }
+
+
+  void update()
+  {
+    sensor_msgs::JointState state;
+    state.header.stamp = ros::Time::now();
+    state.header.frame_id = "base";
+    state.name.push_back("right_gripper_l_finger_joint");
+    state.position.push_back(0);
+    state.velocity.push_back(0);
+    state.effort.push_back(0);
+    joint_state_topic_.publish(state);    
   }
 
   // Action server sends goals here
@@ -195,7 +212,11 @@ int main(int argc, char** argv)
   ros::AsyncSpinner spinner(1);
   spinner.start();
 
-  ros::spin(); // keep the action server alive
+  while(ros::ok())
+  {
+    server.update();
+    ros::Duration(0.1).sleep();
+  }
 
   return 0;
 }
