@@ -7,14 +7,16 @@ Unofficial Baxter packages that add-on to the Rethink SDK. Currently it mostly c
 
  * ROS Groovy or Hydro
  * [gazebo_ros_pkgs](gazebosim.org/wiki/Tutorials#ROS_Integration) installed with the latest stand-alone version of Gazebo
- * The development version of baxter_msgs (Rethink will officially release this soon to baxter_common, otherwise email davetcoleman@gmail.com)
+ * The gazebo_dev version of [sdk-examples](https://github.com/RethinkRobotics/sdk-examples) - we are using the baxter_interface and head_control packages from the SDK
 
 ## Installation
 
 * Create a catkin workspace and cd into it:
 
 ```
+    mkdir -p ~/catkin_ws/src
     cd ~/catkin_ws/src
+    catkin_init_workspace
 ```
 
 * Checkout this repo
@@ -23,7 +25,7 @@ Unofficial Baxter packages that add-on to the Rethink SDK. Currently it mostly c
     git clone git@github.com:davetcoleman/baxter.git
 ```
 
-* Also install from source a transmission version of Baxter, moveit_plugins and (optional) some grasping code
+* Also install from source a few customized repositories:
 
 ```
     git clone git@github.com:davetcoleman/baxter_common.git -b baxter_with_gripper
@@ -35,34 +37,67 @@ Unofficial Baxter packages that add-on to the Rethink SDK. Currently it mostly c
 
 Groovy:
 ```
+    cd ~/catkin_ws/
     rosdep install --from-paths . --ignore-src --rosdistro groovy -y
 ```
 
 Hydro:
 ```
+    cd ~/catkin_ws/
     rosdep install --from-paths . --ignore-src --rosdistro hydro -y
 ```
 
 * Build
 
 ```
-    cd ..
     catkin_make
 ```
 
-## Run
+## Bringup Baxter in Simulation or Harware
 
-### Launch Only Baxter in Gazebo:
+### Hardware
+
+ * Turn on baxter
+ * Enable robot:
+    ```
+    rosrun tools enable_robot.py -e
+    ```
+ * Temporary: launch gripper server
+    ```
+    rosrun baxter_gripper_server gripper_action_server
+    ```
+
+### Simulation
+
+Without controllers:
 
 ```
 roslaunch baxter_gazebo baxter_world.launch
 ```
 
-### Launch Baxter in Gazebo with Rethink SDK
+#### Velocity Controllers
 
-#### Position Control
+With velocity controllers that accept baxter_msgs/JointVelocities.msg
 
-Loads position controllers that accept baxter_msgs/JointPositions.msg
+ * Start simulation with controllers:
+   ```
+   roslaunch baxter_gazebo baxter_world.launch velocity:=true
+   ```
+
+ * Temporary: launch gripper server
+    ```
+    rosrun baxter_gripper_server gripper_action_server
+    ```
+
+Test the controllers using RQT to see a "dashboard" for controlling Baxter:
+
+```
+roslaunch baxter_control baxter_sdk_velocity_rqt.launch 
+```
+
+#### Position Controllers
+
+With position controllers that accept baxter_msgs/JointPositions.msg
 
 ```
 roslaunch baxter_gazebo baxter_world.launch position:=true
@@ -74,41 +109,20 @@ Test the controllers using RQT to see a "dashboard" for controlling Baxter:
 roslaunch baxter_control baxter_sdk_position_rqt.launch 
 ```
 
-This will provide you with easy ways to publish sine wave commands to the actuators, tune the PID controllers and visualize the performance.
+## Start MoveIt
 
-#### Velocity Control
-
-Loads velocity controllers that accept baxter_msgs/JointVelocities.msg
+Works with simulation or hardware:
 
 ```
-roslaunch baxter_gazebo baxter_world.launch velocity:=true
+     roslaunch baxter_moveit_config baxter_bringup.launch
 ```
 
-Test the controllers using RQT to see a "dashboard" for controlling Baxter:
+## Pick and place demo
 
 ```
-roslaunch baxter_control baxter_sdk_velocity_rqt.launch 
+     roslaunch baxter_pick_place baxter_pick_place.launch
 ```
 
-#### Velocity Control with MoveIt
-
-Load the above velocity control launch file then run Baxter's trajectory controller:
-
-```
-rosrun baxter_interface trajectory_controller.py
-```
-
-Next start Baxter with MoveIt:
-```
-roslaunch baxter_moveit_config demo_baxter.launch
-```
-
-### Run a Baxter gripper action server
-Note: requires you have a gripper modeled in the Baxter URDF. This version of the URDF is available in the [baxter_with_gripper](https://github.com/davetcoleman/baxter_common/commits/baxter_with_gripper) branch of davetcoleman/baxter_common
-
-```
-rosrun baxter_gripper_server gripper_action_server
-```
 
 ## Other Run Commands
 
@@ -123,7 +137,7 @@ roslaunch baxter_gazebo baxter_world.launch individual:=true
 roslaunch baxter_control baxter_individual_rqt.launch 
 ```
 
-### Launch a trajectory controller that runs a FollowJointTrajectoryAction (Experimental):
+### Launch a trajectory controller that runs a FollowJointTrajectoryAction (Very Experimental):
 
 First, restart everything, then:
 
