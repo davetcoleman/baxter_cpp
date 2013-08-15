@@ -63,41 +63,47 @@ Hydro:
     ```
     rosrun tools enable_robot.py -e
     ```
- * Temporary: launch gripper server
 
-    ```
-    rosrun baxter_gripper_server gripper_action_server
-    ```
-
-### Simulation
-
-Without controllers:
-
-```
-roslaunch baxter_gazebo baxter_world.launch
-```
-
-#### Velocity Controllers
-
-With velocity controllers that accept baxter_msgs/JointVelocities.msg
+### Simulation 
 
  * Start simulation with controllers:
    ```
    roslaunch baxter_gazebo baxter_world.launch velocity:=true
    ```
 
- * Temporary: launch gripper server
-    ```
-    rosrun baxter_gripper_server gripper_action_server
-    ```
+ * Test/tune the velocity controllers using RQT to see a "dashboard" for controlling Baxter:
+   ```
+   roslaunch baxter_control baxter_sdk_velocity_rqt.launch 
+   ```
 
-Test the controllers using RQT to see a "dashboard" for controlling Baxter:
+## Start MoveIt
+
+Works with simulation or hardware:
+
+ * Temporary: launch gripper server seperate
+   ```
+   rosrun baxter_gripper_server gripper_action_server
+   ```
+ * Start MoveIt:
+   ```
+   roslaunch baxter_moveit_config baxter_bringup.launch
+   ```
+
+## Pick and place demo
+
+   ```
+   roslaunch baxter_pick_place baxter_pick_place.launch
+   ```
+
+## Other Run Commands
+
+### Simulation Without controllers:
 
 ```
-roslaunch baxter_control baxter_sdk_velocity_rqt.launch 
+roslaunch baxter_gazebo baxter_world.launch
 ```
 
-#### Position Controllers
+### Position Controllers
 
 With position controllers that accept baxter_msgs/JointPositions.msg
 
@@ -110,23 +116,6 @@ Test the controllers using RQT to see a "dashboard" for controlling Baxter:
 ```
 roslaunch baxter_control baxter_sdk_position_rqt.launch 
 ```
-
-## Start MoveIt
-
-Works with simulation or hardware:
-
-```
-     roslaunch baxter_moveit_config baxter_bringup.launch
-```
-
-## Pick and place demo
-
-```
-     roslaunch baxter_pick_place baxter_pick_place.launch
-```
-
-
-## Other Run Commands
 
 ### Launch Individual Generic Simulated controllers for Baxter:
 
