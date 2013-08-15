@@ -6,8 +6,7 @@ Unofficial Baxter packages that add-on to the Rethink SDK. Currently it contains
 ## Prequisites
 
  * ROS Groovy or Hydro
- * [gazebo_ros_pkgs](gazebosim.org/wiki/Tutorials#ROS_Integration) installed with the latest stand-alone version of Gazebo
- * The gazebo_dev version of [sdk-examples](https://github.com/RethinkRobotics/sdk-examples) - we are using the baxter_interface and head_control packages from the SDK
+ * Access to the private Rethink [sdk-examples](https://github.com/RethinkRobotics/sdk-examples) repository - we are using the baxter_interface and head_control packages from the SDK
 
 ## Installation
 
@@ -28,6 +27,7 @@ Unofficial Baxter packages that add-on to the Rethink SDK. Currently it contains
 * Also install from source a few customized repositories:
 
 ```
+    git clone git@github.com:RethinkRobotics/sdk-examples.git -b gazebo_dev
     git clone git@github.com:davetcoleman/baxter_common.git -b baxter_with_gripper
     git clone git@github.com:davetcoleman/block_grasp_generator.git
     git clone git@github.com:ros-controls/ros_controllers -b velocity_position_controller
