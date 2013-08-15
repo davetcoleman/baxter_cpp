@@ -14,7 +14,7 @@ Panels:
         - /EE Grasp Poses1/Namespaces1
         - /MoveItGrasps1
       Splitter Ratio: 0.711462
-    Tree Height: 370
+    Tree Height: 156
   - Class: rviz/Help
     Name: Help
   - Class: rviz/Views
@@ -281,8 +281,8 @@ Visualization Manager:
             Show Axes: false
             Show Trail: false
             Value: true
-        Loop Animation: true
-        Robot Alpha: 0.5
+        Loop Animation: false
+        Robot Alpha: 0.45
         Show Robot Collision: false
         Show Robot Visual: true
         Show Trail: false
@@ -302,8 +302,8 @@ Visualization Manager:
         Interactive Marker Size: 0.3
         Joint Violation Color: 255; 0; 255
         Planning Group: right_arm
-        Query Goal State: true
-        Query Start State: true
+        Query Goal State: false
+        Query Start State: false
         Show Workspace: false
         Start State Alpha: 1
         Start State Color: 0; 255; 0
@@ -547,7 +547,7 @@ Visualization Manager:
             Show Axes: false
             Show Trail: false
             Value: true
-        Robot Alpha: 0.5
+        Robot Alpha: 1
         Show Scene Robot: true
       Value: true
     - Alpha: 1
@@ -606,7 +606,22 @@ Visualization Manager:
       Marker Topic: /move_group/display_contacts
       Name: MarkerArray
       Namespaces:
-        {}
+        block1=right_gripper_l_finger: true
+        collision_head_link_1=screen_visual: true
+        little_table=right_gripper: true
+        little_table=right_gripper_l_finger: true
+        little_table=right_gripper_r_finger: true
+        pedestal=block1: true
+        pedestal=right_gripper_l_finger: true
+        pedestal=right_gripper_r_finger: true
+        pedestal=right_hand_camera: true
+        pedestal=right_hand_range: true
+        screen=screen_visual: true
+        screen_visual=collision_head_link_2: true
+        torso=left_lower_forearm: true
+        torso=left_upper_forearm: true
+        torso=left_upper_forearm_visual: true
+        workbench=block1: true
       Queue Size: 100
       Value: true
     - Class: rviz/MarkerArray
@@ -614,7 +629,10 @@ Visualization Manager:
       Marker Topic: /move_group/display_grasp_markers
       Name: MoveItGrasps
       Namespaces:
-        {}
+        moveit_grasps:stage_1: true
+        moveit_grasps:stage_2: true
+        moveit_grasps:stage_3: true
+        moveit_grasps:stage_4: true
       Queue Size: 100
       Value: true
   Enabled: true
@@ -632,31 +650,31 @@ Visualization Manager:
   Views:
     Current:
       Class: rviz/XYOrbit
-      Distance: 3.8667
+      Distance: 1.35084
       Focal Point:
-        X: 1.17258
-        Y: -0.461878
+        X: 1.0935
+        Y: -0.903147
         Z: 1.43051e-06
       Name: Current View
       Near Clip Distance: 0.01
-      Pitch: 0.2054
+      Pitch: 0.3504
       Target Frame: base_link
       Value: XYOrbit (rviz)
-      Yaw: 6.01356
+      Yaw: 5.42855
     Saved: ~
 Window Geometry:
   Displays:
     collapsed: false
-  Height: 1022
+  Height: 705
   Help:
     collapsed: false
   Hide Left Dock: false
   Hide Right Dock: true
   Motion Planning:
     collapsed: false
-  QMainWindow State: 000000ff00000000fd0000000100000000000002a20000039ffc0200000005fb000000100044006900730070006c0061007900730100000041000001b3000000dd00fffffffb0000000800480065006c00700000000342000000bb0000007600fffffffb0000000a0056006900650077007300000001a7000000b0000000b000fffffffb0000000c00430061006d00650072006100000002ff000001610000000000000000fb0000001e004d006f00740069006f006e00200050006c0061006e006e0069006e006701000001fa000001e60000017400ffffff000003e80000039f00000001000000020000000100000002fc0000000100000002000000010000000a0054006f006f006c00730100000000ffffffff0000000000000000
+  QMainWindow State: 000000ff00000000fd0000000100000000000002a200000262fc0200000005fb000000100044006900730070006c0061007900730100000041000000dd000000dd00fffffffb0000000800480065006c00700000000342000000bb0000007600fffffffb0000000a0056006900650077007300000001a7000000b0000000b000fffffffb0000000c00430061006d00650072006100000002ff000001610000000000000000fb0000001e004d006f00740069006f006e00200050006c0061006e006e0069006e006701000001240000017f0000017400ffffff000002dd0000026200000001000000020000000100000002fc0000000100000002000000010000000a0054006f006f006c00730100000000ffffffff0000000000000000
   Views:
     collapsed: false
-  Width: 1680
-  X: -4
-  Y: 289
+  Width: 1413
+  X: 259
+  Y: 291

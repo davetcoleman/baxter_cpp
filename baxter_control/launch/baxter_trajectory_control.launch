@@ -15,7 +15,7 @@
   </node>
 
   <!-- Load gripper controller -->
-  <!--node name="baxter_gripper_controller" pkg="baxter_gripper_controller" type="gripper_action_server" 
-	respawn="false" output="screen" /-->
+  <node name="baxter_gripper_server" pkg="baxter_gripper_server" type="gripper_action_server" 
+	respawn="false" output="screen" />
   
 </launch>

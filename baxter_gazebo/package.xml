@@ -23,7 +23,6 @@
   <run_depend>sensor_msgs</run_depend>
   <run_depend>baxter_description</run_depend>
   <run_depend>baxter_control</run_depend> 
-  <run_depend>xacro</run_depend>
   <run_depend>gazebo_ros</run_depend> 
   <run_depend>baxter_description</run_depend> 
   
