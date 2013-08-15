@@ -130,7 +130,7 @@ public:
 
     // Position
     start_block_pose.position.x = 0.0;
-    start_block_pose.position.y = -0.6; // -0.55;
+    start_block_pose.position.y = -0.65; // -0.55;
     start_block_pose.position.z = -0.5;
 
     // Orientation
@@ -169,7 +169,7 @@ public:
 
     while(ros::ok())
     {
-      // --------------------------------------------------------------------------------------------------------
+      // --------------------------------------------------------------------------------------------
       // Remove attached objects
       cleanupACO(BLOCK_NAME);
 
@@ -178,13 +178,9 @@ public:
       cleanupCO(SUPPORT_SURFACE_NAME);
       cleanupCO(SUPPORT_SURFACE_NAME2);
 
-      // Send Baxter to neutral position
-      //positionBaxterReady();
-      positionBaxterNeutral();
-
-      // --------------------------------------------------------------------------------------------------------
+      // --------------------------------------------------------------------------------------------
       // Add objects to scene
-      //publishCollisionTable();
+      publishCollisionTable();
       publishCollisionTableSmall();
 
       // Publish goal block location
@@ -192,6 +188,10 @@ public:
 
       // Add a new block that is to be moved
       publishCollisionBlock(start_block_pose, BLOCK_NAME);
+
+      // -------------------------------------------------------------------------------------
+      // Send Baxter to neutral position
+      positionBaxterNeutral();
 
       // -------------------------------------------------------------------------------------
       // Create MoveGroup for right arm
@@ -313,7 +313,7 @@ public:
   void loadRobotGraspData()
   {
     // -------------------------------
-    // Create pre-grasp posture
+    // Create pre-grasp posture (Gripper open)
     grasp_data_.pre_grasp_posture_.header.frame_id = BASE_LINK;
     grasp_data_.pre_grasp_posture_.header.stamp = ros::Time::now();
     // Name of joints:
@@ -324,7 +324,7 @@ public:
     grasp_data_.pre_grasp_posture_.position[0] = baxter_msgs::GripperState::POSITION_OPEN;
 
     // -------------------------------
-    // Create grasp posture
+    // Create grasp posture (Gripper closed)
     grasp_data_.grasp_posture_.header.frame_id = BASE_LINK;
     grasp_data_.grasp_posture_.header.stamp = ros::Time::now();
     // Name of joints:
@@ -345,8 +345,8 @@ public:
        grasp_data_.approach_retreat_desired_dist_ = 0.05;
        grasp_data_.approach_retreat_min_dist_ = 0.025;
     */
-    grasp_data_.approach_retreat_desired_dist_ = 0.1;
-    grasp_data_.approach_retreat_min_dist_ = 0.001;
+    grasp_data_.approach_retreat_desired_dist_ = 0.3; // 0.1;
+    grasp_data_.approach_retreat_min_dist_ = 0.06; // 0.001;
 
 
     grasp_data_.grasp_depth_ = 0.1; //15; // default 0.12

@@ -41,9 +41,9 @@
 // ROS
 #include <ros/ros.h>
 #include <actionlib/server/simple_action_server.h>
-#include <std_msgs/Float64.h>
 #include <std_msgs/Float32.h>
 #include <std_msgs/Empty.h>
+#include <std_msgs/Bool.h>
 #include <baxter_msgs/GripperState.h>
 #include <sensor_msgs/JointState.h>
 #include <control_msgs/GripperCommandAction.h>
@@ -72,6 +72,7 @@ protected:
   ros::Publisher calibrate_topic_;
   ros::Publisher position_topic_;
   ros::Publisher release_topic_;
+  ros::Publisher reset_topic_;
   ros::Publisher joint_state_topic_;
   ros::Subscriber gripper_state_sub_;
 
@@ -80,6 +81,7 @@ protected:
 
   // Cache an empty message
   std_msgs::Empty empty_msg_;
+  std_msgs::Bool bool_msg_;
   std_msgs::Float32 zero_msg_;
 
   // Remember the last gripper state and time
@@ -115,6 +117,10 @@ public:
     ROS_DEBUG_STREAM_NAMED(arm_name_,"Starting gripper open publisher");
     release_topic_ = nh_.advertise<std_msgs::Empty>("/robot/limb/" + arm_name_
                      + "/accessory/gripper/command_release",10);
+
+    ROS_DEBUG_STREAM_NAMED(arm_name_,"Starting gripper reset publisher");
+    reset_topic_ = nh_.advertise<std_msgs::Bool>("/robot/limb/" + arm_name_
+                     + "/accessory/gripper/command_reset",10);
 
     // Start the subscriber
     ROS_DEBUG_STREAM_NAMED(arm_name_,"Starting gripper joint state subscriber");
@@ -174,6 +180,9 @@ public:
 
     // Calculate joint stroke
     gripper_finger_joint_stroke_ = GRIPPER_FINGER_JOINT_UPPER - GRIPPER_FINGER_JOINT_LOWER;
+
+    // Reset error just in case
+    resetError();
 
     // Calibrate if needed
     calibrate();
@@ -299,10 +308,25 @@ public:
     {
       ROS_ERROR_STREAM_NAMED(arm_name_,"Gripper " << arm_name_ << " has error. State: \n" << *gripper_state_ );
       action_server_.setAborted(action_result_,"Gripper has error");
+
+      // Attempt to fix error
+      resetError();
+
       return true;
     }
 
     return false;
+  }
+
+  void resetError()
+  {
+    ROS_WARN_STREAM_NAMED(arm_name_,"Resetting gripper");
+
+    bool_msg_.data = true;
+    reset_topic_.publish(bool_msg_);
+    ros::Duration(0.5).sleep();
+
+    calibrate();
   }
 
   // Action server sends goals here
