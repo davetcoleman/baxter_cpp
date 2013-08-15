@@ -61,7 +61,7 @@
         <joint name="right_w1" value="1.26" />
         <joint name="right_w2" value="0" />
     </group_state>
-    <group_state name="both_neutral" group="both_arms">
+    <group_state name="both_ready" group="both_arms">
         <joint name="left_e0" value="0" />
         <joint name="left_e1" value="0.75" />
         <joint name="left_s0" value="0" />
@@ -76,6 +76,22 @@
         <joint name="right_w0" value="0" />
         <joint name="right_w1" value="1.26" />
         <joint name="right_w2" value="0" />
+    </group_state>
+    <group_state name="both_neutral" group="both_arms">
+        <joint name="left_e0" value="0.004218447161865235" />
+        <joint name="left_e1" value="1.3986069817565918" />
+        <joint name="left_s0" value="-0.0034514567687988283" />
+        <joint name="left_s1" value="0.011888351092529297" />
+        <joint name="left_w0" value="0.01457281746826172" />
+        <joint name="left_w1" value="0.23891750744018556" />
+        <joint name="left_w2" value="0.0007669903930664063" />
+        <joint name="right_e0" value="0.002300971179199219" />
+        <joint name="right_e1" value="1.415864265600586" />
+        <joint name="right_s0" value="0.0011504855895996095" />
+        <joint name="right_s1" value="0.01457281746826172" />
+        <joint name="right_w0" value="-0.0011504855895996095" />
+        <joint name="right_w1" value="0.25310682971191406" />
+        <joint name="right_w2" value="-0.18867963669433596" />
     </group_state>
     <!--END EFFECTOR: Purpose: Represent information about an end effector.-->
     <end_effector name="left_hand_eef" parent_link="left_gripper" group="left_hand" parent_group="left_arm" />

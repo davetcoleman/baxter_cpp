@@ -54,6 +54,10 @@ namespace baxter_gripper_action
 static const std::string GRIPPER_COMMAND_ACTION_TOPIC="baxter_gripper_action";
 static const std::string BASE_LINK = "base"; //"/base";
 
+// Copied from URDF \todo read straight from URDF? 
+static const double GRIPPER_FINGER_JOINT_UPPER = 0.0;
+static const double GRIPPER_FINGER_JOINT_LOWER = -0.045;
+
 class GripperActionServer
 {
 protected:
@@ -78,15 +82,16 @@ protected:
   std_msgs::Empty empty_msg_;
   std_msgs::Float32 zero_msg_;
 
-  // Remeber the last gripper state
+  // Remember the last gripper state and time
   baxter_msgs::GripperStateConstPtr gripper_state_;
   ros::Time gripper_state_timestamp_;
 
-  // Using Gazebo or not
-  bool in_simulation_;
+  bool in_simulation_; // Using Gazebo or not
+  double gripper_finger_joint_stroke_; // cache the diff between upper and lower limits
+  std::string arm_name_; // Remember which arm this class is for
 
-  // Remember which arm this class is for
-  std::string arm_name_;
+  // Rate to publish joint states
+  ros::Timer timer_;
 
 public:
 
@@ -111,6 +116,7 @@ public:
     release_topic_ = nh_.advertise<std_msgs::Empty>("/robot/limb/" + arm_name_
                      + "/accessory/gripper/command_release",10);
 
+    // Start the subscriber
     ROS_DEBUG_STREAM_NAMED(arm_name_,"Starting gripper joint state subscriber");
     gripper_state_sub_ = nh_.subscribe<baxter_msgs::GripperState>("/sdk/robot/limb/" + arm_name_
                          + "/accessory/gripper/state",
@@ -166,8 +172,20 @@ public:
     // Cache zero command
     zero_msg_.data = 0;
 
+    // Calculate joint stroke
+    gripper_finger_joint_stroke_ = GRIPPER_FINGER_JOINT_UPPER - GRIPPER_FINGER_JOINT_LOWER;
+
     // Calibrate if needed
     calibrate();
+
+    // Set publish frequency
+    ros::NodeHandle nh_tilde("~");
+    double publish_freq;
+    nh_tilde.param("publish_frequency", publish_freq, 50.0);
+    ros::Duration publish_interval = ros::Duration(1.0/std::max(publish_freq,1.0));
+
+    // trigger to publish fixed joints
+    timer_ = nh_tilde.createTimer(publish_interval, &GripperActionServer::update, this);
 
     // Announce state
     ROS_INFO_STREAM_NAMED(arm_name_, "Baxter Gripper Action Server ready.");
@@ -216,19 +234,23 @@ public:
     }
   }
 
-  void update()
+  void update(const ros::TimerEvent& e)
   {
     // Gazebo publishes a joint state for the gripper, but Baxter does not do so in the right format
     if( in_simulation_ )
       return;
 
+    // Create state message
     sensor_msgs::JointState state;
     state.header.stamp = gripper_state_timestamp_;
     state.header.frame_id = BASE_LINK;
     state.name.push_back(arm_name_ + "_gripper_l_finger_joint");
-    state.position.push_back(gripper_state_->position);
     state.velocity.push_back(0);
     state.effort.push_back(gripper_state_->force);
+
+    // Convert 0-100 state to joint position
+    state.position.push_back(GRIPPER_FINGER_JOINT_LOWER + gripper_finger_joint_stroke_ * 
+      (gripper_state_->position / 100));
 
     joint_state_topic_.publish(state);
   }
@@ -397,12 +419,7 @@ int main(int argc, char** argv)
     server.runTest();
   }
 
-  // Publish joint states if needed
-  while(ros::ok())
-  {
-    server.update();
-    ros::Duration(0.1).sleep();
-  }
+  ros::spin();
 
   return 0;
 }

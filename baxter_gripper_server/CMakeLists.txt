@@ -51,6 +51,7 @@ catkin_package(
 
 ## Declare a cpp executable
 add_executable(gripper_action_server src/gripper_action_server.cpp)
+add_dependencies(gripper_action_server ${catkin_EXPORTED_TARGETS}) # don't build until gazebo_msgs is done
 
 ## Add cmake target dependencies of the executable/library
 ## as an example, message headers may need to be generated before nodes

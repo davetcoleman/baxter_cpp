@@ -10,6 +10,7 @@ find_package(catkin REQUIRED COMPONENTS
   moveit_ros_planning_interface 
   block_grasp_generator
   baxter_msgs
+  std_msgs
 )
 find_package(Eigen REQUIRED)
 find_package(Boost REQUIRED system thread)
@@ -19,6 +20,7 @@ catkin_package(
   CATKIN_DEPENDS 
     moveit_core
     moveit_ros_planning_interface
+    std_msgs
 )
 
 # Enable gdb to show line numbers

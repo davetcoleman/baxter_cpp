@@ -48,8 +48,9 @@
 #include <block_grasp_generator/block_grasp_generator.h>
 #include <block_grasp_generator/robot_viz_tools.h> // simple tool for showing grasps
 
-// Baxter
+// Msgs
 #include <baxter_msgs/GripperState.h>
+#include <std_msgs/Bool.h>
 
 namespace baxter_pick_place
 {
@@ -61,7 +62,6 @@ static const std::string SUPPORT_SURFACE_NAME = "workbench";
 static const std::string SUPPORT_SURFACE_NAME2 = "little_table";
 static const std::string BASE_LINK = "base"; //"/base";
 static const std::string EE_GROUP = "right_hand";
-//static const std::string EE_JOINT = "right_endpoint";
 static const std::string EE_JOINT = "right_gripper_l_finger_joint";
 static const std::string EE_PARENT_LINK = "right_wrist";
 static const std::string BLOCK_NAME = "block1";
@@ -87,6 +87,7 @@ public:
   // publishers
   ros::Publisher pub_collision_obj_;
   ros::Publisher pub_attach_collision_obj_;
+  ros::Publisher pub_baxter_enable_;
 
   // data for generating grasps
   block_grasp_generator::RobotGraspData grasp_data_;
@@ -97,9 +98,12 @@ public:
   SimplePickPlace()
   {
     ros::NodeHandle nh;
+
+    // Advertise services
     pub_collision_obj_ = nh.advertise<moveit_msgs::CollisionObject>("collision_object", 10);
     pub_attach_collision_obj_ = nh.advertise<moveit_msgs::AttachedCollisionObject>
       ("/attached_collision_object", 10);
+    pub_baxter_enable_ = nh.advertise<std_msgs::Bool>("/robot/set_super_enable",10);
 
     ros::Duration(1.0).sleep();
 
@@ -157,6 +161,10 @@ public:
     rviz_tools_->setMuted(true);
 
     // --------------------------------------------------------------------------------------------------------
+    // Enable servos
+    enableBaxter();
+
+    // --------------------------------------------------------------------------------------------------------
     // Start pick and place
 
     while(ros::ok())
@@ -170,18 +178,9 @@ public:
       cleanupCO(SUPPORT_SURFACE_NAME);
       cleanupCO(SUPPORT_SURFACE_NAME2);
 
-      // -------------------------------------------------------------------------------------
-      // Create MoveGroup for both arms
-      if(true)
-      {
-        group_.reset(new move_group_interface::MoveGroup("both_arms"));
-        group_->setPlanningTime(30.0);
-
-        ROS_INFO_STREAM_NAMED("pick_place","Sending to right and left arm neutral position...");
-        group_->setNamedTarget("both_neutral"); // this is defined in Baxter's SRDF
-        group_->move();
-        ros::Duration(1).sleep();
-      }
+      // Send Baxter to neutral position
+      //positionBaxterReady();
+      positionBaxterNeutral();
 
       // --------------------------------------------------------------------------------------------------------
       // Add objects to scene
@@ -214,16 +213,15 @@ public:
           }
           else
           {
-            ROS_INFO_STREAM_NAMED("simple_pick_place","Done with pick");
+            ROS_INFO_STREAM_NAMED("simple_pick_place","Done with pick ---------------------------");
             foundBlock = true;
           }
 
           ros::Duration(2.0).sleep();
         }
 
-        ROS_INFO_STREAM_NAMED("simple_pick_place","Found block!\n\n\n\n\n\n\nWaiting to put...");
+        ROS_INFO_STREAM_NAMED("simple_pick_place","Waiting to put...");
         ros::Duration(1.0).sleep();
-
       }
       else
       {
@@ -248,13 +246,68 @@ public:
         ros::Duration(2.0).sleep();
       }
 
-      ROS_INFO_STREAM_NAMED("simple_pick_place","Cycle completed!\n\n\n\n\n\n\nWaiting to restart...");
-      ros::Duration(1.0).sleep();
+      ROS_INFO_STREAM_NAMED("simple_pick_place","Pick and place cycle complete!");
 
-      ROS_ERROR_STREAM_NAMED("temp","restart disabled");
       break; // \todo remove for demo
     }
 
+
+    // --------------------------------------------------------------------------------------------------------
+    // Shutdown
+
+    // Move to gravity neutral position
+    positionBaxterNeutral();
+
+    // Disable servos
+    disableBaxter();
+  }
+
+  bool enableBaxter()
+  {
+    ROS_INFO_STREAM_NAMED("utility","Enabling Baxter");
+    std_msgs::Bool enable_msg;
+    enable_msg.data = true;
+    pub_baxter_enable_.publish(enable_msg);
+    ros::Duration(0.5).sleep();
+
+    return true;
+  }
+
+  bool disableBaxter()
+  {
+    ROS_INFO_STREAM_NAMED("utility","Disabling Baxter");
+    std_msgs::Bool enable_msg;
+    enable_msg.data = false;
+    pub_baxter_enable_.publish(enable_msg);
+    ros::Duration(0.5).sleep();
+
+    return true;
+  }
+
+  bool positionBaxterReady()
+  {
+    // Create MoveGroup for both arms
+    group_.reset(new move_group_interface::MoveGroup("both_arms"));
+    group_->setPlanningTime(30.0);
+
+    // Send to ready position
+    ROS_INFO_STREAM_NAMED("pick_place","Sending to right and left arm ready positions...");
+    group_->setNamedTarget("both_ready"); // this is defined in Baxter's SRDF
+    group_->move();
+    ros::Duration(1).sleep();
+  }
+
+  bool positionBaxterNeutral()
+  {
+    // Create MoveGroup for both arms
+    group_.reset(new move_group_interface::MoveGroup("both_arms"));
+    group_->setPlanningTime(30.0);
+
+    // Send to neutral position
+    ROS_INFO_STREAM_NAMED("pick_place","Sending to right and left arm neutral positions...");
+    group_->setNamedTarget("both_neutral"); // this is defined in Baxter's SRDF
+    group_->move();
+    ros::Duration(1).sleep();
   }
 
   void loadRobotGraspData()
