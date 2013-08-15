@@ -53,7 +53,7 @@ Hydro:
     catkin_make
 ```
 
-## Bringup Baxter in Simulation or Harware
+## Bringup Baxter
 
 ### Hardware
 
@@ -71,7 +71,7 @@ Hydro:
    roslaunch baxter_gazebo baxter_world.launch velocity:=true
    ```
 
- * Test/tune the velocity controllers using RQT to see a "dashboard" for controlling Baxter:
+ * Optional: Test/tune the velocity controllers using a RQT dashboard GUI
    ```
    roslaunch baxter_control baxter_sdk_velocity_rqt.launch 
    ```
@@ -81,10 +81,12 @@ Hydro:
 Works with simulation or hardware:
 
  * Temporary: launch gripper server seperate
+
    ```
    rosrun baxter_gripper_server gripper_action_server
    ```
  * Start MoveIt:
+
    ```
    roslaunch baxter_moveit_config baxter_bringup.launch
    ```
@@ -98,6 +100,8 @@ Works with simulation or hardware:
 ## Other Run Commands
 
 ### Simulation Without controllers:
+
+Just Baxter in Gazebo:
 
 ```
 roslaunch baxter_gazebo baxter_world.launch
@@ -128,7 +132,9 @@ roslaunch baxter_gazebo baxter_world.launch individual:=true
 roslaunch baxter_control baxter_individual_rqt.launch 
 ```
 
-### Launch a trajectory controller that runs a FollowJointTrajectoryAction (Very Experimental):
+### Custom trajectory controller (Experimental)
+
+Runs a FollowJointTrajectoryAction.
 
 First, restart everything, then:
 
