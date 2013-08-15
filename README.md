@@ -1,7 +1,7 @@
 baxter
 ======
 
-Unofficial Baxter packages that add-on to the Rethink SDK. Currently it mostly contains Gazebo interface stuff, though also some MoveIt code.
+Unofficial Baxter packages that add-on to the Rethink SDK. Currently it contains Gazebo simulation and pick and place MoveIt code for Baxter
 
 ## Prequisites
 
@@ -59,10 +59,12 @@ Hydro:
 
  * Turn on baxter
  * Enable robot:
+
     ```
     rosrun tools enable_robot.py -e
     ```
  * Temporary: launch gripper server
+
     ```
     rosrun baxter_gripper_server gripper_action_server
     ```
