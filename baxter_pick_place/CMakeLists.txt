@@ -11,16 +11,17 @@ find_package(catkin REQUIRED COMPONENTS
   block_grasp_generator
   baxter_msgs
   std_msgs
+  geometry_msgs
+  baxter_control
+  roscpp
 )
+
 find_package(Eigen REQUIRED)
 find_package(Boost REQUIRED system thread)
 
 catkin_package(
 #  INCLUDE_DIRS include
-  CATKIN_DEPENDS 
-    moveit_core
-    moveit_ros_planning_interface
-    std_msgs
+#  CATKIN_DEPENDS 
 )
 
 # Enable gdb to show line numbers
@@ -31,13 +32,17 @@ set(CMAKE_BUILD_TYPE Debug)
 ## Build ##
 ###########
 
-include_directories(SYSTEM ${Boost_INCLUDE_DIR} ${EIGEN_INCLUDE_DIRS})
-include_directories(${catkin_INCLUDE_DIRS})
-link_directories(${catkin_LIBRARY_DIRS})
+include_directories(include ${catkin_INCLUDE_DIRS} ${Boost_INCLUDE_DIRS})
+#include_directories(SYSTEM ${Boost_INCLUDE_DIR} ${EIGEN_INCLUDE_DIRS})
+#include_directories(${catkin_INCLUDE_DIRS})
+#link_directories(${catkin_LIBRARY_DIRS})
 
 add_executable(simple_pick_place src/simple_pick_place.cpp)
 target_link_libraries(simple_pick_place ${catkin_LIBRARIES} ${Boost_LIBRARIES})
 
 add_executable(random_planning src/random_planning.cpp)
 target_link_libraries(random_planning ${catkin_LIBRARIES} ${Boost_LIBRARIES})
+
+add_executable(end_effector_position src/end_effector_position.cpp)
+target_link_libraries(end_effector_position ${catkin_LIBRARIES} ${Boost_LIBRARIES})
 

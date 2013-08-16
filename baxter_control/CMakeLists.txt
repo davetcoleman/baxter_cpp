@@ -4,40 +4,18 @@ project(baxter_control)
 ## Find catkin macros and libraries
 ## if COMPONENTS list like find_package(catkin REQUIRED COMPONENTS xyz)
 ## is used, also find other catkin packages
-find_package(catkin REQUIRED)
+find_package(catkin REQUIRED
+
+)
 
 ## System dependencies are found with CMake's conventions
-# find_package(Boost REQUIRED COMPONENTS system)
+find_package(Boost REQUIRED COMPONENTS system)
 
 
 ## Uncomment this if the package has a setup.py. This macro ensures
 ## modules and global scripts declared therein get installed
 ## See http://ros.org/doc/groovy/api/catkin/html/user_guide/setup_dot_py.html
 # catkin_python_setup()
-
-#######################################
-## Declare ROS messages and services ##
-#######################################
-
-## Generate messages in the 'msg' folder
-# add_message_files(
-#   FILES
-#   Message1.msg
-#   Message2.msg
-# )
-
-## Generate services in the 'srv' folder
-# add_service_files(
-#   FILES
-#   Service1.srv
-#   Service2.srv
-# )
-
-## Generate added messages and services with any dependencies listed here
-# generate_messages(
-#   DEPENDENCIES
-#   std_msgs  # Or other packages containing msgs
-# )
 
 ###################################
 ## catkin specific configuration ##
@@ -48,9 +26,12 @@ find_package(catkin REQUIRED)
 ## CATKIN_DEPENDS: catkin_packages dependent projects also need
 ## DEPENDS: system dependencies of this project that dependent projects also need
 catkin_package(
-#  INCLUDE_DIRS include
+   INCLUDE_DIRS include
 #  LIBRARIES baxter_control
-#  CATKIN_DEPENDS other_catkin_pkg
+   CATKIN_DEPENDS 
+    moveit_ros_planning_interface 
+    std_msgs
+    roscpp
 #  DEPENDS system_lib
 )
 
@@ -60,24 +41,10 @@ catkin_package(
 
 ## Specify additional locations of header files
 ## Your package locations should be listed before other locations
-# include_directories(include ${catkin_INCLUDE_DIRS} ${Boost_INCLUDE_DIRS})
+include_directories(include ${catkin_INCLUDE_DIRS} ${Boost_INCLUDE_DIRS})
 
-## Declare a cpp library
-# add_library(baxter_control
-#   src/${PROJECT_NAME}/baxter_control.cpp
-# )
-
-## Declare a cpp executable
-# add_executable(baxter_control_node src/baxter_control_node.cpp)
-
-## Add cmake target dependencies of the executable/library
-## as an example, message headers may need to be generated before nodes
-# add_dependencies(baxter_control_node baxter_control_generate_messages_cpp)
-
-## Specify libraries to link a library or executable target against
-# target_link_libraries(baxter_control_node
-#   ${catkin_LIBRARIES}
-# )
+#add_library(utilities include/baxter_control/utilities.h)
+#target_link_libraries(utilities ${catkin_LIBRARIES} ${Boost_LIBRARIES})
 
 #############
 ## Install ##

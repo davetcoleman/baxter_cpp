@@ -55,8 +55,8 @@ static const std::string GRIPPER_COMMAND_ACTION_TOPIC="baxter_gripper_action";
 static const std::string BASE_LINK = "base"; //"/base";
 
 // Copied from URDF \todo read straight from URDF? 
-static const double GRIPPER_FINGER_JOINT_UPPER = 0.0;
-static const double GRIPPER_FINGER_JOINT_LOWER = -0.045;
+static const double GRIPPER_FINGER_JOINT_UPPER = 0.0095; //open
+static const double GRIPPER_FINGER_JOINT_LOWER = -0.0125; //close
 
 class GripperActionServer
 {
@@ -98,32 +98,27 @@ protected:
 public:
 
   // Constructor
-  GripperActionServer(const std::string name, const std::string arm_name, const bool in_simulation)
-    : action_server_(nh_, name, false),
+  GripperActionServer(const std::string action_name, const std::string arm_name, const bool in_simulation)
+    : action_server_(nh_, action_name, false),
       arm_name_(arm_name),
       in_simulation_(in_simulation)
   {
-    ROS_INFO_STREAM_NAMED(arm_name_, "Baxter Gripper Action Server starting");
+    ROS_INFO_STREAM_NAMED(arm_name_, "Baxter " + arm_name + " Gripper Action Server starting");
 
     // Start the publishers
-    ROS_DEBUG_STREAM_NAMED(arm_name_,"Starting gripper calibration publisher");
     calibrate_topic_ = nh_.advertise<std_msgs::Empty>("/robot/limb/" + arm_name_
                        + "/accessory/gripper/command_calibrate",10);
 
-    ROS_DEBUG_STREAM_NAMED(arm_name_,"Starting gripper close publisher");
     position_topic_ = nh_.advertise<std_msgs::Float32>("/robot/limb/" + arm_name_
                       + "/accessory/gripper/command_grip",10);
 
-    ROS_DEBUG_STREAM_NAMED(arm_name_,"Starting gripper open publisher");
     release_topic_ = nh_.advertise<std_msgs::Empty>("/robot/limb/" + arm_name_
                      + "/accessory/gripper/command_release",10);
 
-    ROS_DEBUG_STREAM_NAMED(arm_name_,"Starting gripper reset publisher");
     reset_topic_ = nh_.advertise<std_msgs::Bool>("/robot/limb/" + arm_name_
                      + "/accessory/gripper/command_reset",10);
 
     // Start the subscriber
-    ROS_DEBUG_STREAM_NAMED(arm_name_,"Starting gripper joint state subscriber");
     gripper_state_sub_ = nh_.subscribe<baxter_msgs::GripperState>("/sdk/robot/limb/" + arm_name_
                          + "/accessory/gripper/state",
                          1, &GripperActionServer::stateCallback, this);
@@ -167,7 +162,6 @@ public:
     // Gazebo publishes a joint state for the gripper, but Baxter does not do so in the right format
     if( !in_simulation_ )
     {
-      ROS_DEBUG_STREAM_NAMED(arm_name_,"Starting gripper joint state publisher");
       joint_state_topic_ = nh_.advertise<sensor_msgs::JointState>("/robot/joint_states",10);
     }
 
@@ -197,7 +191,7 @@ public:
     timer_ = nh_tilde.createTimer(publish_interval, &GripperActionServer::update, this);
 
     // Announce state
-    ROS_INFO_STREAM_NAMED(arm_name_, "Baxter Gripper Action Server ready.");
+    ROS_INFO_STREAM_NAMED(arm_name_, "Baxter " + arm_name + " Gripper Action Server ready.");
   }
 
   void calibrate()
@@ -211,7 +205,6 @@ public:
       ROS_INFO_STREAM_NAMED(arm_name_,"Calibrating gripper");
       calibrate_topic_.publish(empty_msg_);
       ros::Duration(2.0).sleep();
-      ROS_INFO_STREAM_NAMED(arm_name_,"Done calibrating gripper");
     }
   }
 
@@ -302,6 +295,11 @@ public:
     {
       ROS_ERROR_STREAM_NAMED(arm_name_,"Gripper " << arm_name_ << " not ready. State: \n" << *gripper_state_ );
       action_server_.setAborted(action_result_,"Gripper not ready");
+
+      // Attempt to fix error
+      ROS_WARN_STREAM_NAMED(arm_name_,"Attempting to auto fix");
+      resetError();
+
       return true;
     }
     if( gripper_state_->error )
@@ -310,6 +308,7 @@ public:
       action_server_.setAborted(action_result_,"Gripper has error");
 
       // Attempt to fix error
+      ROS_WARN_STREAM_NAMED(arm_name_,"Attempting to auto fix");
       resetError();
 
       return true;
@@ -320,7 +319,7 @@ public:
 
   void resetError()
   {
-    ROS_WARN_STREAM_NAMED(arm_name_,"Resetting gripper");
+    ROS_INFO_STREAM_NAMED(arm_name_,"Resetting gripper");
 
     bool_msg_.data = true;
     reset_topic_.publish(bool_msg_);
@@ -336,18 +335,21 @@ public:
 
     ROS_INFO_STREAM_NAMED(arm_name_,"Recieved goal for command position: " << position);
 
-    // Error check gripper
-    if( hasError() )
-      return;
-
-
     // Open command
     if(position > 50)
     {
+      // Error check gripper
+      if( hasError(false) ) // don't check ready bit when opening
+        return;
+
       openGripper();
     }
     else // Close command
     {
+      // Error check gripper
+      if( hasError(true) ) // check ready bit when closing
+        return;
+
       closeGripper();
     }
 
@@ -397,13 +399,6 @@ public:
     return true;
   }
 
-  /*
-    feedback_.status = "Sending goal to move_group action server";
-    if(action_server_.isActive()) // Make sure we haven't sent a fake goal
-    action_server_.publishFeedback(feedback_);
-  */
-
-
 }; // end of class
 
 } // namespace
@@ -434,13 +429,16 @@ int main(int argc, char** argv)
     }
   }
 
-  baxter_gripper_action::GripperActionServer server("baxter_gripper_action/gripper_action",
+  baxter_gripper_action::GripperActionServer right_server("baxter_right_gripper_action/gripper_action",
     "right", in_simulation);
+
+  baxter_gripper_action::GripperActionServer left_server("baxter_left_gripper_action/gripper_action",
+    "left", in_simulation);
 
   // Run optional test
   if(run_test)
   {
-    server.runTest();
+    right_server.runTest();
   }
 
   ros::spin();

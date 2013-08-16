@@ -16,6 +16,10 @@
 
   <buildtool_depend>catkin</buildtool_depend>
 
+  <run_depend>moveit_ros_planning_interface</run_depend>
+  <run_depend>std_msgs</run_depend>
+  <run_depend>roscpp</run_depend>
+
   <run_depend>controller_manager</run_depend>
   <run_depend>gazebo_ros_control</run_depend>
 

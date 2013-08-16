@@ -34,7 +34,10 @@
         <group name="left_arm" />
     </group>
     <group name="left_hand">
+        <link name="left_hand" />
         <link name="left_gripper" />
+        <link name="left_gripper_l_finger" />
+        <link name="left_gripper_r_finger" />
     </group>
     <group name="right_hand">
         <link name="right_hand" />
@@ -99,7 +102,7 @@
     <!--VIRTUAL JOINT: Purpose: this element defines a virtual joint between a robot link and an external frame of reference (considered fixed with respect to the robot)-->
     <virtual_joint name="vjoint" type="fixed" parent_frame="vjoint_frame" child_link="base" />
     <!--PASSIVE JOINT: Purpose: this element is used to mark joints that are not actuated-->
-    <passive_joint name="right_endpoint" />
+    <!--passive_joint name="right_endpoint" /-->
     <!--DISABLE COLLISIONS: By default it is assumed that any link of the robot could potentially come into collision with any other link in the robot. This tag disables collision checking between a specified pair of links. -->
     <disable_collisions link1="collision_head_link_1" link2="collision_head_link_2" reason="Adjacent" />
     <disable_collisions link1="collision_head_link_1" link2="head" reason="Never" />
@@ -148,6 +151,30 @@
     <disable_collisions link1="right_gripper_r_finger" link2="right_upper_forearm_visual" reason="Never" />
     <disable_collisions link1="right_gripper_r_finger" link2="right_wrist" reason="Never" />
     <disable_collisions link1="right_gripper_r_finger" link2="sonar_ring" reason="Never" />
+
+    <disable_collisions link1="head" link2="left_gripper_r_finger" reason="Never" />
+    <disable_collisions link1="left_hand_range" link2="left_gripper_l_finger" reason="Never" />
+    <disable_collisions link1="right_hand_range" link2="left_gripper_l_finger" reason="Never" />
+    <disable_collisions link1="right_gripper" link2="left_gripper_l_finger" reason="Adjacent" />
+    <disable_collisions link1="right_gripper" link2="left_gripper_r_finger" reason="Adjacent" />
+    <disable_collisions link1="left_gripper_l_finger" link2="left_gripper_r_finger" reason="Never" />
+    <disable_collisions link1="left_gripper_l_finger" link2="left_hand_camera" reason="Never" />
+    <disable_collisions link1="left_gripper_l_finger" link2="left_hand_range" reason="Never" />
+    <disable_collisions link1="left_gripper_l_finger" link2="left_lower_elbow" reason="Never" />
+    <disable_collisions link1="left_gripper_l_finger" link2="left_lower_forearm" reason="Never" />
+    <disable_collisions link1="left_gripper_l_finger" link2="left_upper_elbow_visual" reason="Never" />
+    <disable_collisions link1="left_gripper_l_finger" link2="left_upper_forearm" reason="Never" />
+    <disable_collisions link1="left_gripper_l_finger" link2="left_upper_forearm_visual" reason="Never" />
+    <disable_collisions link1="left_gripper_l_finger" link2="left_wrist" reason="Never" />
+    <disable_collisions link1="left_gripper_l_finger" link2="sonar_ring" reason="Never" />
+    <disable_collisions link1="left_gripper_r_finger" link2="left_hand_camera" reason="Never" />
+    <disable_collisions link1="left_gripper_r_finger" link2="left_hand_range" reason="Never" />
+    <disable_collisions link1="left_gripper_r_finger" link2="left_lower_elbow" reason="Never" />
+    <disable_collisions link1="left_gripper_r_finger" link2="left_lower_forearm" reason="Never" />
+    <disable_collisions link1="left_gripper_r_finger" link2="left_upper_forearm" reason="Never" />
+    <disable_collisions link1="left_gripper_r_finger" link2="left_upper_forearm_visual" reason="Never" />
+    <disable_collisions link1="left_gripper_r_finger" link2="left_wrist" reason="Never" />
+    <disable_collisions link1="left_gripper_r_finger" link2="sonar_ring" reason="Never" />
 
     <disable_collisions link1="head" link2="left_lower_shoulder" reason="Never" />
     <disable_collisions link1="head" link2="left_upper_elbow" reason="Never" />

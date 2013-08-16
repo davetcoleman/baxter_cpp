@@ -23,8 +23,13 @@ controller_list:
       - left_w0
       - left_w1
       - left_w2
-  - name: baxter_gripper_action
+  - name: baxter_right_gripper_action
     type: GripperCommand
     default: true
     joints:
       - right_gripper_l_finger_joint
+  - name: baxter_left_gripper_action
+    type: GripperCommand
+    default: true
+    joints:
+      - left_gripper_l_finger_joint

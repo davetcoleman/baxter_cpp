@@ -38,11 +38,13 @@
  */
 
 #include <ros/ros.h>
-#include <sensor_msgs/JointState.h>
 
 // MoveIt!
 #include <moveit/move_group_interface/move_group.h>
 #include <shape_tools/solid_primitive_dims.h>
+
+// Baxter Utilities
+#include <baxter_control/utilities.h>
 
 // Grasp generation
 #include <block_grasp_generator/block_grasp_generator.h>
@@ -50,7 +52,6 @@
 
 // Msgs
 #include <baxter_msgs/GripperState.h>
-#include <std_msgs/Bool.h>
 
 namespace baxter_pick_place
 {
@@ -60,6 +61,7 @@ static const std::string RVIZ_MARKER_TOPIC = "/end_effector_marker";
 static const std::string PLANNING_GROUP_NAME = "right_arm";
 static const std::string SUPPORT_SURFACE_NAME = "workbench";
 static const std::string SUPPORT_SURFACE_NAME2 = "little_table";
+static const std::string WALL_NAME = "wall";
 static const std::string BASE_LINK = "base"; //"/base";
 static const std::string EE_GROUP = "right_hand";
 static const std::string EE_JOINT = "right_gripper_l_finger_joint";
@@ -67,13 +69,16 @@ static const std::string EE_PARENT_LINK = "right_wrist";
 static const std::string BLOCK_NAME = "block1";
 static const double BLOCK_SIZE = 0.04;
 
+// robot dimensions
+static const double FLOOR_TO_BASE_HEIGHT = -0.9;
+
 // table dimensions
 static const double TABLE_HEIGHT = 1.0; // .92
 static const double TABLE_WIDTH = .85;
 static const double TABLE_DEPTH = .47;
-static const double TABLE_X = 0.68; //.66
+static const double TABLE_X = 0.7; //.66
 static const double TABLE_Y = 0;
-static const double TABLE_Z = -0.9/2+0.01;
+static const double TABLE_Z = FLOOR_TO_BASE_HEIGHT/2+0.01;
 
 class SimplePickPlace
 {
@@ -87,7 +92,6 @@ public:
   // publishers
   ros::Publisher pub_collision_obj_;
   ros::Publisher pub_attach_collision_obj_;
-  ros::Publisher pub_baxter_enable_;
 
   // data for generating grasps
   block_grasp_generator::RobotGraspData grasp_data_;
@@ -95,22 +99,21 @@ public:
   // our interface with MoveIt
   boost::scoped_ptr<move_group_interface::MoveGroup> group_;
 
+  // baxter helper
+  baxter_control::Utilities baxter_util_;
+
   SimplePickPlace()
   {
     ros::NodeHandle nh;
 
+    // ---------------------------------------------------------------------------------------------
     // Advertise services
     pub_collision_obj_ = nh.advertise<moveit_msgs::CollisionObject>("collision_object", 10);
     pub_attach_collision_obj_ = nh.advertise<moveit_msgs::AttachedCollisionObject>
       ("/attached_collision_object", 10);
-    pub_baxter_enable_ = nh.advertise<std_msgs::Bool>("/robot/set_super_enable",10);
-
-    ros::Duration(1.0).sleep();
 
     // ---------------------------------------------------------------------------------------------
-    // Load the Robot Viz Tools for publishing to Rviz
-    ROS_INFO_STREAM_NAMED("temp","Loading robot viz tools");
-    // class for publishing stuff to rviz
+    // Load the Robot Viz Tools for publishing to rviz
     rviz_tools_.reset(new block_grasp_generator::RobotVizTools( RVIZ_MARKER_TOPIC, EE_GROUP,
         PLANNING_GROUP_NAME, BASE_LINK));
 
@@ -119,50 +122,33 @@ public:
     loadRobotGraspData(); // Load robot specific data
     block_grasp_generator_.reset(new block_grasp_generator::BlockGraspGenerator(rviz_tools_));
 
-    // --------------------------------------------------------------------------------------------------------
-    // Start pick and place loop
+    // ---------------------------------------------------------------------------------------------
+    // Let everything load
+    ros::Duration(1.0).sleep();
 
-    geometry_msgs::Pose start_block_pose;
-    geometry_msgs::Pose goal_block_pose;
+    // ---------------------------------------------------------------------------------------------
+    // Load hard coded poses
+    geometry_msgs::Pose start_block_pose = createStartBlock();
+    geometry_msgs::Pose goal_block_pose = createGoalBlock();
 
-    // --------------------------------------------------------------------------------------------------------
-    // Create start block
-
-    // Position
-    start_block_pose.position.x = 0.0;
-    start_block_pose.position.y = -0.65; // -0.55;
-    start_block_pose.position.z = -0.5;
-
-    // Orientation
-    double angle = M_PI / 1.5;
-    Eigen::Quaterniond quat1(Eigen::AngleAxis<double>(double(angle), Eigen::Vector3d::UnitZ()));
-    start_block_pose.orientation.x = quat1.x();
-    start_block_pose.orientation.y = quat1.y();
-    start_block_pose.orientation.z = quat1.z();
-    start_block_pose.orientation.w = quat1.w();
-
-    // --------------------------------------------------------------------------------------------------------
-    // Create goal block
-
-    // Position
-    goal_block_pose.position.x = 0.6; // table depth
-    goal_block_pose.position.y = -TABLE_WIDTH/2 + 0.2; // table width
-    goal_block_pose.position.z = TABLE_Z + TABLE_HEIGHT / 2.0 + BLOCK_SIZE / 2.0; // table height
-
-    // Orientation
-    angle = 0; //M_PI / 1.5;
-    Eigen::Quaterniond quat2(Eigen::AngleAxis<double>(double(angle), Eigen::Vector3d::UnitZ()));
-    goal_block_pose.orientation.x = quat2.x();
-    goal_block_pose.orientation.y = quat2.y();
-    goal_block_pose.orientation.z = quat2.z();
-    goal_block_pose.orientation.w = quat2.w();
-
-    // temp \todo
-    rviz_tools_->setMuted(true);
+    // Show grasp visualizations or not
+    //rviz_tools_->setMuted(true);
 
     // --------------------------------------------------------------------------------------------------------
     // Enable servos
-    enableBaxter();
+    baxter_util_.enableBaxter();
+
+    // -------------------------------------------------------------------------------------
+    // Create MoveGroup for right arm
+    group_.reset(new move_group_interface::MoveGroup(PLANNING_GROUP_NAME));
+    group_->setPlanningTime(30.0);
+
+    /*
+    // test
+    geometry_msgs::PoseStamped ee_pose;
+    ee_pose = group_->getCurrentPose();
+    ROS_INFO_STREAM_NAMED("temp",ee_pose);
+    */
 
     // --------------------------------------------------------------------------------------------------------
     // Start pick and place
@@ -177,11 +163,13 @@ public:
       cleanupCO(BLOCK_NAME);
       cleanupCO(SUPPORT_SURFACE_NAME);
       cleanupCO(SUPPORT_SURFACE_NAME2);
+      cleanupCO(WALL_NAME);
 
       // --------------------------------------------------------------------------------------------
       // Add objects to scene
       publishCollisionTable();
       publishCollisionTableSmall();
+      publishCollisionWall();
 
       // Publish goal block location
       rviz_tools_->publishBlock( goal_block_pose, BLOCK_SIZE, true );
@@ -191,14 +179,8 @@ public:
 
       // -------------------------------------------------------------------------------------
       // Send Baxter to neutral position
-      positionBaxterNeutral();
+      baxter_util_.positionBaxterNeutral();
 
-      // -------------------------------------------------------------------------------------
-      // Create MoveGroup for right arm
-      group_.reset(new move_group_interface::MoveGroup(PLANNING_GROUP_NAME));
-      group_->setPlanningTime(30.0);
-
-      // Do pick operation?
       if(true)
       {
         bool foundBlock = false;
@@ -229,85 +211,85 @@ public:
         attachCO(BLOCK_NAME);
       }
 
-      bool putBlock = false;
-      while(!putBlock && ros::ok())
+      if(true)
       {
-        if( !place(goal_block_pose, BLOCK_NAME) )
-        {
-          ROS_ERROR_STREAM_NAMED("simple_pick_place","Place failed.");
-          putBlock = true; // \todo remove this for demo, is wrong
-        }
-        else
-        {
-          ROS_INFO_STREAM_NAMED("simple_pick_place","Done with place");
-          putBlock = true;
-        }
 
-        ros::Duration(2.0).sleep();
+        bool putBlock = false;
+        while(!putBlock && ros::ok())
+        {
+          if( !place(goal_block_pose, BLOCK_NAME) )
+          {
+            ROS_ERROR_STREAM_NAMED("simple_pick_place","Place failed.");
+            putBlock = true; // \todo remove this for demo, is wrong
+          }
+          else
+          {
+            ROS_INFO_STREAM_NAMED("simple_pick_place","Done with place");
+            putBlock = true;
+          }
+        }
       }
 
-      ROS_INFO_STREAM_NAMED("simple_pick_place","Pick and place cycle complete!");
+      ROS_INFO_STREAM_NAMED("simple_pick_place","Pick and place cycle complete ========================================= \n");
+      ros::Duration(1.0).sleep();
 
-      break; // \todo remove for demo
+
+      // Move to gravity neutral position
+      baxter_util_.positionBaxterNeutral();
+
+      //break; // \todo remove for demo
     }
 
 
     // --------------------------------------------------------------------------------------------------------
     // Shutdown
 
-    // Move to gravity neutral position
-    positionBaxterNeutral();
-
     // Disable servos
-    disableBaxter();
+    baxter_util_.disableBaxter();
   }
 
-  bool enableBaxter()
+  geometry_msgs::Pose createStartBlock()
   {
-    ROS_INFO_STREAM_NAMED("utility","Enabling Baxter");
-    std_msgs::Bool enable_msg;
-    enable_msg.data = true;
-    pub_baxter_enable_.publish(enable_msg);
-    ros::Duration(0.5).sleep();
+    geometry_msgs::Pose start_block_pose;
 
-    return true;
+    // Position
+    start_block_pose.position.x = 0.0;
+    start_block_pose.position.y = -0.65; // -0.55;
+    start_block_pose.position.z = -0.5;
+
+    // Orientation
+    double angle = M_PI / 1.5;
+    Eigen::Quaterniond quat(Eigen::AngleAxis<double>(double(angle), Eigen::Vector3d::UnitZ()));
+    start_block_pose.orientation.x = quat.x();
+    start_block_pose.orientation.y = quat.y();
+    start_block_pose.orientation.z = quat.z();
+    start_block_pose.orientation.w = quat.w();
+
+    return start_block_pose;
   }
 
-  bool disableBaxter()
+  geometry_msgs::Pose createGoalBlock()
   {
-    ROS_INFO_STREAM_NAMED("utility","Disabling Baxter");
-    std_msgs::Bool enable_msg;
-    enable_msg.data = false;
-    pub_baxter_enable_.publish(enable_msg);
-    ros::Duration(0.5).sleep();
+    geometry_msgs::Pose goal_block_pose;
 
-    return true;
-  }
+    // Position
+    goal_block_pose.position.x = 0.85; // table depth
+    goal_block_pose.position.y = 0; //-TABLE_WIDTH/4; // table width
+    goal_block_pose.position.z = TABLE_Z + TABLE_HEIGHT / 2.0 + BLOCK_SIZE / 2.0; // table height
 
-  bool positionBaxterReady()
-  {
-    // Create MoveGroup for both arms
-    group_.reset(new move_group_interface::MoveGroup("both_arms"));
-    group_->setPlanningTime(30.0);
+    // Orientation
+    double angle = 0; //M_PI / 1.5;
+    Eigen::Quaterniond quat(Eigen::AngleAxis<double>(double(angle), Eigen::Vector3d::UnitZ()));
+    goal_block_pose.orientation.x = quat.x();
+    goal_block_pose.orientation.y = quat.y();
+    goal_block_pose.orientation.z = quat.z();
+    goal_block_pose.orientation.w = quat.w();
 
-    // Send to ready position
-    ROS_INFO_STREAM_NAMED("pick_place","Sending to right and left arm ready positions...");
-    group_->setNamedTarget("both_ready"); // this is defined in Baxter's SRDF
-    group_->move();
-    ros::Duration(1).sleep();
-  }
+    ROS_WARN_STREAM_NAMED("temp","here \n" << goal_block_pose);
+    rviz_tools_->publishBlock( goal_block_pose, BLOCK_SIZE, true );
+    ros::Duration(2.0).sleep();
 
-  bool positionBaxterNeutral()
-  {
-    // Create MoveGroup for both arms
-    group_.reset(new move_group_interface::MoveGroup("both_arms"));
-    group_->setPlanningTime(30.0);
-
-    // Send to neutral position
-    ROS_INFO_STREAM_NAMED("pick_place","Sending to right and left arm neutral positions...");
-    group_->setNamedTarget("both_neutral"); // this is defined in Baxter's SRDF
-    group_->move();
-    ros::Duration(1).sleep();
+    return goal_block_pose;
   }
 
   void loadRobotGraspData()
@@ -349,9 +331,13 @@ public:
     grasp_data_.approach_retreat_min_dist_ = 0.06; // 0.001;
 
 
-    grasp_data_.grasp_depth_ = 0.1; //15; // default 0.12
+    // distance from center point of object to end effector
+    grasp_data_.grasp_depth_ = 0.06; // 0.1;
 
     grasp_data_.block_size_ = 0.04;
+
+    // generate grasps at PI/angle_resolution increments
+    grasp_data_.angle_resolution_ = 16;
 
     // Debug
     block_grasp_generator::BlockGraspGenerator::printBlockGraspData(grasp_data_);
@@ -407,6 +393,52 @@ public:
     pub_collision_obj_.publish(collision_obj);
 
     ROS_DEBUG_STREAM_NAMED("simple_pick_place","Published collision object " << block_name);
+  }
+
+  void publishCollisionWall()
+  {
+    moveit_msgs::CollisionObject collision_obj;
+    collision_obj.header.stamp = ros::Time::now();
+    collision_obj.header.frame_id = BASE_LINK;
+    collision_obj.operation = moveit_msgs::CollisionObject::ADD;
+    collision_obj.primitives.resize(1);
+    collision_obj.primitives[0].type = shape_msgs::SolidPrimitive::BOX;
+    collision_obj.primitives[0].dimensions.resize(shape_tools::SolidPrimitiveDimCount<shape_msgs::SolidPrimitive::BOX>::value);
+
+    geometry_msgs::Pose rec_pose;
+
+    // ----------------------------------------------------------------------------------
+    // Name
+    collision_obj.id = WALL_NAME;
+
+    double depth = 0.1;
+    double width = 0.95;
+    double height = 2.0;
+
+    // Position
+    rec_pose.position.x = -0.6;
+    rec_pose.position.y = 0;
+    rec_pose.position.z = height / 2 + FLOOR_TO_BASE_HEIGHT;
+
+    // Orientation
+    double angle = 0; // M_PI / 2;
+
+    // Size
+    collision_obj.primitives[0].dimensions[shape_msgs::SolidPrimitive::BOX_X] = depth;
+    collision_obj.primitives[0].dimensions[shape_msgs::SolidPrimitive::BOX_Y] = width;
+    collision_obj.primitives[0].dimensions[shape_msgs::SolidPrimitive::BOX_Z] = height;
+    // ----------------------------------------------------------------------------------
+
+    Eigen::Quaterniond quat(Eigen::AngleAxis<double>(double(angle), Eigen::Vector3d::UnitZ()));
+    rec_pose.orientation.x = quat.x();
+    rec_pose.orientation.y = quat.y();
+    rec_pose.orientation.z = quat.z();
+    rec_pose.orientation.w = quat.w();
+
+    collision_obj.primitive_poses.resize(1);
+    collision_obj.primitive_poses[0] = rec_pose;
+
+    pub_collision_obj_.publish(collision_obj);
   }
 
   void publishCollisionTable()
@@ -502,6 +534,14 @@ public:
     //ROS_INFO_STREAM_NAMED("","\n\n\nGrasp 10\n" << grasps[10]);
 
     return group_->pick(block_name, grasps);
+    //return pickDebug(block_name, grasps);
+  }
+
+  // Step through the pick steps one by one
+  bool pickDebug(std::string block_name, const std::vector<manipulation_msgs::Grasp>& grasps)
+  {
+    
+
   }
 
   bool place(const geometry_msgs::Pose& goal_block_pose, std::string block_name)
