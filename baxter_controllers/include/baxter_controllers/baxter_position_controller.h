@@ -79,6 +79,7 @@ namespace baxter_controllers
     realtime_tools::RealtimeBuffer<baxter_msgs::JointPositions> position_command_buffer_; 
 
     size_t n_joints_;
+    std::string topic_name;
 
     std::map<std::string,std::size_t> joint_to_index_map_; // allows incoming messages to be quickly ordered
 
