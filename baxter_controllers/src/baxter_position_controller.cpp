@@ -116,9 +116,22 @@ bool BaxterPositionController::init(
     ++i;
   }
 
-  // Create command subscriber custom to baxter
-  position_command_sub_ = nh_.subscribe<baxter_msgs::JointPositions>(
-    "command", 1, &BaxterPositionController::commandCB, this);
+  // Get controller topic name that it will subscribe to
+  if( nh_.getParam("topic", topic_name) ) // They provided a custom topic to subscribe to
+  {
+    // Get a node handle that is relative to the base path
+    ros::NodeHandle nh_base("~");
+
+    // Create command subscriber custom to baxter  
+    position_command_sub_ = nh_base.subscribe<baxter_msgs::JointPositions>
+      (topic_name, 1, &BaxterPositionController::commandCB, this);
+  }
+  else // default "command" topic
+  {
+    // Create command subscriber custom to baxter
+    position_command_sub_ = nh_.subscribe<baxter_msgs::JointPositions>
+      ("command", 1, &BaxterPositionController::commandCB, this);
+  }
 
   return true;
 }
