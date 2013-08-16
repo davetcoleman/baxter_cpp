@@ -44,7 +44,7 @@
 #include <shape_tools/solid_primitive_dims.h>
 
 // Baxter Utilities
-#include <baxter_control/utilities.h>
+#include <baxter_control/baxter_utilities.h>
 
 // Grasp generation
 #include <block_grasp_generator/block_grasp_generator.h>
@@ -100,7 +100,7 @@ public:
   boost::scoped_ptr<move_group_interface::MoveGroup> group_;
 
   // baxter helper
-  baxter_control::Utilities baxter_util_;
+  baxter_control::BaxterUtilities baxter_util_;
 
   SimplePickPlace()
   {
@@ -273,9 +273,10 @@ public:
     geometry_msgs::Pose goal_block_pose;
 
     // Position
-    goal_block_pose.position.x = 0.85; // table depth
-    goal_block_pose.position.y = 0; //-TABLE_WIDTH/4; // table width
+    goal_block_pose.position.x = 0.75; // table depth
+    goal_block_pose.position.y = -TABLE_WIDTH/4; // table width
     goal_block_pose.position.z = TABLE_Z + TABLE_HEIGHT / 2.0 + BLOCK_SIZE / 2.0; // table height
+    goal_block_pose.position.z += 0.05; // a hack
 
     // Orientation
     double angle = 0; //M_PI / 1.5;
@@ -285,9 +286,7 @@ public:
     goal_block_pose.orientation.z = quat.z();
     goal_block_pose.orientation.w = quat.w();
 
-    ROS_WARN_STREAM_NAMED("temp","here \n" << goal_block_pose);
     rviz_tools_->publishBlock( goal_block_pose, BLOCK_SIZE, true );
-    ros::Duration(2.0).sleep();
 
     return goal_block_pose;
   }
@@ -571,20 +570,24 @@ public:
       pose_stamped.pose.orientation.w = quat.w();
 
       // Giggle block around the area
+      /*
       for (double z = -0.05; z < 0.05; z += 0.05)
       {
         for (double x = -0.05; x < 0.05; x += 0.05)
         {
           for (double y = -0.05; y < 0.05; y += 0.05)
           {
+      */
             // Create new place location
             manipulation_msgs::PlaceLocation place_loc;
 
             place_loc.place_pose = pose_stamped;
 
+            /*
             place_loc.place_pose.pose.position.x += x;
             place_loc.place_pose.pose.position.y += y;
             place_loc.place_pose.pose.position.z += z;
+            */
 
             //ROS_INFO_STREAM_NAMED("temp","pose:\n" << place_loc.place_pose);
             rviz_tools_->publishBlock( place_loc.place_pose.pose, BLOCK_SIZE, true );
@@ -615,12 +618,12 @@ public:
             place_loc.post_place_posture = grasp_data_.pre_grasp_posture_;
 
             place_locations.push_back(place_loc);
-
+            /*
           }
         }
       }
+            */
     }
-
 
     /*
     // Generate grasps

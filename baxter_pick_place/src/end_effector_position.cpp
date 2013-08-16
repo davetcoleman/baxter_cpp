@@ -47,7 +47,7 @@
 #include <geometry_msgs/PoseStamped.h>
 
 // Baxter Utilities
-#include <baxter_control/utilities.h>
+#include <baxter_control/baxter_utilities.h>
 
 namespace baxter_pick_place
 {
@@ -73,7 +73,7 @@ public:
   boost::scoped_ptr<move_group_interface::MoveGroup> group_;
 
   // baxter helper
-  baxter_control::Utilities baxter_util_;
+  baxter_control::BaxterUtilities baxter_util_;
 
   EndEffectorPosition()
   {

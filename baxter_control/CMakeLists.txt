@@ -43,8 +43,8 @@ catkin_package(
 ## Your package locations should be listed before other locations
 include_directories(include ${catkin_INCLUDE_DIRS} ${Boost_INCLUDE_DIRS})
 
-#add_library(utilities include/baxter_control/utilities.h)
-#target_link_libraries(utilities ${catkin_LIBRARIES} ${Boost_LIBRARIES})
+#add_library(baxter_utilities include/baxter_control/baxter_utilities.h)
+#target_link_libraries(baxter_utilities ${catkin_LIBRARIES} ${Boost_LIBRARIES})
 
 #############
 ## Install ##

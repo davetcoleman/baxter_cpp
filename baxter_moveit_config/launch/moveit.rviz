@@ -98,6 +98,16 @@ Visualization Manager:
             Show Axes: false
             Show Trail: false
             Value: true
+          left_gripper_l_finger:
+            Alpha: 1
+            Show Axes: false
+            Show Trail: false
+            Value: true
+          left_gripper_r_finger:
+            Alpha: 1
+            Show Axes: false
+            Show Trail: false
+            Value: true
           left_hand:
             Alpha: 1
             Show Axes: false
@@ -364,6 +374,16 @@ Visualization Manager:
             Show Axes: false
             Show Trail: false
             Value: true
+          left_gripper_l_finger:
+            Alpha: 1
+            Show Axes: false
+            Show Trail: false
+            Value: true
+          left_gripper_r_finger:
+            Alpha: 1
+            Show Axes: false
+            Show Trail: false
+            Value: true
           left_hand:
             Alpha: 1
             Show Axes: false
@@ -571,7 +591,7 @@ Visualization Manager:
       Marker Topic: /end_effector_marker
       Name: EndEffector
       Namespaces:
-        {}
+        Block: true
       Queue Size: 100
       Value: true
     - Arrow Length: 0.1
@@ -594,7 +614,7 @@ Visualization Manager:
       Marker Topic: /end_effector_marker
       Name: EE Grasp Poses
       Namespaces:
-        {}
+        Block: true
       Queue Size: 100
       Value: true
     - Class: rviz/MarkerArray
@@ -602,7 +622,16 @@ Visualization Manager:
       Marker Topic: /move_group/display_contacts
       Name: MarkerArray
       Namespaces:
-        {}
+        collision_head_link_1=screen_visual: true
+        left_gripper=left_gripper_r_finger: true
+        left_gripper_l_finger=left_gripper: true
+        pedestal=right_gripper_l_finger: true
+        pedestal=right_gripper_r_finger: true
+        pedestal=right_hand_camera: true
+        pedestal=right_hand_range: true
+        screen_visual=collision_head_link_2: true
+        screen_visual=screen: true
+        workbench=right_wrist: true
       Queue Size: 100
       Value: true
     - Class: rviz/MarkerArray
@@ -610,7 +639,9 @@ Visualization Manager:
       Marker Topic: /move_group/display_grasp_markers
       Name: MoveItGrasps
       Namespaces:
-        {}
+        moveit_grasps:stage_1: true
+        moveit_grasps:stage_3: true
+        moveit_grasps:stage_4: true
       Queue Size: 100
       Value: true
   Enabled: true
@@ -628,17 +659,17 @@ Visualization Manager:
   Views:
     Current:
       Class: rviz/XYOrbit
-      Distance: 1.05855
+      Distance: 2.15671
       Focal Point:
-        X: 1.14979
-        Y: -0.650553
-        Z: -7.45058e-07
+        X: 0.857404
+        Y: -0.596343
+        Z: 0
       Name: Current View
       Near Clip Distance: 0.01
-      Pitch: 0.450399
+      Pitch: 0.370399
       Target Frame: base_link
       Value: XYOrbit (rviz)
-      Yaw: 5.78858
+      Yaw: 5.71857
     Saved: ~
 Window Geometry:
   Displays:

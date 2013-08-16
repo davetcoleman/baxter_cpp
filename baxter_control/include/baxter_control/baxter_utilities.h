@@ -55,7 +55,7 @@ static const std::string EE_GROUP = "right_hand";
 static const std::string EE_JOINT = "right_gripper_l_finger_joint";
 static const std::string EE_PARENT_LINK = "right_wrist";
 
-class Utilities
+class BaxterUtilities
 {
 public:
 
@@ -64,7 +64,7 @@ public:
   // Interface with MoveIt
   boost::scoped_ptr<move_group_interface::MoveGroup> group_;
 
-  Utilities()
+  BaxterUtilities()
   {
     ros::NodeHandle nh;
 
@@ -72,11 +72,15 @@ public:
     // Advertise services
     pub_baxter_enable_ = nh.advertise<std_msgs::Bool>("/robot/set_super_enable",10);
 
+    ros::Duration(0.5).sleep();
+  }
+
+  bool setPlanningGroup()
+  {
+    //std::string group_name = group_->getName();
+
     // Create MoveGroup for both arms
     group_.reset(new move_group_interface::MoveGroup("both_arms"));
-    group_->setPlanningTime(10.0);
-
-    ros::Duration(0.5).sleep();
   }
 
   bool enableBaxter()
@@ -103,6 +107,8 @@ public:
 
   bool positionBaxterReady()
   {
+    setPlanningGroup();
+
     // Send to ready position
     ROS_INFO_STREAM_NAMED("pick_place","Sending to right and left arm ready positions...");
     group_->setNamedTarget("both_ready"); // this is defined in Baxter's SRDF
@@ -112,6 +118,8 @@ public:
 
   bool positionBaxterNeutral()
   {
+    setPlanningGroup();
+
     // Send to neutral position
     ROS_INFO_STREAM_NAMED("pick_place","Sending to right and left arm neutral positions...");
     group_->setNamedTarget("both_neutral"); // this is defined in Baxter's SRDF
