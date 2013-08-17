@@ -112,20 +112,34 @@ public:
     pub_attach_collision_obj_ = nh.advertise<moveit_msgs::AttachedCollisionObject>
       ("/attached_collision_object", 10);
 
-    // ---------------------------------------------------------------------------------------------
     // Load the Robot Viz Tools for publishing to rviz
     rviz_tools_.reset(new block_grasp_generator::RobotVizTools( RVIZ_MARKER_TOPIC, EE_GROUP,
         PLANNING_GROUP_NAME, BASE_LINK));
 
-    // ---------------------------------------------------------------------------------------------
     // Load grasp generator
     loadRobotGraspData(); // Load robot specific data
     block_grasp_generator_.reset(new block_grasp_generator::BlockGraspGenerator(rviz_tools_));
 
-    // ---------------------------------------------------------------------------------------------
+    // Create MoveGroup for right arm
+    group_.reset(new move_group_interface::MoveGroup(PLANNING_GROUP_NAME));
+    group_->setPlanningTime(30.0);
+
     // Let everything load
     ros::Duration(1.0).sleep();
 
+    // Enable baxter
+    if( !baxter_util_.enableBaxter() )
+      return;
+
+    // Do it.
+    startRoutine();
+
+    // Shutdown
+    baxter_util_.disableBaxter();
+  }
+
+  bool startRoutine()
+  {
     // ---------------------------------------------------------------------------------------------
     // Load hard coded poses
     geometry_msgs::Pose start_block_pose = createStartBlock();
@@ -133,15 +147,6 @@ public:
 
     // Show grasp visualizations or not
     //rviz_tools_->setMuted(true);
-
-    // --------------------------------------------------------------------------------------------------------
-    // Enable servos
-    baxter_util_.enableBaxter();
-
-    // -------------------------------------------------------------------------------------
-    // Create MoveGroup for right arm
-    group_.reset(new move_group_interface::MoveGroup(PLANNING_GROUP_NAME));
-    group_->setPlanningTime(30.0);
 
     /*
     // test
@@ -179,7 +184,8 @@ public:
 
       // -------------------------------------------------------------------------------------
       // Send Baxter to neutral position
-      baxter_util_.positionBaxterNeutral();
+      if( !baxter_util_.positionBaxterNeutral() )
+        return false;
 
       if(true)
       {
@@ -233,17 +239,14 @@ public:
 
 
       // Move to gravity neutral position
-      baxter_util_.positionBaxterNeutral();
+      if( !baxter_util_.positionBaxterNeutral() )
+        return false;
 
       //break; // \todo remove for demo
     }
 
-
-    // --------------------------------------------------------------------------------------------------------
-    // Shutdown
-
-    // Disable servos
-    baxter_util_.disableBaxter();
+    // Everything worked!
+    return true;
   }
 
   geometry_msgs::Pose createStartBlock()

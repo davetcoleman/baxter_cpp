@@ -44,10 +44,14 @@
 
 // Msgs
 #include <std_msgs/Bool.h>
+#include <baxter_msgs/AssemblyState.h>
 
 namespace baxter_control
 {
 
+static const std::string BAXTER_STATE_TOPIC = "/sdk/robot/state";
+
+// Needed?
 static const std::string ROBOT_DESCRIPTION="robot_description";
 static const std::string PLANNING_GROUP_NAME = "both_arms";
 static const std::string BASE_LINK = "base"; //"/base";
@@ -55,14 +59,20 @@ static const std::string EE_GROUP = "right_hand";
 static const std::string EE_JOINT = "right_gripper_l_finger_joint";
 static const std::string EE_PARENT_LINK = "right_wrist";
 
+
 class BaxterUtilities
 {
 public:
 
   ros::Publisher pub_baxter_enable_;
+  ros::Subscriber sub_baxter_state_;
 
   // Interface with MoveIt
   boost::scoped_ptr<move_group_interface::MoveGroup> group_;
+
+  // Remember the last baxter state and time
+  baxter_msgs::AssemblyStateConstPtr baxter_state_;
+  ros::Time baxter_state_timestamp_;
 
   BaxterUtilities()
   {
@@ -74,7 +84,104 @@ public:
     // Advertise services
     pub_baxter_enable_ = nh.advertise<std_msgs::Bool>("/robot/set_super_enable",10);
 
-    ros::Duration(0.5).sleep();
+    // ---------------------------------------------------------------------------------------------
+    // Start the state subscriber
+    sub_baxter_state_ = nh.subscribe<baxter_msgs::AssemblyState>(BAXTER_STATE_TOPIC,
+                         1, &BaxterUtilities::stateCallback, this);
+  }
+
+  bool checkCommunication()
+  {
+    // Wait for initial state to be recieved
+    int count = 0;
+    while( ros::ok() && baxter_state_timestamp_.toSec() == 0 )
+    {
+      if( count > 20 ) // 20 is an arbitrary number for when to assume no state is being published
+      {
+        ROS_ERROR_STREAM_NAMED("utilities","No state message has been recieved on topic " 
+          << BAXTER_STATE_TOPIC);
+        return false;
+      }
+
+      ++count;
+      ros::Duration(0.05).sleep();
+    }
+
+    return true;
+  }
+
+  bool checkReady()
+  {
+    // Check we have a recent state
+    if(ros::Time::now() > baxter_state_timestamp_ + ros::Duration(1.0)) // check that the message timestamp is no older than 1 second
+    {
+      ROS_ERROR_STREAM_NAMED("utilities","Baxter state expired. State: \n" << *baxter_state_ );
+      return false;
+    }
+
+    // Check for error
+    if( baxter_state_->error == true )
+    {
+      ROS_ERROR_STREAM_NAMED("utilities","Baxter has an error :(  State: \n" << *baxter_state_ );
+      return false;
+    }    
+
+    // Check for estop
+    if( baxter_state_->stopped == true )
+    {
+      std::string estop_button;
+      switch( baxter_state_->estop_button )
+      {
+      case baxter_msgs::AssemblyState::ESTOP_BUTTON_UNPRESSED:
+        estop_button = "Robot is not stopped and button is not pressed";
+        break;
+      case baxter_msgs::AssemblyState::ESTOP_BUTTON_PRESSED:
+        estop_button = "Pressed";
+        break;
+      case baxter_msgs::AssemblyState::ESTOP_BUTTON_UNKNOWN:
+        estop_button = "STATE_UNKNOWN when estop was asserted by a non-user source";
+        break;
+      case baxter_msgs::AssemblyState::ESTOP_BUTTON_RELEASED:
+        estop_button = "Was pressed, is now known to be released, but robot is still stopped.";
+        break;
+      default:
+        estop_button = "Unkown button state code";
+      }
+
+      std::string estop_source;
+      switch( baxter_state_->estop_source )
+      {
+      case baxter_msgs::AssemblyState::ESTOP_SOURCE_NONE:
+        estop_source = "e-stop is not asserted";
+        break;
+      case baxter_msgs::AssemblyState::ESTOP_SOURCE_USER:
+        estop_source = "e-stop source is user input (the red button)";
+        break;
+      case baxter_msgs::AssemblyState::ESTOP_SOURCE_UNKNOWN:
+        estop_source = "e-stop source is unknown";
+        break;
+      case baxter_msgs::AssemblyState::ESTOP_SOURCE_FAULT:
+        estop_source = "MotorController asserted e-stop in response to a joint fault";
+        break;
+      case baxter_msgs::AssemblyState::ESTOP_SOURCE_BRAIN:
+        estop_source = "MotorController asserted e-stop in response to a lapse of the brain heartbeat";
+        break;
+      default:
+        estop_source = "Unkown button source code";
+
+      }
+
+      ROS_ERROR_STREAM_NAMED("utilities","ESTOP Button: '" << estop_button << "'. Source: '" << estop_source << "'. State: \n" << *baxter_state_ );
+      return false;
+    }
+
+    return true;
+  }
+
+  void stateCallback(const baxter_msgs::AssemblyStateConstPtr& msg)
+  {
+    baxter_state_ = msg;
+    baxter_state_timestamp_ = ros::Time::now();
   }
 
   bool setPlanningGroup()
@@ -88,10 +195,35 @@ public:
   bool enableBaxter()
   {
     ROS_INFO_STREAM_NAMED("utility","Enabling Baxter");
+
+    // Check communication
+    if( !checkCommunication() )
+      return false;
+
+    // Check for errors / estop
+    if( !checkReady() )
+      return false;
+
     std_msgs::Bool enable_msg;
     enable_msg.data = true;
     pub_baxter_enable_.publish(enable_msg);
-    ros::Duration(0.5).sleep();
+    ros::Duration(1.0).sleep();
+
+
+    // Check it enabled
+    int count = 0;
+    while( ros::ok() && baxter_state_->enabled == false )
+    {
+      if( count > 20 ) // 20 is an arbitrary number for when to assume its not going to enable
+      {
+        ROS_ERROR_STREAM_NAMED("utilities","Failed to enable Baxter");
+        return false;
+      }
+
+      ++count;
+      ros::Duration(0.05).sleep();
+    }    
+
 
     return true;
   }
@@ -103,6 +235,9 @@ public:
     enable_msg.data = false;
     pub_baxter_enable_.publish(enable_msg);
     ros::Duration(0.5).sleep();
+
+    // Check if Baxter disabled successfully
+    // \todo
 
     return true;
   }
@@ -129,7 +264,12 @@ public:
     // Send to ready position
     ROS_INFO_STREAM_NAMED("pick_place","Sending to right and left arm ready positions...");
     group_->setNamedTarget(pose_name); 
-    return group_->move();
+    bool result = group_->move();
+
+    if( !result )
+      ROS_ERROR_STREAM_NAMED("utilities","Failed to send Baxter to pose " << pose_name);
+
+    return result;
   }
 
 };

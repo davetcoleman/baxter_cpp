@@ -14,8 +14,8 @@
 	respawn="false" output="screen" args="--enable=0"/>
 
   <!-- load Baxter's trajectory controller -->
-  <node name="baxter_trajectory_controller" pkg="baxter_interface" type="trajectory_controller.py"
-	respawn="false" output="screen"/>
+  <!--node name="baxter_trajectory_controller" pkg="baxter_interface" type="trajectory_controller.py"
+	respawn="false" output="screen"/-->
 
   <!-- Load gripper controller -->
   <node name="baxter_gripper_server" pkg="baxter_gripper_server" type="gripper_action_server" 
