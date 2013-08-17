@@ -18,8 +18,8 @@
 	respawn="false" output="screen"/>
 
   <!-- Load gripper controller -->
-  <!--node name="baxter_gripper_server" pkg="baxter_gripper_server" type="gripper_action_server" 
-	respawn="false" output="screen" /-->
+  <node name="baxter_gripper_server" pkg="baxter_gripper_server" type="gripper_action_server" 
+	respawn="false" output="screen" />
   
   <!-- start move_group -->
   <include file="$(find baxter_moveit_config)/launch/move_group.launch">

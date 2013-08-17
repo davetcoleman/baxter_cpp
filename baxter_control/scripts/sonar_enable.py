@@ -39,7 +39,7 @@
 
 import getopt
 import sys
-
+import os
 import roslib
 roslib.load_manifest('head_control')
 import rospy
