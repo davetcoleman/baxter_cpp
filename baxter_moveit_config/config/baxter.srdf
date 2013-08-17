@@ -157,6 +157,7 @@
     <disable_collisions link1="right_hand_range" link2="left_gripper_l_finger" reason="Never" />
     <disable_collisions link1="right_gripper" link2="left_gripper_l_finger" reason="Adjacent" />
     <disable_collisions link1="right_gripper" link2="left_gripper_r_finger" reason="Adjacent" />
+    <disable_collisions link1="left_gripper_l_finger" link2="left_gripper" reason="Never" />
     <disable_collisions link1="left_gripper_l_finger" link2="left_gripper_r_finger" reason="Never" />
     <disable_collisions link1="left_gripper_l_finger" link2="left_hand_camera" reason="Never" />
     <disable_collisions link1="left_gripper_l_finger" link2="left_hand_range" reason="Never" />
@@ -167,6 +168,7 @@
     <disable_collisions link1="left_gripper_l_finger" link2="left_upper_forearm_visual" reason="Never" />
     <disable_collisions link1="left_gripper_l_finger" link2="left_wrist" reason="Never" />
     <disable_collisions link1="left_gripper_l_finger" link2="sonar_ring" reason="Never" />
+    <disable_collisions link1="left_gripper_r_finger" link2="left_gripper" reason="Never" />
     <disable_collisions link1="left_gripper_r_finger" link2="left_hand_camera" reason="Never" />
     <disable_collisions link1="left_gripper_r_finger" link2="left_hand_range" reason="Never" />
     <disable_collisions link1="left_gripper_r_finger" link2="left_lower_elbow" reason="Never" />

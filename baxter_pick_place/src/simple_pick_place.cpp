@@ -198,12 +198,10 @@ public:
             ROS_INFO_STREAM_NAMED("simple_pick_place","Done with pick ---------------------------");
             foundBlock = true;
           }
-
-          ros::Duration(2.0).sleep();
         }
 
         ROS_INFO_STREAM_NAMED("simple_pick_place","Waiting to put...");
-        ros::Duration(1.0).sleep();
+        ros::Duration(0.5).sleep();
       }
       else
       {

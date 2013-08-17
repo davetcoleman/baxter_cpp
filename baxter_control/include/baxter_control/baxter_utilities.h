@@ -68,6 +68,8 @@ public:
   {
     ros::NodeHandle nh;
 
+    group_.reset(new move_group_interface::MoveGroup("both_arms"));
+
     // ---------------------------------------------------------------------------------------------
     // Advertise services
     pub_baxter_enable_ = nh.advertise<std_msgs::Bool>("/robot/set_super_enable",10);
@@ -107,24 +109,27 @@ public:
 
   bool positionBaxterReady()
   {
-    setPlanningGroup();
-
-    // Send to ready position
-    ROS_INFO_STREAM_NAMED("pick_place","Sending to right and left arm ready positions...");
-    group_->setNamedTarget("both_ready"); // this is defined in Baxter's SRDF
-    group_->move();
-    ros::Duration(1).sleep();
+    return sendToPose("both_ready");     
   }
 
   bool positionBaxterNeutral()
   {
-    setPlanningGroup();
+    return sendToPose("both_neutral"); 
+  }
 
-    // Send to neutral position
-    ROS_INFO_STREAM_NAMED("pick_place","Sending to right and left arm neutral positions...");
-    group_->setNamedTarget("both_neutral"); // this is defined in Baxter's SRDF
-    group_->move();
-    ros::Duration(1).sleep();
+  /**
+   * \brief Send baxter to a pose defined in the SRDF
+   * \param pose_name - name of pose in SRDF
+   * \return true if sucessful in planning and moving there
+   */
+  bool sendToPose(const std::string &pose_name)
+  {
+    //    setPlanningGroup();
+
+    // Send to ready position
+    ROS_INFO_STREAM_NAMED("pick_place","Sending to right and left arm ready positions...");
+    group_->setNamedTarget(pose_name); 
+    return group_->move();
   }
 
 };
