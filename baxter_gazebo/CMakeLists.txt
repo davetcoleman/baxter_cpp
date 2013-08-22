@@ -2,24 +2,30 @@ cmake_minimum_required(VERSION 2.8.3)
 project(baxter_gazebo)
 
 find_package(catkin 
-  REQUIRED
+  REQUIRED COMPONENTS
     roscpp
-    std_msgs
-    sensor_msgs
+    gazebo_ros
+    gazebo_ros_control
+    controller_manager    
+    baxter_msgs 
 )
 
 ## System dependencies are found with CMake's conventions
 find_package(Boost REQUIRED COMPONENTS system)
 
+# Depend on system install of Gazebo 
+find_package(gazebo REQUIRED)
 
 catkin_package(
 #  INCLUDE_DIRS include
 #  LIBRARIES baxter_gazebo
   CATKIN_DEPENDS 
-#    roscpp
-#    std_msgs
-#    sensor_msgs
-#  DEPENDS system_lib
+    baxter_msgs 
+    gazebo_ros_control
+    roscpp
+    controller_manager_msgs
+  DEPENDS 
+    gazebo
 )
 
 ###########
@@ -27,21 +33,20 @@ catkin_package(
 ###########
 
 ## Specify additional locations of header files
-## Your package locations should be listed before other locations
-# include_directories(include ${catkin_INCLUDE_DIRS} ${Boost_INCLUDE_DIRS})
-
-## Declare a cpp library
-# add_library(baxter_gazebo
-#   src/${PROJECT_NAME}/baxter_gazebo.cpp
-# )
-
-## Declare a cpp executable
-add_executable(mimic_physical src/mimic_physical.cpp)
-
-## Specify libraries to link a library or executable target against
-target_link_libraries(mimic_physical
-  ${catkin_LIBRARIES}
+link_directories(${GAZEBO_LIBRARY_DIRS} ${catkin_LIBRARY_DIRS})
+include_directories(include
+  ${Boost_INCLUDE_DIR}
+  ${catkin_INCLUDE_DIRS}
+  ${GAZEBO_INCLUDE_DIRS}
 )
+
+# Library
+add_library(baxter_gazebo_ros_control src/baxter_gazebo_ros_control_plugin.cpp)
+#message(status "${catkin_LIBRARIES} \n\n\n\n\n\n\n\n ")
+target_link_libraries(baxter_gazebo_ros_control ${catkin_LIBRARIES} ${GAZEBO_LIBRARIES} gazebo_ros_control) # \todo remove gazebo_ros_control here
+add_dependencies(baxter_gazebo_ros_control ${catkin_EXPORTED_TARGETS}) # don't build until baxter_msgs is done
+
+
 
 #############
 ## Install ##
