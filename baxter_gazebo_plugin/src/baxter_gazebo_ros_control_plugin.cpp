@@ -2,7 +2,6 @@
  * Software License Agreement (BSD License)
  *
  *  Copyright (c) 2013, Open Source Robotics Foundation
- *  Copyright (c) 2013, The Johns Hopkins University
  *  All rights reserved.
  *
  *  Redistribution and use in source and binary forms, with or without
@@ -58,8 +57,11 @@ public:
   {
     ROS_INFO_STREAM_NAMED("baxter_gazebo_ros_control_plugin","loading baxter specific stuff");
 
+    // Subscribe to a topic that switches' Baxter's msgs
     command_mode_sub_ = nh_.subscribe<baxter_msgs::JointCommandMode>("/sdk/robot/command_mode_TODO",
                          1, &BaxterGazeboRosControlPlugin::modeCommandCallback, this);
+
+    // \todo start a publisher that publishes fake AssemblyState.msg data about Baxter
   }
 
   void modeCommandCallback(const baxter_msgs::JointCommandModeConstPtr& msg)
