@@ -1,0 +1,1 @@
+python `openrave-config --python-dir`/openravepy/_openravepy_/ikfast.py --robot baxter.dae --iktype=transform6d --baselink=10 --freeindex=17 --eelink=18 --savefile=ikfast61_left_arm.cpp

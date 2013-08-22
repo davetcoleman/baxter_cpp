@@ -123,7 +123,8 @@ public:
     if( baxter_state_->error == true )
     {
       ROS_ERROR_STREAM_NAMED("utilities","Baxter has an error :(  State: \n" << *baxter_state_ );
-      return false;
+      ROS_WARN_STREAM_NAMED("temp","Temporarily ignoring error bit");
+      // \todo return false;
     }    
 
     // Check for estop

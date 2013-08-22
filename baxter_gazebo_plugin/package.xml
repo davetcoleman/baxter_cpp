@@ -1,0 +1,30 @@
+<?xml version="1.0"?>
+<package>
+  <name>baxter_gazebo_plugin</name>
+  <version>0.0.1</version>
+  <description>The baxter_gazebo_plugin package</description>
+
+  <maintainer email="davetcoleman@gmail.com">Dave Coleman</maintainer>
+
+  <license>BSD</license>
+
+  <url type="website">https://github.com/davetcoleman/baxter</url> -->
+  <url type="butracker">https://github.com/davetcoleman/baxter/issues</url> -->
+  <url type="repository">https://github.com/davetcoleman/baxter/</url> -->
+
+  <author email="davetcoleman@gmail.com">Dave Coleman</author>
+
+  <buildtool_depend>catkin</buildtool_depend>
+
+  <buildtool_depend>catkin</buildtool_depend>
+
+  <build_depend>baxter_msgs</build_depend>
+  <build_depend>gazebo_ros_control</build_depend>
+
+  <run_depend>baxter_msgs</run_depend>
+  <run_depend>gazebo_ros_control</run_depend>
+
+
+  <export>
+  </export>
+</package>
