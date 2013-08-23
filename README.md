@@ -75,8 +75,7 @@ Hydro:
  * Optional: Test/tune the velocity controllers or position controllers using a RQT dashboard GUI. Make sure you are in the right joint command mode when using these:
 
    ```
-   roslaunch baxter_control baxter_sdk_position_rqt.launch 
-
+   roslaunch baxter_control baxter_sdk_position_rqt.launch
    ```
    or
    ```
