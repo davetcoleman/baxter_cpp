@@ -31,6 +31,7 @@ Unofficial Baxter packages that add-on to the Rethink SDK. Currently it contains
     git clone git@github.com:davetcoleman/baxter_common.git -b dual_parallel_grippers
     git clone git@github.com:davetcoleman/block_grasp_generator.git
     git clone git@github.com:ros-controls/ros_controllers -b velocity_position_controller
+    git clone git@github.com:ros-simulation/gazebo_ros_pkgs -b ros_control_plugin_header
 ```
 
 * Install dependencies
