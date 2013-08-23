@@ -68,24 +68,13 @@ private:
 
 public:
 
-  virtual void overloadtest()
-  {
-    ROS_INFO_STREAM_NAMED("temp","-----------------------------");
-    ROS_INFO_STREAM_NAMED("temp","-----------------------------");
-    ROS_INFO_STREAM_NAMED("temp","-----------------------------");
-    ROS_INFO_STREAM_NAMED("named","booom");
-    ROS_INFO_STREAM_NAMED("temp","-----------------------------");
-    ROS_INFO_STREAM_NAMED("temp","-----------------------------");
-    ROS_INFO_STREAM_NAMED("temp","-----------------------------");
-  }  //using GazeboRosControlPlugin::overloadtest;
-
   void Load(gazebo::physics::ModelPtr parent, sdf::ElementPtr sdf)
   {
     // Load parent class first
     GazeboRosControlPlugin::Load(parent, sdf);
 
     // Baxter customizations:
-    ROS_ERROR_STREAM_NAMED("baxter_gazebo_ros_control_plugin","loading baxter specific stuff");
+    ROS_INFO_STREAM_NAMED("baxter_gazebo_ros_control_plugin","Loading Baxter specific simulation components");
 
     // Subscribe to a topic that switches' Baxter's msgs
     left_command_mode_sub_ = nh_.subscribe<baxter_msgs::JointCommandMode>("/robot/limb/left/joint_command_mode",
@@ -130,7 +119,8 @@ public:
 
   void modeCommandCallback(const baxter_msgs::JointCommandModeConstPtr& msg, const std::string& side)
   {
-    ROS_DEBUG_STREAM_NAMED("baxter_gazebo_ros_control_plugin","Switching command mode for side " << side);
+    ROS_DEBUG_STREAM_NAMED("baxter_gazebo_ros_control_plugin","Switching command mode for side " 
+      << side );
 
     std::vector<std::string> start_controllers;
     std::vector<std::string> stop_controllers;
@@ -139,14 +129,16 @@ public:
     case baxter_msgs::JointCommandMode::POSITION:
       start_controllers.push_back(side+"_joint_position_controller");
       stop_controllers.push_back(side+"_joint_effort_controller");
-      stop_controllers.push_back(side+"_joint_velocity_controller");
+      //stop_controllers.push_back(side+"_joint_velocity_controller");
       break;
     case baxter_msgs::JointCommandMode::VELOCITY:
       start_controllers.push_back(side+"_joint_velocity_controller");
       stop_controllers.push_back(side+"_joint_position_controller");
-      stop_controllers.push_back(side+"_joint_effort_controller");
+      //stop_controllers.push_back(side+"_joint_effort_controller");
       break;
     case baxter_msgs::JointCommandMode::TORQUE:
+      ROS_WARN_STREAM_NAMED("baxter_gazebo_ros_control_plugin","Torque not implemented yet!");
+      return;
       start_controllers.push_back(side+"_joint_effort_controller");
       stop_controllers.push_back(side+"_joint_position_controller");
       stop_controllers.push_back(side+"_joint_velocity_controller");
@@ -177,4 +169,6 @@ public:
 
 };
 
+// Register this plugin with the simulator
+GZ_REGISTER_MODEL_PLUGIN(BaxterGazeboRosControlPlugin);
 } // namespace

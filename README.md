@@ -80,11 +80,6 @@ Hydro:
 
 Works with simulation or hardware:
 
- * Temporary: launch gripper server seperate
-
-   ```
-   rosrun baxter_gripper_server gripper_action_server
-   ```
  * Start MoveIt:
 
    ```
