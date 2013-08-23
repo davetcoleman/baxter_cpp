@@ -68,12 +68,17 @@ Hydro:
 
  * Start simulation with controllers:
    ```
-   roslaunch baxter_gazebo baxter_world.launch velocity:=true
+   roslaunch baxter_gazebo baxter_world.launch
    ```
 
- * Optional: Test/tune the velocity controllers using a RQT dashboard GUI
+ * Optional: Test/tune the velocity controllers or position controllers using a RQT dashboard GUI
+
    ```
    roslaunch baxter_control baxter_sdk_velocity_rqt.launch 
+   ```
+   or
+   ```
+   roslaunch baxter_control baxter_sdk_position_rqt.launch 
    ```
 
 ## Start MoveIt
@@ -91,52 +96,6 @@ Works with simulation or hardware:
    ```
    roslaunch baxter_pick_place baxter_pick_place.launch
    ```
-
-## Other Run Commands
-
-### Simulation Without controllers:
-
-Just Baxter in Gazebo:
-
-```
-roslaunch baxter_gazebo baxter_world.launch
-```
-
-### Position Controllers
-
-With position controllers that accept baxter_msgs/JointPositions.msg
-
-```
-roslaunch baxter_gazebo baxter_world.launch position:=true
-```
-
-Test the controllers using RQT to see a "dashboard" for controlling Baxter:
-
-```
-roslaunch baxter_control baxter_sdk_position_rqt.launch 
-```
-
-### Launch Individual Generic Simulated controllers for Baxter:
-
-Only accepts individual std_msgs/Float32 commands
-
-First, restart everything, then:
-
-```
-roslaunch baxter_gazebo baxter_world.launch individual:=true
-roslaunch baxter_control baxter_individual_rqt.launch 
-```
-
-### Custom trajectory controller (Experimental)
-
-Runs a FollowJointTrajectoryAction.
-
-First, restart everything, then:
-
-```
-roslaunch baxter_gazebo baxter_world.launch trajectory:=true
-roslaunch baxter_control baxter_trajectory_rqt.launch
-```
 
 ## Develop and Contribute
 
