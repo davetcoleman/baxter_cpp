@@ -70,15 +70,17 @@ Hydro:
    ```
    roslaunch baxter_gazebo baxter_world.launch
    ```
+   By default the position controllers are started. To switch, use the JointCommandMode topic as documented in the Baxter SDK.
 
- * Optional: Test/tune the velocity controllers or position controllers using a RQT dashboard GUI
+ * Optional: Test/tune the velocity controllers or position controllers using a RQT dashboard GUI. Make sure you are in the right joint command mode when using these:
 
    ```
-   roslaunch baxter_control baxter_sdk_velocity_rqt.launch 
+   roslaunch baxter_control baxter_sdk_position_rqt.launch 
+
    ```
    or
    ```
-   roslaunch baxter_control baxter_sdk_position_rqt.launch 
+   roslaunch baxter_control baxter_sdk_velocity_rqt.launch 
    ```
 
 ## Start MoveIt
