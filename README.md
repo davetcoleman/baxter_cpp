@@ -3,9 +3,11 @@ baxter
 
 Unofficial Baxter packages that add-on to the Rethink SDK. Currently it contains Gazebo simulation and pick and place MoveIt code for Baxter
 
+THIS README IS SPECIFIC FOR HYDRO, SEE groovy-devel BRANCH FOR GROOVY INSTRUCTIONS
+
 ## Prequisites
 
- * ROS Groovy or Hydro
+ * ROS Hydro
  * Access to the private Rethink [sdk-examples](https://github.com/RethinkRobotics/sdk-examples) repository - we are using the baxter_interface and head_control packages from the SDK
 
 ## Installation
@@ -21,7 +23,7 @@ Unofficial Baxter packages that add-on to the Rethink SDK. Currently it contains
 * Checkout this repo
 
 ```
-    git clone git@github.com:davetcoleman/baxter.git
+    git clone git@github.com:davetcoleman/baxter.git -b hydro-devel
 ```
 
 * Also install from source a few customized repositories:
@@ -29,20 +31,13 @@ Unofficial Baxter packages that add-on to the Rethink SDK. Currently it contains
 ```
     git clone git@github.com:RethinkRobotics/sdk-examples.git -b gazebo_dev
     git clone git@github.com:davetcoleman/baxter_common.git -b dual_parallel_grippers
-    git clone git@github.com:davetcoleman/block_grasp_generator.git
+    git clone git@github.com:davetcoleman/block_grasp_generator.git -b hydro-devel
     git clone git@github.com:ros-controls/ros_controllers -b velocity_position_controller
     git clone git@github.com:ros-simulation/gazebo_ros_pkgs -b ros_control_plugin_header
 ```
 
 * Install dependencies
 
-Groovy:
-```
-    cd ~/catkin_ws/
-    rosdep install --from-paths . --ignore-src --rosdistro groovy -y
-```
-
-Hydro:
 ```
     cd ~/catkin_ws/
     rosdep install --from-paths . --ignore-src --rosdistro hydro -y
