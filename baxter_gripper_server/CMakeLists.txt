@@ -9,15 +9,12 @@ find_package(catkin REQUIRED COMPONENTS
   control_msgs
   roscpp
   std_msgs
-  actionlib_msgs
   sensor_msgs
   baxter_msgs
 )
 
-
 ## System dependencies are found with CMake's conventions
 find_package(Boost REQUIRED COMPONENTS system)
-
 
 ###################################
 ## catkin specific configuration ##
@@ -30,9 +27,15 @@ find_package(Boost REQUIRED COMPONENTS system)
 catkin_package(
   #   INCLUDE_DIRS include
   #  LIBRARIES baxter_gripper_action
-  #  CATKIN_DEPENDS actionlib control_msgs roscpp std_msgs
+  CATKIN_DEPENDS
+  actionlib
+  control_msgs
+  roscpp
+  std_msgs
+  sensor_msgs
+  baxter_msgs
   #  DEPENDS system_lib
-  )
+)
 
 ###########
 ## Build ##
@@ -40,27 +43,21 @@ catkin_package(
 
 ## Specify additional locations of header files
 ## Your package locations should be listed before other locations
-#include_directories(include
-#  ${catkin_INCLUDE_DIRS}
-#)
-
-## Declare a cpp library
-# add_library(baxter_gripper_action
-#   src/${PROJECT_NAME}/baxter_gripper_action.cpp
-# )
+include_directories(include
+  ${catkin_INCLUDE_DIRS}
+)
 
 ## Declare a cpp executable
 add_executable(gripper_action_server src/gripper_action_server.cpp)
-add_dependencies(gripper_action_server ${catkin_EXPORTED_TARGETS}) # don't build until gazebo_msgs is done
+add_dependencies(gripper_action_server ${catkin_EXPORTED_TARGETS}) # don't build until baxter_msgs is done
+add_dependencies(gripper_action_server baxter_msgs_gencpp ${PROJECT_NAME}_gencfg) # wait for baxter_msgs to be built
 
 ## Add cmake target dependencies of the executable/library
 ## as an example, message headers may need to be generated before nodes
-# add_dependencies(gripper_action_server baxter_gripper_action_generate_messages_cpp)
+add_dependencies(gripper_action_server baxter_gripper_action_generate_messages_cpp)
 
 ## Specify libraries to link a library or executable target against
-target_link_libraries(gripper_action_server
-  ${catkin_LIBRARIES} ${BOOST_LIBRARIES}
-)
+target_link_libraries(gripper_action_server ${catkin_LIBRARIES} ${BOOST_LIBRARIES})
 
 #############
 ## Install ##
