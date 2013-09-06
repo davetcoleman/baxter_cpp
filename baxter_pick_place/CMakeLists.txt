@@ -46,3 +46,6 @@ target_link_libraries(random_planning ${catkin_LIBRARIES} ${Boost_LIBRARIES})
 add_executable(end_effector_position src/end_effector_position.cpp)
 target_link_libraries(end_effector_position ${catkin_LIBRARIES} ${Boost_LIBRARIES})
 
+add_executable(get_joint_values src/get_joint_values.cpp)
+target_link_libraries(get_joint_values ${catkin_LIBRARIES} ${Boost_LIBRARIES})
+

@@ -86,7 +86,7 @@ public:
   block_grasp_generator::RobotGraspData grasp_data_;
 
   // our interface with MoveIt
-  boost::scoped_ptr<move_group_interface::MoveGroup> group_;
+  boost::scoped_ptr<move_group_interface::MoveGroup> move_group_;
 
   // baxter helper
   baxter_control::BaxterUtilities baxter_util_;
@@ -96,8 +96,8 @@ public:
     ros::NodeHandle nh;
 
     // Create MoveGroup for right arm
-    group_.reset(new move_group_interface::MoveGroup(PLANNING_GROUP_NAME));
-    group_->setPlanningTime(30.0);
+    move_group_.reset(new move_group_interface::MoveGroup(PLANNING_GROUP_NAME));
+    move_group_->setPlanningTime(30.0);
 
     // Load the Robot Viz Tools for publishing to rviz
     rviz_tools_.reset(new block_grasp_generator::RobotVizTools( RVIZ_MARKER_TOPIC, EE_GROUP,
@@ -123,11 +123,8 @@ public:
 
   bool startRoutine()
   {
-    // ---------------------------------------------------------------------------------------------
-    // Load hard coded poses
-
-    // Debug
-    if( true )
+    // Debug - calculate and output table surface dimensions
+    if( false )
     {
       double y_min, y_max, x_min, x_max;
       getTableWidthRange(y_min, y_max);
@@ -136,6 +133,7 @@ public:
       ROS_INFO_STREAM_NAMED("table","Blocks depth range: " << x_min << " <= x <= " << x_max);
     }
 
+    // Create start block positions (hard coded)
     std::vector<MetaBlock> start_blocks;
     start_blocks.push_back( createStartBlock(0.55, -0.1, "Block1") );
     start_blocks.push_back( createStartBlock(0.65, -0.1, "Block2") );
@@ -146,7 +144,13 @@ public:
     // Show grasp visualizations or not
     rviz_tools_->setMuted(false);
 
+    // Create the walls and tables
     createEnvironment(rviz_tools_);
+
+
+      // Send Baxter to neutral position
+      if( !baxter_util_.positionBaxterNeutral() )
+        return false;
 
     // --------------------------------------------------------------------------------------------------------
     // Start pick and place
@@ -171,10 +175,10 @@ public:
 
       // -------------------------------------------------------------------------------------
       // Send Baxter to neutral position
-      //if( !baxter_util_.positionBaxterNeutral() )
-      //  return false;
+      if( !baxter_util_.positionBaxterNeutral() )
+        return false;
 
-      std::size_t block_id = 1;
+      std::size_t block_id = 1; // \todo temp
 
       if(true)
       {
@@ -200,7 +204,7 @@ public:
       else
       {
         // Fake the pick operation by just attaching the collision object
-        rviz_tools_->attachCO(BLOCK_NAME);
+        rviz_tools_->attachCO(start_blocks[block_id].name);
       }
 
       if(true)
@@ -209,7 +213,7 @@ public:
         bool putBlock = false;
         while(!putBlock && ros::ok())
         {
-          if( !place(goal_block_pose, BLOCK_NAME) )
+          if( !place(goal_block_pose, start_blocks[block_id].name) )
           {
             ROS_ERROR_STREAM_NAMED("simple_pick_place","Place failed.");
             putBlock = true; // \todo remove this for demo, is wrong
@@ -230,7 +234,7 @@ public:
       if( !baxter_util_.positionBaxterNeutral() )
         return false;
 
-      //break; // \todo remove for demo
+      break; // \todo remove for demo
     }
 
     // Everything worked!
@@ -376,7 +380,7 @@ public:
     block_grasp_generator_->generateGrasps( block_pose, grasp_data_, grasps );
 
     // Prevent collision with table
-    group_->setSupportSurfaceName(SUPPORT_SURFACE3_NAME);
+    move_group_->setSupportSurfaceName(SUPPORT_SURFACE3_NAME);
 
     //ROS_WARN_STREAM_NAMED("","testing grasp 1:\n" << grasps[0]);
     //ros::Duration(100).sleep();
@@ -384,7 +388,7 @@ public:
     //ROS_INFO_STREAM_NAMED("","Grasp 0\n" << grasps[0]);
     //ROS_INFO_STREAM_NAMED("","\n\n\nGrasp 10\n" << grasps[10]);
 
-    return group_->pick(block_name, grasps);
+    return move_group_->pick(block_name, grasps);
     //return pickDebug(block_name, grasps);
   }
 
@@ -520,11 +524,11 @@ public:
     */
 
     // Prevent collision with table
-    group_->setSupportSurfaceName(SUPPORT_SURFACE3_NAME);
+    move_group_->setSupportSurfaceName(SUPPORT_SURFACE3_NAME);
 
-    group_->setPlannerId("RRTConnectkConfigDefault");
+    move_group_->setPlannerId("RRTConnectkConfigDefault");
 
-    return group_->place(block_name, place_locations);
+    return move_group_->place(block_name, place_locations);
   }
 
 };

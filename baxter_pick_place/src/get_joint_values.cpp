@@ -33,7 +33,7 @@
  *********************************************************************/
 
 /**
- * \brief   Outputs to console the current location of the end effector
+ * \brief   Outputs to console the joint values of a chosen planning group
  * \author  Dave Coleman
  */
 
@@ -42,81 +42,51 @@
 // MoveIt!
 #include <moveit/move_group_interface/move_group.h>
 
-#include <block_grasp_generator/robot_viz_tools.h> // simple tool for showing grasps
-
-#include <geometry_msgs/PoseStamped.h>
-
-// Baxter Utilities
-#include <baxter_control/baxter_utilities.h>
-
 namespace baxter_pick_place
 {
 
 static const std::string ROBOT_DESCRIPTION="robot_description";
-static const std::string RVIZ_MARKER_TOPIC = "/end_effector_marker";
-static const std::string PLANNING_GROUP_NAME = "right_arm";
-static const std::string SUPPORT_SURFACE_NAME = "workbench";
-static const std::string SUPPORT_SURFACE_NAME2 = "little_table";
-static const std::string BASE_LINK = "base"; //"/base";
-static const std::string EE_GROUP = "right_hand";
-static const std::string EE_JOINT = "right_gripper_l_finger_joint";
-static const std::string EE_PARENT_LINK = "right_wrist";
 
-
-class EndEffectorPosition
+class GetJointValues
 {
 public:
 
-  block_grasp_generator::RobotVizToolsPtr rviz_tools_;
-
   // our interface with MoveIt
-  boost::scoped_ptr<move_group_interface::MoveGroup> group_;
+  boost::scoped_ptr<move_group_interface::MoveGroup> move_group_;
 
-  // baxter helper
-  baxter_control::BaxterUtilities baxter_util_;
-
-  EndEffectorPosition()
+  GetJointValues()
   {
     ros::NodeHandle nh;
+    
+    std::string planning_group;
 
-    // ---------------------------------------------------------------------------------------------
-    // Load the Robot Viz Tools for publishing to rviz
-    /*
-      rviz_tools_.reset(new block_grasp_generator::RobotVizTools( RVIZ_MARKER_TOPIC, EE_GROUP,
-      PLANNING_GROUP_NAME, BASE_LINK));
-    */
-
-    // --------------------------------------------------------------------------------------------------------
-    // Enable servos
-    baxter_util_.enableBaxter();
-
-    // -------------------------------------------------------------------------------------
+    std::cout << "Type desired planning group name:\n";
+    std::getline(std::cin, planning_group);
+    
     // Create MoveGroup for right arm
-    group_.reset(new move_group_interface::MoveGroup(PLANNING_GROUP_NAME));
+    move_group_.reset(new move_group_interface::MoveGroup(planning_group)); // \todo group name
 
-    geometry_msgs::PoseStamped ee_pose;
+    std::vector<double> joint_values;
+    std::vector<std::string> joint_names = move_group_->getJoints();
 
     while(ros::ok())
     {
-      ee_pose = group_->getCurrentPose("right_gripper_l_finger");
+      ROS_INFO_STREAM("SDF Code for joint values pose:\n");
 
-      ROS_INFO_STREAM_NAMED("position",ee_pose);
+      joint_values = move_group_->getCurrentJointValues();
+      
+      // Output XML
+      std::cout << "<group_state name=\"\" group=\"" << planning_group << "\">\n";
+      for (std::size_t i = 0; i < joint_values.size(); ++i)
+      {
+        std::cout << "  <joint name=\"" << joint_names[i] <<"\" value=\"" << joint_values[i] << "\" />\n";
+      }
+      std::cout << "</group_state>\n\n\n\n";
 
       ros::Duration(4.0).sleep();
     }
 
-
-    // -------------------------------------------------------------------------------------
-    // Shutdown
-
-    // Move to gravity neutral position
-    baxter_util_.positionBaxterNeutral();
-
-    // Disable servos
-    baxter_util_.disableBaxter();
   }
-
-
 
 };
 
@@ -124,14 +94,14 @@ public:
 
 int main(int argc, char **argv)
 {
-  ros::init (argc, argv, "end_effector_position");
+  ros::init (argc, argv, "get_joint_values");
   ros::AsyncSpinner spinner(1);
   spinner.start();
 
   // Start the pick place node
-  baxter_pick_place::EndEffectorPosition();
+  baxter_pick_place::GetJointValues();
 
   ros::shutdown();
-  
+
   return 0;
 }

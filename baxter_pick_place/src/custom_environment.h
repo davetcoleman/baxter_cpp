@@ -42,18 +42,18 @@ namespace baxter_pick_place
 {
 
 // environment
-static const std::string SUPPORT_SURFACE1_NAME = "surface1";
-static const std::string SUPPORT_SURFACE2_NAME = "surface2";
-static const std::string SUPPORT_SURFACE3_NAME = "surface3";
-static const std::string WALL1_NAME = "wall1";
-static const std::string WALL2_NAME = "wall2";
-static const std::string WALL3_NAME = "wall3";
+static const std::string SUPPORT_SURFACE1_NAME = "monitor";
+static const std::string SUPPORT_SURFACE2_NAME = "desk";
+static const std::string SUPPORT_SURFACE3_NAME = "table";
+static const std::string WALL1_NAME = "back_wall";
+static const std::string WALL2_NAME = "right_wall";
+static const std::string WALL3_NAME = "left_wall";
 
 // robot dimensions
 static const double FLOOR_TO_BASE_HEIGHT = -0.9;
 
 // table dimensions
-static const double TABLE_HEIGHT = 0.83;
+static const double TABLE_HEIGHT = 0.81;
 static const double TABLE_WIDTH  = 0.85;
 static const double TABLE_DEPTH  = 0.44;
 static const double TABLE_X = 0.73;
