@@ -41,17 +41,19 @@
 
 // MoveIt!
 #include <moveit/move_group_interface/move_group.h>
-#include <shape_tools/solid_primitive_dims.h>
 
 // Baxter Utilities
 #include <baxter_control/baxter_utilities.h>
 
 // Grasp generation
 #include <block_grasp_generator/block_grasp_generator.h>
-#include <block_grasp_generator/robot_viz_tools.h> // simple tool for showing grasps
+#include <block_grasp_generator/robot_viz_tools.h> // simple tool for showing graspsp
 
 // Msgs
 #include <baxter_msgs/GripperState.h>
+
+// Custom environment
+#include "custom_environment.h"
 
 namespace baxter_pick_place
 {
@@ -59,26 +61,17 @@ namespace baxter_pick_place
 static const std::string ROBOT_DESCRIPTION="robot_description";
 static const std::string RVIZ_MARKER_TOPIC = "/end_effector_marker";
 static const std::string PLANNING_GROUP_NAME = "right_arm";
-static const std::string SUPPORT_SURFACE_NAME = "workbench";
-static const std::string SUPPORT_SURFACE_NAME2 = "little_table";
-static const std::string WALL_NAME = "wall";
-static const std::string BASE_LINK = "base"; //"/base";
+static const std::string BASE_LINK = "base";
 static const std::string EE_GROUP = "right_hand";
 static const std::string EE_JOINT = "right_gripper_l_finger_joint";
 static const std::string EE_PARENT_LINK = "right_wrist";
 static const std::string BLOCK_NAME = "block1";
-static const double BLOCK_SIZE = 0.04;
 
-// robot dimensions
-static const double FLOOR_TO_BASE_HEIGHT = -0.9;
-
-// table dimensions
-static const double TABLE_HEIGHT = 1.0; // .92
-static const double TABLE_WIDTH = .85;
-static const double TABLE_DEPTH = .47;
-static const double TABLE_X = 0.7; //.66
-static const double TABLE_Y = 0;
-static const double TABLE_Z = FLOOR_TO_BASE_HEIGHT/2+0.01;
+struct MetaBlock
+{
+  std::string name;
+  geometry_msgs::Pose pose;
+};
 
 class SimplePickPlace
 {
@@ -88,10 +81,6 @@ public:
   block_grasp_generator::BlockGraspGeneratorPtr block_grasp_generator_;
 
   block_grasp_generator::RobotVizToolsPtr rviz_tools_;
-
-  // publishers
-  ros::Publisher pub_collision_obj_;
-  ros::Publisher pub_attach_collision_obj_;
 
   // data for generating grasps
   block_grasp_generator::RobotGraspData grasp_data_;
@@ -106,23 +95,17 @@ public:
   {
     ros::NodeHandle nh;
 
-    // ---------------------------------------------------------------------------------------------
-    // Advertise services
-    pub_collision_obj_ = nh.advertise<moveit_msgs::CollisionObject>("collision_object", 10);
-    pub_attach_collision_obj_ = nh.advertise<moveit_msgs::AttachedCollisionObject>
-      ("/attached_collision_object", 10);
+    // Create MoveGroup for right arm
+    group_.reset(new move_group_interface::MoveGroup(PLANNING_GROUP_NAME));
+    group_->setPlanningTime(30.0);
 
     // Load the Robot Viz Tools for publishing to rviz
     rviz_tools_.reset(new block_grasp_generator::RobotVizTools( RVIZ_MARKER_TOPIC, EE_GROUP,
-        PLANNING_GROUP_NAME, BASE_LINK));
+        PLANNING_GROUP_NAME, BASE_LINK, FLOOR_TO_BASE_HEIGHT));
 
     // Load grasp generator
     loadRobotGraspData(); // Load robot specific data
     block_grasp_generator_.reset(new block_grasp_generator::BlockGraspGenerator(rviz_tools_));
-
-    // Create MoveGroup for right arm
-    group_.reset(new move_group_interface::MoveGroup(PLANNING_GROUP_NAME));
-    group_->setPlanningTime(30.0);
 
     // Let everything load
     ros::Duration(1.0).sleep();
@@ -142,62 +125,67 @@ public:
   {
     // ---------------------------------------------------------------------------------------------
     // Load hard coded poses
-    geometry_msgs::Pose start_block_pose = createStartBlock();
+
+    // Debug
+    if( true )
+    {
+      double y_min, y_max, x_min, x_max;
+      getTableWidthRange(y_min, y_max);
+      getTableDepthRange(x_min, x_max);
+      ROS_INFO_STREAM_NAMED("table","Blocks width range: " << y_min << " <= y <= " << y_max);
+      ROS_INFO_STREAM_NAMED("table","Blocks depth range: " << x_min << " <= x <= " << x_max);
+    }
+
+    std::vector<MetaBlock> start_blocks;
+    start_blocks.push_back( createStartBlock(0.55, -0.1, "Block1") );
+    start_blocks.push_back( createStartBlock(0.65, -0.1, "Block2") );
+    start_blocks.push_back( createStartBlock(0.75, -0.1, "Block3") );
+
     geometry_msgs::Pose goal_block_pose = createGoalBlock();
 
     // Show grasp visualizations or not
-    //rviz_tools_->setMuted(true);
+    rviz_tools_->setMuted(false);
 
-    /*
-    // test
-    geometry_msgs::PoseStamped ee_pose;
-    ee_pose = group_->getCurrentPose();
-    ROS_INFO_STREAM_NAMED("temp",ee_pose);
-    */
+    createEnvironment(rviz_tools_);
 
     // --------------------------------------------------------------------------------------------------------
     // Start pick and place
-
     while(ros::ok())
     {
       // --------------------------------------------------------------------------------------------
-      // Remove attached objects
-      cleanupACO(BLOCK_NAME);
+      // Loop through all blocks
+      for (std::size_t i = 0; i < start_blocks.size(); ++i)
+      {
+        // Remove attached objects
+        rviz_tools_->cleanupACO(start_blocks[i].name);
 
-      // Remove collision objects
-      cleanupCO(BLOCK_NAME);
-      cleanupCO(SUPPORT_SURFACE_NAME);
-      cleanupCO(SUPPORT_SURFACE_NAME2);
-      cleanupCO(WALL_NAME);
+        // Remove collision objects
+        rviz_tools_->cleanupCO(start_blocks[i].name);
 
-      // --------------------------------------------------------------------------------------------
-      // Add objects to scene
-      publishCollisionTable();
-      publishCollisionTableSmall();
-      publishCollisionWall();
+        // Add a new block that is to be moved
+        rviz_tools_->publishCollisionBlock(start_blocks[i].pose, start_blocks[i].name, BLOCK_SIZE);
+      }
 
       // Publish goal block location
       rviz_tools_->publishBlock( goal_block_pose, BLOCK_SIZE, true );
 
-      // Add a new block that is to be moved
-      publishCollisionBlock(start_block_pose, BLOCK_NAME);
-
       // -------------------------------------------------------------------------------------
       // Send Baxter to neutral position
-      if( !baxter_util_.positionBaxterNeutral() )
-        return false;
+      //if( !baxter_util_.positionBaxterNeutral() )
+      //  return false;
+
+      std::size_t block_id = 1;
 
       if(true)
       {
         bool foundBlock = false;
         while(!foundBlock && ros::ok())
         {
-          //publishCollisionBlock(start_block_pose, BLOCK_NAME);
+          ROS_INFO_STREAM_NAMED("pick_place","Attempting to pick '" << start_blocks[block_id].name << "'");
 
-          if( !pick(start_block_pose, BLOCK_NAME) )
+          if( !pick(start_blocks[block_id].pose, start_blocks[block_id].name) )
           {
             ROS_ERROR_STREAM_NAMED("simple_pick_place","Pick failed. Retrying.");
-            //cleanupCO(BLOCK_NAME);
           }
           else
           {
@@ -212,7 +200,7 @@ public:
       else
       {
         // Fake the pick operation by just attaching the collision object
-        attachCO(BLOCK_NAME);
+        rviz_tools_->attachCO(BLOCK_NAME);
       }
 
       if(true)
@@ -249,35 +237,41 @@ public:
     return true;
   }
 
-  geometry_msgs::Pose createStartBlock()
+  MetaBlock createStartBlock(double x, double y, const std::string name)
   {
-    geometry_msgs::Pose start_block_pose;
+    MetaBlock start_block;
+    start_block.name = name;
 
     // Position
-    start_block_pose.position.x = 0.0;
-    start_block_pose.position.y = -0.65; // -0.55;
-    start_block_pose.position.z = -0.5;
+    start_block.pose.position.x = x;
+    start_block.pose.position.y = y;
+    start_block.pose.position.z = getTableHeight();
 
     // Orientation
-    double angle = M_PI / 1.5;
+    double angle = 0; // M_PI / 1.5;
     Eigen::Quaterniond quat(Eigen::AngleAxis<double>(double(angle), Eigen::Vector3d::UnitZ()));
-    start_block_pose.orientation.x = quat.x();
-    start_block_pose.orientation.y = quat.y();
-    start_block_pose.orientation.z = quat.z();
-    start_block_pose.orientation.w = quat.w();
+    start_block.pose.orientation.x = quat.x();
+    start_block.pose.orientation.y = quat.y();
+    start_block.pose.orientation.z = quat.z();
+    start_block.pose.orientation.w = quat.w();
 
-    return start_block_pose;
+    rviz_tools_->publishBlock( start_block.pose, BLOCK_SIZE, true );
+
+    return start_block;
   }
 
   geometry_msgs::Pose createGoalBlock()
   {
+    double y_min, y_max, x_min, x_max;
+    getTableWidthRange(y_min, y_max);
+    getTableDepthRange(x_min, x_max);
+
     geometry_msgs::Pose goal_block_pose;
 
     // Position
-    goal_block_pose.position.x = 0.75; // table depth
-    goal_block_pose.position.y = -TABLE_WIDTH/4; // table width
-    goal_block_pose.position.z = TABLE_Z + TABLE_HEIGHT / 2.0 + BLOCK_SIZE / 2.0; // table height
-    goal_block_pose.position.z += 0.05; // a hack
+    goal_block_pose.position.x = x_max - TABLE_DEPTH / 2;
+    goal_block_pose.position.y = y_max - TABLE_WIDTH / 2;
+    goal_block_pose.position.z = getTableHeight();
 
     // Orientation
     double angle = 0; //M_PI / 1.5;
@@ -361,7 +355,7 @@ public:
     // Position
     block_pose.position.x = fRand(0.7,TABLE_DEPTH);
     block_pose.position.y = fRand(-TABLE_WIDTH/2,-0.1);
-    block_pose.position.z = TABLE_Z + TABLE_HEIGHT / 2.0 + BLOCK_SIZE / 2.0;
+    block_pose.position.z = TABLE_HEIGHT / 2.0 + BLOCK_SIZE / 2.0; // todo this is broken
 
     // Orientation
     double angle = M_PI * fRand(0.1,1);
@@ -370,149 +364,6 @@ public:
     block_pose.orientation.y = quat.y();
     block_pose.orientation.z = quat.z();
     block_pose.orientation.w = quat.w();
-  }
-
-  void publishCollisionBlock(geometry_msgs::Pose block_pose, std::string block_name)
-  {
-    moveit_msgs::CollisionObject collision_obj;
-    collision_obj.header.stamp = ros::Time::now();
-    collision_obj.header.frame_id = BASE_LINK;
-    collision_obj.id = block_name;
-    collision_obj.operation = moveit_msgs::CollisionObject::ADD;
-    collision_obj.primitives.resize(1);
-    collision_obj.primitives[0].type = shape_msgs::SolidPrimitive::BOX;
-    collision_obj.primitives[0].dimensions.resize(shape_tools::SolidPrimitiveDimCount<shape_msgs::SolidPrimitive::BOX>::value);
-    collision_obj.primitives[0].dimensions[shape_msgs::SolidPrimitive::BOX_X] = BLOCK_SIZE;
-    collision_obj.primitives[0].dimensions[shape_msgs::SolidPrimitive::BOX_Y] = BLOCK_SIZE;
-    collision_obj.primitives[0].dimensions[shape_msgs::SolidPrimitive::BOX_Z] = BLOCK_SIZE;
-    collision_obj.primitive_poses.resize(1);
-    collision_obj.primitive_poses[0] = block_pose;
-
-    //ROS_INFO_STREAM_NAMED("pick_place","CollisionObject: \n " << collision_obj);
-
-    pub_collision_obj_.publish(collision_obj);
-
-    ROS_DEBUG_STREAM_NAMED("simple_pick_place","Published collision object " << block_name);
-  }
-
-  void publishCollisionWall()
-  {
-    moveit_msgs::CollisionObject collision_obj;
-    collision_obj.header.stamp = ros::Time::now();
-    collision_obj.header.frame_id = BASE_LINK;
-    collision_obj.operation = moveit_msgs::CollisionObject::ADD;
-    collision_obj.primitives.resize(1);
-    collision_obj.primitives[0].type = shape_msgs::SolidPrimitive::BOX;
-    collision_obj.primitives[0].dimensions.resize(shape_tools::SolidPrimitiveDimCount<shape_msgs::SolidPrimitive::BOX>::value);
-
-    geometry_msgs::Pose rec_pose;
-
-    // ----------------------------------------------------------------------------------
-    // Name
-    collision_obj.id = WALL_NAME;
-
-    double depth = 0.1;
-    double width = 0.95;
-    double height = 2.0;
-
-    // Position
-    rec_pose.position.x = -0.6;
-    rec_pose.position.y = 0;
-    rec_pose.position.z = height / 2 + FLOOR_TO_BASE_HEIGHT;
-
-    // Orientation
-    double angle = 0; // M_PI / 2;
-
-    // Size
-    collision_obj.primitives[0].dimensions[shape_msgs::SolidPrimitive::BOX_X] = depth;
-    collision_obj.primitives[0].dimensions[shape_msgs::SolidPrimitive::BOX_Y] = width;
-    collision_obj.primitives[0].dimensions[shape_msgs::SolidPrimitive::BOX_Z] = height;
-    // ----------------------------------------------------------------------------------
-
-    Eigen::Quaterniond quat(Eigen::AngleAxis<double>(double(angle), Eigen::Vector3d::UnitZ()));
-    rec_pose.orientation.x = quat.x();
-    rec_pose.orientation.y = quat.y();
-    rec_pose.orientation.z = quat.z();
-    rec_pose.orientation.w = quat.w();
-
-    collision_obj.primitive_poses.resize(1);
-    collision_obj.primitive_poses[0] = rec_pose;
-
-    pub_collision_obj_.publish(collision_obj);
-  }
-
-  void publishCollisionTable()
-  {
-    geometry_msgs::Pose table_pose;
-
-    // Position
-    table_pose.position.x = TABLE_X;
-    table_pose.position.y = TABLE_Y;
-    table_pose.position.z = TABLE_Z;
-
-    // Orientation
-    double angle = 0; // M_PI / 2;
-    Eigen::Quaterniond quat(Eigen::AngleAxis<double>(double(angle), Eigen::Vector3d::UnitZ()));
-    table_pose.orientation.x = quat.x();
-    table_pose.orientation.y = quat.y();
-    table_pose.orientation.z = quat.z();
-    table_pose.orientation.w = quat.w();
-
-    moveit_msgs::CollisionObject collision_obj;
-    collision_obj.header.stamp = ros::Time::now();
-    collision_obj.header.frame_id = BASE_LINK;
-    collision_obj.id = SUPPORT_SURFACE_NAME;
-    collision_obj.operation = moveit_msgs::CollisionObject::ADD;
-    collision_obj.primitives.resize(1);
-    collision_obj.primitives[0].type = shape_msgs::SolidPrimitive::BOX;
-    collision_obj.primitives[0].dimensions.resize(shape_tools::SolidPrimitiveDimCount<shape_msgs::SolidPrimitive::BOX>::value);
-
-    // Size
-    collision_obj.primitives[0].dimensions[shape_msgs::SolidPrimitive::BOX_X] = TABLE_DEPTH;
-    collision_obj.primitives[0].dimensions[shape_msgs::SolidPrimitive::BOX_Y] = TABLE_WIDTH;
-    collision_obj.primitives[0].dimensions[shape_msgs::SolidPrimitive::BOX_Z] = TABLE_HEIGHT;
-
-    collision_obj.primitive_poses.resize(1);
-    collision_obj.primitive_poses[0] = table_pose;
-
-    pub_collision_obj_.publish(collision_obj);
-  }
-
-  void publishCollisionTableSmall()
-  {
-    geometry_msgs::Pose table_pose;
-
-    // Position
-    table_pose.position.x = 0.0;
-    table_pose.position.y = -0.55;
-    table_pose.position.z = -0.68;
-
-    // Orientation
-    double angle = 0; // M_PI / 2;
-    Eigen::Quaterniond quat(Eigen::AngleAxis<double>(double(angle), Eigen::Vector3d::UnitZ()));
-    table_pose.orientation.x = quat.x();
-    table_pose.orientation.y = quat.y();
-    table_pose.orientation.z = quat.z();
-    table_pose.orientation.w = quat.w();
-
-    moveit_msgs::CollisionObject collision_obj;
-    collision_obj.header.stamp = ros::Time::now();
-    collision_obj.header.frame_id = BASE_LINK;
-    collision_obj.id = SUPPORT_SURFACE_NAME2;
-    collision_obj.operation = moveit_msgs::CollisionObject::ADD;
-    collision_obj.primitives.resize(1);
-    collision_obj.primitives[0].type = shape_msgs::SolidPrimitive::BOX;
-    collision_obj.primitives[0].dimensions.resize(shape_tools::SolidPrimitiveDimCount<shape_msgs::SolidPrimitive::BOX>::value);
-
-    // Size
-    collision_obj.primitives[0].dimensions[shape_msgs::SolidPrimitive::BOX_X] = .3;
-    collision_obj.primitives[0].dimensions[shape_msgs::SolidPrimitive::BOX_Y] = .3;
-    collision_obj.primitives[0].dimensions[shape_msgs::SolidPrimitive::BOX_Z] = .3;
-
-    collision_obj.primitive_poses.resize(1);
-    collision_obj.primitive_poses[0] = table_pose;
-
-    pub_collision_obj_.publish(collision_obj);
   }
 
   bool pick(const geometry_msgs::Pose& block_pose, std::string block_name)
@@ -525,7 +376,7 @@ public:
     block_grasp_generator_->generateGrasps( block_pose, grasp_data_, grasps );
 
     // Prevent collision with table
-    group_->setSupportSurfaceName(SUPPORT_SURFACE_NAME2);
+    group_->setSupportSurfaceName(SUPPORT_SURFACE3_NAME);
 
     //ROS_WARN_STREAM_NAMED("","testing grasp 1:\n" << grasps[0]);
     //ros::Duration(100).sleep();
@@ -540,7 +391,7 @@ public:
   // Step through the pick steps one by one
   bool pickDebug(std::string block_name, const std::vector<manipulation_msgs::Grasp>& grasps)
   {
-    
+
 
   }
 
@@ -572,58 +423,58 @@ public:
 
       // Giggle block around the area
       /*
-      for (double z = -0.05; z < 0.05; z += 0.05)
-      {
+        for (double z = -0.05; z < 0.05; z += 0.05)
+        {
         for (double x = -0.05; x < 0.05; x += 0.05)
         {
-          for (double y = -0.05; y < 0.05; y += 0.05)
-          {
+        for (double y = -0.05; y < 0.05; y += 0.05)
+        {
       */
-            // Create new place location
-            manipulation_msgs::PlaceLocation place_loc;
+      // Create new place location
+      manipulation_msgs::PlaceLocation place_loc;
 
-            place_loc.place_pose = pose_stamped;
+      place_loc.place_pose = pose_stamped;
 
-            /*
-            place_loc.place_pose.pose.position.x += x;
-            place_loc.place_pose.pose.position.y += y;
-            place_loc.place_pose.pose.position.z += z;
-            */
+      /*
+        place_loc.place_pose.pose.position.x += x;
+        place_loc.place_pose.pose.position.y += y;
+        place_loc.place_pose.pose.position.z += z;
+      */
 
-            //ROS_INFO_STREAM_NAMED("temp","pose:\n" << place_loc.place_pose);
-            rviz_tools_->publishBlock( place_loc.place_pose.pose, BLOCK_SIZE, true );
+      //ROS_INFO_STREAM_NAMED("temp","pose:\n" << place_loc.place_pose);
+      rviz_tools_->publishBlock( place_loc.place_pose.pose, BLOCK_SIZE, true );
 
-            // Approach
-            manipulation_msgs::GripperTranslation gripper_approach;
-            gripper_approach.direction.header.stamp = ros::Time::now();
-            gripper_approach.desired_distance = grasp_data_.approach_retreat_desired_dist_; // The distance the origin of a robot link needs to travel
-            gripper_approach.min_distance = grasp_data_.approach_retreat_min_dist_; // half of the desired? Untested.
-            gripper_approach.direction.header.frame_id = grasp_data_.base_link_;
-            gripper_approach.direction.vector.x = 0;
-            gripper_approach.direction.vector.y = 0;
-            gripper_approach.direction.vector.z = -1; // Approach direction (negative z axis)  // TODO: document this assumption
-            place_loc.approach = gripper_approach;
+      // Approach
+      manipulation_msgs::GripperTranslation gripper_approach;
+      gripper_approach.direction.header.stamp = ros::Time::now();
+      gripper_approach.desired_distance = grasp_data_.approach_retreat_desired_dist_; // The distance the origin of a robot link needs to travel
+      gripper_approach.min_distance = grasp_data_.approach_retreat_min_dist_; // half of the desired? Untested.
+      gripper_approach.direction.header.frame_id = grasp_data_.base_link_;
+      gripper_approach.direction.vector.x = 0;
+      gripper_approach.direction.vector.y = 0;
+      gripper_approach.direction.vector.z = -1; // Approach direction (negative z axis)  // TODO: document this assumption
+      place_loc.approach = gripper_approach;
 
-            // Retreat
-            manipulation_msgs::GripperTranslation gripper_retreat;
-            gripper_retreat.direction.header.stamp = ros::Time::now();
-            gripper_retreat.desired_distance = grasp_data_.approach_retreat_desired_dist_; // The distance the origin of a robot link needs to travel
-            gripper_retreat.min_distance = grasp_data_.approach_retreat_min_dist_; // half of the desired? Untested.
-            gripper_retreat.direction.header.frame_id = grasp_data_.base_link_;
-            gripper_retreat.direction.vector.x = 0;
-            gripper_retreat.direction.vector.y = 0;
-            gripper_retreat.direction.vector.z = 1; // Retreat direction (pos z axis)
-            place_loc.retreat = gripper_retreat;
+      // Retreat
+      manipulation_msgs::GripperTranslation gripper_retreat;
+      gripper_retreat.direction.header.stamp = ros::Time::now();
+      gripper_retreat.desired_distance = grasp_data_.approach_retreat_desired_dist_; // The distance the origin of a robot link needs to travel
+      gripper_retreat.min_distance = grasp_data_.approach_retreat_min_dist_; // half of the desired? Untested.
+      gripper_retreat.direction.header.frame_id = grasp_data_.base_link_;
+      gripper_retreat.direction.vector.x = 0;
+      gripper_retreat.direction.vector.y = 0;
+      gripper_retreat.direction.vector.z = 1; // Retreat direction (pos z axis)
+      place_loc.retreat = gripper_retreat;
 
-            // Post place posture - use same as pre-grasp posture (the OPEN command)
-            place_loc.post_place_posture = grasp_data_.pre_grasp_posture_;
+      // Post place posture - use same as pre-grasp posture (the OPEN command)
+      place_loc.post_place_posture = grasp_data_.pre_grasp_posture_;
 
-            place_locations.push_back(place_loc);
-            /*
-          }
+      place_locations.push_back(place_loc);
+      /*
         }
-      }
-            */
+        }
+        }
+      */
     }
 
     /*
@@ -669,63 +520,13 @@ public:
     */
 
     // Prevent collision with table
-    group_->setSupportSurfaceName(SUPPORT_SURFACE_NAME);
+    group_->setSupportSurfaceName(SUPPORT_SURFACE3_NAME);
 
     group_->setPlannerId("RRTConnectkConfigDefault");
 
     return group_->place(block_name, place_locations);
   }
 
-  void cleanupACO(const std::string& name)
-  {
-    // Clean up old attached collision object
-    moveit_msgs::AttachedCollisionObject aco;
-    aco.object.header.stamp = ros::Time::now();
-    aco.object.header.frame_id = BASE_LINK;
-
-    //aco.object.id = name;
-    aco.object.operation = moveit_msgs::CollisionObject::REMOVE;
-
-    aco.link_name = EE_PARENT_LINK;
-
-    ros::WallDuration(0.1).sleep();
-    pub_attach_collision_obj_.publish(aco);
-    ros::WallDuration(0.1).sleep();
-    pub_attach_collision_obj_.publish(aco);
-
-  }
-  void attachCO(const std::string& name)
-  {
-    // Clean up old attached collision object
-    moveit_msgs::AttachedCollisionObject aco;
-    aco.object.header.stamp = ros::Time::now();
-    aco.object.header.frame_id = BASE_LINK;
-
-    aco.object.id = name;
-    aco.object.operation = moveit_msgs::CollisionObject::ADD;
-
-    // Link to attach the object to
-    aco.link_name = EE_PARENT_LINK;
-
-    ros::WallDuration(0.1).sleep();
-    pub_attach_collision_obj_.publish(aco);
-    ros::WallDuration(0.1).sleep();
-    pub_attach_collision_obj_.publish(aco);
-
-  }
-  void cleanupCO(std::string name)
-  {
-    // Clean up old collision objects
-    moveit_msgs::CollisionObject co;
-    co.header.stamp = ros::Time::now();
-    co.header.frame_id = BASE_LINK;
-    co.id = name;
-    co.operation = moveit_msgs::CollisionObject::REMOVE;
-    ros::WallDuration(0.1).sleep();
-    pub_collision_obj_.publish(co);
-    ros::WallDuration(0.1).sleep();
-    pub_collision_obj_.publish(co);
-  }
 };
 
 } //namespace
