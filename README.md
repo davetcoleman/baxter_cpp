@@ -20,6 +20,10 @@ NOTE: This is the ROS Hydro readme version. See groovy-devel branch for ROS Groo
     catkin_init_workspace
 ```
 
+* Setup Github (recommended)
+
+    The git@github.com urls, below, only work if you have [Setup Github](https://help.github.com/articles/set-up-git) and generated [SSH Keys for Github](https://help.github.com/articles/generating-ssh-keys). Otherwise, change the below URLS to say "https://github.com/".
+
 * Checkout this repo
 
 ```
@@ -37,7 +41,7 @@ NOTE: This is the ROS Hydro readme version. See groovy-devel branch for ROS Groo
 
 * Disable duplicate packages
 
-There is currently a duplication of packages in sdk-examples and baxter_common that must be fixed manually. This issue should be fixed in Rethink's next release of their SDK:
+    There is currently a duplication of packages in sdk-examples and baxter_common that must be fixed manually. This issue should be fixed in Rethink's next release of their SDK:
 
 ```
     cd ~/baxter_ws/
