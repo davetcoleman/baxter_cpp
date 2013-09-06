@@ -3,7 +3,7 @@ baxter
 
 Unofficial Baxter packages that add-on to the Rethink SDK. Currently it contains Gazebo simulation and pick and place MoveIt code for Baxter
 
-THIS README IS SPECIFIC FOR HYDRO, SEE groovy-devel BRANCH FOR GROOVY INSTRUCTIONS
+NOTE: This is the ROS Hydro readme version. See groovy-devel branch for ROS Groovy instructions.
 
 ## Prequisites
 
