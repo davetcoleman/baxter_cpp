@@ -3,11 +3,11 @@ baxter
 
 Unofficial Baxter packages that add-on to the Rethink SDK. Currently it contains Gazebo simulation and pick and place MoveIt code for Baxter
 
-THIS README IS SPECIFIC FOR HYDRO, SEE groovy-devel BRANCH FOR GROOVY INSTRUCTIONS
+NOTE: This is the ROS Hydro readme version. See groovy-devel branch for ROS Groovy instructions.
 
 ## Prequisites
 
- * ROS Hydro
+ * [ROS Hydro](http://wiki.ros.org/ROS/Installation)
  * Access to the private Rethink [sdk-examples](https://github.com/RethinkRobotics/sdk-examples) repository - we are using the baxter_interface and head_control packages from the SDK
 
 ## Installation
@@ -15,10 +15,14 @@ THIS README IS SPECIFIC FOR HYDRO, SEE groovy-devel BRANCH FOR GROOVY INSTRUCTIO
 * Create a catkin workspace and cd into it:
 
 ```
-    mkdir -p ~/catkin_ws/src
-    cd ~/catkin_ws/src
+    mkdir -p ~/baxter_ws/src
+    cd ~/baxter_ws/src
     catkin_init_workspace
 ```
+
+* Setup Github (recommended)
+
+    The git@github.com urls, below, only work if you have [Setup Github](https://help.github.com/articles/set-up-git) and generated [SSH Keys for Github](https://help.github.com/articles/generating-ssh-keys). Otherwise, change the below URLS to say "https://github.com/".
 
 * Checkout this repo
 
@@ -35,10 +39,19 @@ THIS README IS SPECIFIC FOR HYDRO, SEE groovy-devel BRANCH FOR GROOVY INSTRUCTIO
     git clone git@github.com:ros-controls/ros_controllers -b velocity_position_controller
 ```
 
+* Disable duplicate packages
+
+    There is currently a duplication of packages in sdk-examples and baxter_common that must be fixed manually. This issue should be fixed in Rethink's next release of their SDK:
+
+```
+    cd ~/baxter_ws/
+    touch src/sdk-examples/baxter_description/CATKIN_IGNORE
+    touch src/sdk-examples/baxter_msgs/CATKIN_IGNORE
+```
+
 * Install dependencies
 
 ```
-    cd ~/catkin_ws/
     rosdep install --from-paths . --ignore-src --rosdistro hydro -y
 ```
 
@@ -48,18 +61,34 @@ THIS README IS SPECIFIC FOR HYDRO, SEE groovy-devel BRANCH FOR GROOVY INSTRUCTIO
     catkin_make
 ```
 
+* Add setup.bash to your .bashrc (recommended)
+
+```
+    echo 'source ~/baxter_ws/devel/setup.bash' >> ~/.bashrc
+```
+
 ## Bringup Baxter
 
 ### Hardware
 
- * Turn on baxter
- * Enable robot:
+ * Ensure you have the correct ROS_MASTER_URI exported, this depends on your robot serial number:
+   ```
+   export ROS_MASTER_URI=http://011305P0009.local:11311
+   ```
 
-    ```
-    rosrun tools enable_robot.py -e
-    ```
+ * Turn on baxter
+
+ * Enable robot:
+   ```
+   rosrun tools enable_robot.py -e
+   ```
 
 ### Simulation 
+
+ * Ensure you have the correct ROS_MASTER_URI exported:
+   ```
+   export ROS_MASTER_URI=http://localhost:11311
+   ```
 
  * Start simulation with controllers:
    ```
