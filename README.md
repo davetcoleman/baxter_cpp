@@ -7,7 +7,7 @@ NOTE: This is the ROS Hydro readme version. See groovy-devel branch for ROS Groo
 
 ## Prequisites
 
- * ROS Hydro
+ * [ROS Hydro](http://wiki.ros.org/ROS/Installation)
  * Access to the private Rethink [sdk-examples](https://github.com/RethinkRobotics/sdk-examples) repository - we are using the baxter_interface and head_control packages from the SDK
 
 ## Installation
@@ -37,7 +37,7 @@ NOTE: This is the ROS Hydro readme version. See groovy-devel branch for ROS Groo
 
 * Disable duplicate packages
 
-There is currently a duplication of packages in sdk-examples and baxter_common that must be fixed manually. This issue should be fixed in Rethink's next release of their SDK
+There is currently a duplication of packages in sdk-examples and baxter_common that must be fixed manually. This issue should be fixed in Rethink's next release of their SDK:
 
 ```
     cd ~/baxter_ws/
