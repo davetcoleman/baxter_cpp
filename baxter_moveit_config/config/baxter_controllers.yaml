@@ -1,6 +1,6 @@
 controller_list:
   - name: /sdk/robot/limb/right
-    ns: follow_joint_trajectory_hydro
+    ns: follow_joint_trajectory
     type: FollowJointTrajectory
     default: true
     joints:
@@ -12,7 +12,7 @@ controller_list:
       - right_w1
       - right_w2
   - name: /sdk/robot/limb/left
-    ns: follow_joint_trajectory_hydro	
+    ns: follow_joint_trajectory
     type: FollowJointTrajectory
     default: true
     joints:

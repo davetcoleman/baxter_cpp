@@ -128,8 +128,8 @@ public:
     {
     case baxter_msgs::JointCommandMode::POSITION:
       start_controllers.push_back(side+"_joint_position_controller");
-      stop_controllers.push_back(side+"_joint_effort_controller");
-      //stop_controllers.push_back(side+"_joint_velocity_controller");
+      stop_controllers.push_back(side+"_joint_velocity_controller");
+      //stop_controllers.push_back(side+"_joint_effort_controller");
       break;
     case baxter_msgs::JointCommandMode::VELOCITY:
       start_controllers.push_back(side+"_joint_velocity_controller");
