@@ -96,7 +96,23 @@ A URDF file must exist for this robot as well, where the joints and the links th
     <joint name="right_w1" value="0.25310682971191406" />
     <joint name="right_w2" value="-0.18867963669433596" />
   </group_state>
-  <group_state name="both_compact" group="both_arms">
+<group_state name="both_compact" group="both_arms">
+  <joint name="left_s0" value="0.491257" />
+  <joint name="left_s1" value="0.0594418" />
+  <joint name="left_e0" value="0.0368155" />
+  <joint name="left_e1" value="1.12748" />
+  <joint name="left_w0" value="0.126553" />
+  <joint name="left_w1" value="0.301427" />
+  <joint name="left_w2" value="-0.0479369" />
+  <joint name="right_s0" value="-0.393466" />
+  <joint name="right_s1" value="-0.0264612" />
+  <joint name="right_e0" value="0.0475534" />
+  <joint name="right_e1" value="1.55967" />
+  <joint name="right_w0" value="-3.00315" />
+  <joint name="right_w1" value="-0.0471699" />
+  <joint name="right_w2" value="-1.01511" />
+</group_state>
+  <group_state name="both_compact_bad" group="both_arms">
     <joint name="left_s0" value="0.562587" />
     <joint name="left_s1" value="0.0651942" />
     <joint name="left_e0" value="-0.0329806" />
@@ -145,6 +161,12 @@ A URDF file must exist for this robot as well, where the joints and the links th
   <disable_collisions link1="head" link2="left_gripper" reason="Never" />
   <disable_collisions link1="head" link2="left_hand_camera" reason="Never" />
   <disable_collisions link1="head" link2="left_hand_range" reason="Never" />
+
+  <!-- I'm not sure these are a good idea to disable -->
+  <disable_collisions link1="right_gripper_l_finger" link2="pedestal" reason="Never" />
+  <disable_collisions link1="right_gripper_r_finger" link2="pedestal" reason="Never" />
+  <disable_collisions link1="left_gripper_l_finger" link2="pedestal" reason="Never" />
+  <disable_collisions link1="left_gripper_r_finger" link2="pedestal" reason="Never" />
 
   <disable_collisions link1="head" link2="right_gripper_r_finger" reason="Never" />
   <disable_collisions link1="left_hand_range" link2="right_gripper_l_finger" reason="Never" />

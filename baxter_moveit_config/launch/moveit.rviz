@@ -311,8 +311,8 @@ Visualization Manager:
         Goal State Color: 250; 128; 0
         Interactive Marker Size: 0.3
         Joint Violation Color: 255; 0; 255
-        Planning Group: right_arm
-        Query Goal State: false
+        Planning Group: both_arms
+        Query Goal State: true
         Query Start State: false
         Show Workspace: false
         Start State Alpha: 1
@@ -591,7 +591,7 @@ Visualization Manager:
       Marker Topic: /end_effector_marker
       Name: EndEffector
       Namespaces:
-        {}
+        Block: true
       Queue Size: 100
       Value: true
     - Arrow Length: 0.1
@@ -614,7 +614,7 @@ Visualization Manager:
       Marker Topic: /end_effector_marker
       Name: EE Grasp Poses
       Namespaces:
-        {}
+        Block: true
       Queue Size: 100
       Value: true
     - Class: rviz/MarkerArray
@@ -648,17 +648,17 @@ Visualization Manager:
   Views:
     Current:
       Class: rviz/XYOrbit
-      Distance: 3.99953
+      Distance: 2.72557
       Focal Point:
-        X: 0.351499
-        Y: -0.0101539
+        X: 0.573586
+        Y: 0.219982
         Z: -7.98216e-07
       Name: Current View
       Near Clip Distance: 0.01
-      Pitch: 0.375398
+      Pitch: 0.850398
       Target Frame: base_link
       Value: XYOrbit (rviz)
-      Yaw: 6.27359
+      Yaw: 0.495404
     Saved: ~
 Window Geometry:
   Displays:

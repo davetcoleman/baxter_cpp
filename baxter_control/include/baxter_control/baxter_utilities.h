@@ -58,6 +58,7 @@ static const std::string BASE_LINK = "base"; //"/base";
 static const std::string EE_GROUP = "right_hand";
 static const std::string EE_JOINT = "right_gripper_l_finger_joint";
 static const std::string EE_PARENT_LINK = "right_wrist";
+static const std::string NEUTRAL_POSE_NAME = "both_compact";
 
 
 class BaxterUtilities
@@ -78,7 +79,7 @@ public:
   {
     ros::NodeHandle nh;
 
-    move_group_.reset(new move_group_interface::MoveGroup("both_arms"));
+    move_group_.reset(new move_group_interface::MoveGroup(PLANNING_GROUP_NAME));
 
     // ---------------------------------------------------------------------------------------------
     // Advertise services
@@ -190,7 +191,7 @@ public:
     //std::string group_name = move_group_->getName();
 
     // Create MoveGroup for both arms
-    move_group_.reset(new move_group_interface::MoveGroup("both_arms"));
+    move_group_.reset(new move_group_interface::MoveGroup(PLANNING_GROUP_NAME));
   }
 
   bool enableBaxter()
@@ -250,7 +251,7 @@ public:
 
   bool positionBaxterNeutral()
   {
-    return sendToPose("both_neutral");
+    return sendToPose(NEUTRAL_POSE_NAME);
   }
 
   /**
@@ -268,7 +269,7 @@ public:
     bool result = move_group_->move();
 
     if( !result )
-      ROS_ERROR_STREAM_NAMED("utilities","Failed to send Baxter to pose " << pose_name);
+      ROS_ERROR_STREAM_NAMED("utilities","Failed to send Baxter to pose '" << pose_name << "'");
 
     return result;
   }

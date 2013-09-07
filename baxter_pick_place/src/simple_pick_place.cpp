@@ -147,11 +147,6 @@ public:
     // Create the walls and tables
     createEnvironment(rviz_tools_);
 
-
-      // Send Baxter to neutral position
-      if( !baxter_util_.positionBaxterNeutral() )
-        return false;
-
     // --------------------------------------------------------------------------------------------------------
     // Start pick and place
     while(ros::ok())
@@ -258,8 +253,6 @@ public:
     start_block.pose.orientation.y = quat.y();
     start_block.pose.orientation.z = quat.z();
     start_block.pose.orientation.w = quat.w();
-
-    rviz_tools_->publishBlock( start_block.pose, BLOCK_SIZE, true );
 
     return start_block;
   }
