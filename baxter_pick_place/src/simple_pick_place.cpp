@@ -147,60 +147,59 @@ public:
     // Create the walls and tables
     createEnvironment(rviz_tools_);
 
+    std::size_t block_id = 0; // \todo temp
+
     // --------------------------------------------------------------------------------------------------------
     // Start pick and place
     while(ros::ok())
     {
-      // --------------------------------------------------------------------------------------------
-      // Loop through all blocks
-      for (std::size_t i = 0; i < start_blocks.size(); ++i)
-      {
-        // Remove attached objects
-        rviz_tools_->cleanupACO(start_blocks[i].name);
-
-        // Remove collision objects
-        rviz_tools_->cleanupCO(start_blocks[i].name);
-
-        // Add a new block that is to be moved
-        rviz_tools_->publishCollisionBlock(start_blocks[i].pose, start_blocks[i].name, BLOCK_SIZE);
-      }
-
-      // Publish goal block location
-      rviz_tools_->publishBlock( goal_block_pose, BLOCK_SIZE, true );
-
       // -------------------------------------------------------------------------------------
       // Send Baxter to neutral position
-      if( !baxter_util_.positionBaxterNeutral() )
-        return false;
+      //if( !baxter_util_.positionBaxterNeutral() )
+      //  return false;
 
-      std::size_t block_id = 1; // \todo temp
-
-      if(true)
+      // -------------------------------------------------------------------------------------
+      // Pick block
+      
+      bool foundBlock = false;
+      while(!foundBlock && ros::ok())
       {
-        bool foundBlock = false;
-        while(!foundBlock && ros::ok())
+        // --------------------------------------------------------------------------------------------
+        // Re-add all blocks
+        for (std::size_t i = 0; i < start_blocks.size(); ++i)
         {
-          ROS_INFO_STREAM_NAMED("pick_place","Attempting to pick '" << start_blocks[block_id].name << "'");
+          // Remove attached objects
+          rviz_tools_->cleanupACO(start_blocks[i].name);
 
-          if( !pick(start_blocks[block_id].pose, start_blocks[block_id].name) )
-          {
-            ROS_ERROR_STREAM_NAMED("simple_pick_place","Pick failed. Retrying.");
-          }
-          else
-          {
-            ROS_INFO_STREAM_NAMED("simple_pick_place","Done with pick ---------------------------");
-            foundBlock = true;
-          }
+          // Remove collision objects
+          rviz_tools_->cleanupCO(start_blocks[i].name);
+
+          // Add a new block that is to be moved
+          rviz_tools_->publishCollisionBlock(start_blocks[i].pose, start_blocks[i].name, BLOCK_SIZE);
         }
 
-        ROS_INFO_STREAM_NAMED("simple_pick_place","Waiting to put...");
-        ros::Duration(0.5).sleep();
+        // Publish goal block location
+        rviz_tools_->publishBlock( goal_block_pose, BLOCK_SIZE, true );
+
+        // -------------------------------------------------------------------------------------
+        // Start pick
+        ROS_INFO_STREAM_NAMED("pick_place","Attempting to pick '" << start_blocks[block_id].name << "'");
+
+        if( !pick(start_blocks[block_id].pose, start_blocks[block_id].name) )
+        {
+          ROS_ERROR_STREAM_NAMED("simple_pick_place","Pick failed. Press any key to retry.");
+          std::cin.ignore();
+        }
+        else
+        {
+          ROS_INFO_STREAM_NAMED("simple_pick_place","Done with pick ---------------------------");
+          foundBlock = true;
+        }
       }
-      else
-      {
-        // Fake the pick operation by just attaching the collision object
-        rviz_tools_->attachCO(start_blocks[block_id].name);
-      }
+
+      // -------------------------------------------------------------------------------------
+      ROS_INFO_STREAM_NAMED("simple_pick_place","Waiting to put...");
+      ros::Duration(0.5).sleep();
 
       if(true)
       {
@@ -210,8 +209,8 @@ public:
         {
           if( !place(goal_block_pose, start_blocks[block_id].name) )
           {
-            ROS_ERROR_STREAM_NAMED("simple_pick_place","Place failed.");
-            putBlock = true; // \todo remove this for demo, is wrong
+            ROS_ERROR_STREAM_NAMED("simple_pick_place","Place failed. Press any key to retry.");
+            std::cin.ignore();
           }
           else
           {
@@ -222,14 +221,17 @@ public:
       }
 
       ROS_INFO_STREAM_NAMED("simple_pick_place","Pick and place cycle complete ========================================= \n");
-      ros::Duration(1.0).sleep();
+      ROS_INFO_STREAM_NAMED("simple_pick_place","Press any key to continue:");
+      std::cin.ignore();
 
+      // Go for next block or loop
+      block_id++;
+      if( block_id > 2 )
+        block_id = 0;
 
       // Move to gravity neutral position
-      if( !baxter_util_.positionBaxterNeutral() )
-        return false;
-
-      break; // \todo remove for demo
+      //if( !baxter_util_.positionBaxterNeutral() )
+      //  return false;
     }
 
     // Everything worked!
@@ -332,35 +334,6 @@ public:
 
     // Debug
     block_grasp_generator::BlockGraspGenerator::printBlockGraspData(grasp_data_);
-  }
-
-  double fRand(double fMin, double fMax)
-  {
-    double f = (double)rand() / RAND_MAX;
-    return fMin + f * (fMax - fMin);
-  }
-
-  void generateRandomPose(geometry_msgs::Pose& block_pose)
-  {
-    // Position
-    /*
-      block_pose.position.x = fRand(0.7,TABLE_DEPTH);
-      block_pose.position.y = fRand(-TABLE_WIDTH/2,TABLE_WIDTH/2);
-      block_pose.position.z = TABLE_Z + TABLE_HEIGHT / 2.0 + BLOCK_SIZE / 2.0;
-    */
-
-    // Position
-    block_pose.position.x = fRand(0.7,TABLE_DEPTH);
-    block_pose.position.y = fRand(-TABLE_WIDTH/2,-0.1);
-    block_pose.position.z = TABLE_HEIGHT / 2.0 + BLOCK_SIZE / 2.0; // todo this is broken
-
-    // Orientation
-    double angle = M_PI * fRand(0.1,1);
-    Eigen::Quaterniond quat(Eigen::AngleAxis<double>(double(angle), Eigen::Vector3d::UnitZ()));
-    block_pose.orientation.x = quat.x();
-    block_pose.orientation.y = quat.y();
-    block_pose.orientation.z = quat.z();
-    block_pose.orientation.w = quat.w();
   }
 
   bool pick(const geometry_msgs::Pose& block_pose, std::string block_name)
