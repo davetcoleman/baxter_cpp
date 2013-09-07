@@ -113,6 +113,8 @@ Works with simulation or hardware:
 
 ## Pick and place demo
 
+Still under development.
+
    ```
    roslaunch baxter_pick_place baxter_pick_place.launch
    ```
