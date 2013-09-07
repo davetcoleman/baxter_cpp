@@ -107,8 +107,6 @@ NOTE: This is the ROS Hydro readme version. See groovy-devel branch for ROS Groo
 
 Works with simulation or hardware:
 
- * Start MoveIt:
-
    ```
    roslaunch baxter_moveit_config baxter_bringup.launch
    ```
