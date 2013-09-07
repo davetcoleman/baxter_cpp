@@ -9,6 +9,7 @@ NOTE: This is the ROS Hydro readme version. See groovy-devel branch for ROS Groo
 
  * [ROS Hydro](http://wiki.ros.org/ROS/Installation)
  * Access to the private Rethink [sdk-examples](https://github.com/RethinkRobotics/sdk-examples) repository - we are using the baxter_interface and head_control packages from the SDK
+ * Setup Github (recommended) - the git@github.com urls, below, only work if you have [Setup Github](https://help.github.com/articles/set-up-git) and generated [SSH Keys for Github](https://help.github.com/articles/generating-ssh-keys). Otherwise, change the below URLS to say "https://github.com/".
 
 ## Installation
 
@@ -19,10 +20,6 @@ NOTE: This is the ROS Hydro readme version. See groovy-devel branch for ROS Groo
     cd ~/baxter_ws/src
     catkin_init_workspace
 ```
-
-* Setup Github (recommended)
-
-    The git@github.com urls, below, only work if you have [Setup Github](https://help.github.com/articles/set-up-git) and generated [SSH Keys for Github](https://help.github.com/articles/generating-ssh-keys). Otherwise, change the below URLS to say "https://github.com/".
 
 * Checkout this repo
 
