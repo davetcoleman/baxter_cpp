@@ -78,34 +78,59 @@ public:
     // Get from either gripper if we are in simulation
     in_simulation_ = right_gripper.isInSimulation();
 
-    // Gazebo publishes a joint state for the gripper, but Baxter does not do so in the right format
-    if( !in_simulation_ )
-    {
-      joint_state_topic_ = nh_.advertise<sensor_msgs::JointState>("/robot/joint_states",10);
-
-      // Set publish frequency
-      ros::NodeHandle nh_tilde("~");
-      double publish_freq;
-      nh_tilde.param("publish_frequency", publish_freq, 50.0);
-      ros::Duration publish_interval = ros::Duration(1.0/std::max(publish_freq,1.0));
-
-      // trigger to publish fixed joints
-      timer_ = nh_tilde.createTimer(publish_interval, &GripperActionServer::update, this);
-
-    }
+    // Wait for both calibrations to finish
+    ros::Duration(2.0).sleep();
 
     // Run optional test
     if(run_test)
-    {
-      right_gripper.runTest();
-      left_gripper.runTest();
-    }
+      runTest();
 
-    // Announce state
-    ROS_INFO_STREAM("Baxter Gripper Action Servers ready.");
+    // Gazebo publishes a joint state for the gripper, but Baxter does not do so in the right format
+    if( in_simulation_ )
+      return;
+
+    // Publish joint_states
+    joint_state_topic_ = nh_.advertise<sensor_msgs::JointState>("/robot/joint_states",10);
+
+    // Set publish frequency
+    ros::NodeHandle nh_tilde("~");
+    double publish_freq = 50; // hz
+    nh_tilde.param("publish_frequency", publish_freq, 50.0);
+
+    ros::Rate rate(publish_freq); // hz
+    while (ros::ok())
+    {
+      update();
+      rate.sleep();
+    }
   }
 
-  void update(const ros::TimerEvent& e)
+  void runTest()
+  {
+    // Error check gripper
+    left_gripper.hasError();
+    right_gripper.hasError();
+
+    bool open = false;
+    while(ros::ok())
+    {
+      if(open)
+      {
+        left_gripper.openGripper();
+        right_gripper.openGripper();
+        open = false;
+      }
+      else
+      {
+        left_gripper.closeGripper();
+        right_gripper.closeGripper();
+        open = true;
+      }
+      ros::Duration(2.0).sleep();
+    }
+  }
+
+  void update()
   {
     // Gazebo publishes a joint state for the gripper, but Baxter does not do so in the right format
     if( in_simulation_ )

@@ -55,8 +55,8 @@ static const std::string GRIPPER_COMMAND_ACTION_TOPIC="baxter_gripper_action";
 static const std::string BASE_LINK = "base"; //"/base";
 
 // Copied from URDF \todo read straight from URDF?
-static const double GRIPPER_FINGER_JOINT_UPPER = 0.0095; //open
-static const double GRIPPER_FINGER_JOINT_LOWER = -0.0125; //close
+static const double FINGER_JOINT_UPPER = 0.0095; //open
+static const double FINGER_JOINT_LOWER = -0.0125; //close
 
 class ElectricParallelGripper
 {
@@ -89,7 +89,8 @@ protected:
   ros::Time gripper_state_timestamp_;
 
   bool in_simulation_; // Using Gazebo or not
-  double gripper_finger_joint_stroke_; // cache the diff between upper and lower limits
+  double finger_joint_stroke_; // cache the diff between upper and lower limits
+  double finger_joint_midpoint_; // cache the mid point of the joint limits
   std::string arm_name_; // Remember which arm this class is for
 
 public:
@@ -100,7 +101,7 @@ public:
       arm_name_(arm_name),
       in_simulation_(in_simulation)
   {
-    ROS_INFO_STREAM_NAMED(arm_name_, "Baxter " + arm_name + " Gripper Action Server starting");
+    ROS_DEBUG_STREAM_NAMED(arm_name_, "Baxter Electric Parallel Gripper starting " << arm_name_);
 
     // Start the publishers
     calibrate_topic_ = nh_.advertise<std_msgs::Empty>("/robot/limb/" + arm_name_
@@ -169,17 +170,15 @@ public:
     // Cache zero command
     zero_msg_.data = 0;
 
-    // Calculate joint stroke
-    gripper_finger_joint_stroke_ = GRIPPER_FINGER_JOINT_UPPER - GRIPPER_FINGER_JOINT_LOWER;
+    // Calculate joint stroke and midpoint
+    finger_joint_stroke_ = FINGER_JOINT_UPPER - FINGER_JOINT_LOWER;
+    finger_joint_midpoint_ = FINGER_JOINT_LOWER + finger_joint_stroke_ / 2;
 
-    // Reset error just in case
+    // Reset error just in case. This step also includes calibration
     resetError();
 
-    // Calibrate if needed
-    calibrate();
-
     // Announce state
-    ROS_INFO_STREAM_NAMED(arm_name_, "Baxter " + arm_name + " Gripper Action Server ready.");
+    ROS_INFO_STREAM_NAMED(arm_name_, "Baxter Electric Parallel Gripper ready " << arm_name_);
   }
 
   void populateState(sensor_msgs::JointState &state)
@@ -194,7 +193,7 @@ public:
     state.effort.push_back(gripper_state_->force); // \todo remove this mimic joint once moveit is fixed
 
     // Convert 0-100 state to joint position
-    double position = GRIPPER_FINGER_JOINT_LOWER + gripper_finger_joint_stroke_ *
+    double position = FINGER_JOINT_LOWER + finger_joint_stroke_ *
       (gripper_state_->position / 100);
 
     state.position.push_back(position);
@@ -215,8 +214,14 @@ public:
     if( !gripper_state_->calibrated )
     {
       ROS_INFO_STREAM_NAMED(arm_name_,"Calibrating gripper");
+
       calibrate_topic_.publish(empty_msg_);
-      ros::Duration(2.0).sleep();
+      ros::spinOnce();
+      ros::Duration(0.05).sleep();
+
+      calibrate_topic_.publish(empty_msg_);
+      ros::spinOnce();
+      ros::Duration(0.05).sleep();
     }
   }
 
@@ -224,28 +229,6 @@ public:
   {
     gripper_state_ = msg;
     gripper_state_timestamp_ = ros::Time::now();
-  }
-
-  void runTest()
-  {
-    // Error check gripper
-    hasError();
-
-    bool open = true;
-    while(ros::ok())
-    {
-      if(open)
-      {
-        openGripper();
-        open = false;
-      }
-      else
-      {
-        closeGripper();
-        open = true;
-      }
-      ros::Duration(2.0).sleep();
-    }
   }
 
   /**
@@ -314,7 +297,9 @@ public:
 
     bool_msg_.data = true;
     reset_topic_.publish(bool_msg_);
-    ros::Duration(0.5).sleep();
+    ros::Duration(0.05).sleep();
+    reset_topic_.publish(bool_msg_);
+    ros::Duration(0.05).sleep();
 
     calibrate();
   }
@@ -327,7 +312,7 @@ public:
     ROS_INFO_STREAM_NAMED(arm_name_,"Recieved goal for command position: " << position);
 
     // Open command
-    if(position > 50)
+    if(position > finger_joint_midpoint_)
     {
       // Error check gripper
       if( hasError(false) ) // don't check ready bit when opening
