@@ -263,6 +263,11 @@ public:
     {
       ROS_ERROR_STREAM_NAMED(arm_name_,"Gripper " << arm_name_ << " not calibrated. State: \n" << *gripper_state_ );
       action_server_.setAborted(action_result_,"Gripper not calibrated");
+
+      // Attempt to fix error
+      ROS_WARN_STREAM_NAMED(arm_name_,"Attempting to auto fix");
+      resetError();
+
       return true;
     }
     if( checkReady && !gripper_state_->ready )

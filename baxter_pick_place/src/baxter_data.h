@@ -52,8 +52,8 @@ static const std::string EE_JOINT = "right_gripper_l_finger_joint";
 static const std::string EE_PARENT_LINK = "right_wrist";
 
 // Copied from URDF \todo read straight from URDF? 
-static const double GRIPPER_FINGER_JOINT_UPPER = 0.0095; //open
-static const double GRIPPER_FINGER_JOINT_LOWER = -0.0125; //close
+static const double FINGER_JOINT_UPPER = 0.0095; //open
+static const double FINGER_JOINT_LOWER = -0.0125; //close
 
 // robot dimensions
 static const double FLOOR_TO_BASE_HEIGHT = -0.9;
@@ -71,7 +71,7 @@ block_grasp_generator::RobotGraspData loadRobotGraspData()
   grasp_data.pre_grasp_posture_.name[0] = EE_JOINT;
   // Position of joints
   grasp_data.pre_grasp_posture_.position.resize(1);
-  grasp_data.pre_grasp_posture_.position[0] = GRIPPER_FINGER_JOINT_UPPER;
+  grasp_data.pre_grasp_posture_.position[0] = FINGER_JOINT_UPPER;
 
   // -------------------------------
   // Create grasp posture (Gripper closed)
@@ -82,7 +82,7 @@ block_grasp_generator::RobotGraspData loadRobotGraspData()
   grasp_data.grasp_posture_.name[0] = EE_JOINT;
   // Position of joints
   grasp_data.grasp_posture_.position.resize(1);
-  grasp_data.grasp_posture_.position[0] = GRIPPER_FINGER_JOINT_LOWER;
+  grasp_data.grasp_posture_.position[0] = FINGER_JOINT_LOWER;
 
   // -------------------------------
   // Links

@@ -181,20 +181,23 @@ public:
         // Start pick
         ROS_INFO_STREAM_NAMED("pick_place","Attempting to pick '" << start_blocks[block_id].name << "'");
 
+        // Visualize the block we are about to pick
+        rviz_tools_->publishBlock( start_blocks[block_id].pose, BLOCK_SIZE, false );
+
         if( !pick(start_blocks[block_id].pose, start_blocks[block_id].name) )
         {
-          ROS_ERROR_STREAM_NAMED("simple_pick_place","Pick failed. Press any key to retry.");
+          ROS_ERROR_STREAM_NAMED("pick_place","Pick failed. Press any key to retry.");
           std::cin.ignore();
         }
         else
         {
-          ROS_INFO_STREAM_NAMED("simple_pick_place","Done with pick ---------------------------");
+          ROS_INFO_STREAM_NAMED("pick_place","Done with pick ---------------------------");
           foundBlock = true;
         }
       }
 
       // -------------------------------------------------------------------------------------
-      ROS_INFO_STREAM_NAMED("simple_pick_place","Waiting to put...");
+      ROS_INFO_STREAM_NAMED("pick_place","Waiting to put...");
       ros::Duration(0.5).sleep();
 
       if(true)
@@ -205,19 +208,19 @@ public:
         {
           if( !place(goal_block_pose, start_blocks[block_id].name) )
           {
-            ROS_ERROR_STREAM_NAMED("simple_pick_place","Place failed. Press any key to retry.");
+            ROS_ERROR_STREAM_NAMED("pick_place","Place failed. Press any key to retry.");
             std::cin.ignore();
           }
           else
           {
-            ROS_INFO_STREAM_NAMED("simple_pick_place","Done with place");
+            ROS_INFO_STREAM_NAMED("pick_place","Done with place");
             putBlock = true;
           }
         }
       }
 
-      ROS_INFO_STREAM_NAMED("simple_pick_place","Pick and place cycle complete ========================================= \n");
-      ROS_INFO_STREAM_NAMED("simple_pick_place","Press any key to continue:");
+      ROS_INFO_STREAM_NAMED("pick_place","Pick and place cycle complete ========================================= \n");
+      ROS_INFO_STREAM_NAMED("pick_place","Press any key to continue:");
       std::cin.ignore();
 
       // Go for next block or loop
