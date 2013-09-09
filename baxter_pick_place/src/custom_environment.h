@@ -38,6 +38,9 @@
 
 #include <block_grasp_generator/robot_viz_tools.h> // simple tool for showing grasps
 
+#ifndef BAXTER_PICK_PLACE__CUSTOM_ENVIRONMENT_
+#define BAXTER_PICK_PLACE__CUSTOM_ENVIRONMENT_
+
 namespace baxter_pick_place
 {
 
@@ -48,9 +51,6 @@ static const std::string SUPPORT_SURFACE3_NAME = "table";
 static const std::string WALL1_NAME = "back_wall";
 static const std::string WALL2_NAME = "right_wall";
 static const std::string WALL3_NAME = "left_wall";
-
-// robot dimensions
-static const double FLOOR_TO_BASE_HEIGHT = -0.9;
 
 // table dimensions
 static const double TABLE_HEIGHT = 0.83;
@@ -84,9 +84,9 @@ void createEnvironment(block_grasp_generator::RobotVizToolsPtr rviz_tools_)
   rviz_tools_->publishCollisionTable(TABLE_X, TABLE_Y, 0,     TABLE_WIDTH, TABLE_HEIGHT, TABLE_DEPTH, SUPPORT_SURFACE3_NAME); // andy table
 }
 
-double getTableHeight()
+double getTableHeight(double floor_offset)
 {
-  return TABLE_HEIGHT + FLOOR_TO_BASE_HEIGHT + BLOCK_SIZE / 2;
+  return TABLE_HEIGHT + floor_offset + BLOCK_SIZE / 2;
 }
 
 void getTableWidthRange(double &y_min, double &y_max)
@@ -102,3 +102,5 @@ void getTableDepthRange(double &x_min, double &x_max)
 }
 
 } // namespace
+
+#endif

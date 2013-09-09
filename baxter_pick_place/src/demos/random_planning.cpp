@@ -55,20 +55,17 @@
 #include <std_msgs/Bool.h>
 #include <baxter_msgs/HeadPanCommand.h>
 
+// Baxter specific properties
+#include "../baxter_data.h"
+
 // Custom environment
 #include "../custom_environment.h"
 
 namespace baxter_pick_place
 {
 
-static const std::string ROBOT_DESCRIPTION="robot_description";
 static const std::string RVIZ_MARKER_TOPIC = "/end_effector_marker";
 static const std::string PLANNING_GROUP_NAME = "both_arms";
-static const std::string SUPPORT_SURFACE_NAME = "workbench";
-static const std::string BASE_LINK = "base"; //"/base";
-static const std::string EE_GROUP = "right_hand";
-static const std::string EE_JOINT = "right_endpoint";
-static const std::string EE_PARENT_LINK = "right_wrist";
 
 class RandomPlanning
 {

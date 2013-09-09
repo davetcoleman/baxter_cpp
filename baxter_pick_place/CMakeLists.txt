@@ -33,19 +33,18 @@ set(CMAKE_BUILD_TYPE Debug)
 ###########
 
 include_directories(include ${catkin_INCLUDE_DIRS} ${Boost_INCLUDE_DIRS})
-#include_directories(SYSTEM ${Boost_INCLUDE_DIR} ${EIGEN_INCLUDE_DIRS})
-#include_directories(${catkin_INCLUDE_DIRS})
-#link_directories(${catkin_LIBRARY_DIRS})
 
 add_executable(simple_pick_place src/simple_pick_place.cpp)
 target_link_libraries(simple_pick_place ${catkin_LIBRARIES} ${Boost_LIBRARIES})
 
+# Demos
 add_executable(random_planning src/demos/random_planning.cpp)
 target_link_libraries(random_planning ${catkin_LIBRARIES} ${Boost_LIBRARIES})
 
+# Tools
 add_executable(get_joint_values src/tools/get_joint_values.cpp)
 target_link_libraries(get_joint_values ${catkin_LIBRARIES} ${Boost_LIBRARIES})
 
-add_executable(get_joint_values src/tools/end_effector_position.cpp)
-target_link_libraries(get_joint_values ${catkin_LIBRARIES} ${Boost_LIBRARIES})
+add_executable(end_effector_position src/tools/end_effector_position.cpp)
+target_link_libraries(end_effector_position ${catkin_LIBRARIES} ${Boost_LIBRARIES})
 

@@ -58,7 +58,7 @@
 namespace baxter_pick_place
 {
 
-static const std::string ROBOT_DESCRIPTION="robot_description";
+static const std::string PLANNING_GROUP_NAME = "right_arm";
 static const std::string RVIZ_MARKER_TOPIC = "/end_effector_marker";
 static const std::string BLOCK_NAME = "block1";
 
@@ -99,7 +99,8 @@ public:
         PLANNING_GROUP_NAME, BASE_LINK, FLOOR_TO_BASE_HEIGHT));
 
     // Load grasp generator
-    loadRobotGraspData(); // Load robot specific data
+    grasp_data_ = loadRobotGraspData(); // Load robot specific data
+
     block_grasp_generator_.reset(new block_grasp_generator::BlockGraspGenerator(rviz_tools_));
 
     // Let everything load
@@ -130,9 +131,9 @@ public:
 
     // Create start block positions (hard coded)
     std::vector<MetaBlock> start_blocks;
-    start_blocks.push_back( createStartBlock(0.55, -0.1, "Block1") );
-    start_blocks.push_back( createStartBlock(0.65, -0.1, "Block2") );
-    start_blocks.push_back( createStartBlock(0.75, -0.1, "Block3") );
+    start_blocks.push_back( createStartBlock(0.85, -0.1, "Block1") );
+    start_blocks.push_back( createStartBlock(0.95, -0.1, "Block2") );
+    start_blocks.push_back( createStartBlock(1.05, -0.1, "Block3") );
 
     geometry_msgs::Pose goal_block_pose = createGoalBlock();
 
@@ -221,7 +222,7 @@ public:
 
       // Go for next block or loop
       block_id++;
-      if( block_id > 2 )
+      if( block_id >= start_blocks.size() )
         block_id = 0;
 
       // Move to gravity neutral position
@@ -241,7 +242,7 @@ public:
     // Position
     start_block.pose.position.x = x;
     start_block.pose.position.y = y;
-    start_block.pose.position.z = getTableHeight();
+    start_block.pose.position.z = getTableHeight(FLOOR_TO_BASE_HEIGHT);
 
     // Orientation
     double angle = 0; // M_PI / 1.5;
@@ -265,7 +266,7 @@ public:
     // Position
     goal_block_pose.position.x = x_max - TABLE_DEPTH / 2;
     goal_block_pose.position.y = y_max - TABLE_WIDTH / 2;
-    goal_block_pose.position.z = getTableHeight();
+    goal_block_pose.position.z = getTableHeight(FLOOR_TO_BASE_HEIGHT);
 
     // Orientation
     double angle = 0; //M_PI / 1.5;

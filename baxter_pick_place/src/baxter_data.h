@@ -42,73 +42,71 @@
 // Msgs
 #include <baxter_msgs/GripperState.h>
 
-
 namespace baxter_pick_place
 {
 
-static const std::string PLANNING_GROUP_NAME = "right_arm";
+static const std::string ROBOT_DESCRIPTION="robot_description";
 static const std::string BASE_LINK = "base";
 static const std::string EE_GROUP = "right_hand";
 static const std::string EE_JOINT = "right_gripper_l_finger_joint";
 static const std::string EE_PARENT_LINK = "right_wrist";
 
+// Copied from URDF \todo read straight from URDF? 
+static const double GRIPPER_FINGER_JOINT_UPPER = 0.0095; //open
+static const double GRIPPER_FINGER_JOINT_LOWER = -0.0125; //close
+
 // robot dimensions
 static const double FLOOR_TO_BASE_HEIGHT = -0.9;
 
-  void loadRobotGraspData()
-  {
-    block_grasp_generator::RobotGraspData grasp_data;
-  
-    // -------------------------------
-    // Create pre-grasp posture (Gripper open)
-    grasp_data.pre_grasp_posture_.header.frame_id = BASE_LINK;
-    grasp_data.pre_grasp_posture_.header.stamp = ros::Time::now();
-    // Name of joints:
-    grasp_data.pre_grasp_posture_.name.resize(1);
-    grasp_data.pre_grasp_posture_.name[0] = EE_JOINT;
-    // Position of joints
-    grasp_data.pre_grasp_posture_.position.resize(1);
-    grasp_data.pre_grasp_posture_.position[0] = baxter_msgs::GripperState::POSITION_OPEN;
+block_grasp_generator::RobotGraspData loadRobotGraspData()
+{
+  block_grasp_generator::RobotGraspData grasp_data;
 
-    // -------------------------------
-    // Create grasp posture (Gripper closed)
-    grasp_data.grasp_posture_.header.frame_id = BASE_LINK;
-    grasp_data.grasp_posture_.header.stamp = ros::Time::now();
-    // Name of joints:
-    grasp_data.grasp_posture_.name.resize(1);
-    grasp_data.grasp_posture_.name[0] = EE_JOINT;
-    // Position of joints
-    grasp_data.grasp_posture_.position.resize(1);
-    grasp_data.grasp_posture_.position[0] = baxter_msgs::GripperState::POSITION_CLOSED;
+  // -------------------------------
+  // Create pre-grasp posture (Gripper open)
+  grasp_data.pre_grasp_posture_.header.frame_id = BASE_LINK;
+  grasp_data.pre_grasp_posture_.header.stamp = ros::Time::now();
+  // Name of joints:
+  grasp_data.pre_grasp_posture_.name.resize(1);
+  grasp_data.pre_grasp_posture_.name[0] = EE_JOINT;
+  // Position of joints
+  grasp_data.pre_grasp_posture_.position.resize(1);
+  grasp_data.pre_grasp_posture_.position[0] = GRIPPER_FINGER_JOINT_UPPER;
 
-    // -------------------------------
-    // Links
-    grasp_data.base_link_ = BASE_LINK;
-    grasp_data.ee_parent_link_ = EE_PARENT_LINK;
+  // -------------------------------
+  // Create grasp posture (Gripper closed)
+  grasp_data.grasp_posture_.header.frame_id = BASE_LINK;
+  grasp_data.grasp_posture_.header.stamp = ros::Time::now();
+  // Name of joints:
+  grasp_data.grasp_posture_.name.resize(1);
+  grasp_data.grasp_posture_.name[0] = EE_JOINT;
+  // Position of joints
+  grasp_data.grasp_posture_.position.resize(1);
+  grasp_data.grasp_posture_.position[0] = GRIPPER_FINGER_JOINT_LOWER;
 
-    // -------------------------------
-    // Nums
-    /* Clam
-       grasp_data.approach_retreat_desired_dist_ = 0.05;
-       grasp_data.approach_retreat_min_dist_ = 0.025;
-    */
-    grasp_data.approach_retreat_desired_dist_ = 0.3; // 0.1;
-    grasp_data.approach_retreat_min_dist_ = 0.06; // 0.001;
+  // -------------------------------
+  // Links
+  grasp_data.base_link_ = BASE_LINK;
+  grasp_data.ee_parent_link_ = EE_PARENT_LINK;
 
+  // -------------------------------
+  // Nums
+  grasp_data.approach_retreat_desired_dist_ = 0.3; // 0.1;
+  grasp_data.approach_retreat_min_dist_ = 0.06; // 0.001;
 
-    // distance from center point of object to end effector
-    grasp_data.grasp_depth_ = 0.06; // 0.1;
+  // distance from center point of object to end effector
+  grasp_data.grasp_depth_ = 0.06; // 0.1;
 
-    grasp_data.block_size_ = 0.04;
+  grasp_data.block_size_ = 0.04;
 
-    // generate grasps at PI/angle_resolution increments
-    grasp_data.angle_resolution_ = 16;
+  // generate grasps at PI/angle_resolution increments
+  grasp_data.angle_resolution_ = 16;
 
-    // Debug
-    block_grasp_generator::BlockGraspGenerator::printBlockGraspData(grasp_data);
+  // Debug
+  block_grasp_generator::BlockGraspGenerator::printBlockGraspData(grasp_data);
 
-    return grasp_data;
-  }
+  return grasp_data;
+}
 
 
 
