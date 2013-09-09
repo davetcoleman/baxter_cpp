@@ -66,6 +66,12 @@ private:
   // Cache the message
   baxter_msgs::AssemblyState assembly_state_;
 
+  // use this as flag to indicate current mode
+  baxter_msgs::JointCommandMode right_command_mode_;
+  baxter_msgs::JointCommandMode left_command_mode_;
+
+  boost::mutex mtx_; // mutex for re-entrent calls to modeCommandCallback
+
 public:
 
   void Load(gazebo::physics::ModelPtr parent, sdf::ElementPtr sdf)
@@ -100,6 +106,10 @@ public:
 
     // trigger to publish fixed joints
     timer_ = nh_tilde.createTimer(publish_interval, &BaxterGazeboRosControlPlugin::update, this);
+
+    //preset the mode to illegal value
+    right_command_mode_.mode = -1;
+    left_command_mode_.mode = -1;
   }
 
   void update(const ros::TimerEvent& e)
@@ -109,11 +119,31 @@ public:
 
   void leftModeCommandCallback(const baxter_msgs::JointCommandModeConstPtr& msg)
   {
+    //Check if we already received this command for this arm and bug out if so
+    if(left_command_mode_.mode == msg->mode)
+    {
+      return;
+    }
+    else
+    {
+      left_command_mode_.mode = msg->mode; //cache last mode
+    }
+
     modeCommandCallback(msg, "left");
   }
 
   void rightModeCommandCallback(const baxter_msgs::JointCommandModeConstPtr& msg)
   {
+    //Check if we already received this command for this arm and bug out if so
+    if(right_command_mode_.mode == msg->mode)
+    {
+      return;
+    }
+    else
+    {
+      right_command_mode_.mode = msg->mode; //cache last mode
+    }
+
     modeCommandCallback(msg, "right");
   }
 
@@ -121,6 +151,9 @@ public:
   {
     ROS_DEBUG_STREAM_NAMED("baxter_gazebo_ros_control_plugin","Switching command mode for side " 
       << side );
+    
+    //lock out other thread(s) which are getting called back via ros.
+    boost::lock_guard<boost::mutex> guard(mtx_);
 
     std::vector<std::string> start_controllers;
     std::vector<std::string> stop_controllers;
