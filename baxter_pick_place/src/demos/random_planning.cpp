@@ -56,7 +56,7 @@
 #include <baxter_msgs/HeadPanCommand.h>
 
 // Custom environment
-#include "custom_environment.h"
+#include "../custom_environment.h"
 
 namespace baxter_pick_place
 {

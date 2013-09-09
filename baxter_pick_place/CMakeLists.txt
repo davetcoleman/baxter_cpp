@@ -40,12 +40,12 @@ include_directories(include ${catkin_INCLUDE_DIRS} ${Boost_INCLUDE_DIRS})
 add_executable(simple_pick_place src/simple_pick_place.cpp)
 target_link_libraries(simple_pick_place ${catkin_LIBRARIES} ${Boost_LIBRARIES})
 
-add_executable(random_planning src/random_planning.cpp)
+add_executable(random_planning src/demos/random_planning.cpp)
 target_link_libraries(random_planning ${catkin_LIBRARIES} ${Boost_LIBRARIES})
 
-add_executable(end_effector_position src/end_effector_position.cpp)
-target_link_libraries(end_effector_position ${catkin_LIBRARIES} ${Boost_LIBRARIES})
+add_executable(get_joint_values src/tools/get_joint_values.cpp)
+target_link_libraries(get_joint_values ${catkin_LIBRARIES} ${Boost_LIBRARIES})
 
-add_executable(get_joint_values src/get_joint_values.cpp)
+add_executable(get_joint_values src/tools/end_effector_position.cpp)
 target_link_libraries(get_joint_values ${catkin_LIBRARIES} ${Boost_LIBRARIES})
 

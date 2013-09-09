@@ -1,0 +1,115 @@
+/*********************************************************************
+ * Software License Agreement (BSD License)
+ *
+ *  Copyright (c) 2013, University of Colorado, Boulder
+ *  All rights reserved.
+ *
+ *  Redistribution and use in source and binary forms, with or without
+ *  modification, are permitted provided that the following conditions
+ *  are met:
+ *
+ *   * Redistributions of source code must retain the above copyright
+ *     notice, this list of conditions and the following disclaimer.
+ *   * Redistributions in binary form must reproduce the above
+ *     copyright notice, this list of conditions and the following
+ *     disclaimer in the documentation and/or other materials provided
+ *     with the distribution.
+ *   * Neither the name of the Univ of CO, Boulder nor the names of its
+ *     contributors may be used to endorse or promote products derived
+ *     from this software without specific prior written permission.
+ *
+ *  THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
+ *  "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
+ *  LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS
+ *  FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE
+ *  COPYRIGHT OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT,
+ *  INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING,
+ *  BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
+ *  LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
+ *  CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT
+ *  LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN
+ *  ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
+ *  POSSIBILITY OF SUCH DAMAGE.
+ *********************************************************************/
+
+/* Author: Dave Coleman
+   Desc:   Custom environments for running MoveIt!
+*/
+
+// Blocks
+#include <block_grasp_generator/block_grasp_generator.h> // has datastructure
+
+// Msgs
+#include <baxter_msgs/GripperState.h>
+
+
+namespace baxter_pick_place
+{
+
+static const std::string PLANNING_GROUP_NAME = "right_arm";
+static const std::string BASE_LINK = "base";
+static const std::string EE_GROUP = "right_hand";
+static const std::string EE_JOINT = "right_gripper_l_finger_joint";
+static const std::string EE_PARENT_LINK = "right_wrist";
+
+// robot dimensions
+static const double FLOOR_TO_BASE_HEIGHT = -0.9;
+
+  void loadRobotGraspData()
+  {
+    block_grasp_generator::RobotGraspData grasp_data;
+  
+    // -------------------------------
+    // Create pre-grasp posture (Gripper open)
+    grasp_data.pre_grasp_posture_.header.frame_id = BASE_LINK;
+    grasp_data.pre_grasp_posture_.header.stamp = ros::Time::now();
+    // Name of joints:
+    grasp_data.pre_grasp_posture_.name.resize(1);
+    grasp_data.pre_grasp_posture_.name[0] = EE_JOINT;
+    // Position of joints
+    grasp_data.pre_grasp_posture_.position.resize(1);
+    grasp_data.pre_grasp_posture_.position[0] = baxter_msgs::GripperState::POSITION_OPEN;
+
+    // -------------------------------
+    // Create grasp posture (Gripper closed)
+    grasp_data.grasp_posture_.header.frame_id = BASE_LINK;
+    grasp_data.grasp_posture_.header.stamp = ros::Time::now();
+    // Name of joints:
+    grasp_data.grasp_posture_.name.resize(1);
+    grasp_data.grasp_posture_.name[0] = EE_JOINT;
+    // Position of joints
+    grasp_data.grasp_posture_.position.resize(1);
+    grasp_data.grasp_posture_.position[0] = baxter_msgs::GripperState::POSITION_CLOSED;
+
+    // -------------------------------
+    // Links
+    grasp_data.base_link_ = BASE_LINK;
+    grasp_data.ee_parent_link_ = EE_PARENT_LINK;
+
+    // -------------------------------
+    // Nums
+    /* Clam
+       grasp_data.approach_retreat_desired_dist_ = 0.05;
+       grasp_data.approach_retreat_min_dist_ = 0.025;
+    */
+    grasp_data.approach_retreat_desired_dist_ = 0.3; // 0.1;
+    grasp_data.approach_retreat_min_dist_ = 0.06; // 0.001;
+
+
+    // distance from center point of object to end effector
+    grasp_data.grasp_depth_ = 0.06; // 0.1;
+
+    grasp_data.block_size_ = 0.04;
+
+    // generate grasps at PI/angle_resolution increments
+    grasp_data.angle_resolution_ = 16;
+
+    // Debug
+    block_grasp_generator::BlockGraspGenerator::printBlockGraspData(grasp_data);
+
+    return grasp_data;
+  }
+
+
+
+} // namespace

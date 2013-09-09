@@ -49,8 +49,8 @@
 #include <block_grasp_generator/block_grasp_generator.h>
 #include <block_grasp_generator/robot_viz_tools.h> // simple tool for showing graspsp
 
-// Msgs
-#include <baxter_msgs/GripperState.h>
+// Baxter specific properties
+#include "baxter_data.h"
 
 // Custom environment
 #include "custom_environment.h"
@@ -60,11 +60,6 @@ namespace baxter_pick_place
 
 static const std::string ROBOT_DESCRIPTION="robot_description";
 static const std::string RVIZ_MARKER_TOPIC = "/end_effector_marker";
-static const std::string PLANNING_GROUP_NAME = "right_arm";
-static const std::string BASE_LINK = "base";
-static const std::string EE_GROUP = "right_hand";
-static const std::string EE_JOINT = "right_gripper_l_finger_joint";
-static const std::string EE_PARENT_LINK = "right_wrist";
 static const std::string BLOCK_NAME = "block1";
 
 struct MetaBlock
@@ -283,57 +278,6 @@ public:
     rviz_tools_->publishBlock( goal_block_pose, BLOCK_SIZE, true );
 
     return goal_block_pose;
-  }
-
-  void loadRobotGraspData()
-  {
-    // -------------------------------
-    // Create pre-grasp posture (Gripper open)
-    grasp_data_.pre_grasp_posture_.header.frame_id = BASE_LINK;
-    grasp_data_.pre_grasp_posture_.header.stamp = ros::Time::now();
-    // Name of joints:
-    grasp_data_.pre_grasp_posture_.name.resize(1);
-    grasp_data_.pre_grasp_posture_.name[0] = EE_JOINT;
-    // Position of joints
-    grasp_data_.pre_grasp_posture_.position.resize(1);
-    grasp_data_.pre_grasp_posture_.position[0] = baxter_msgs::GripperState::POSITION_OPEN;
-
-    // -------------------------------
-    // Create grasp posture (Gripper closed)
-    grasp_data_.grasp_posture_.header.frame_id = BASE_LINK;
-    grasp_data_.grasp_posture_.header.stamp = ros::Time::now();
-    // Name of joints:
-    grasp_data_.grasp_posture_.name.resize(1);
-    grasp_data_.grasp_posture_.name[0] = EE_JOINT;
-    // Position of joints
-    grasp_data_.grasp_posture_.position.resize(1);
-    grasp_data_.grasp_posture_.position[0] = baxter_msgs::GripperState::POSITION_CLOSED;
-
-    // -------------------------------
-    // Links
-    grasp_data_.base_link_ = BASE_LINK;
-    grasp_data_.ee_parent_link_ = EE_PARENT_LINK;
-
-    // -------------------------------
-    // Nums
-    /* Clam
-       grasp_data_.approach_retreat_desired_dist_ = 0.05;
-       grasp_data_.approach_retreat_min_dist_ = 0.025;
-    */
-    grasp_data_.approach_retreat_desired_dist_ = 0.3; // 0.1;
-    grasp_data_.approach_retreat_min_dist_ = 0.06; // 0.001;
-
-
-    // distance from center point of object to end effector
-    grasp_data_.grasp_depth_ = 0.06; // 0.1;
-
-    grasp_data_.block_size_ = 0.04;
-
-    // generate grasps at PI/angle_resolution increments
-    grasp_data_.angle_resolution_ = 16;
-
-    // Debug
-    block_grasp_generator::BlockGraspGenerator::printBlockGraspData(grasp_data_);
   }
 
   bool pick(const geometry_msgs::Pose& block_pose, std::string block_name)
