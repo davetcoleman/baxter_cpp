@@ -291,7 +291,7 @@ Visualization Manager:
             Show Axes: false
             Show Trail: false
             Value: true
-        Loop Animation: true
+        Loop Animation: false
         Robot Alpha: 0.45
         Show Robot Collision: false
         Show Robot Visual: true
@@ -648,17 +648,17 @@ Visualization Manager:
   Views:
     Current:
       Class: rviz/XYOrbit
-      Distance: 3.08222
+      Distance: 4.08622
       Focal Point:
-        X: 1.77004
-        Y: 0.0735052
-        Z: -9.7703e-07
+        X: 0.349343
+        Y: -0.038754
+        Z: -1.33466e-06
       Name: Current View
       Near Clip Distance: 0.01
-      Pitch: 0.494794
+      Pitch: 0.154794
       Target Frame: base_link
       Value: XYOrbit (rviz)
-      Yaw: 0.0654048
+      Yaw: 0.0603934
     Saved: ~
 Window Geometry:
   Displays:
