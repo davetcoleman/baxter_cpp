@@ -247,12 +247,17 @@ public:
     state.header.stamp = gripper_state_timestamp_;
     state.header.frame_id = BASE_LINK;
     state.name.push_back(arm_name_ + "_gripper_l_finger_joint");
+    state.name.push_back(arm_name_ + "_gripper_r_finger_joint");
     state.velocity.push_back(0);
+    state.velocity.push_back(0);
+    state.effort.push_back(gripper_state_->force);
     state.effort.push_back(gripper_state_->force);
 
     // Convert 0-100 state to joint position
-    state.position.push_back(GRIPPER_FINGER_JOINT_LOWER + gripper_finger_joint_stroke_ * 
-      (gripper_state_->position / 100));
+    double position = GRIPPER_FINGER_JOINT_LOWER + gripper_finger_joint_stroke_ * 
+      (gripper_state_->position / 100);
+    state.position.push_back(position);
+    state.position.push_back(position*-1);
 
     joint_state_topic_.publish(state);
   }
