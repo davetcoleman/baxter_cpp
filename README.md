@@ -13,14 +13,36 @@ NOTE: This is the ROS Hydro readme version. See groovy-devel branch for ROS Groo
  * [ROS Hydro](http://wiki.ros.org/ROS/Installation)
  * Access to the private Rethink [sdk-examples](https://github.com/RethinkRobotics/sdk-examples) repository - we are using the baxter_interface and head_control packages from the SDK. Contact [Dave](davetcoleman@gmail.com) if you should have access to this.
  * Setup Github (recommended) - the git@github.com urls, below, only work if you have [Setup Github](https://help.github.com/articles/set-up-git) and generated [SSH Keys for Github](https://help.github.com/articles/generating-ssh-keys). Otherwise, change the below URLS to say "https://github.com/".
-
-## Installation
-
-* Install wstool package
+ * Install wstool package
 
 ```
     sudo apt-get install python-wstool
 ```
+
+## Install MoveIt
+
+    Note: Currently you can skip this section - the debians are still the same as of Sep 9, 2013. 
+
+    We have chosen to freeze the version of MoveIt! we are using for the short-run to ensure compatibilty with our customizations. We recommend you install this in a seperate workspace to decrease built times.
+
+```
+    mkdir -p ~/ros/ws_moveit/src
+    cd ~/ros/ws_moveit/src
+    wstool init .
+    wstool merge https://raw.github.com/davetcoleman/baxter/hydro-devel/moveit.rosinstall
+    wstool update
+    cd ..
+    rosdep install --from-paths src --ignore-src --rosdistro hydro -y
+    catkin_make
+```
+
+* Add MoveIt setup.bash to your .bashrc (recommended)
+
+```
+    echo 'source ~/ros/ws_moveit/devel/setup.bash' >> ~/.bashrc
+```
+
+## Installation
 
 * Create a catkin workspace (we recommend a separate one for Baxter) and use wstool to install the individual repositories
 
@@ -64,29 +86,6 @@ NOTE: This is the ROS Hydro readme version. See groovy-devel branch for ROS Groo
 
 ```
     echo 'source ~/ros/ws_baxter/devel/setup.bash' >> ~/.bashrc
-```
-
-## Install MoveIt
-
-* Install MoveIt! From Source (currently not required - the debians are still the same)
-
-    We have chosen to freeze the version of MoveIt! we are using for the short-run to ensure compatibilty with our customizations. We recommend you install this in a seperate workspace to decrease built times.
-
-```
-    mkdir -p ~/ros/ws_moveit/src
-    cd ~/ros/ws_moveit/src
-    wstool init .
-    wstool merge https://raw.github.com/davetcoleman/baxter/hydro-devel/moveit.rosinstall
-    wstool update
-    cd ..
-    rosdep install --from-paths src --ignore-src --rosdistro hydro -y
-    catkin_make
-```
-
-* Add MoveIt setup.bash to your .bashrc (recommended)
-
-```
-    echo 'source ~/ros/ws_moveit/devel/setup.bash' >> ~/.bashrc
 ```
 
 ## Bringup Baxter
