@@ -5,9 +5,9 @@ Unofficial Baxter packages that add-on to the Rethink SDK. It is entirely writte
 
 Currently it contains Gazebo simulation and pick and place MoveIt code for Baxter. The more stable version is the groovy-devel branch.
 
-NOTE: This is the ROS Hydro readme version. See groovy-devel branch for ROS Groovy instructions.
+**Note:** This is the ROS Hydro readme version. See groovy-devel branch for ROS Groovy instructions.
 
-## Prequisites
+## Prerequisites
 
  * A Baxter with dual parallel grippers, or the desire to see one in simulation
  * [ROS Hydro](http://wiki.ros.org/ROS/Installation)
@@ -15,9 +15,9 @@ NOTE: This is the ROS Hydro readme version. See groovy-devel branch for ROS Groo
  * Setup Github (recommended) - the git@github.com urls, below, only work if you have [Setup Github](https://help.github.com/articles/set-up-git) and generated [SSH Keys for Github](https://help.github.com/articles/generating-ssh-keys). Otherwise, change the below URLS to say "https://github.com/".
  * Install wstool package
 
-```
+    ```
     sudo apt-get install python-wstool
-```
+    ```
 
 ## Install MoveIt From Source
 
