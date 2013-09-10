@@ -72,15 +72,10 @@ We have chosen to freeze the version of MoveIt! we are using for the short-run t
     touch src/sdk-examples/baxter_msgs/CATKIN_IGNORE
     ```
 
-* Install dependencies
+* Install dependencies and build
 
     ```
     rosdep install --from-paths . --ignore-src --rosdistro hydro -y
-    ```
-
-* Build
-
-    ```
     catkin_make
     ```
 
