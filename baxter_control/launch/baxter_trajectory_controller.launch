@@ -1,0 +1,9 @@
+<launch>
+
+  <!-- load Baxter's trajectory controller -->
+  <node name="baxter_trajectory_controller" pkg="baxter_interface" type="trajectory_controller.py"
+      respawn="false" output="screen">
+    <rosparam command="load" file="$(find baxter_control)/config/trajectory_controller.yaml"/>
+  </node>
+
+</launch>

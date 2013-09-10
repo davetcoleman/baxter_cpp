@@ -58,6 +58,7 @@ static const std::string BASE_LINK = "base"; //"/base";
 static const std::string EE_GROUP = "right_hand";
 static const std::string EE_JOINT = "right_gripper_l_finger_joint";
 static const std::string EE_PARENT_LINK = "right_wrist";
+static const std::string NEUTRAL_POSE_NAME = "both_neutral";
 
 
 class BaxterUtilities
@@ -68,7 +69,7 @@ public:
   ros::Subscriber sub_baxter_state_;
 
   // Interface with MoveIt
-  boost::scoped_ptr<move_group_interface::MoveGroup> group_;
+  boost::scoped_ptr<move_group_interface::MoveGroup> move_group_;
 
   // Remember the last baxter state and time
   baxter_msgs::AssemblyStateConstPtr baxter_state_;
@@ -78,7 +79,7 @@ public:
   {
     ros::NodeHandle nh;
 
-    group_.reset(new move_group_interface::MoveGroup("both_arms"));
+    move_group_.reset(new move_group_interface::MoveGroup(PLANNING_GROUP_NAME));
 
     // ---------------------------------------------------------------------------------------------
     // Advertise services
@@ -87,7 +88,7 @@ public:
     // ---------------------------------------------------------------------------------------------
     // Start the state subscriber
     sub_baxter_state_ = nh.subscribe<baxter_msgs::AssemblyState>(BAXTER_STATE_TOPIC,
-                         1, &BaxterUtilities::stateCallback, this);
+                        1, &BaxterUtilities::stateCallback, this);
   }
 
   bool checkCommunication()
@@ -98,7 +99,7 @@ public:
     {
       if( count > 20 ) // 20 is an arbitrary number for when to assume no state is being published
       {
-        ROS_ERROR_STREAM_NAMED("utilities","No state message has been recieved on topic " 
+        ROS_ERROR_STREAM_NAMED("utilities","No state message has been recieved on topic "
           << BAXTER_STATE_TOPIC);
         return false;
       }
@@ -125,7 +126,7 @@ public:
       ROS_ERROR_STREAM_NAMED("utilities","Baxter has an error :(  State: \n" << *baxter_state_ );
       ROS_WARN_STREAM_NAMED("temp","Temporarily ignoring error bit");
       // \todo return false;
-    }    
+    }
 
     // Check for estop
     if( baxter_state_->stopped == true )
@@ -187,10 +188,10 @@ public:
 
   bool setPlanningGroup()
   {
-    //std::string group_name = group_->getName();
+    //std::string group_name = move_group_->getName();
 
     // Create MoveGroup for both arms
-    group_.reset(new move_group_interface::MoveGroup("both_arms"));
+    move_group_.reset(new move_group_interface::MoveGroup(PLANNING_GROUP_NAME));
   }
 
   bool enableBaxter()
@@ -223,7 +224,7 @@ public:
 
       ++count;
       ros::Duration(0.05).sleep();
-    }    
+    }
 
 
     return true;
@@ -245,12 +246,12 @@ public:
 
   bool positionBaxterReady()
   {
-    return sendToPose("both_ready");     
+    return sendToPose("both_ready");
   }
 
   bool positionBaxterNeutral()
   {
-    return sendToPose("both_neutral"); 
+    return sendToPose(NEUTRAL_POSE_NAME);
   }
 
   /**
@@ -264,11 +265,11 @@ public:
 
     // Send to ready position
     ROS_INFO_STREAM_NAMED("pick_place","Sending to right and left arm ready positions...");
-    group_->setNamedTarget(pose_name); 
-    bool result = group_->move();
+    move_group_->setNamedTarget(pose_name);
+    bool result = move_group_->move();
 
     if( !result )
-      ROS_ERROR_STREAM_NAMED("utilities","Failed to send Baxter to pose " << pose_name);
+      ROS_ERROR_STREAM_NAMED("utilities","Failed to send Baxter to pose '" << pose_name << "'");
 
     return result;
   }

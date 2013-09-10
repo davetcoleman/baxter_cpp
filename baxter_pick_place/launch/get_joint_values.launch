@@ -4,10 +4,9 @@
   <arg unless="$(arg debug)" name="launch_prefix" value="" />
   <arg     if="$(arg debug)" name="launch_prefix" value="gdb --ex run --args" />
 
-  <!-- Launch pick and place -->
-  <node name="baxter_block_pick_place" launch-prefix="$(arg launch_prefix)" pkg="baxter_pick_place" 
-	type="block_pick_place" output="screen">
-    <rosparam command="load" file="$(find baxter_moveit_config)/config/kinematics.yaml"/>
+  <!-- Launch node -->
+  <node name="get_joint_values" launch-prefix="$(arg launch_prefix)" pkg="baxter_pick_place" 
+	type="get_joint_values" output="screen">
     <remap from="/joint_states" to="/robot/joint_states" />
   </node>
 

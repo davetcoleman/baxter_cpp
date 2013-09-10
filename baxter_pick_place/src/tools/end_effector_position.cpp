@@ -132,6 +132,6 @@ int main(int argc, char **argv)
   baxter_pick_place::EndEffectorPosition();
 
   ros::shutdown();
-
+  
   return 0;
 }
