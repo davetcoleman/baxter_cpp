@@ -156,7 +156,7 @@ public:
 
       // -------------------------------------------------------------------------------------
       // Pick block
-      
+
       bool foundBlock = false;
       while(!foundBlock && ros::ok())
       {
@@ -295,6 +295,22 @@ public:
 
     // Prevent collision with table
     move_group_->setSupportSurfaceName(SUPPORT_SURFACE3_NAME);
+
+    // Allow blocks to be touched by end effector
+    {
+      // an optional list of obstacles that we have semantic information about and that can be touched/pushed/moved in the course of grasping
+      std::vector<std::string> allowed_touch_objects;
+      allowed_touch_objects.push_back("Block1");
+      allowed_touch_objects.push_back("Block2");
+      allowed_touch_objects.push_back("Block3");
+      allowed_touch_objects.push_back("Block4");
+
+      // Add this list to all grasps
+      for (std::size_t i = 0; i < grasps.size(); ++i)
+      {
+        grasps[i].allowed_touch_objects = allowed_touch_objects;
+      }
+    }
 
     //ROS_WARN_STREAM_NAMED("","testing grasp 1:\n" << grasps[0]);
     //ros::Duration(100).sleep();

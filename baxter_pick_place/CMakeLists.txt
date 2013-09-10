@@ -34,8 +34,13 @@ set(CMAKE_BUILD_TYPE Debug)
 
 include_directories(include ${catkin_INCLUDE_DIRS} ${Boost_INCLUDE_DIRS})
 
+# Main executable
 add_executable(block_pick_place src/block_pick_place.cpp)
 target_link_libraries(block_pick_place ${catkin_LIBRARIES} ${Boost_LIBRARIES})
+
+# Test executable
+add_executable(block_grasp_generator_test src/block_grasp_generator_test.cpp)
+target_link_libraries(block_grasp_generator_test ${catkin_LIBRARIES} ${Boost_LIBRARIES})
 
 # Demos
 add_executable(random_planning src/demos/random_planning.cpp)

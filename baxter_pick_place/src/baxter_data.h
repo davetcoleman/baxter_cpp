@@ -33,14 +33,12 @@
  *********************************************************************/
 
 /* Author: Dave Coleman
-   Desc:   Custom environments for running MoveIt!
+   Desc:   Parameters specific to Baxter for performing pick-place
+   THIS IS A COPIED VERSION FROM baxter_pick_place PACKAGE!
 */
 
 // Blocks
 #include <block_grasp_generator/block_grasp_generator.h> // has datastructure
-
-// Msgs
-#include <baxter_msgs/GripperState.h>
 
 namespace baxter_pick_place
 {
@@ -51,16 +49,33 @@ static const std::string EE_GROUP = "right_hand";
 static const std::string EE_JOINT = "right_gripper_l_finger_joint";
 static const std::string EE_PARENT_LINK = "right_wrist";
 
-// Copied from URDF \todo read straight from URDF? 
+// Copied from URDF \todo read straight from URDF?
 static const double FINGER_JOINT_UPPER = 0.0095; //open
 static const double FINGER_JOINT_LOWER = -0.0125; //close
 
 // robot dimensions
 static const double FLOOR_TO_BASE_HEIGHT = -0.9;
 
-block_grasp_generator::RobotGraspData loadRobotGraspData()
+block_grasp_generator::RobotGraspData loadRobotGraspData(double block_size)
 {
   block_grasp_generator::RobotGraspData grasp_data;
+
+  // -------------------------------
+  // Convert generic grasp pose to this end effector's frame of reference
+  // I think this is kind of the same as the "approach direction"
+
+  // Orientation
+  double angle = M_PI / 2;  // turn on Z axis
+  Eigen::Quaterniond quat(Eigen::AngleAxis<double>(double(angle), Eigen::Vector3d::UnitY()));
+  grasp_data.grasp_pose_to_eef_pose_.orientation.x = quat.x();
+  grasp_data.grasp_pose_to_eef_pose_.orientation.y = quat.y();
+  grasp_data.grasp_pose_to_eef_pose_.orientation.z = quat.z();
+  grasp_data.grasp_pose_to_eef_pose_.orientation.w = quat.w();
+
+  // Position
+  grasp_data.grasp_pose_to_eef_pose_.position.x = -0.15;
+  grasp_data.grasp_pose_to_eef_pose_.position.y = 0;
+  grasp_data.grasp_pose_to_eef_pose_.position.z = 0;
 
   // -------------------------------
   // Create pre-grasp posture (Gripper open)
@@ -97,13 +112,13 @@ block_grasp_generator::RobotGraspData loadRobotGraspData()
   // distance from center point of object to end effector
   grasp_data.grasp_depth_ = 0.06; // 0.1;
 
-  grasp_data.block_size_ = 0.04;
+  grasp_data.block_size_ = block_size;
 
   // generate grasps at PI/angle_resolution increments
   grasp_data.angle_resolution_ = 16;
 
   // Debug
-  block_grasp_generator::BlockGraspGenerator::printBlockGraspData(grasp_data);
+  //block_grasp_generator::BlockGraspGenerator::printBlockGraspData(grasp_data);
 
   return grasp_data;
 }

@@ -12,7 +12,7 @@ Currently it contains Gazebo simulation and pick and place MoveIt code for Baxte
  * A Baxter with dual parallel grippers, or the desire to see one in simulation
  * [ROS Hydro](http://wiki.ros.org/ROS/Installation)
  * Access to the private Rethink [sdk-examples](https://github.com/RethinkRobotics/sdk-examples) repository - we are using the baxter_interface and head_control packages from the SDK. Contact [Dave](davetcoleman@gmail.com) if you should have access to this.
- * Setup Github (recommended) - the git@github.com urls, below, only work if you have [Setup Github](https://help.github.com/articles/set-up-git) and generated [SSH Keys for Github](https://help.github.com/articles/generating-ssh-keys). Otherwise, change the below URLS to say "https://github.com/".
+ * Setup Github - the git@github.com urls, below, only work if you have [Setup Github](https://help.github.com/articles/set-up-git) and generated [SSH Keys for Github](https://help.github.com/articles/generating-ssh-keys). 
  * Install wstool package
 
     ```
@@ -140,6 +140,11 @@ Still under development.
    roslaunch baxter_pick_place baxter_pick_place.launch
    ```
 
+## License
+
+BSD (New BSD License)
+
 ## Develop and Contribute
 
 See [Contribute](https://github.com/osrf/baxter/blob/master/CONTRIBUTING.md) page.
+
