@@ -50,10 +50,8 @@
 #include <block_grasp_generator/robot_viz_tools.h> // simple tool for showing graspsp
 
 // Baxter specific properties
-#include "baxter_data.h"
-
-// Custom environment
-#include "custom_environment.h"
+#include <baxter_pick_place/baxter_data.h>
+#include <baxter_pick_place/custom_environment.h>
 
 namespace baxter_pick_place
 {
@@ -99,7 +97,7 @@ public:
         PLANNING_GROUP_NAME, BASE_LINK, FLOOR_TO_BASE_HEIGHT));
 
     // Load grasp generator
-    grasp_data_ = loadRobotGraspData(); // Load robot specific data
+    grasp_data_ = loadRobotGraspData(BLOCK_SIZE); // Load robot specific data
 
     block_grasp_generator_.reset(new block_grasp_generator::BlockGraspGenerator(rviz_tools_));
 

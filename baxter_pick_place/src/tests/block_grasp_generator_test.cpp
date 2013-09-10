@@ -59,7 +59,7 @@
 #include <block_grasp_generator/block_grasp_generator.h>
 
 // Baxter specific properties
-#include "baxter_data.h"
+#include <baxter_pick_place/baxter_data.h>
 
 namespace block_grasp_generator
 {

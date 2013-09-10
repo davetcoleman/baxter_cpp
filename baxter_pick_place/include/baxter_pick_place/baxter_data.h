@@ -34,7 +34,6 @@
 
 /* Author: Dave Coleman
    Desc:   Parameters specific to Baxter for performing pick-place
-   THIS IS A COPIED VERSION FROM baxter_pick_place PACKAGE!
 */
 
 // Blocks

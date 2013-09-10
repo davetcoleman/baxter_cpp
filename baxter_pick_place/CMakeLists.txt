@@ -39,7 +39,7 @@ add_executable(block_pick_place src/block_pick_place.cpp)
 target_link_libraries(block_pick_place ${catkin_LIBRARIES} ${Boost_LIBRARIES})
 
 # Test executable
-add_executable(block_grasp_generator_test src/block_grasp_generator_test.cpp)
+add_executable(block_grasp_generator_test src/tests/block_grasp_generator_test.cpp)
 target_link_libraries(block_grasp_generator_test ${catkin_LIBRARIES} ${Boost_LIBRARIES})
 
 # Demos
