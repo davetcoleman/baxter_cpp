@@ -25,7 +25,6 @@ Currently it contains Gazebo simulation and pick and place MoveIt code for Baxte
 
 We have chosen to freeze the version of MoveIt! we are using for the short-run to ensure compatibilty with our customizations. We recommend you install this in a seperate workspace to decrease built times.
 
-    ```
     mkdir -p ~/ros/ws_moveit/src
     cd ~/ros/ws_moveit/src
     wstool init .
@@ -34,7 +33,6 @@ We have chosen to freeze the version of MoveIt! we are using for the short-run t
     cd ..
     rosdep install --from-paths src --ignore-src --rosdistro hydro -y
     catkin_make
-    ```
 
 * Add MoveIt setup.bash to your .bashrc (recommended)
 
