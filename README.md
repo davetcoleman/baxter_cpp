@@ -19,11 +19,11 @@ NOTE: This is the ROS Hydro readme version. See groovy-devel branch for ROS Groo
     sudo apt-get install python-wstool
 ```
 
-## Install MoveIt
+## Install MoveIt From Source
 
-    Note: Currently you can skip this section - the debians are still the same as of Sep 9, 2013. 
+**Note:** Currently you can skip this section - the debians are still the same as of Sep 9, 2013. 
 
-    We have chosen to freeze the version of MoveIt! we are using for the short-run to ensure compatibilty with our customizations. We recommend you install this in a seperate workspace to decrease built times.
+We have chosen to freeze the version of MoveIt! we are using for the short-run to ensure compatibilty with our customizations. We recommend you install this in a seperate workspace to decrease built times.
 
 ```
     mkdir -p ~/ros/ws_moveit/src
@@ -42,7 +42,7 @@ NOTE: This is the ROS Hydro readme version. See groovy-devel branch for ROS Groo
     echo 'source ~/ros/ws_moveit/devel/setup.bash' >> ~/.bashrc
 ```
 
-## Installation
+## Install Baxter Software
 
 * Create a catkin workspace (we recommend a separate one for Baxter) and use wstool to install the individual repositories
 
