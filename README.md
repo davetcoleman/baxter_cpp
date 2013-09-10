@@ -25,7 +25,7 @@ Currently it contains Gazebo simulation and pick and place MoveIt code for Baxte
 
 We have chosen to freeze the version of MoveIt! we are using for the short-run to ensure compatibilty with our customizations. We recommend you install this in a seperate workspace to decrease built times.
 
-```
+    ```
     mkdir -p ~/ros/ws_moveit/src
     cd ~/ros/ws_moveit/src
     wstool init .
@@ -34,59 +34,59 @@ We have chosen to freeze the version of MoveIt! we are using for the short-run t
     cd ..
     rosdep install --from-paths src --ignore-src --rosdistro hydro -y
     catkin_make
-```
+    ```
 
 * Add MoveIt setup.bash to your .bashrc (recommended)
 
-```
+    ```
     echo 'source ~/ros/ws_moveit/devel/setup.bash' >> ~/.bashrc
-```
+    ```
 
 ## Install Baxter Software
 
 * Create a catkin workspace (we recommend a separate one for Baxter) and use wstool to install the individual repositories
 
-```
+    ```
     mkdir -p ~/ros/ws_baxter/src
     cd ~/ros/ws_baxter/src
     wstool init .
     wstool merge https://raw.github.com/davetcoleman/baxter/hydro-devel/baxter.rosinstall
     wstool update
-```
+    ```
 
 * Also install from source the private RethinkRobotics SDK:
 
-```
+    ```
     git clone git@github.com:RethinkRobotics/sdk-examples.git -b gazebo_dev
-```
+    ```
 
 * Disable duplicate packages
 
     There is currently a duplication of packages in sdk-examples and baxter_common that must be fixed manually. This issue should be fixed in Rethink's next release of their SDK:
 
-```
+    ```
     cd ~/ros/ws_baxter/
     touch src/sdk-examples/baxter_description/CATKIN_IGNORE
     touch src/sdk-examples/baxter_msgs/CATKIN_IGNORE
-```
+    ```
 
 * Install dependencies
 
-```
+    ```
     rosdep install --from-paths . --ignore-src --rosdistro hydro -y
-```
+    ```
 
 * Build
 
-```
+    ```
     catkin_make
-```
+    ```
 
 * Add Baxter setup.bash to your .bashrc (recommended)
 
-```
+    ```
     echo 'source ~/ros/ws_baxter/devel/setup.bash' >> ~/.bashrc
-```
+    ```
 
 ## Bringup Baxter
 
