@@ -25,8 +25,8 @@ NOTE: This is the ROS Hydro readme version. See groovy-devel branch for ROS Groo
 * Create a catkin workspace (we recommend a separate one for Baxter) and ``cd`` into it:
 
 ```
-    mkdir -p ~/ros/baxter_ws/src
-    cd ~/ros/baxter_ws/src
+    mkdir -p ~/ros/ws_baxter/src
+    cd ~/ros/ws_baxter/src
     wstool init .
     wstool merge https://raw.github.com/davetcoleman/baxter/hydro-devel/baxter.rosinstall
     wstool update
@@ -43,7 +43,7 @@ NOTE: This is the ROS Hydro readme version. See groovy-devel branch for ROS Groo
     There is currently a duplication of packages in sdk-examples and baxter_common that must be fixed manually. This issue should be fixed in Rethink's next release of their SDK:
 
 ```
-    cd ~/ros/baxter_ws/
+    cd ~/ros/ws_baxter/
     touch src/sdk-examples/baxter_description/CATKIN_IGNORE
     touch src/sdk-examples/baxter_msgs/CATKIN_IGNORE
 ```
@@ -63,7 +63,7 @@ NOTE: This is the ROS Hydro readme version. See groovy-devel branch for ROS Groo
 * Add Baxter setup.bash to your .bashrc (recommended)
 
 ```
-    echo 'source ~/ros/baxter_ws/devel/setup.bash' >> ~/.bashrc
+    echo 'source ~/ros/ws_baxter/devel/setup.bash' >> ~/.bashrc
 ```
 
 * Install MoveIt! From Source (currently not required - the debians are still the same)
@@ -71,8 +71,8 @@ NOTE: This is the ROS Hydro readme version. See groovy-devel branch for ROS Groo
     We have chosen to freeze the version of MoveIt! we are using for the short-run to ensure compatibilty with our customizations. We recommend you install this in a seperate workspace to decrease built times.
 
 ```
-    mkdir -p ~/ros/moveit_ws/src
-    cd ~/ros/moveit_ws/src
+    mkdir -p ~/ros/ws_moveit/src
+    cd ~/ros/ws_moveit/src
     wstool init .
     wstool merge https://raw.github.com/davetcoleman/baxter/hydro-devel/moveit.rosinstall
     wstool update
@@ -84,7 +84,7 @@ NOTE: This is the ROS Hydro readme version. See groovy-devel branch for ROS Groo
 * Add MoveIt setup.bash to your .bashrc (recommended)
 
 ```
-    echo 'source ~/ros/moveit_ws/devel/setup.bash' >> ~/.bashrc
+    echo 'source ~/ros/ws_moveit/devel/setup.bash' >> ~/.bashrc
 ```
 
 ## Bringup Baxter
