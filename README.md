@@ -66,6 +66,8 @@ NOTE: This is the ROS Hydro readme version. See groovy-devel branch for ROS Groo
     echo 'source ~/ros/ws_baxter/devel/setup.bash' >> ~/.bashrc
 ```
 
+## Install MoveIt
+
 * Install MoveIt! From Source (currently not required - the debians are still the same)
 
     We have chosen to freeze the version of MoveIt! we are using for the short-run to ensure compatibilty with our customizations. We recommend you install this in a seperate workspace to decrease built times.
