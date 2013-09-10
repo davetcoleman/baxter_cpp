@@ -59,15 +59,19 @@ namespace baxter_pick_place
 static const std::string ROBOT_DESCRIPTION="robot_description";
 static const std::string RVIZ_MARKER_TOPIC = "/end_effector_marker";
 static const std::string PLANNING_GROUP_NAME = "right_arm";
-static const std::string SUPPORT_SURFACE_NAME = "workbench";
-static const std::string SUPPORT_SURFACE_NAME2 = "little_table";
-static const std::string WALL_NAME = "wall";
 static const std::string BASE_LINK = "base"; //"/base";
 static const std::string EE_GROUP = "right_hand";
 static const std::string EE_JOINT = "right_gripper_l_finger_joint";
 static const std::string EE_PARENT_LINK = "right_wrist";
 static const std::string BLOCK_NAME = "block1";
 static const double BLOCK_SIZE = 0.04;
+
+// environment
+static const std::string SUPPORT_SURFACE1_NAME = "workbench1";
+static const std::string SUPPORT_SURFACE2_NAME = "workbench2";
+static const std::string WALL1_NAME = "wall1";
+static const std::string WALL2_NAME = "wall2";
+static const std::string WALL3_NAME = "wall3";
 
 // robot dimensions
 static const double FLOOR_TO_BASE_HEIGHT = -0.9;
@@ -138,6 +142,24 @@ public:
     baxter_util_.disableBaxter();
   }
 
+  void createEnvironment()
+  {
+      cleanupCO(SUPPORT_SURFACE1_NAME);
+      cleanupCO(SUPPORT_SURFACE2_NAME);
+      cleanupCO(WALL1_NAME);
+      cleanupCO(WALL2_NAME);
+      cleanupCO(WALL3_NAME);
+
+      // --------------------------------------------------------------------------------------------
+      // Add objects to scene
+      //publishCollisionTable();
+      //publishCollisionTableSmall();
+
+      // M_PI / 2;
+      publishCollisionWall(-0.6, 0, 0, WALL1_NAME);
+
+  }
+
   bool startRoutine()
   {
     // ---------------------------------------------------------------------------------------------
@@ -148,6 +170,8 @@ public:
     // Show grasp visualizations or not
     //rviz_tools_->setMuted(true);
 
+    createEnvironment();
+    return true;
     /*
     // test
     geometry_msgs::PoseStamped ee_pose;
@@ -166,15 +190,6 @@ public:
 
       // Remove collision objects
       cleanupCO(BLOCK_NAME);
-      cleanupCO(SUPPORT_SURFACE_NAME);
-      cleanupCO(SUPPORT_SURFACE_NAME2);
-      cleanupCO(WALL_NAME);
-
-      // --------------------------------------------------------------------------------------------
-      // Add objects to scene
-      publishCollisionTable();
-      publishCollisionTableSmall();
-      publishCollisionWall();
 
       // Publish goal block location
       rviz_tools_->publishBlock( goal_block_pose, BLOCK_SIZE, true );
@@ -395,7 +410,7 @@ public:
     ROS_DEBUG_STREAM_NAMED("simple_pick_place","Published collision object " << block_name);
   }
 
-  void publishCollisionWall()
+  void publishCollisionWall(double x, double y, double angle, const std::string name)
   {
     moveit_msgs::CollisionObject collision_obj;
     collision_obj.header.stamp = ros::Time::now();
@@ -409,19 +424,16 @@ public:
 
     // ----------------------------------------------------------------------------------
     // Name
-    collision_obj.id = WALL_NAME;
+    collision_obj.id = name;
 
     double depth = 0.1;
     double width = 0.95;
     double height = 2.0;
 
     // Position
-    rec_pose.position.x = -0.6;
-    rec_pose.position.y = 0;
+    rec_pose.position.x = x;
+    rec_pose.position.y = y;
     rec_pose.position.z = height / 2 + FLOOR_TO_BASE_HEIGHT;
-
-    // Orientation
-    double angle = 0; // M_PI / 2;
 
     // Size
     collision_obj.primitives[0].dimensions[shape_msgs::SolidPrimitive::BOX_X] = depth;
@@ -461,7 +473,7 @@ public:
     moveit_msgs::CollisionObject collision_obj;
     collision_obj.header.stamp = ros::Time::now();
     collision_obj.header.frame_id = BASE_LINK;
-    collision_obj.id = SUPPORT_SURFACE_NAME;
+    collision_obj.id = SUPPORT_SURFACE1_NAME;
     collision_obj.operation = moveit_msgs::CollisionObject::ADD;
     collision_obj.primitives.resize(1);
     collision_obj.primitives[0].type = shape_msgs::SolidPrimitive::BOX;
@@ -498,7 +510,7 @@ public:
     moveit_msgs::CollisionObject collision_obj;
     collision_obj.header.stamp = ros::Time::now();
     collision_obj.header.frame_id = BASE_LINK;
-    collision_obj.id = SUPPORT_SURFACE_NAME2;
+    collision_obj.id = SUPPORT_SURFACE2_NAME;
     collision_obj.operation = moveit_msgs::CollisionObject::ADD;
     collision_obj.primitives.resize(1);
     collision_obj.primitives[0].type = shape_msgs::SolidPrimitive::BOX;
@@ -525,7 +537,7 @@ public:
     block_grasp_generator_->generateGrasps( block_pose, grasp_data_, grasps );
 
     // Prevent collision with table
-    group_->setSupportSurfaceName(SUPPORT_SURFACE_NAME2);
+    group_->setSupportSurfaceName(SUPPORT_SURFACE2_NAME);
 
     //ROS_WARN_STREAM_NAMED("","testing grasp 1:\n" << grasps[0]);
     //ros::Duration(100).sleep();
@@ -669,7 +681,7 @@ public:
     */
 
     // Prevent collision with table
-    group_->setSupportSurfaceName(SUPPORT_SURFACE_NAME);
+    group_->setSupportSurfaceName(SUPPORT_SURFACE1_NAME);
 
     group_->setPlannerId("RRTConnectkConfigDefault");
 

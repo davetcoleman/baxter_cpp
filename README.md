@@ -1,42 +1,41 @@
 baxter
 ======
 
-Unofficial Baxter packages that add-on to the Rethink SDK. Currently it contains Gazebo simulation and pick and place MoveIt code for Baxter
+Unofficial Baxter packages that add-on to the Rethink SDK. It is entirely written in C++ and is the location of on going development by [Dave Coleman](http://davetcoleman.com). 
+
+Currently it contains Gazebo simulation and pick and place MoveIt code for Baxter. The more stable version is the groovy-devel branch.
 
 NOTE: This is the ROS Hydro readme version. See groovy-devel branch for ROS Groovy instructions.
 
 ## Prequisites
 
+ * A Baxter with dual parallel grippers, or the desire to see one in simulation
  * [ROS Hydro](http://wiki.ros.org/ROS/Installation)
- * Access to the private Rethink [sdk-examples](https://github.com/RethinkRobotics/sdk-examples) repository - we are using the baxter_interface and head_control packages from the SDK
+ * Access to the private Rethink [sdk-examples](https://github.com/RethinkRobotics/sdk-examples) repository - we are using the baxter_interface and head_control packages from the SDK. Contact [Dave](davetcoleman@gmail.com) if you should have access to this.
+ * Setup Github (recommended) - the git@github.com urls, below, only work if you have [Setup Github](https://help.github.com/articles/set-up-git) and generated [SSH Keys for Github](https://help.github.com/articles/generating-ssh-keys). Otherwise, change the below URLS to say "https://github.com/".
 
 ## Installation
 
-* Create a catkin workspace and cd into it:
+* Install wstool package
 
 ```
-    mkdir -p ~/baxter_ws/src
-    cd ~/baxter_ws/src
-    catkin_init_workspace
+    sudo apt-get install python-wstool
 ```
 
-* Setup Github (recommended)
-
-    The git@github.com urls, below, only work if you have [Setup Github](https://help.github.com/articles/set-up-git) and generated [SSH Keys for Github](https://help.github.com/articles/generating-ssh-keys). Otherwise, change the below URLS to say "https://github.com/".
-
-* Checkout this repo
+* Create a catkin workspace (we recommend a separate one for Baxter) and ``cd`` into it:
 
 ```
-    git clone git@github.com:davetcoleman/baxter.git -b hydro-devel
+    mkdir -p ~/ros/baxter_ws/src
+    cd ~/ros/baxter_ws/src
+    wstool init .
+    wstool merge https://raw.github.com/davetcoleman/baxter/hydro-devel/baxter.rosinstall
+    wstool update
 ```
 
-* Also install from source a few customized repositories:
+* Also install from source the private RethinkRobotics SDK:
 
 ```
     git clone git@github.com:RethinkRobotics/sdk-examples.git -b gazebo_dev
-    git clone git@github.com:davetcoleman/baxter_common.git -b dual_parallel_grippers
-    git clone git@github.com:davetcoleman/block_grasp_generator.git -b hydro-devel
-    git clone git@github.com:ros-controls/ros_controllers -b velocity_position_controller
 ```
 
 * Disable duplicate packages
@@ -44,7 +43,7 @@ NOTE: This is the ROS Hydro readme version. See groovy-devel branch for ROS Groo
     There is currently a duplication of packages in sdk-examples and baxter_common that must be fixed manually. This issue should be fixed in Rethink's next release of their SDK:
 
 ```
-    cd ~/baxter_ws/
+    cd ~/ros/baxter_ws/
     touch src/sdk-examples/baxter_description/CATKIN_IGNORE
     touch src/sdk-examples/baxter_msgs/CATKIN_IGNORE
 ```
@@ -61,10 +60,31 @@ NOTE: This is the ROS Hydro readme version. See groovy-devel branch for ROS Groo
     catkin_make
 ```
 
-* Add setup.bash to your .bashrc (recommended)
+* Add Baxter setup.bash to your .bashrc (recommended)
 
 ```
-    echo 'source ~/baxter_ws/devel/setup.bash' >> ~/.bashrc
+    echo 'source ~/ros/baxter_ws/devel/setup.bash' >> ~/.bashrc
+```
+
+* Install MoveIt! From Source (currently not required - the debians are still the same)
+
+    We have chosen to freeze the version of MoveIt! we are using for the short-run to ensure compatibilty with our customizations. We recommend you install this in a seperate workspace to decrease built times.
+
+```
+    mkdir -p ~/ros/moveit_ws/src
+    cd ~/ros/moveit_ws/src
+    wstool init .
+    wstool merge https://raw.github.com/davetcoleman/baxter/hydro-devel/moveit.rosinstall
+    wstool update
+    cd ..
+    rosdep install --from-paths src --ignore-src --rosdistro hydro -y
+    catkin_make
+```
+
+* Add MoveIt setup.bash to your .bashrc (recommended)
+
+```
+    echo 'source ~/ros/moveit_ws/devel/setup.bash' >> ~/.bashrc
 ```
 
 ## Bringup Baxter
