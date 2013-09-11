@@ -171,8 +171,31 @@ public:
     finger_joint_midpoint_ = FINGER_JOINT_LOWER + finger_joint_stroke_ / 2;
 
     // Get the EE ready to be used
+    autoFix();
+
+    // Error report
+    if( hasError(true) ) // check ready bit when closing
+    {
+      ROS_ERROR_STREAM_NAMED(arm_name,"Unable to enable " << arm_name_ << " gripper, perhaps the EStop is on. Quitting.");
+      exit(0);
+    }
+    else
+    {
+      // Register the goal and start
+      action_server_.registerGoalCallback(boost::bind(&ElectricParallelGripper::goalCB, this));
+      action_server_.start();
+
+      // Announce state
+      ROS_INFO_STREAM_NAMED(arm_name_, "Baxter Electric Parallel Gripper ready " << arm_name_);
+    }
+  }
+
+  bool autoFix()
+  {
     int attempts = 0;
-    while(ros::ok() && attempts < 3)
+    bool result = false;
+
+    while(ros::ok())
     {
       bool recheck = false;
 
@@ -200,27 +223,23 @@ public:
 
       // Check if we need to loop again
       if(!recheck)
+      {
+        result = true;
         break;
-      
+      }
+
+      // Check if we should give up
+      if( attempts >= 3 )
+      {
+        result = false;
+        break;
+      }
+
       ros::Duration(1.0).sleep();
       ++attempts;
     }
 
-    // Error report
-    if( hasError(true) ) // check ready bit when closing
-    {
-      ROS_ERROR_STREAM_NAMED(arm_name,"Unable to enable " << arm_name_ << " gripper, perhaps the EStop is on. Quitting.");
-      exit(0);
-    }
-    else
-    {
-      // Register the goal and start
-      action_server_.registerGoalCallback(boost::bind(&ElectricParallelGripper::goalCB, this));
-      action_server_.start();
-
-      // Announce state
-      ROS_INFO_STREAM_NAMED(arm_name_, "Baxter Electric Parallel Gripper ready " << arm_name_);
-    }
+    return result;
   }
 
   void populateState(sensor_msgs::JointState &state)
@@ -249,8 +268,8 @@ public:
 
   /**
    * \brief Send the calibrate command to the EE twice (just in case one fails)
-            but do not do any error checking
-   */
+   but do not do any error checking
+  */
   void calibrate()
   {
     if( in_simulation_ )
@@ -275,6 +294,20 @@ public:
   {
     gripper_state_ = msg;
     gripper_state_timestamp_ = ros::Time::now();
+
+    // Check for errors every 50 refreshes
+    static std::size_t counter = 0;
+    counter++;
+    if( counter % 50 == 0 )
+    {
+      if( !autoFix() )
+      {
+        ROS_ERROR_STREAM_THROTTLE_NAMED(2,arm_name_,"End effector " << arm_name_ << " in error state.");
+      }
+    }
+    // Reset counter when it reaches max value
+    if( counter >= (size_t)-1 )
+      counter = 0;
   }
 
   /**
@@ -293,7 +326,7 @@ public:
 
     // Run Checks
     if( !in_simulation_ &&
-      ros::Time::now() > gripper_state_timestamp_ + ros::Duration(1.0)) // check that the message timestamp is no older than 1 second
+      ros::Time::now() > gripper_state_timestamp_ + ros::Duration(2.0)) // check that the message timestamp is no older than 1 second
     {
       ROS_ERROR_STREAM_NAMED(arm_name_,"Gripper " << arm_name_ << " state expired. State: \n" << *gripper_state_ );
 
