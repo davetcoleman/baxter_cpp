@@ -50,10 +50,10 @@
 #include <block_grasp_generator/robot_viz_tools.h> // simple tool for showing graspsp
 
 // Baxter specific properties
-#include "baxter_data.h"
+#include <baxter_pick_place/baxter_data.h>
 
 // Custom environment
-#include "custom_environment.h"
+#include <baxter_pick_place/custom_environment.h>
 
 namespace baxter_pick_place
 {
@@ -144,6 +144,7 @@ public:
     createEnvironment(rviz_tools_);
 
     std::size_t block_id = 0; // \todo temp
+    char input; // for user input
 
     // --------------------------------------------------------------------------------------------------------
     // Start pick and place
@@ -156,7 +157,7 @@ public:
 
       // -------------------------------------------------------------------------------------
       // Pick block
-      
+
       bool foundBlock = false;
       while(!foundBlock && ros::ok())
       {
@@ -186,8 +187,10 @@ public:
 
         if( !pick(start_blocks[block_id].pose, start_blocks[block_id].name) )
         {
-          ROS_ERROR_STREAM_NAMED("pick_place","Pick failed. Press any key to retry.");
-          std::cin.ignore();
+          ROS_ERROR_STREAM_NAMED("pick_place","Pick failed. Continue (y/n)?");
+          std::cin >> input;
+          if( input != 'y' )
+            exit(0);
         }
         else
         {
@@ -200,7 +203,7 @@ public:
       ROS_INFO_STREAM_NAMED("pick_place","Waiting to put...");
       ros::Duration(0.5).sleep();
 
-      if(true)
+      if(false)
       {
 
         bool putBlock = false;
@@ -208,8 +211,10 @@ public:
         {
           if( !place(goal_block_pose, start_blocks[block_id].name) )
           {
-            ROS_ERROR_STREAM_NAMED("pick_place","Place failed. Press any key to retry.");
-            std::cin.ignore();
+            ROS_ERROR_STREAM_NAMED("pick_place","Place failed. Continue (y/n)?");
+            std::cin >> input;
+            if( input != 'y' )
+              exit(0);
           }
           else
           {
@@ -219,9 +224,11 @@ public:
         }
       }
 
-      ROS_INFO_STREAM_NAMED("pick_place","Pick and place cycle complete ========================================= \n");
-      ROS_INFO_STREAM_NAMED("pick_place","Press any key to continue:");
-      std::cin.ignore();
+      ROS_INFO_STREAM_NAMED("pick_place","Pick and place cycle complete =========================================");
+      ROS_ERROR_STREAM_NAMED("pick_place","Re-run (y/n)?");
+      std::cin >> input;
+      if( input != 'y' )
+        exit(0);
 
       // Go for next block or loop
       block_id++;

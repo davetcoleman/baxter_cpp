@@ -33,7 +33,7 @@
  *********************************************************************/
 
 /* Author: Dave Coleman
-   Desc:   Custom environments for running MoveIt!
+   Desc:   Parameters specific to Baxter for performing pick-place
 */
 
 // Blocks
@@ -103,7 +103,7 @@ block_grasp_generator::RobotGraspData loadRobotGraspData()
   grasp_data.angle_resolution_ = 16;
 
   // Debug
-  block_grasp_generator::BlockGraspGenerator::printBlockGraspData(grasp_data);
+  //block_grasp_generator::BlockGraspGenerator::printBlockGraspData(grasp_data);
 
   return grasp_data;
 }
