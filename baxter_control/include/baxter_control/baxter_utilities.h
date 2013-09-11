@@ -198,19 +198,19 @@ public:
   {
     ROS_INFO_STREAM_NAMED("utility","Enabling Baxter");
 
-    // Check communication
+    // Wait for state msg to be recieved
     if( !checkCommunication() )
       return false;
 
-    // Check for errors / estop
-    if( !checkReady() )
-      return false;
-
+    // Attempt to reset and enable robot
     std_msgs::Bool enable_msg;
     enable_msg.data = true;
     pub_baxter_enable_.publish(enable_msg);
     ros::Duration(1.0).sleep();
 
+    // Check for errors / estop
+    if( !checkReady() )
+      return false;
 
     // Check it enabled
     int count = 0;

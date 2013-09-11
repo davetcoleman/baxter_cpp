@@ -202,7 +202,7 @@ public:
       ROS_INFO_STREAM_NAMED("pick_place","Waiting to put...");
       ros::Duration(0.5).sleep();
 
-      if(true)
+      if(false)
       {
 
         bool putBlock = false;

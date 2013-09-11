@@ -163,10 +163,6 @@ public:
       joint_state_topic_ = nh_.advertise<sensor_msgs::JointState>("/robot/joint_states",10);
     }
 
-    // Register the goal and start
-    action_server_.registerGoalCallback(boost::bind(&ElectricParallelGripper::goalCB, this));
-    action_server_.start();
-
     // Cache zero command
     zero_msg_.data = 0;
 
@@ -174,11 +170,57 @@ public:
     finger_joint_stroke_ = FINGER_JOINT_UPPER - FINGER_JOINT_LOWER;
     finger_joint_midpoint_ = FINGER_JOINT_LOWER + finger_joint_stroke_ / 2;
 
-    // Reset error just in case. This step also includes calibration
-    resetError();
+    // Get the EE ready to be used
+    int attempts = 0;
+    while(ros::ok() && attempts < 3)
+    {
+      bool recheck = false;
 
-    // Announce state
-    ROS_INFO_STREAM_NAMED(arm_name_, "Baxter Electric Parallel Gripper ready " << arm_name_);
+      // Reset error if necessary
+      if( gripper_state_->error )
+      {
+        resetError();
+        if( gripper_state_->error )
+          recheck = true;
+      }
+
+      // Calibrate
+      if( !gripper_state_->calibrated )
+      {
+        calibrate();
+        if( !gripper_state_->calibrated )
+          recheck = true;
+      }
+
+      // Check for ready
+      if( !gripper_state_->ready )
+      {
+        recheck = true;
+      }
+
+      // Check if we need to loop again
+      if(!recheck)
+        break;
+      
+      ros::Duration(1.0).sleep();
+      ++attempts;
+    }
+
+    // Error report
+    if( hasError(true) ) // check ready bit when closing
+    {
+      ROS_ERROR_STREAM_NAMED(arm_name,"Unable to enable " << arm_name_ << " gripper, perhaps the EStop is on. Quitting.");
+      exit(0);
+    }
+    else
+    {
+      // Register the goal and start
+      action_server_.registerGoalCallback(boost::bind(&ElectricParallelGripper::goalCB, this));
+      action_server_.start();
+
+      // Announce state
+      ROS_INFO_STREAM_NAMED(arm_name_, "Baxter Electric Parallel Gripper ready " << arm_name_);
+    }
   }
 
   void populateState(sensor_msgs::JointState &state)
@@ -205,6 +247,10 @@ public:
     return in_simulation_;
   }
 
+  /**
+   * \brief Send the calibrate command to the EE twice (just in case one fails)
+            but do not do any error checking
+   */
   void calibrate()
   {
     if( in_simulation_ )
@@ -221,7 +267,7 @@ public:
 
       calibrate_topic_.publish(empty_msg_);
       ros::spinOnce();
-      ros::Duration(0.05).sleep();
+      ros::Duration(1.5).sleep();
     }
   }
 
@@ -250,45 +296,51 @@ public:
       ros::Time::now() > gripper_state_timestamp_ + ros::Duration(1.0)) // check that the message timestamp is no older than 1 second
     {
       ROS_ERROR_STREAM_NAMED(arm_name_,"Gripper " << arm_name_ << " state expired. State: \n" << *gripper_state_ );
-      action_server_.setAborted(action_result_,std::string("Gripper state expired"));
+
+      if( action_server_.isActive() )
+        action_server_.setAborted(action_result_,std::string("Gripper state expired"));
+
       return true;
     }
     if( !gripper_state_->enabled )
     {
       ROS_ERROR_STREAM_NAMED(arm_name_,"Gripper " << arm_name_ << " not enabled. State: \n" << *gripper_state_ );
-      action_server_.setAborted(action_result_,"Gripper not enabled");
-      return true;
-    }
-    if( !gripper_state_->calibrated )
-    {
-      ROS_ERROR_STREAM_NAMED(arm_name_,"Gripper " << arm_name_ << " not calibrated. State: \n" << *gripper_state_ );
-      action_server_.setAborted(action_result_,"Gripper not calibrated");
 
-      // Attempt to fix error
-      ROS_WARN_STREAM_NAMED(arm_name_,"Attempting to auto fix");
-      resetError();
-
-      return true;
-    }
-    if( checkReady && !gripper_state_->ready )
-    {
-      ROS_ERROR_STREAM_NAMED(arm_name_,"Gripper " << arm_name_ << " not ready. State: \n" << *gripper_state_ );
-      action_server_.setAborted(action_result_,"Gripper not ready");
-
-      // Attempt to fix error
-      ROS_WARN_STREAM_NAMED(arm_name_,"Attempting to auto fix");
-      resetError();
+      if( action_server_.isActive() )
+        action_server_.setAborted(action_result_,"Gripper not enabled");
 
       return true;
     }
     if( gripper_state_->error )
     {
       ROS_ERROR_STREAM_NAMED(arm_name_,"Gripper " << arm_name_ << " has error. State: \n" << *gripper_state_ );
-      action_server_.setAborted(action_result_,"Gripper has error");
 
+      if( action_server_.isActive() )
+        action_server_.setAborted(action_result_,"Gripper has error");
+
+      return true;
+    }
+    if( !gripper_state_->calibrated )
+    {
+      ROS_ERROR_STREAM_NAMED(arm_name_,"Gripper " << arm_name_ << " not calibrated. State: \n" << *gripper_state_ );
+
+      if( action_server_.isActive() )
+        action_server_.setAborted(action_result_,"Gripper not calibrated");
+
+      /*
       // Attempt to fix error
       ROS_WARN_STREAM_NAMED(arm_name_,"Attempting to auto fix");
       resetError();
+      calibrate();
+      */
+      return true;
+    }
+    if( checkReady && !gripper_state_->ready )
+    {
+      ROS_ERROR_STREAM_NAMED(arm_name_,"Gripper " << arm_name_ << " not ready. State: \n" << *gripper_state_ );
+
+      if( action_server_.isActive() )
+        action_server_.setAborted(action_result_,"Gripper not ready");
 
       return true;
     }
@@ -296,6 +348,9 @@ public:
     return false;
   }
 
+  /**
+   * \brief Send the reset command to the EE twice (just to be sure). No error checking.
+   */
   void resetError()
   {
     ROS_INFO_STREAM_NAMED(arm_name_,"Resetting gripper");
@@ -305,8 +360,6 @@ public:
     ros::Duration(0.05).sleep();
     reset_topic_.publish(bool_msg_);
     ros::Duration(0.05).sleep();
-
-    calibrate();
   }
 
   // Action server sends goals here
