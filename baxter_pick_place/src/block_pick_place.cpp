@@ -129,9 +129,9 @@ public:
 
     // Create start block positions (hard coded)
     std::vector<MetaBlock> start_blocks;
-    start_blocks.push_back( createStartBlock(0.85, -0.1, "Block1") );
-    start_blocks.push_back( createStartBlock(0.95, -0.1, "Block2") );
-    start_blocks.push_back( createStartBlock(1.05, -0.1, "Block3") );
+    start_blocks.push_back( createStartBlock(0.75, -0.1, "Block1") );
+    start_blocks.push_back( createStartBlock(0.85, -0.1, "Block2") );
+    start_blocks.push_back( createStartBlock(0.95, -0.1, "Block3") );
 
     geometry_msgs::Pose goal_block_pose = createGoalBlock();
 
@@ -273,7 +273,7 @@ public:
     geometry_msgs::Pose goal_block_pose;
 
     // Position
-    goal_block_pose.position.x = x_max - TABLE_DEPTH / 2;
+    goal_block_pose.position.x = x_min + TABLE_DEPTH / 6;
     goal_block_pose.position.y = y_max - TABLE_WIDTH / 2;
     goal_block_pose.position.z = getTableHeight(FLOOR_TO_BASE_HEIGHT);
 
@@ -292,7 +292,7 @@ public:
 
   bool pick(const geometry_msgs::Pose& block_pose, std::string block_name)
   {
-    ROS_WARN_STREAM_NAMED("","picking block "<< block_name);
+    ROS_WARN_STREAM_NAMED("pick","Picking '"<< block_name << "'");
 
     std::vector<manipulation_msgs::Grasp> grasps;
 
@@ -325,7 +325,7 @@ public:
 
   bool place(const geometry_msgs::Pose& goal_block_pose, std::string block_name)
   {
-    ROS_WARN_STREAM_NAMED("pick_place","Placing "<< block_name);
+    ROS_WARN_STREAM_NAMED("place","Placing '"<< block_name << "'");
 
     std::vector<manipulation_msgs::PlaceLocation> place_locations;
     std::vector<manipulation_msgs::Grasp> grasps;

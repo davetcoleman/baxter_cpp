@@ -174,7 +174,7 @@ public:
     autoFix();
 
     // Error report
-    if( hasError(true) ) // check ready bit when closing
+    if( hasError() ) 
     {
       ROS_ERROR_STREAM_NAMED(arm_name,"Unable to enable " << arm_name_ << " gripper, perhaps the EStop is on. Quitting.");
       exit(0);
@@ -215,8 +215,8 @@ public:
           recheck = true;
       }
 
-      // Check for ready
-      if( !gripper_state_->ready )
+      // Check for ready - unless we are gripping in which case its ok if its not ready
+      if( !gripper_state_->ready && !gripper_state_->gripping )
       {
         recheck = true;
       }
@@ -312,11 +312,9 @@ public:
 
   /**
    * \brief Check if gripper is in good state
-   * \param checkReady - flag if the ready state should be checked. It should not be checked during
-   *                     operation
    * \return true if there is no error
    */
-  bool hasError(bool checkReady = true)
+  bool hasError()
   {
     // Populate these now in case an error is detected below
     action_result_.position = gripper_state_->position;
@@ -360,15 +358,9 @@ public:
       if( action_server_.isActive() )
         action_server_.setAborted(action_result_,"Gripper not calibrated");
 
-      /*
-      // Attempt to fix error
-      ROS_WARN_STREAM_NAMED(arm_name_,"Attempting to auto fix");
-      resetError();
-      calibrate();
-      */
       return true;
     }
-    if( checkReady && !gripper_state_->ready )
+    if( !gripper_state_->ready && !gripper_state_->gripping && !gripper_state_->moving )
     {
       ROS_ERROR_STREAM_NAMED(arm_name_,"Gripper " << arm_name_ << " not ready. State: \n" << *gripper_state_ );
 
@@ -406,7 +398,7 @@ public:
     if(position > finger_joint_midpoint_)
     {
       // Error check gripper
-      if( hasError(false) ) // don't check ready bit when opening
+      if( hasError() ) 
         return;
 
       openGripper();
@@ -414,7 +406,7 @@ public:
     else // Close command
     {
       // Error check gripper
-      if( hasError(true) ) // check ready bit when closing
+      if( hasError() )
         return;
 
       closeGripper();
@@ -441,7 +433,7 @@ public:
     }
 
     // Error check gripper
-    if( hasError(false) )
+    if( hasError() )
       return false;
 
     return true;
@@ -460,7 +452,7 @@ public:
     }
 
     // Error check gripper
-    if( hasError(false) )
+    if( hasError() )
       return false;
 
     return true;

@@ -56,7 +56,7 @@ static const std::string WALL3_NAME = "left_wall";
 static const double TABLE_HEIGHT = 0.83;
 static const double TABLE_WIDTH  = 0.85;
 static const double TABLE_DEPTH  = 0.44;
-static const double TABLE_X = 0.93;
+static const double TABLE_X = 0.83;
 static const double TABLE_Y = 0.15;
 
 // block dimensions

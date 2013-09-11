@@ -109,7 +109,7 @@ block_grasp_generator::RobotGraspData loadRobotGraspData(double block_size)
   grasp_data.approach_retreat_min_dist_ = 0.06; // 0.001;
 
   // distance from center point of object to end effector
-  grasp_data.grasp_depth_ = 0.06; // 0.1;
+  grasp_data.grasp_depth_ = 0.08; // 0.06
 
   grasp_data.block_size_ = block_size;
 
