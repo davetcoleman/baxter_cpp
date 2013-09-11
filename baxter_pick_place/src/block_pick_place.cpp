@@ -141,7 +141,9 @@ public:
     // Create the walls and tables
     createEnvironment(rviz_tools_);
 
-    std::size_t block_id = 0; // \todo temp
+    std::size_t block_id = 0;
+
+    char input; // used for prompting yes/no
 
     // --------------------------------------------------------------------------------------------------------
     // Start pick and place
@@ -184,8 +186,10 @@ public:
 
         if( !pick(start_blocks[block_id].pose, start_blocks[block_id].name) )
         {
-          ROS_ERROR_STREAM_NAMED("pick_place","Pick failed. Press any key to retry.");
-          std::cin.ignore();
+          ROS_ERROR_STREAM_NAMED("pick_place","Pick failed. Retry? (y/n)");
+          std::cin >> input;
+          if( input == 'n' )
+            exit(0);
         }
         else
         {
@@ -206,8 +210,10 @@ public:
         {
           if( !place(goal_block_pose, start_blocks[block_id].name) )
           {
-            ROS_ERROR_STREAM_NAMED("pick_place","Place failed. Press any key to retry.");
-            std::cin.ignore();
+            ROS_ERROR_STREAM_NAMED("pick_place","Place failed. Retry? (y/n)");
+            std::cin >> input;
+            if( input == 'n' )
+              exit(0);
           }
           else
           {
@@ -218,8 +224,10 @@ public:
       }
 
       ROS_INFO_STREAM_NAMED("pick_place","Pick and place cycle complete ========================================= \n");
-      ROS_INFO_STREAM_NAMED("pick_place","Press any key to continue:");
-      std::cin.ignore();
+      ROS_INFO_STREAM_NAMED("pick_place","Restart cycle? (y/n)");
+      std::cin >> input;
+      if( input == 'n' )
+        exit(0);
 
       // Go for next block or loop
       block_id++;
