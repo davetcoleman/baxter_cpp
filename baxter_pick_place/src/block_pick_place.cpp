@@ -202,7 +202,7 @@ public:
       ROS_INFO_STREAM_NAMED("pick_place","Waiting to put...");
       ros::Duration(0.5).sleep();
 
-      if(false)
+      if(true)
       {
 
         bool putBlock = false;
@@ -318,21 +318,9 @@ public:
       }
     }
 
-    //ROS_WARN_STREAM_NAMED("","testing grasp 1:\n" << grasps[0]);
-    //ros::Duration(100).sleep();
-
     //ROS_INFO_STREAM_NAMED("","Grasp 0\n" << grasps[0]);
-    //ROS_INFO_STREAM_NAMED("","\n\n\nGrasp 10\n" << grasps[10]);
 
     return move_group_->pick(block_name, grasps);
-    //return pickDebug(block_name, grasps);
-  }
-
-  // Step through the pick steps one by one
-  bool pickDebug(std::string block_name, const std::vector<manipulation_msgs::Grasp>& grasps)
-  {
-
-
   }
 
   bool place(const geometry_msgs::Pose& goal_block_pose, std::string block_name)
@@ -361,27 +349,11 @@ public:
       pose_stamped.pose.orientation.z = quat.z();
       pose_stamped.pose.orientation.w = quat.w();
 
-      // Giggle block around the area
-      /*
-        for (double z = -0.05; z < 0.05; z += 0.05)
-        {
-        for (double x = -0.05; x < 0.05; x += 0.05)
-        {
-        for (double y = -0.05; y < 0.05; y += 0.05)
-        {
-      */
       // Create new place location
       manipulation_msgs::PlaceLocation place_loc;
 
       place_loc.place_pose = pose_stamped;
 
-      /*
-        place_loc.place_pose.pose.position.x += x;
-        place_loc.place_pose.pose.position.y += y;
-        place_loc.place_pose.pose.position.z += z;
-      */
-
-      //ROS_INFO_STREAM_NAMED("temp","pose:\n" << place_loc.place_pose);
       rviz_tools_->publishBlock( place_loc.place_pose.pose, BLOCK_SIZE, true );
 
       // Approach
@@ -410,54 +382,7 @@ public:
       place_loc.post_place_posture = grasp_data_.pre_grasp_posture_;
 
       place_locations.push_back(place_loc);
-      /*
-        }
-        }
-        }
-      */
     }
-
-    /*
-    // Generate grasps
-    block_grasp_generator_->generateGrasps( goal_block_pose, grasp_data_, grasps );
-
-    // Convert 'grasps' to place_locations format
-    for (std::size_t i = 0; i < grasps.size(); ++i)
-    {
-    // Create new place location
-    manipulation_msgs::PlaceLocation place_loc;
-
-    // Pose
-    pose_stamped.pose = grasps[i].grasp_pose.pose;
-    place_loc.place_pose = pose_stamped;
-
-    // DEBUG \todo remove
-    ROS_ERROR_STREAM_NAMED("temp","place pose " << i << "\n" << pose_stamped);
-
-    // Publish to Rviz
-    rviz_tools_->publishArrow(pose_stamped.pose);
-
-    int counter = 0;
-    while(ros::ok() && counter < 2)
-    {
-    sleep(1);
-    counter++;
-    }
-
-    // Approach & Retreat
-    place_loc.approach = grasps[i].approach;
-    //ROS_WARN_STREAM_NAMED("","is the same? \n" << place_loc.approach);
-    place_loc.retreat = grasps[i].retreat;
-
-    // Post place posture - use same as pre-grasp posture (the OPEN command)
-    place_loc.post_place_posture = grasp_data_.pre_grasp_posture_;
-
-    //ROS_INFO_STREAM_NAMED("place location","PlaceLocation msg:\n" << place_loc);
-
-    place_locations.push_back(place_loc);
-    }
-    ROS_INFO_STREAM_NAMED("pick_place","Created " << place_locations.size() << " place locations");
-    */
 
     // Prevent collision with table
     move_group_->setSupportSurfaceName(SUPPORT_SURFACE3_NAME);

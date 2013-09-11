@@ -100,7 +100,7 @@ We have chosen to freeze the version of MoveIt! we are using for the short-run t
    ```
    rosrun tools enable_robot.py -e
    ```
-
+ 
 ### Simulation 
 
  * Ensure you have the correct ROS_MASTER_URI exported:
@@ -128,16 +128,24 @@ We have chosen to freeze the version of MoveIt! we are using for the short-run t
 
 Works with simulation or hardware:
 
+ * Bringup Baxter Hardware Interface:
+
    ```
-   roslaunch baxter_moveit_config baxter_bringup.launch
+   roslaunch baxter_control baxter_bringup.launch
+   ```
+
+ * Start MoveIt's move_group Server:
+
+   ```
+   roslaunch baxter_moveit_config baxter_moveit.launch
    ```
 
 ## Pick and place demo
 
-Still under development.
+Still under development - moves blocks located on a table in front of Baxter.
 
    ```
-   roslaunch baxter_pick_place baxter_pick_place.launch
+   roslaunch baxter_pick_place block_pick_place.launch
    ```
 
 ## License

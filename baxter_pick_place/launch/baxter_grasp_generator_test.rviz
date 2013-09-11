@@ -5,11 +5,12 @@ Panels:
     Property Tree Widget:
       Expanded:
         - /Global Options1
+        - /Grid1
         - /Grid1/Offset1
         - /grasp_generator1/Namespaces1
         - /MoveItGrasps1
       Splitter Ratio: 0.711462
-    Tree Height: 641
+    Tree Height: 640
   - Class: rviz/Help
     Name: Help
   - Class: rviz/Views
@@ -33,7 +34,7 @@ Visualization Manager:
       Offset:
         X: 0
         Y: 0
-        Z: -0.9
+        Z: 0
       Plane: XY
       Plane Cell Count: 10
       Reference Frame: <Fixed Frame>
@@ -59,7 +60,10 @@ Visualization Manager:
       Marker Topic: /end_effector_marker
       Name: EndEffector
       Namespaces:
-        {}
+        Arrow: true
+        Block: true
+        Text: true
+        end_effector: true
       Queue Size: 100
       Value: true
     - Arrow Length: 0.1
@@ -82,7 +86,10 @@ Visualization Manager:
       Marker Topic: /end_effector_marker
       Name: grasp_generator
       Namespaces:
-        {}
+        Arrow: true
+        Block: true
+        Text: true
+        end_effector: true
       Queue Size: 100
       Value: true
     - Class: rviz/MarkerArray
@@ -116,29 +123,29 @@ Visualization Manager:
   Views:
     Current:
       Class: rviz/XYOrbit
-      Distance: 0.0240412
+      Distance: 0.363095
       Focal Point:
-        X: 0.567681
-        Y: -0.659329
-        Z: -1.43152e-06
+        X: 0.247377
+        Y: 0.1113
+        Z: -1.34211e-06
       Name: Current View
       Near Clip Distance: 0.01
-      Pitch: 0.214797
+      Pitch: 1.0748
       Target Frame: base_link
       Value: XYOrbit (rviz)
-      Yaw: 5.16354
+      Yaw: 0.178513
     Saved: ~
 Window Geometry:
   Displays:
     collapsed: false
-  Height: 1172
+  Height: 1171
   Help:
     collapsed: false
   Hide Left Dock: false
   Hide Right Dock: true
-  QMainWindow State: 000000ff00000000fd00000001000000000000022600000435fc0200000005fb000000100044006900730070006c0061007900730100000041000002c2000000dd00fffffffb0000000800480065006c00700000000342000000bb0000007600fffffffb0000000a0056006900650077007301000003090000016d000000b000fffffffb0000000c00430061006d00650072006100000002ff000001610000000000000000fb0000001e004d006f00740069006f006e00200050006c0061006e006e0069006e006701000002ae000001c70000000000000000000004140000043500000001000000020000000100000002fc0000000100000002000000010000000a0054006f006f006c00730100000000ffffffff0000000000000000
+  QMainWindow State: 000000ff00000000fd00000001000000000000022600000434fc0200000005fb000000100044006900730070006c0061007900730100000041000002c1000000dd00fffffffb0000000800480065006c00700000000342000000bb0000007600fffffffb0000000a0056006900650077007301000003080000016d000000b000fffffffb0000000c00430061006d00650072006100000002ff000001610000000000000000fb0000001e004d006f00740069006f006e00200050006c0061006e006e0069006e006701000002ae000001c70000000000000000000004120000043400000001000000020000000100000002fc0000000100000002000000010000000a0054006f006f006c00730100000000ffffffff0000000000000000
   Views:
     collapsed: false
-  Width: 1600
+  Width: 1598
   X: 3840
   Y: 0

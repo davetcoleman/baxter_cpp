@@ -68,7 +68,7 @@ static const std::string PLANNING_GROUP_NAME = "right_arm";
 static const std::string RVIZ_MARKER_TOPIC = "/end_effector_marker";
 static const std::string BLOCK_NAME = "block1";
 static const double BLOCK_SIZE = 0.04;
-
+ 
 class GraspGeneratorTest
 {
 private:

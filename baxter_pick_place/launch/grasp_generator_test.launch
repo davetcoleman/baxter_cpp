@@ -7,7 +7,7 @@
   </include>
 
   <!--Start the test -->
-  <node name="grasp_generator_test" pkg="block_grasp_generator" type="block_grasp_generator_test" output="screen">
+  <node name="grasp_generator_test" pkg="baxter_pick_place" type="block_grasp_generator_test" output="screen">
     <rosparam command="load" file="$(find baxter_moveit_config)/config/kinematics.yaml"/>
   </node>
 
