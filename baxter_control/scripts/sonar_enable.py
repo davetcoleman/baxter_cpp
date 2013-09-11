@@ -55,10 +55,10 @@ def send_command(enable):
     
     if int(enable)==int(0):
         msg = 0 # turn off enable flags for all sonar channels
+        rospy.loginfo("Disabling sonars")
     else:
         msg = 4095 # turn back on enable flags for all sonar channels
-
-    print(' Enabling sonars= '+enable+' message= '+str(msg));
+        rospy.loginfo("Enabling sonars")
 
     pub = rospy.Publisher('/robot/sonar/set_sonars_enabled', std_msgs.msg.UInt16, latch=False)
     rospy.Rate(1).sleep()

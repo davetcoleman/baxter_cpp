@@ -291,7 +291,7 @@ Visualization Manager:
             Show Axes: false
             Show Trail: false
             Value: true
-        Loop Animation: false
+        Loop Animation: true
         Robot Alpha: 0.45
         Show Robot Collision: false
         Show Robot Visual: true
@@ -591,7 +591,8 @@ Visualization Manager:
       Marker Topic: /end_effector_marker
       Name: EndEffector
       Namespaces:
-        {}
+        Arrow: true
+        Block: true
       Queue Size: 100
       Value: true
     - Arrow Length: 0.1
@@ -614,7 +615,8 @@ Visualization Manager:
       Marker Topic: /end_effector_marker
       Name: EE Grasp Poses
       Namespaces:
-        {}
+        Arrow: true
+        Block: true
       Queue Size: 100
       Value: true
     - Class: rviz/MarkerArray
@@ -648,17 +650,17 @@ Visualization Manager:
   Views:
     Current:
       Class: rviz/XYOrbit
-      Distance: 1.59203
+      Distance: 1.08492
       Focal Point:
         X: 1.09046
         Y: -0.0210259
         Z: -1.39426e-06
       Name: Current View
       Near Clip Distance: 0.01
-      Pitch: 0.114794
+      Pitch: 0.474794
       Target Frame: base_link
       Value: XYOrbit (rviz)
-      Yaw: 0.115393
+      Yaw: 0.130393
     Saved: ~
 Window Geometry:
   Displays:

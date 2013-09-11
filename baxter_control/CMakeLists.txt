@@ -5,17 +5,14 @@ project(baxter_control)
 ## if COMPONENTS list like find_package(catkin REQUIRED COMPONENTS xyz)
 ## is used, also find other catkin packages
 find_package(catkin REQUIRED
-
+    moveit_ros_planning_interface 
+    std_msgs
+    roscpp
+    baxter_msgs
 )
 
 ## System dependencies are found with CMake's conventions
 find_package(Boost REQUIRED COMPONENTS system)
-
-
-## Uncomment this if the package has a setup.py. This macro ensures
-## modules and global scripts declared therein get installed
-## See http://ros.org/doc/groovy/api/catkin/html/user_guide/setup_dot_py.html
-# catkin_python_setup()
 
 ###################################
 ## catkin specific configuration ##
@@ -27,7 +24,7 @@ find_package(Boost REQUIRED COMPONENTS system)
 ## DEPENDS: system dependencies of this project that dependent projects also need
 catkin_package(
    INCLUDE_DIRS include
-#  LIBRARIES baxter_control
+   LIBRARIES baxter_utilities
    CATKIN_DEPENDS 
     moveit_ros_planning_interface 
     std_msgs
@@ -44,8 +41,8 @@ catkin_package(
 ## Your package locations should be listed before other locations
 include_directories(include ${catkin_INCLUDE_DIRS} ${Boost_INCLUDE_DIRS})
 
-#add_library(baxter_utilities include/baxter_control/baxter_utilities.h)
-#target_link_libraries(baxter_utilities ${catkin_LIBRARIES} ${Boost_LIBRARIES})
+add_library(baxter_utilities src/baxter_utilities.cpp)
+target_link_libraries(baxter_utilities ${catkin_LIBRARIES} ${Boost_LIBRARIES})
 
 #############
 ## Install ##
