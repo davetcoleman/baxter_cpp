@@ -90,7 +90,7 @@ public:
   int auto_reset_sec_;
 
   SimplePickPlace()
-    : auto_reset_(true),
+    : auto_reset_(false),
       auto_reset_sec_(4)
   {
     ros::NodeHandle nh;
