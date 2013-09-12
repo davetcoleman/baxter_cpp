@@ -90,7 +90,7 @@ public:
   int auto_reset_sec_;
 
   SimplePickPlace()
-    : auto_reset_(true),
+    : auto_reset_(false),
       auto_reset_sec_(4)
   {
     ros::NodeHandle nh;
@@ -136,16 +136,15 @@ public:
 
     // Create start block positions (hard coded)
     std::vector<MetaBlock> blocks;
-    blocks.push_back( createStartBlock(0.75, -0.1, "Block1") );
-    blocks.push_back( createStartBlock(0.85, -0.1, "Block2") );
-    blocks.push_back( createStartBlock(0.95, -0.1, "Block3") );
+    blocks.push_back( createStartBlock(0.55, -0.4, "Block1") );
+    blocks.push_back( createStartBlock(0.65, -0.4, "Block2") );
+    blocks.push_back( createStartBlock(0.75, -0.4, "Block3") );
 
-    geometry_msgs::Pose goal_block_pose = createGoalBlock();
-    // Add the goal pose to each block, stacking them ontop each other
+    // The goal for each block is simply translating them on the y axis
     for (std::size_t i = 0; i < blocks.size(); ++i)
     {
-      blocks[i].goal_pose = goal_block_pose;
-      goal_block_pose.position.z += BLOCK_SIZE; // stack
+      blocks[i].goal_pose = blocks[i].start_pose;
+      blocks[i].goal_pose.position.y += 0.2;
     }
 
     // Show grasp visualizations or not
@@ -154,10 +153,8 @@ public:
     // Create the walls and tables
     createEnvironment(rviz_tools_);
 
-    std::size_t block_id = 0;
-
     // --------------------------------------------------------------------------------------------------------
-    // Start pick and place
+    // Repeat pick and place forever
     while(ros::ok())
     {
       // -------------------------------------------------------------------------------------
@@ -165,90 +162,110 @@ public:
       //if( !baxter_util_.positionBaxterNeutral() )
       //  return false;
 
-      // -------------------------------------------------------------------------------------
-      // Pick block
-
-      bool foundBlock = false;
-      while(!foundBlock && ros::ok())
+      // --------------------------------------------------------------------------------------------
+      // Re-add all blocks
+      for (std::size_t i = 0; i < blocks.size(); ++i)
       {
-        // --------------------------------------------------------------------------------------------
-        // Re-add all blocks
-        for (std::size_t i = 0; i < blocks.size(); ++i)
-        {
-          // Remove attached objects
-          rviz_tools_->cleanupACO(blocks[i].name);
-
-          // Remove collision objects
-          rviz_tools_->cleanupCO(blocks[i].name);
-
-          // Add a new block that is to be moved
-          rviz_tools_->publishCollisionBlock(blocks[i].start_pose, blocks[i].name, BLOCK_SIZE);
-        }
-
-        // Publish goal block location
-        rviz_tools_->publishBlock( blocks[block_id].goal_pose, BLOCK_SIZE, true );
-
-        // -------------------------------------------------------------------------------------
-        // Start pick
-        ROS_INFO_STREAM_NAMED("pick_place","Attempting to pick '" << blocks[block_id].name << "'");
-
-        // Visualize the block we are about to pick
-        rviz_tools_->publishBlock( blocks[block_id].start_pose, BLOCK_SIZE, false );
-
-        if( !pick(blocks[block_id].start_pose, blocks[block_id].name) )
-        {
-          ROS_ERROR_STREAM_NAMED("pick_place","Pick failed.");
-          if( !promptUser() )
-            exit(0);
-        }
-        else
-        {
-          ROS_INFO_STREAM_NAMED("pick_place","Done with pick ---------------------------");
-          foundBlock = true;
-        }
+        resetBlock(blocks[i]);
       }
 
-      // -------------------------------------------------------------------------------------
-      ROS_INFO_STREAM_NAMED("pick_place","Waiting to put...");
-      ros::Duration(0.5).sleep();
-
-      if(true)
+      // Do for all blocks
+      for (std::size_t block_id = 0; block_id < blocks.size(); ++block_id)
       {
-
-        bool putBlock = false;
-        while(!putBlock && ros::ok())
+        // Pick -------------------------------------------------------------------------------------
+        while(ros::ok())
         {
+          ROS_INFO_STREAM_NAMED("pick_place","Picking '" << blocks[block_id].name << "'");
+
+          // Visualize the block we are about to pick
+          rviz_tools_->publishBlock( blocks[block_id].start_pose, BLOCK_SIZE, false );
+
+          if( !pick(blocks[block_id].start_pose, blocks[block_id].name) )
+          {
+            ROS_ERROR_STREAM_NAMED("pick_place","Pick failed.");
+
+            // Ask user if we should try again
+            if( !promptUser() )
+              exit(0);
+
+            // Retry
+            resetBlock(blocks[block_id]);
+          }
+          else
+          {
+            ROS_INFO_STREAM_NAMED("pick_place","Done with pick ---------------------------");
+            break;
+          }
+        }
+
+        // Place -------------------------------------------------------------------------------------
+        while(ros::ok())
+        {
+          ROS_INFO_STREAM_NAMED("pick_place","Placing '" << blocks[block_id].name << "'");
+
+          // Publish goal block location
+          rviz_tools_->publishBlock( blocks[block_id].goal_pose, BLOCK_SIZE, true );
+
           if( !place(blocks[block_id].goal_pose, blocks[block_id].name) )
           {
             ROS_ERROR_STREAM_NAMED("pick_place","Place failed.");
+
+            // Determine if the attached collision body as already been removed, in which case
+            // we can ignore the failure and just resume picking
+            /*
+            if( !move_group_->hasAttachedObject(blocks[block_id].name) )
+            {
+              ROS_WARN_STREAM_NAMED("pick_place","Collision object already detached, so auto resuming pick place.");
+              ROS_WARN_STREAM_NAMED("pick_place","Collision object already detached, so auto resuming pick place.");
+              ROS_WARN_STREAM_NAMED("pick_place","Collision object already detached, so auto resuming pick place.");
+              ROS_WARN_STREAM_NAMED("pick_place","Collision object already detached, so auto resuming pick place.");
+              ROS_WARN_STREAM_NAMED("pick_place","Collision object already detached, so auto resuming pick place.");
+              ROS_WARN_STREAM_NAMED("pick_place","Collision object already detached, so auto resuming pick place.");
+
+              // Ask user if we should try again
+              if( !promptUser() )
+                break; // resume picking
+                }
+            */
+  
+            // Ask user if we should try again
             if( !promptUser() )
               exit(0);
           }
           else
           {
-            ROS_INFO_STREAM_NAMED("pick_place","Done with place");
-            putBlock = true;
+            ROS_INFO_STREAM_NAMED("pick_place","Done with place ----------------------------");
+            break;
           }
         }
+
       }
 
-      ROS_INFO_STREAM_NAMED("pick_place","Pick and place cycle complete ========================================= \n");
+      ROS_INFO_STREAM_NAMED("pick_place","Finished picking and placing " << blocks.size() << " blocks!");
+
+      // Ask user if we should repeat
       if( !promptUser() )
         break;
-
-      // Go for next block or loop
-      block_id++;
-      if( block_id >= blocks.size() )
-        block_id = 0;
-
     }
 
     // Move to gravity neutral position
-    if( !baxter_util_.positionBaxterNeutral() )
-      return false;
+    //if( !baxter_util_.positionBaxterNeutral() )
+    //  return false;
 
     // Everything worked!
     return true;
+  }
+
+  void resetBlock(MetaBlock block)
+  {
+    // Remove attached object
+    rviz_tools_->cleanupACO(block.name);
+
+    // Remove collision object
+    rviz_tools_->cleanupCO(block.name);
+
+    // Add the collision block
+    rviz_tools_->publishCollisionBlock(block.start_pose, block.name, BLOCK_SIZE);
   }
 
   MetaBlock createStartBlock(double x, double y, const std::string name)
@@ -270,32 +287,6 @@ public:
     start_block.start_pose.orientation.w = quat.w();
 
     return start_block;
-  }
-
-  geometry_msgs::Pose createGoalBlock()
-  {
-    double y_min, y_max, x_min, x_max;
-    getTableWidthRange(y_min, y_max);
-    getTableDepthRange(x_min, x_max);
-
-    geometry_msgs::Pose goal_block_pose;
-
-    // Position
-    goal_block_pose.position.x = x_min + TABLE_DEPTH / 6;
-    goal_block_pose.position.y = y_max - TABLE_WIDTH / 2;
-    goal_block_pose.position.z = getTableHeight(FLOOR_TO_BASE_HEIGHT);
-
-    // Orientation
-    double angle = 0; //M_PI / 1.5;
-    Eigen::Quaterniond quat(Eigen::AngleAxis<double>(double(angle), Eigen::Vector3d::UnitZ()));
-    goal_block_pose.orientation.x = quat.x();
-    goal_block_pose.orientation.y = quat.y();
-    goal_block_pose.orientation.z = quat.z();
-    goal_block_pose.orientation.w = quat.w();
-
-    rviz_tools_->publishBlock( goal_block_pose, BLOCK_SIZE, true );
-
-    return goal_block_pose;
   }
 
   bool pick(const geometry_msgs::Pose& block_pose, std::string block_name)
@@ -344,9 +335,9 @@ public:
     pose_stamped.header.stamp = ros::Time::now();
 
     // Create 360 degrees of place location rotated around a center
-    for (double angle = 0; angle < 2*M_PI; angle += M_PI/4)
+    for (double angle = 0; angle < 2*M_PI; angle += M_PI/2)
     {
-      //    ROS_INFO_STREAM_NAMED("temp","angle = " << angle);
+      ROS_INFO_STREAM_NAMED("temp","angle = " << angle);
 
       pose_stamped.pose = goal_block_pose;
 

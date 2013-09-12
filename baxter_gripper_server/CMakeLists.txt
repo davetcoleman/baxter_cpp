@@ -19,11 +19,6 @@ find_package(Boost REQUIRED COMPONENTS system)
 ###################################
 ## catkin specific configuration ##
 ###################################
-## The catkin_package macro generates cmake config files for your package
-## Declare things to be passed to dependent projects
-## LIBRARIES: libraries you create in this project that dependent projects also need
-## CATKIN_DEPENDS: catkin_packages dependent projects also need
-## DEPENDS: system dependencies of this project that dependent projects also need
 catkin_package(
   #   INCLUDE_DIRS include
   #  LIBRARIES baxter_gripper_action
@@ -49,8 +44,7 @@ include_directories(include
 
 ## Declare a cpp executable
 add_executable(gripper_action_server src/gripper_action_server.cpp)
-add_dependencies(gripper_action_server ${catkin_EXPORTED_TARGETS}) # don't build until baxter_msgs is done
-add_dependencies(gripper_action_server baxter_msgs_gencpp ${PROJECT_NAME}_gencfg) # wait for baxter_msgs to be built
+add_dependencies(gripper_action_server ${catkin_EXPORTED_TARGETS}) # don't build until necessary msgs are finished
 
 ## Add cmake target dependencies of the executable/library
 ## as an example, message headers may need to be generated before nodes

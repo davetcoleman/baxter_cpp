@@ -215,8 +215,8 @@ public:
           recheck = true;
       }
 
-      // Check for ready - unless we are gripping in which case its ok if its not ready
-      if( !gripper_state_->ready && !gripper_state_->gripping )
+      // Check for ready - unless we are gripping or moving in which case its ok if its not ready
+      if( !gripper_state_->ready && !gripper_state_->gripping && !gripper_state_->moving )
       {
         recheck = true;
       }
@@ -229,11 +229,13 @@ public:
       }
 
       // Check if we should give up
-      if( attempts >= 3 )
+      if( attempts > 2 )
       {
         result = false;
         break;
       }
+
+      ROS_WARN_STREAM_NAMED(arm_name_,"Autofix detected issue with end effector " << arm_name_ << ". Attempting to fix...");
 
       ros::Duration(1.0).sleep();
       ++attempts;
@@ -298,16 +300,14 @@ public:
     // Check for errors every 50 refreshes
     static std::size_t counter = 0;
     counter++;
-    if( counter % 50 == 0 )
+    if( counter % 10 == 0 )
     {
       if( !autoFix() )
       {
         ROS_ERROR_STREAM_THROTTLE_NAMED(2,arm_name_,"End effector " << arm_name_ << " in error state.");
       }
+      counter = 0; // Reset counter
     }
-    // Reset counter when it reaches max value
-    if( counter >= (size_t)-1 )
-      counter = 0;
   }
 
   /**
@@ -422,7 +422,7 @@ public:
 
   bool openGripper()
   {
-    ROS_INFO_STREAM_NAMED(arm_name_,"Opening gripper " << arm_name_);
+    ROS_INFO_STREAM_NAMED(arm_name_,"Opening " << arm_name_ << " end effector");
 
     // Send command several times to be safe
     for (std::size_t i = 0; i < 4; ++i)
@@ -441,7 +441,7 @@ public:
 
   bool closeGripper()
   {
-    ROS_INFO_STREAM_NAMED(arm_name_,"Closing gripper");
+    ROS_INFO_STREAM_NAMED(arm_name_,"Closing " << arm_name_ << " end effector");
 
     // Send command several times to be safe
     for (std::size_t i = 0; i < 4; ++i)

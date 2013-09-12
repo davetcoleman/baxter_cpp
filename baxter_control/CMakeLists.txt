@@ -43,6 +43,7 @@ include_directories(include ${catkin_INCLUDE_DIRS} ${Boost_INCLUDE_DIRS})
 
 add_library(baxter_utilities src/baxter_utilities.cpp)
 target_link_libraries(baxter_utilities ${catkin_LIBRARIES} ${Boost_LIBRARIES})
+add_dependencies(baxter_utilities ${catkin_EXPORTED_TARGETS}) # don't build until necessary msgs are finished
 
 #############
 ## Install ##
