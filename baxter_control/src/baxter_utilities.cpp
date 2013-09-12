@@ -270,27 +270,6 @@ bool BaxterUtilities::resetBaxter()
   pub_baxter_reset_.publish(empty_msg_);
   ros::Duration(0.5).sleep();
 
-  // Check for errors / estop
-  if( !isEnabled() )
-  {
-    ROS_ERROR_STREAM_NAMED("temp","not enabled after resetting");
-    return false;
-  }
-
-  // Check it enabled
-  int count = 0;
-  while( ros::ok() && baxter_state_->error == true )
-  {
-    if( count > 20 ) // 20 is an arbitrary number for when to assume its not going to enable
-    {
-      ROS_ERROR_STREAM_NAMED("utilities","Failed to reset Baxter");
-      return false;
-    }
-
-    ++count;
-    ros::Duration(0.05).sleep();
-  }
-
   return true;
 }
 

@@ -127,7 +127,7 @@ public:
       int count = 0;
       while( ros::ok() && gripper_state_timestamp_.toSec() == 0 )
       {
-        if( count > 20 ) // 20 is an arbitrary number for when to assume we are in simulation mode
+        if( count > 40 ) // 20 is an arbitrary number for when to assume we are in simulation mode
         {
           ROS_INFO_STREAM_NAMED(arm_name_,"Assuming Baxter is in simulaion mode because unable to get gripper state");
           in_simulation_ = true;
@@ -392,7 +392,7 @@ public:
   {
     double position = action_server_.acceptNewGoal()->command.position;
 
-    ROS_INFO_STREAM_NAMED(arm_name_,"Recieved goal for command position: " << position);
+    //ROS_INFO_STREAM_NAMED(arm_name_,"Recieved goal for command position: " << position);
 
     // Open command
     if(position > finger_joint_midpoint_)
@@ -422,7 +422,7 @@ public:
 
   bool openGripper()
   {
-    ROS_INFO_STREAM_NAMED(arm_name_,"Opening gripper");
+    ROS_INFO_STREAM_NAMED(arm_name_,"Opening gripper " << arm_name_);
 
     // Send command several times to be safe
     for (std::size_t i = 0; i < 4; ++i)

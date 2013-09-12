@@ -63,7 +63,8 @@ static const std::string BLOCK_NAME = "block1";
 struct MetaBlock
 {
   std::string name;
-  geometry_msgs::Pose pose;
+  geometry_msgs::Pose start_pose;
+  geometry_msgs::Pose goal_pose;
 };
 
 class SimplePickPlace
@@ -84,7 +85,13 @@ public:
   // baxter helper
   baxter_control::BaxterUtilities baxter_util_;
 
+  // settings
+  bool auto_reset_;
+  int auto_reset_sec_;
+
   SimplePickPlace()
+    : auto_reset_(true),
+      auto_reset_sec_(4)
   {
     ros::NodeHandle nh;
 
@@ -128,12 +135,18 @@ public:
     }
 
     // Create start block positions (hard coded)
-    std::vector<MetaBlock> start_blocks;
-    start_blocks.push_back( createStartBlock(0.75, -0.1, "Block1") );
-    start_blocks.push_back( createStartBlock(0.85, -0.1, "Block2") );
-    start_blocks.push_back( createStartBlock(0.95, -0.1, "Block3") );
+    std::vector<MetaBlock> blocks;
+    blocks.push_back( createStartBlock(0.75, -0.1, "Block1") );
+    blocks.push_back( createStartBlock(0.85, -0.1, "Block2") );
+    blocks.push_back( createStartBlock(0.95, -0.1, "Block3") );
 
     geometry_msgs::Pose goal_block_pose = createGoalBlock();
+    // Add the goal pose to each block, stacking them ontop each other
+    for (std::size_t i = 0; i < blocks.size(); ++i)
+    {
+      blocks[i].goal_pose = goal_block_pose;
+      goal_block_pose.position.z += BLOCK_SIZE; // stack
+    }
 
     // Show grasp visualizations or not
     rviz_tools_->setMuted(false);
@@ -142,8 +155,6 @@ public:
     createEnvironment(rviz_tools_);
 
     std::size_t block_id = 0;
-
-    char input; // used for prompting yes/no
 
     // --------------------------------------------------------------------------------------------------------
     // Start pick and place
@@ -162,33 +173,32 @@ public:
       {
         // --------------------------------------------------------------------------------------------
         // Re-add all blocks
-        for (std::size_t i = 0; i < start_blocks.size(); ++i)
+        for (std::size_t i = 0; i < blocks.size(); ++i)
         {
           // Remove attached objects
-          rviz_tools_->cleanupACO(start_blocks[i].name);
+          rviz_tools_->cleanupACO(blocks[i].name);
 
           // Remove collision objects
-          rviz_tools_->cleanupCO(start_blocks[i].name);
+          rviz_tools_->cleanupCO(blocks[i].name);
 
           // Add a new block that is to be moved
-          rviz_tools_->publishCollisionBlock(start_blocks[i].pose, start_blocks[i].name, BLOCK_SIZE);
+          rviz_tools_->publishCollisionBlock(blocks[i].start_pose, blocks[i].name, BLOCK_SIZE);
         }
 
         // Publish goal block location
-        rviz_tools_->publishBlock( goal_block_pose, BLOCK_SIZE, true );
+        rviz_tools_->publishBlock( blocks[block_id].goal_pose, BLOCK_SIZE, true );
 
         // -------------------------------------------------------------------------------------
         // Start pick
-        ROS_INFO_STREAM_NAMED("pick_place","Attempting to pick '" << start_blocks[block_id].name << "'");
+        ROS_INFO_STREAM_NAMED("pick_place","Attempting to pick '" << blocks[block_id].name << "'");
 
         // Visualize the block we are about to pick
-        rviz_tools_->publishBlock( start_blocks[block_id].pose, BLOCK_SIZE, false );
+        rviz_tools_->publishBlock( blocks[block_id].start_pose, BLOCK_SIZE, false );
 
-        if( !pick(start_blocks[block_id].pose, start_blocks[block_id].name) )
+        if( !pick(blocks[block_id].start_pose, blocks[block_id].name) )
         {
-          ROS_ERROR_STREAM_NAMED("pick_place","Pick failed. Retry? (y/n)");
-          std::cin >> input;
-          if( input == 'n' )
+          ROS_ERROR_STREAM_NAMED("pick_place","Pick failed.");
+          if( !promptUser() )
             exit(0);
         }
         else
@@ -208,11 +218,10 @@ public:
         bool putBlock = false;
         while(!putBlock && ros::ok())
         {
-          if( !place(goal_block_pose, start_blocks[block_id].name) )
+          if( !place(blocks[block_id].goal_pose, blocks[block_id].name) )
           {
-            ROS_ERROR_STREAM_NAMED("pick_place","Place failed. Retry? (y/n)");
-            std::cin >> input;
-            if( input == 'n' )
+            ROS_ERROR_STREAM_NAMED("pick_place","Place failed.");
+            if( !promptUser() )
               exit(0);
           }
           else
@@ -224,20 +233,19 @@ public:
       }
 
       ROS_INFO_STREAM_NAMED("pick_place","Pick and place cycle complete ========================================= \n");
-      ROS_INFO_STREAM_NAMED("pick_place","Restart cycle? (y/n)");
-      std::cin >> input;
-      if( input == 'n' )
-        exit(0);
+      if( !promptUser() )
+        break;
 
       // Go for next block or loop
       block_id++;
-      if( block_id >= start_blocks.size() )
+      if( block_id >= blocks.size() )
         block_id = 0;
 
-      // Move to gravity neutral position
-      //if( !baxter_util_.positionBaxterNeutral() )
-      //  return false;
     }
+
+    // Move to gravity neutral position
+    if( !baxter_util_.positionBaxterNeutral() )
+      return false;
 
     // Everything worked!
     return true;
@@ -249,17 +257,17 @@ public:
     start_block.name = name;
 
     // Position
-    start_block.pose.position.x = x;
-    start_block.pose.position.y = y;
-    start_block.pose.position.z = getTableHeight(FLOOR_TO_BASE_HEIGHT);
+    start_block.start_pose.position.x = x;
+    start_block.start_pose.position.y = y;
+    start_block.start_pose.position.z = getTableHeight(FLOOR_TO_BASE_HEIGHT);
 
     // Orientation
     double angle = 0; // M_PI / 1.5;
     Eigen::Quaterniond quat(Eigen::AngleAxis<double>(double(angle), Eigen::Vector3d::UnitZ()));
-    start_block.pose.orientation.x = quat.x();
-    start_block.pose.orientation.y = quat.y();
-    start_block.pose.orientation.z = quat.z();
-    start_block.pose.orientation.w = quat.w();
+    start_block.start_pose.orientation.x = quat.x();
+    start_block.start_pose.orientation.y = quat.y();
+    start_block.start_pose.orientation.z = quat.z();
+    start_block.start_pose.orientation.w = quat.w();
 
     return start_block;
   }
@@ -390,6 +398,28 @@ public:
     move_group_->setPlannerId("RRTConnectkConfigDefault");
 
     return move_group_->place(block_name, place_locations);
+  }
+
+  bool promptUser()
+  {
+    // Make sure ROS is still with us
+    if( !ros::ok() )
+      return false;
+
+    if( auto_reset_ )
+    {
+      ROS_INFO_STREAM_NAMED("pick_place","Auto-retrying in " << auto_reset_sec_ << " seconds");
+      ros::Duration(auto_reset_sec_).sleep();
+    }
+    else
+    {
+      ROS_INFO_STREAM_NAMED("pick_place","Retry? (y/n)");
+      char input; // used for prompting yes/no
+      std::cin >> input;
+      if( input == 'n' )
+        return false;
+    }
+    return true;
   }
 
 };
