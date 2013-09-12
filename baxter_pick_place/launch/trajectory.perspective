@@ -84,7 +84,7 @@
                 }, 
                 "topics": {
                   "type": "repr", 
-                  "repr": "[u'/baxter/limb/right/right_w1/trajectory/error/data', u'/baxter/limb/right/right_e1/trajectory/error/data', u'/baxter/limb/right/right_s1/trajectory/error/data', u'/baxter/limb/right/right_w2/trajectory/error/data', u'/baxter/limb/right/right_w0/trajectory/error/data', u'/baxter/limb/right/right_e0/trajectory/error/data', u'/baxter/limb/right/right_s0/trajectory/error/data']"
+                  "repr": "[u'/robot/limb/right/right_w1/trajectory/error/data', u'/robot/limb/right/right_e1/trajectory/error/data', u'/robot/limb/right/right_s1/trajectory/error/data', u'/robot/limb/right/right_w2/trajectory/error/data', u'/robot/limb/right/right_w0/trajectory/error/data', u'/robot/limb/right/right_e0/trajectory/error/data', u'/robot/limb/right/right_s0/trajectory/error/data']"
                 }
               }, 
               "groups": {}

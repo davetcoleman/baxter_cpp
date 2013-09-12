@@ -45,6 +45,7 @@
 #include <std_msgs/Empty.h>
 #include <std_msgs/Bool.h>
 #include <baxter_msgs/GripperState.h>
+#include <baxter_msgs/DigitalIOState.h>
 #include <sensor_msgs/JointState.h>
 #include <control_msgs/GripperCommandAction.h>
 
@@ -58,6 +59,12 @@ static const std::string BASE_LINK = "base"; //"/base";
 static const double FINGER_JOINT_UPPER = 0.0095; //open
 static const double FINGER_JOINT_LOWER = -0.0125; //close
 
+// Various numbers
+static const double MSG_PULSE_SEC = 0.1;
+static const double WAIT_GRIPPER_CLOSE_SEC = 0.5;
+static const double WAIT_STATE_MSG_SEC = 1; // max time to wait for the gripper state to refresh
+static const double GRIPPER_MSG_RESEND = 2; // Number of times to re-send a msg to the end effects for assurance that it arrives
+
 class ElectricParallelGripper
 {
 protected:
@@ -68,13 +75,17 @@ protected:
   // Action Server
   actionlib::SimpleActionServer<control_msgs::GripperCommandAction> action_server_;
 
-  // Publisher
+  // Publishers
   ros::Publisher calibrate_topic_;
   ros::Publisher position_topic_;
   ros::Publisher release_topic_;
   ros::Publisher reset_topic_;
   ros::Publisher joint_state_topic_;
+
+  // Subscribers
   ros::Subscriber gripper_state_sub_;
+  ros::Subscriber cuff_grasp_sub_;
+  ros::Subscriber cuff_ok_sub_;
 
   // Action messages
   control_msgs::GripperCommandResult action_result_;
@@ -88,6 +99,10 @@ protected:
   baxter_msgs::GripperStateConstPtr gripper_state_;
   ros::Time gripper_state_timestamp_;
 
+  // Button states
+  bool cuff_grasp_pressed_;
+  bool cuff_ok_pressed_;
+
   bool in_simulation_; // Using Gazebo or not
   double finger_joint_stroke_; // cache the diff between upper and lower limits
   double finger_joint_midpoint_; // cache the mid point of the joint limits
@@ -99,7 +114,9 @@ public:
   ElectricParallelGripper(const std::string action_name, const std::string arm_name, const bool in_simulation)
     : action_server_(nh_, action_name, false),
       arm_name_(arm_name),
-      in_simulation_(in_simulation)
+      in_simulation_(in_simulation),
+      cuff_grasp_pressed_(false),
+      cuff_ok_pressed_(false)
   {
     ROS_DEBUG_STREAM_NAMED(arm_name_, "Baxter Electric Parallel Gripper starting " << arm_name_);
 
@@ -116,10 +133,18 @@ public:
     reset_topic_ = nh_.advertise<std_msgs::Bool>("/robot/limb/" + arm_name_
                    + "/accessory/gripper/command_reset",10);
 
-    // Start the subscriber
+    // Start the subscribers
     gripper_state_sub_ = nh_.subscribe<baxter_msgs::GripperState>("/sdk/robot/limb/" + arm_name_
                          + "/accessory/gripper/state",
                          1, &ElectricParallelGripper::stateCallback, this);
+
+    cuff_grasp_sub_ = nh_.subscribe<baxter_msgs::DigitalIOState>("/sdk/robot/digital_io/" +
+                      arm_name_ + "_upper_button/state",
+                      1, &ElectricParallelGripper::cuffGraspCallback, this);
+
+    cuff_ok_sub_ = nh_.subscribe<baxter_msgs::DigitalIOState>("/sdk/robot/digital_io/" +
+                   arm_name_ + "_lower_button/state",
+                   1, &ElectricParallelGripper::cuffOKCallback, this);
 
     // Decide if we are in simulation based on the existence of the gripper state message
     if( !in_simulation )
@@ -174,7 +199,7 @@ public:
     autoFix();
 
     // Error report
-    if( hasError() ) 
+    if( hasError() )
     {
       ROS_ERROR_STREAM_NAMED(arm_name,"Unable to enable " << arm_name_ << " gripper, perhaps the EStop is on. Quitting.");
       exit(0);
@@ -182,7 +207,7 @@ public:
     else
     {
       // Register the goal and start
-      action_server_.registerGoalCallback(boost::bind(&ElectricParallelGripper::goalCB, this));
+      action_server_.registerGoalCallback(boost::bind(&ElectricParallelGripper::goalCallback, this));
       action_server_.start();
 
       // Announce state
@@ -215,8 +240,8 @@ public:
           recheck = true;
       }
 
-      // Check for ready - unless we are gripping or moving in which case its ok if its not ready
-      if( !gripper_state_->ready && !gripper_state_->gripping && !gripper_state_->moving )
+      // Check for ready/moving/gripping
+      if( !isReadyMovingGrippingOK() )
       {
         recheck = true;
       }
@@ -235,9 +260,10 @@ public:
         break;
       }
 
-      ROS_WARN_STREAM_NAMED(arm_name_,"Autofix detected issue with end effector " << arm_name_ << ". Attempting to fix...");
+      ROS_WARN_STREAM_NAMED(arm_name_,"Autofix detected issue with end effector " << arm_name_ << ". Attempting to fix. State: \n" << *gripper_state_);
 
-      ros::Duration(1.0).sleep();
+      ros::Duration(WAIT_STATE_MSG_SEC).sleep();
+      ros::spinOnce();
       ++attempts;
     }
 
@@ -304,9 +330,47 @@ public:
     {
       if( !autoFix() )
       {
-        ROS_ERROR_STREAM_THROTTLE_NAMED(2,arm_name_,"End effector " << arm_name_ << " in error state.");
+        ROS_ERROR_STREAM_THROTTLE_NAMED(2,arm_name_,"End effector " << arm_name_ << " in error state:\n" << *gripper_state_);
       }
       counter = 0; // Reset counter
+    }
+  }
+
+  void cuffGraspCallback(const baxter_msgs::DigitalIOStateConstPtr& msg)
+  {
+    // Check if button is pressed
+    if( msg->state == 1 )
+    {
+      // Check that the button was not already pressed
+      if( cuff_grasp_pressed_ == false)
+      {
+        cuff_grasp_pressed_ = true; // set this first since closeGripper has delay
+        closeGripper();
+      }
+    }
+    else
+    {
+      // Reset so button can be pressed anytime
+      cuff_grasp_pressed_ = false;
+    }
+  }
+
+  void cuffOKCallback(const baxter_msgs::DigitalIOStateConstPtr& msg)
+  {
+    // Check if button is pressed
+    if( msg->state == 1 )
+    {
+      // Check that the button was not already pressed
+      if( !cuff_ok_pressed_ )
+      {
+        cuff_ok_pressed_ = true;
+        openGripper();
+      }
+    }
+    else
+    {
+      // Reset so button can be pressed anytime
+      cuff_ok_pressed_ = false;
     }
   }
 
@@ -360,17 +424,39 @@ public:
 
       return true;
     }
-    if( !gripper_state_->ready && !gripper_state_->gripping && !gripper_state_->moving )
+
+    if( !isReadyMovingGrippingOK() )
     {
       ROS_ERROR_STREAM_NAMED(arm_name_,"Gripper " << arm_name_ << " not ready. State: \n" << *gripper_state_ );
 
       if( action_server_.isActive() )
         action_server_.setAborted(action_result_,"Gripper not ready");
-
       return true;
     }
 
     return false;
+  }
+
+  /**
+   * \brief Check that the either the ready/moving/gripper status is true
+   * \return true if one of the three are enabled
+   */
+  bool isReadyMovingGrippingOK()
+  {
+    // Sometimes the state is temporarily between ready, gripping, and moving.
+    // If we wait for a second it usually fixes itself:
+    int counter = 0;
+    while( !gripper_state_->ready && !gripper_state_->gripping && !gripper_state_->moving && ros::ok() )
+    {
+      ros::Duration(MSG_PULSE_SEC).sleep();
+      ros::spinOnce();
+      if( counter > WAIT_STATE_MSG_SEC / MSG_PULSE_SEC)
+      {
+        return false;
+      }
+      counter++;
+    }
+    return true;
   }
 
   /**
@@ -388,9 +474,10 @@ public:
   }
 
   // Action server sends goals here
-  void goalCB()
+  void goalCallback()
   {
     double position = action_server_.acceptNewGoal()->command.position;
+    bool success;
 
     //ROS_INFO_STREAM_NAMED(arm_name_,"Recieved goal for command position: " << position);
 
@@ -398,26 +485,37 @@ public:
     if(position > finger_joint_midpoint_)
     {
       // Error check gripper
-      if( hasError() ) 
-        return;
-
-      openGripper();
+      if( hasError() )
+        success = false;
+      else
+        success = openGripper();
     }
     else // Close command
     {
       // Error check gripper
       if( hasError() )
-        return;
-
-      closeGripper();
+        success = false;
+      else
+        success = closeGripper();
     }
 
     // Report success
     action_result_.position = gripper_state_->position;
     action_result_.effort = gripper_state_->force;
-    action_result_.stalled = false; // \todo implement
-    action_result_.reached_goal = true;
-    action_server_.setSucceeded(action_result_,"Success");
+
+    if( success )
+    {
+      action_result_.reached_goal = true;
+      action_server_.setSucceeded(action_result_,"Success");
+      action_result_.stalled = false; // \todo implement
+    }
+    else
+    {
+      ROS_ERROR_STREAM_NAMED(arm_name_,"Failed to complete end effector command");
+      action_result_.reached_goal = false;
+      action_result_.stalled = true; // \todo is this always true?
+      action_server_.setSucceeded(action_result_,"Failure"); // \todo is this succeeded?
+    }
   }
 
   bool openGripper()
@@ -425,11 +523,11 @@ public:
     ROS_INFO_STREAM_NAMED(arm_name_,"Opening " << arm_name_ << " end effector");
 
     // Send command several times to be safe
-    for (std::size_t i = 0; i < 4; ++i)
+    for (std::size_t i = 0; i < GRIPPER_MSG_RESEND; ++i)
     {
       release_topic_.publish(empty_msg_);
-      ros::Duration(0.1).sleep();
-      ros::spinOnce(); //todo remove
+      ros::Duration(MSG_PULSE_SEC).sleep();
+      ros::spinOnce();
     }
 
     // Error check gripper
@@ -444,11 +542,28 @@ public:
     ROS_INFO_STREAM_NAMED(arm_name_,"Closing " << arm_name_ << " end effector");
 
     // Send command several times to be safe
-    for (std::size_t i = 0; i < 4; ++i)
+    for (std::size_t i = 0; i < GRIPPER_MSG_RESEND; ++i)
     {
       position_topic_.publish(zero_msg_);
-      ros::Duration(0.1).sleep();
-      ros::spinOnce(); //todo remove
+      ros::Duration(MSG_PULSE_SEC).sleep();
+      ros::spinOnce();
+    }
+
+    // Check that it actually grasped something
+    int counter = 0;
+    while( !gripper_state_->gripping )
+    {
+      ros::Duration(MSG_PULSE_SEC).sleep();
+      ros::spinOnce();
+
+      if( counter > WAIT_GRIPPER_CLOSE_SEC / MSG_PULSE_SEC )
+        break;
+      counter++;
+    }
+    if( !gripper_state_->gripping )
+    {
+      ROS_ERROR_STREAM_NAMED(arm_name_,"No object detected in end effector");
+      return false;
     }
 
     // Error check gripper

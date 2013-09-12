@@ -148,6 +148,10 @@ Still under development - moves blocks located on a table in front of Baxter.
    roslaunch baxter_pick_place block_pick_place.launch
    ```
 
+## Programmed Buttons
+
+The rectangular and circular buttons on the end effector cuff have been programmed to close and open the end effector, respectively. 
+
 ## License
 
 BSD (New BSD License)
