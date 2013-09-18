@@ -148,9 +148,81 @@ Still under development - moves blocks located on a table in front of Baxter.
    roslaunch baxter_pick_place block_pick_place.launch
    ```
 
+## Test Programs
+
+Send Baxter to random poses using motion planning and obstacle avoidance of a hard-coded planning scene
+
+```
+roslaunch baxter_pick_place random_planning.launch
+```
+
+Send the end effector up and down with a horizontal cartesian path
+
+```
+roslaunch baxter_pick_place verticle_approach_test.launch
+```
+
+Test grasp poses of blocks
+
+```
+roslaunch baxter_pick_place grasp_generator_test.launch
+```
+
 ## Programmed Buttons
 
 The rectangular and circular buttons on the end effector cuff have been programmed to close and open the end effector, respectively. 
+
+## Helpful Aliases
+
+When using Baxter, it is very productive to have command shortcuts for diagnosing baxter. These are the ones I use:
+
+### Turn on and off
+    ```
+    alias be="rosrun tools enable_robot.py -e"
+    alias bd="rosrun tools enable_robot.py -d"
+    alias br="rosrun tools enable_robot.py -r"
+    alias bs="rostopic echo -c /sdk/robot/state"
+    alias bsu="rosrun baxter_control sonar_enable.py --enable=0"
+    alias bsd="rosrun baxter_control sonar_enable.py --enable=1"
+    ```
+
+### Launch scripts
+    ```
+    alias btc="rosrun baxter_interface trajectory_controller.py"
+    alias bbu="roslaunch baxter_control baxter_bringup.launch"
+    alias bm="roslaunch baxter_moveit_config baxter_moveit.launch"
+    alias bpp="roslaunch baxter_pick_place block_pick_place.launch"
+    alias bppa="roslaunch baxter_pick_place block_pick_place_all.launch"
+    alias bw="rosrun joint_velocity wobbler.py"
+    ```
+
+### Calibrate/Tare
+    ```
+    alias brtare="rosrun tools tare.py -t right"
+    alias bltare="rosrun tools tare.py -t left"
+    alias brcalibrate="rosrun tools calibrate_arm.py -c right"
+    alias blcalibrate="rosrun tools calibrate_arm.py -c left"
+    ```
+
+### Gripper Control
+    ```
+    alias brgripperstate="rostopic echo -c /sdk/robot/limb/right/accessory/gripper/state"
+    alias brgrippercal="rostopic pub -1 /robot/limb/right/accessory/gripper/command_calibrate std_msgs/Empty"
+    alias brgripperres="rostopic pub -1 /robot/limb/right/accessory/gripper/command_reset std_msgs/Bool true"
+    alias brgripperopen="rostopic pub -1 /robot/limb/right/accessory/gripper/command_release std_msgs/Empty"
+    alias brgripperclose="rostopic pub -1 /robot/limb/right/accessory/gripper/command_grip std_msgs/Float32 0"
+    alias blgripperstate="rostopic echo -c /sdk/robot/limb/left/accessory/gripper/state"
+    alias blgrippercal="rostopic pub -1 /robot/limb/left/accessory/gripper/command_calibrate std_msgs/Empty"
+    alias blgripperres="rostopic pub -1 /robot/limb/left/accessory/gripper/command_reset std_msgs/Bool true"
+    alias blgripperopen="rostopic pub -1 /robot/limb/left/accessory/gripper/command_release std_msgs/Empty"
+    alias blgripperclose="rostopic pub -1 /robot/limb/left/accessory/gripper/command_grip std_msgs/Float32 0"
+    ```
+
+### Misc
+    ```
+    alias bssh="ssh osrf@011305P0009.local"
+    alias blog="ftp 011305P0009.local"
+    ```
 
 ## License
 
@@ -158,5 +230,5 @@ BSD (New BSD License)
 
 ## Develop and Contribute
 
-See [Contribute](https://github.com/osrf/baxter/blob/master/CONTRIBUTING.md) page.
+Please do! See [Contribute](https://github.com/osrf/baxter/blob/master/CONTRIBUTING.md) page.
 
