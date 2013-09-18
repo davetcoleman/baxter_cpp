@@ -168,45 +168,47 @@ public:
     // Start Position
     ROS_INFO_STREAM_NAMED("verticle_test","Sending arm to start position ----------------------------------");
 
-    double x_offset = 0.0;
-    if(!sendPoseCommand(start_pose, x_offset))
+    if(!sendPoseCommand(start_pose))
     {
       ROS_ERROR_STREAM_NAMED("verticle_test","Failed to go to start position");
       return false;
     }
 
-    // ---------------------------------------------------------------------------------------------
-    // Move vertically
-    // try to compute a straight line path that arrives at the goal using the specified approach direction
-    ROS_INFO_STREAM_NAMED("verticle_test","Lowering over block -------------------------------------------");
-    Eigen::Vector3d approach_direction; // Approach direction (negative z axis)
-    approach_direction << 0, 0, -1;
-    double desired_approach_distance = .050; // The distance the origin of a robot link needs to travel
+    double desired_approach_distance = 0.4; // The distance the origin of a robot link needs to travel
 
-    if( !computeStraightLinePath(approach_direction, desired_approach_distance) )
+    while(ros::ok())
     {
-      ROS_ERROR_STREAM_NAMED("verticle_test","Failed to follow straight line path");
-      return false;
+      // ---------------------------------------------------------------------------------------------
+      // Down
+      // try to compute a straight line path that arrives at the goal using the specified approach direction
+      ROS_INFO_STREAM_NAMED("verticle_test","Lowering down -------------------------------------------");
+      Eigen::Vector3d approach_direction; // Approach direction (negative z axis)
+      approach_direction << 0, 0, -1;
+
+      if( !computeStraightLinePath(approach_direction, desired_approach_distance) )
+      {
+        ROS_ERROR_STREAM_NAMED("verticle_test","Failed to follow straight line path");
+        return false;
+      }
+
+      ros::Duration(1).sleep();
+
+      // ---------------------------------------------------------------------------------------------
+      // Up
+      // try to compute a straight line path that arrives at the goal using the specified approach direction
+      ROS_INFO_STREAM_NAMED("verticle_test","Raising up -------------------------------------------");
+
+      approach_direction << 0, 0, 1; // Approach direction (positive z axis)
+
+      if( !computeStraightLinePath(approach_direction, desired_approach_distance) )
+      {
+        ROS_ERROR_STREAM_NAMED("verticle_test","Failed to follow straight line path");
+        return false;
+      }
+
+      ros::Duration(1).sleep();
+
     }
-
-
-    ros::Duration(10).sleep();
-
-    // ---------------------------------------------------------------------------------------------
-    // Lifting block
-    // try to compute a straight line path that arrives at the goal using the specified approach direction
-    ROS_INFO_STREAM_NAMED("verticle_test","Lifting block -------------------------------------------");
-
-    approach_direction << 0, 0, 1; // Approach direction (positive z axis)
-    desired_approach_distance = .050; // The distance the origin of a robot link needs to travel
-
-    if( !computeStraightLinePath(approach_direction, desired_approach_distance) )
-    {
-      ROS_ERROR_STREAM_NAMED("verticle_test","Failed to follow straight line path");
-      return false;
-    }
-    ros::Duration(0.5).sleep();
-
 
     // ---------------------------------------------------------------------------------------------
     // Demo will automatically reset arm
@@ -216,7 +218,7 @@ public:
   }
 
   // Moves the arm to a specified pose
-  bool sendPoseCommand(const geometry_msgs::Pose& pose, double x_offset = 0.0)
+  bool sendPoseCommand(const geometry_msgs::Pose& pose)
   {
     // -----------------------------------------------------------------------------------------------
     // Make a stamped version of the pose
@@ -238,6 +240,7 @@ public:
     moveit_msgs::Constraints goal_constraint0 = kinematic_constraints::constructGoalConstraints(
       rviz_tools_->getEEParentLink(), goal_pose, tolerance_pose, tolerance_angle);
 
+    double x_offset = 0;
     ROS_INFO_STREAM_NAMED("verticle_test","Goal pose with x_offset of: " << x_offset << "\n" << goal_pose);
 
     // Create offset constraint
@@ -284,8 +287,6 @@ public:
    * \param desired_approach_distance - distance the origin of a robot link needs to travel
    */
   bool computeStraightLinePath( Eigen::Vector3d approach_direction, double desired_approach_distance )
-
-
   {
     // ---------------------------------------------------------------------------------------------
     // Get planning scene
@@ -293,9 +294,8 @@ public:
     robot_state::RobotState approach_state = planning_scene->getCurrentState();
 
     // Output state info
-    ROS_WARN_STREAM_NAMED("temp","my own debug info!");
-    approach_state.printStateInfo();
-    approach_state.printTransforms();
+    //approach_state.printStateInfo();
+    //approach_state.printTransforms();
 
     // ---------------------------------------------------------------------------------------------
     // Settings for computeCartesianPath
@@ -369,7 +369,7 @@ public:
 
     // -----------------------------------------------------------------------------------------------
     // Get current RobotState  (in order to specify all joints not in approach_traj_result)
-    robot_state::RobotState this_robot_state = planning_scene->getCurrentState();
+    //robot_state::RobotState this_robot_state = planning_scene->getCurrentState();
 
     // -----------------------------------------------------------------------------------------------
     // Smooth the path and add velocities/accelerations
@@ -383,7 +383,8 @@ public:
     const std::vector<moveit_msgs::JointLimits> &joint_limits = joint_model_group->getVariableLimits();
 
     // Copy the vector of RobotStates to a RobotTrajectory
-    robot_trajectory::RobotTrajectoryPtr approach_traj(new robot_trajectory::RobotTrajectory(planning_scene->getRobotModel(), PLANNING_GROUP_NAME));
+    robot_trajectory::RobotTrajectoryPtr approach_traj(new robot_trajectory::RobotTrajectory(
+        planning_scene->getRobotModel(), PLANNING_GROUP_NAME));
     for (std::size_t k = 0 ; k < approach_traj_result.size() ; ++k)
       approach_traj->addSuffixWayPoint(approach_traj_result[k], 0.0);
 
@@ -403,7 +404,8 @@ public:
 
     // Create publisher
     ros::Publisher display_path_publisher_;
-    display_path_publisher_ = nh_.advertise<moveit_msgs::DisplayTrajectory>("/move_group/display_planned_path", 10, true);
+    display_path_publisher_ = nh_.advertise<moveit_msgs::DisplayTrajectory>
+      ("/move_group/display_planned_path", 10, true);
     ros::spinOnce();
     ros::Duration(0.1).sleep();
 
@@ -416,7 +418,6 @@ public:
     robot_state::robotStateToRobotStateMsg(approach_traj->getFirstWayPoint(), rviz_display.trajectory_start);
     rviz_display.trajectory.resize(1);
     approach_traj->getRobotTrajectoryMsg(rviz_display.trajectory[0]);
-
 
     // Publish message
     display_path_publisher_.publish(rviz_display);
@@ -472,9 +473,9 @@ public:
     geometry_msgs::Pose start_pose;
 
     // Position
-    start_pose.position.x = 0.55;
+    start_pose.position.x = 0.6;
     start_pose.position.y = -0.4;
-    start_pose.position.z = 0; // torso
+    start_pose.position.z = 0.2; // torso
 
     // Orientation
     double angle = M_PI;
