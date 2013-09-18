@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<launch>
+
+  <!-- Launch controller manager in this namespace -->
+  <include ns="verticle_approach_test" file="$(find baxter_moveit_config)/launch/trajectory_execution.launch">
+    <arg name="moveit_controller_manager" value="baxter" /> 
+    <arg name="moveit_manage_controllers" value="true" />
+  </include>
+
+  <!--Start the test -->
+  <node name="verticle_approach_test" pkg="baxter_pick_place" type="verticle_approach_test" output="screen">
+    <remap from="/joint_states" to="/robot/joint_states" />
+    <rosparam command="load" file="$(find baxter_moveit_config)/config/kinematics.yaml"/>
+  </node>
+
+</launch>

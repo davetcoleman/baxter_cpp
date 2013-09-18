@@ -63,11 +63,14 @@
 
 // Grasp generation
 #include <block_grasp_generator/block_grasp_generator.h>
-#include <block_grasp_generator/grasp_filter.h>
+//#include <block_grasp_generator/grasp_filter.h>
 
 // Baxter specific properties
 #include <baxter_pick_place/baxter_data.h>
 #include <baxter_pick_place/custom_environment.h>
+
+// Baxter Utilities
+#include <baxter_control/baxter_utilities.h>
 
 namespace baxter_pick_place
 {
@@ -85,7 +88,7 @@ private:
   ros::NodeHandle nh_;
 
   // Action Servers and Clients
-  actionlib::SimpleActionClient<moveit_msgs::MoveGroupAction> movegroup_action_;
+  boost::shared_ptr<actionlib::SimpleActionClient<moveit_msgs::MoveGroupAction> > movegroup_action_;
 
   // MoveIt Components
   boost::shared_ptr<tf::TransformListener> tf_;
@@ -99,19 +102,20 @@ private:
   // data for generating grasps
   block_grasp_generator::RobotGraspData grasp_data_;
 
-  // class for filter object
-  block_grasp_generator::GraspFilterPtr grasp_filter_;
+  // baxter helper
+  baxter_control::BaxterUtilities baxter_util_;
 
 public:
 
   // Constructor
   VerticleApproachTest()
-    : movegroup_action_("move_group", true)
   {
-
     // -----------------------------------------------------------------------------------------------
     // Connect to move_group action server
-    while(!movegroup_action_.waitForServer(ros::Duration(4.0))){ // wait for server to start
+    movegroup_action_.reset(new actionlib::SimpleActionClient
+      <moveit_msgs::MoveGroupAction>("move_group", true));
+    while(!movegroup_action_->waitForServer(ros::Duration(4.0)))
+    {
       ROS_INFO_STREAM_NAMED("pick place","Waiting for the move_group action server");
     }
 
@@ -135,30 +139,20 @@ public:
 
     // ---------------------------------------------------------------------------------------------
     // Create a trajectory execution manager
-    trajectory_execution_manager_.reset(new trajectory_execution_manager::TrajectoryExecutionManager
-                                        (planning_scene_monitor_->getRobotModel()));
-    plan_execution_.reset(new plan_execution::PlanExecution(planning_scene_monitor_, trajectory_execution_manager_));
-
-    // ---------------------------------------------------------------------------------------------
-    // Wait for complete state to be recieved
-    ros::Duration(0.25).sleep();
-
-    std::vector<std::string> missing_joints;
-    while( !planning_scene_monitor_->getStateMonitor()->haveCompleteState() )
+    if( false )
     {
-      ros::Duration(0.1).sleep();
-      ros::spinOnce();
-      ROS_INFO_STREAM_NAMED("pick place","Waiting for complete state...");
-
-      // Show unpublished joints
-      planning_scene_monitor_->getStateMonitor()->haveCompleteState( missing_joints );
-      for(int i = 0; i < missing_joints.size(); ++i)
-        ROS_WARN_STREAM_NAMED("verticle_test","Unpublished joints: " << missing_joints[i]);
+    trajectory_execution_manager_.reset(new trajectory_execution_manager::TrajectoryExecutionManager
+      (planning_scene_monitor_->getRobotModel()));
+    plan_execution_.reset(new plan_execution::PlanExecution(planning_scene_monitor_, trajectory_execution_manager_));
     }
 
     // ---------------------------------------------------------------------------------------------
+    // Wait for planning scene to be ready
+    waitForPlanningScene();
+
+    // ---------------------------------------------------------------------------------------------
     // Load the Robot Viz Tools for publishing to Rviz
-    rviz_tools_.reset(new block_grasp_generator::RobotVizTools(RVIZ_MARKER_TOPIC, baxter_pick_place::EE_GROUP, 
+    rviz_tools_.reset(new block_grasp_generator::RobotVizTools(RVIZ_MARKER_TOPIC, baxter_pick_place::EE_GROUP,
         PLANNING_GROUP_NAME, baxter_pick_place::BASE_LINK, 0));
     rviz_tools_->setLifetime(120.0);
     rviz_tools_->setMuted(false);
@@ -168,65 +162,40 @@ public:
     grasp_data_ = loadRobotGraspData(BLOCK_SIZE); // Load robot specific data
 
     // ---------------------------------------------------------------------------------------------
-    // Load grasp filter
-    bool rviz_verbose = true;
-    grasp_filter_.reset(new block_grasp_generator::GraspFilter(BASE_LINK, rviz_verbose, rviz_tools_, PLANNING_GROUP_NAME) );
+    // Enable baxter
+    if( !baxter_util_.enableBaxter() )
+      return;
 
     // ---------------------------------------------------------------------------------------------
-    // Load starting point
+    // Do it
+    geometry_msgs::Pose start_pose = createStartPose();
+    createVerticleTrajectory(start_pose);
 
-    // Position
-    geometry_msgs::Pose start_block_pose;
+    ROS_INFO_STREAM_NAMED("verticle_test","Success! Waiting 10 sec before shutting down.");
+    ros::Duration(10).sleep();
 
-    start_block_pose.position.x = 0.2;
-    start_block_pose.position.y = 0.0;
-    start_block_pose.position.z = 0.02;
-
-    // Orientation
-    double angle = M_PI / 1.5;
-    Eigen::Quaterniond quat(Eigen::AngleAxis<double>(double(angle), Eigen::Vector3d::UnitZ()));
-    start_block_pose.orientation.x = quat.x();
-    start_block_pose.orientation.y = quat.y();
-    start_block_pose.orientation.z = quat.z();
-    start_block_pose.orientation.w = quat.w();
-
-    createVerticleTrajectory(start_block_pose);
+    // Shutdown
+    baxter_util_.disableBaxter();
   }
 
   // Execute series of tasks for pick/place
-  bool createVerticleTrajectory(const geometry_msgs::Pose& start_block_pose)
+  bool createVerticleTrajectory(const geometry_msgs::Pose& start_pose)
   {
     ROS_INFO_STREAM_NAMED("verticle_test","Test started");
 
     // ---------------------------------------------------------------------------------------------
-    // Generate graps
-    ROS_INFO_STREAM_NAMED("verticle_test","Generating grasps");
-    block_grasp_generator::BlockGraspGenerator grasp_generator( rviz_tools_ );
-
-    // Pick grasp
-    std::vector<manipulation_msgs::Grasp> possible_grasps;
-    grasp_generator.generateGrasps( start_block_pose, grasp_data_, possible_grasps);
-
-    manipulation_msgs::Grasp pick_grasp;
-    // Filter grasp poses
-    //if( !grasp_generator.filterGrasps( possible_grasps ) )
-    //return false;
-    grasp_filter_->chooseBestGrasp( possible_grasps, pick_grasp );
-
-    geometry_msgs::Pose pick_pose = pick_grasp.grasp_pose.pose;
-
-
-    // ---------------------------------------------------------------------------------------------
     // Hover over block
-    ROS_INFO_STREAM_NAMED("verticle_test","Sending arm to pre-grasp position ----------------------------------");
-    pick_pose.position.z = 0.09; // a good number for hovering  \todo set this
+    ROS_INFO_STREAM_NAMED("verticle_test","Sending arm to start position ----------------------------------");
 
     double x_offset = 0.15;
-    if(!sendPoseCommand(pick_pose, x_offset))
+    if(!sendPoseCommand(start_pose, x_offset))
     {
-      ROS_ERROR_STREAM_NAMED("verticle_test","Failed to go to pre-grasp position");
+      ROS_ERROR_STREAM_NAMED("verticle_test","Failed to go to start position");
       return false;
     }
+
+    // temp
+    return true;
 
     // ---------------------------------------------------------------------------------------------
     // Lower over block
@@ -288,7 +257,7 @@ public:
     double tolerance_angle = 1e-2; // default 1e-2... radians
     moveit_msgs::Constraints goal_constraint0 =
       kinematic_constraints::constructGoalConstraints(rviz_tools_->getEEParentLink(), goal_pose,
-                                                      tolerance_pose, tolerance_angle);
+        tolerance_pose, tolerance_angle);
 
     ROS_INFO_STREAM_NAMED("verticle_test","Goal pose with x_offset of: " << x_offset << "\n" << goal_pose);
 
@@ -304,26 +273,44 @@ public:
     // -------------------------------------------------------------------------------------------
     // Visualize goals in rviz
     ROS_INFO_STREAM_NAMED("verticle_test","Sending planning goal to MoveGroup for:\n" << goal_pose.pose );
-    rviz_tools_->publishSphere(goal_pose.pose);
-    rviz_tools_->publishEEMarkers(goal_pose.pose);  // \todo add x_offset to x?
+    rviz_tools_->publishArrow(goal_pose.pose, block_grasp_generator::RED);
+    rviz_tools_->publishEEMarkers(goal_pose.pose, block_grasp_generator::RED);
+
+
+    // ------------------------------------------------------------------------
+    // Change the end effector pose to frame of reference of this custom end effector
+
+    // Convert to Eigen
+    Eigen::Affine3d goal_pose_eigen;
+    Eigen::Affine3d eef_conversion_pose;
+    tf::poseMsgToEigen(goal_pose.pose, goal_pose_eigen);
+    tf::poseMsgToEigen(grasp_data_.grasp_pose_to_eef_pose_, eef_conversion_pose);
+
+    // Transform the grasp pose
+    goal_pose_eigen = goal_pose_eigen * eef_conversion_pose;
+
+    // Convert back to message
+    tf::poseEigenToMsg(goal_pose_eigen, goal_pose.pose);
+    rviz_tools_->publishArrow(goal_pose.pose, block_grasp_generator::GREEN);
+    rviz_tools_->publishEEMarkers(goal_pose.pose, block_grasp_generator::GREEN, "good");
 
     // -------------------------------------------------------------------------------------------
     // Plan
-    movegroup_action_.sendGoal(goal);
-    ros::Duration(5.0).sleep();
+    movegroup_action_->sendGoal(goal);
+    ros::Duration(10.0).sleep();
 
-    if(!movegroup_action_.waitForResult(ros::Duration(5.0)))
+    if(!movegroup_action_->waitForResult(ros::Duration(5.0)))
     {
       ROS_INFO_STREAM_NAMED("verticle_test","Returned early?");
       return false;
     }
-    if (movegroup_action_.getState() == actionlib::SimpleClientGoalState::SUCCEEDED)
+    if (movegroup_action_->getState() == actionlib::SimpleClientGoalState::SUCCEEDED)
     {
       ROS_INFO_STREAM_NAMED("verticle_test","Plan successful!");
     }
     else
     {
-      ROS_ERROR_STREAM_NAMED("verticle_test","move_group failed: " << movegroup_action_.getState().toString() << ": " << movegroup_action_.getState().getText());
+      ROS_ERROR_STREAM_NAMED("verticle_test","move_group failed: " << movegroup_action_->getState().toString() << ": " << movegroup_action_->getState().getText());
       return false;
     }
 
@@ -406,14 +393,14 @@ public:
 
     double d_approach =
       approach_state.getJointStateGroup(PLANNING_GROUP_NAME)->computeCartesianPath(approach_traj_result,
-                                                                                   ik_link,                   // link name
-                                                                                   approach_direction,
-                                                                                   true,                      // direction is in global reference frame
-                                                                                   desired_approach_distance,
-                                                                                   max_step,
-                                                                                   jump_threshold
-                                                                                   // TODO approach_validCallback
-                                                                                   );
+        ik_link,                   // link name
+        approach_direction,
+        true,                      // direction is in global reference frame
+        desired_approach_distance,
+        max_step,
+        jump_threshold
+        // TODO approach_validCallback
+      );
 
     //    double robot_state::JointStateGroup::computeCartesianPath(std::vector<boost::shared_ptr<robot_state::RobotState> >&, const string&, const Vector3d&, bool, double, double, double, const StateValidityCallbackFn&)
 
@@ -525,21 +512,67 @@ public:
     return true;
   }
 
+  /**
+   * \brief Create the location for the end effector to start at
+   * \return the pose
+   */
+  geometry_msgs::Pose createStartPose()
+  {
+    geometry_msgs::Pose start_pose;
+
+    // Position
+    start_pose.position.x = 0.55;
+    start_pose.position.y = -0.4;
+    start_pose.position.z = 0; // torso
+
+    // Orientation
+    double angle = M_PI / 2;
+    Eigen::Quaterniond quat(Eigen::AngleAxis<double>(double(angle), Eigen::Vector3d::UnitY()));
+    start_pose.orientation.x = quat.x();
+    start_pose.orientation.y = quat.y();
+    start_pose.orientation.z = quat.z();
+    start_pose.orientation.w = quat.w();
+
+    return start_pose;
+  }
+
+  /**
+   * \brief Helper function to wait for planning scene to be ready
+   */
+  void waitForPlanningScene()
+  {
+    // Wait for complete state to be recieved
+    std::vector<std::string> missing_joints;
+    while( !planning_scene_monitor_->getStateMonitor()->haveCompleteState() )
+    {
+      ros::Duration(0.1).sleep();
+      ros::spinOnce();
+      ROS_INFO_STREAM_NAMED("pick place","Waiting for complete state...");
+
+      // Show unpublished joints
+      planning_scene_monitor_->getStateMonitor()->haveCompleteState( missing_joints );
+      for(int i = 0; i < missing_joints.size(); ++i)
+        ROS_WARN_STREAM_NAMED("verticle_test","Unpublished joints: " << missing_joints[i]);
+    }
+  }
+  
 }; // end of class
 
 } // namespace
 
 int main(int argc, char** argv)
 {
+  ROS_INFO_STREAM_NAMED("verticle_test","Verticle Approach Test");
+
   ros::init(argc, argv, "verticle_approach_test");
 
   // Allow the action server to recieve and send ros messages
-  ros::AsyncSpinner spinner(1);
+  ros::AsyncSpinner spinner(4);
   spinner.start();
 
-  baxter_pick_place::VerticleApproachTest tester();
+  baxter_pick_place::VerticleApproachTest tester;
 
-  ros::spin(); // keep the action server alive
+  ROS_INFO_STREAM_NAMED("verticle_test","Shutting down.");
 
   return 0;
 }
