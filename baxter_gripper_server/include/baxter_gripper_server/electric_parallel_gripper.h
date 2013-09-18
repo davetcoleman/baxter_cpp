@@ -229,12 +229,10 @@ public:
       switch(checkError())
       {
         case EXPIRED:
-          ROS_DEBUG_STREAM_NAMED("temp","recheck source is expired");
           recheck = true;
           break;
 
         case ENABLED:
-          ROS_ERROR_STREAM_NAMED(arm_name_,"Gripper " << arm_name_ << " not enabled. State: \n" << *gripper_state_ );
           recheck = true;
           break;
 
@@ -242,7 +240,6 @@ public:
           resetError();
           if( gripper_state_->error )
           {
-            ROS_DEBUG_STREAM_NAMED("temp","recheck source is error");
             recheck = true;
           }
           break;
@@ -251,13 +248,11 @@ public:
           calibrate();
           if( !gripper_state_->calibrated )
           {
-            ROS_DEBUG_STREAM_NAMED("temp","recheck source is calibrated");
             recheck = true;
           }
           break;
 
         case READY:
-          ROS_DEBUG_STREAM_NAMED("temp","recheck source is OK");
           recheck = true;
           break;
 
@@ -281,8 +276,8 @@ public:
         break;
       }
 
-      if(verbose)
-        ROS_WARN_STREAM_NAMED(arm_name_,"Autofix detected issue with end effector " << arm_name_ << ". Attempting to fix. State: \n" << *gripper_state_);
+      //if(verbose)
+      //  ROS_DEBUG_STREAM_NAMED(arm_name_,"Autofix detected issue with end effector " << arm_name_ << ". Attempting to fix. State: \n" << *gripper_state_);
 
       ros::Duration(WAIT_STATE_MSG_SEC).sleep();
       ros::spinOnce();

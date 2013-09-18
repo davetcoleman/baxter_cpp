@@ -87,10 +87,12 @@ public:
   {
     ros::NodeHandle nh;
 
+    
+
     // ---------------------------------------------------------------------------------------------
     // Load the Robot Viz Tools for publishing to rviz
     rviz_tools_.reset(new block_grasp_generator::RobotVizTools( RVIZ_MARKER_TOPIC, EE_GROUP,
-        PLANNING_GROUP_NAME, BASE_LINK, FLOOR_TO_BASE_HEIGHT));
+        PLANNING_GROUP_NAME, BASE_LINK));
 
     // ---------------------------------------------------------------------------------------------
     // Create MoveGroup

@@ -101,7 +101,8 @@ public:
 
     // Load the Robot Viz Tools for publishing to rviz
     rviz_tools_.reset(new block_grasp_generator::RobotVizTools( RVIZ_MARKER_TOPIC, EE_GROUP,
-        PLANNING_GROUP_NAME, BASE_LINK, FLOOR_TO_BASE_HEIGHT));
+        PLANNING_GROUP_NAME, BASE_LINK));
+    rviz_tools_->setFloorToBaseHeight(FLOOR_TO_BASE_HEIGHT);
 
     // Load grasp generator
     grasp_data_ = loadRobotGraspData(BLOCK_SIZE); // Load robot specific data

@@ -38,7 +38,7 @@
 
 // ROS
 #include <ros/ros.h>
-#include <tf/tf.h>
+//#include <tf/tf.h>
 #include <tf/transform_broadcaster.h>
 #include <tf/transform_listener.h>
 #include <actionlib/client/simple_action_client.h>
@@ -91,7 +91,6 @@ private:
   boost::shared_ptr<actionlib::SimpleActionClient<moveit_msgs::MoveGroupAction> > movegroup_action_;
 
   // MoveIt Components
-  boost::shared_ptr<tf::TransformListener> tf_;
   planning_scene_monitor::PlanningSceneMonitorPtr planning_scene_monitor_;
   trajectory_execution_manager::TrajectoryExecutionManagerPtr trajectory_execution_manager_;
   boost::shared_ptr<plan_execution::PlanExecution> plan_execution_;
@@ -116,50 +115,34 @@ public:
       <moveit_msgs::MoveGroupAction>("move_group", true));
     while(!movegroup_action_->waitForServer(ros::Duration(4.0)))
     {
-      ROS_INFO_STREAM_NAMED("pick place","Waiting for the move_group action server");
+      ROS_INFO_STREAM_NAMED("verticle_test","Waiting for the move_group action server");
     }
-
-    // ---------------------------------------------------------------------------------------------
-    // Create planning scene monitor \todo remove this?
-    tf_.reset(new tf::TransformListener());
-    planning_scene_monitor_.reset(new planning_scene_monitor::PlanningSceneMonitor(ROBOT_DESCRIPTION, tf_));
-
-    // ---------------------------------------------------------------------------------------------
-    // Check planning scene monitor
-    if (planning_scene_monitor_->getPlanningScene())
-    {
-      planning_scene_monitor_->startWorldGeometryMonitor();
-      planning_scene_monitor_->startSceneMonitor("/move_group/monitored_planning_scene");
-      planning_scene_monitor_->startStateMonitor("/joint_states", "/attached_collision_object");
-    }
-    else
-    {
-      ROS_ERROR_STREAM_NAMED("verticle_test","Planning scene not configured");
-    }
-
-    // ---------------------------------------------------------------------------------------------
-    // Create a trajectory execution manager
-    if( false )
-    {
-    trajectory_execution_manager_.reset(new trajectory_execution_manager::TrajectoryExecutionManager
-      (planning_scene_monitor_->getRobotModel()));
-    plan_execution_.reset(new plan_execution::PlanExecution(planning_scene_monitor_, trajectory_execution_manager_));
-    }
-
-    // ---------------------------------------------------------------------------------------------
-    // Wait for planning scene to be ready
-    waitForPlanningScene();
-
-    // ---------------------------------------------------------------------------------------------
-    // Load the Robot Viz Tools for publishing to Rviz
-    rviz_tools_.reset(new block_grasp_generator::RobotVizTools(RVIZ_MARKER_TOPIC, baxter_pick_place::EE_GROUP,
-        PLANNING_GROUP_NAME, baxter_pick_place::BASE_LINK, 0));
-    rviz_tools_->setLifetime(120.0);
-    rviz_tools_->setMuted(false);
 
     // ---------------------------------------------------------------------------------------------
     // Load grasp generator
     grasp_data_ = loadRobotGraspData(BLOCK_SIZE); // Load robot specific data
+
+    // ---------------------------------------------------------------------------------------------
+    // Create planning scene monitor
+    if(!loadPlanningSceneMonitor())
+    {
+      ROS_ERROR_STREAM_NAMED("verticle_test","Unable to load planning scene monitor");
+      return;
+    }
+
+    // ---------------------------------------------------------------------------------------------
+    // Create a trajectory execution manager
+    trajectory_execution_manager_.reset(new trajectory_execution_manager::TrajectoryExecutionManager
+      (planning_scene_monitor_->getRobotModel()));
+    plan_execution_.reset(new plan_execution::PlanExecution(planning_scene_monitor_, trajectory_execution_manager_));
+
+    // ---------------------------------------------------------------------------------------------
+    // Load the Robot Viz Tools for publishing to Rviz
+    rviz_tools_.reset(new block_grasp_generator::RobotVizTools(RVIZ_MARKER_TOPIC, baxter_pick_place::EE_GROUP,
+        PLANNING_GROUP_NAME, baxter_pick_place::BASE_LINK));
+    rviz_tools_->setLifetime(120.0);
+    rviz_tools_->setMuted(false);
+    rviz_tools_->setGraspPoseToEEFPose(grasp_data_.grasp_pose_to_eef_pose_);
 
     // ---------------------------------------------------------------------------------------------
     // Enable baxter
@@ -178,27 +161,22 @@ public:
     baxter_util_.disableBaxter();
   }
 
-  // Execute series of tasks for pick/place
+  // Execute series of tasks
   bool createVerticleTrajectory(const geometry_msgs::Pose& start_pose)
   {
-    ROS_INFO_STREAM_NAMED("verticle_test","Test started");
-
     // ---------------------------------------------------------------------------------------------
-    // Hover over block
+    // Start Position
     ROS_INFO_STREAM_NAMED("verticle_test","Sending arm to start position ----------------------------------");
 
-    double x_offset = 0.15;
+    double x_offset = 0.0;
     if(!sendPoseCommand(start_pose, x_offset))
     {
       ROS_ERROR_STREAM_NAMED("verticle_test","Failed to go to start position");
       return false;
     }
 
-    // temp
-    return true;
-
     // ---------------------------------------------------------------------------------------------
-    // Lower over block
+    // Move vertically
     // try to compute a straight line path that arrives at the goal using the specified approach direction
     ROS_INFO_STREAM_NAMED("verticle_test","Lowering over block -------------------------------------------");
     Eigen::Vector3d approach_direction; // Approach direction (negative z axis)
@@ -210,7 +188,9 @@ public:
       ROS_ERROR_STREAM_NAMED("verticle_test","Failed to follow straight line path");
       return false;
     }
-    ros::Duration(0.5).sleep();
+
+
+    ros::Duration(10).sleep();
 
     // ---------------------------------------------------------------------------------------------
     // Lifting block
@@ -255,9 +235,8 @@ public:
     goal_pose.header.frame_id = baxter_pick_place::BASE_LINK;
     double tolerance_pose = 1e-4; // default: 1e-3... meters
     double tolerance_angle = 1e-2; // default 1e-2... radians
-    moveit_msgs::Constraints goal_constraint0 =
-      kinematic_constraints::constructGoalConstraints(rviz_tools_->getEEParentLink(), goal_pose,
-        tolerance_pose, tolerance_angle);
+    moveit_msgs::Constraints goal_constraint0 = kinematic_constraints::constructGoalConstraints(
+      rviz_tools_->getEEParentLink(), goal_pose, tolerance_pose, tolerance_angle);
 
     ROS_INFO_STREAM_NAMED("verticle_test","Goal pose with x_offset of: " << x_offset << "\n" << goal_pose);
 
@@ -272,32 +251,12 @@ public:
 
     // -------------------------------------------------------------------------------------------
     // Visualize goals in rviz
-    ROS_INFO_STREAM_NAMED("verticle_test","Sending planning goal to MoveGroup for:\n" << goal_pose.pose );
-    rviz_tools_->publishArrow(goal_pose.pose, block_grasp_generator::RED);
-    rviz_tools_->publishEEMarkers(goal_pose.pose, block_grasp_generator::RED);
-
-
-    // ------------------------------------------------------------------------
-    // Change the end effector pose to frame of reference of this custom end effector
-
-    // Convert to Eigen
-    Eigen::Affine3d goal_pose_eigen;
-    Eigen::Affine3d eef_conversion_pose;
-    tf::poseMsgToEigen(goal_pose.pose, goal_pose_eigen);
-    tf::poseMsgToEigen(grasp_data_.grasp_pose_to_eef_pose_, eef_conversion_pose);
-
-    // Transform the grasp pose
-    goal_pose_eigen = goal_pose_eigen * eef_conversion_pose;
-
-    // Convert back to message
-    tf::poseEigenToMsg(goal_pose_eigen, goal_pose.pose);
     rviz_tools_->publishArrow(goal_pose.pose, block_grasp_generator::GREEN);
-    rviz_tools_->publishEEMarkers(goal_pose.pose, block_grasp_generator::GREEN, "good");
+    rviz_tools_->publishEEMarkers(goal_pose.pose, block_grasp_generator::GREEN);
 
     // -------------------------------------------------------------------------------------------
     // Plan
     movegroup_action_->sendGoal(goal);
-    ros::Duration(10.0).sleep();
 
     if(!movegroup_action_->waitForResult(ros::Duration(5.0)))
     {
@@ -313,6 +272,9 @@ public:
       ROS_ERROR_STREAM_NAMED("verticle_test","move_group failed: " << movegroup_action_->getState().toString() << ": " << movegroup_action_->getState().getText());
       return false;
     }
+
+    ROS_INFO_STREAM_NAMED("verticle_test","Sleeping...");
+    ros::Duration(4.0).sleep();
 
     return true;
   }
@@ -331,16 +293,15 @@ public:
     robot_state::RobotState approach_state = planning_scene->getCurrentState();
 
     // Output state info
+    ROS_WARN_STREAM_NAMED("temp","my own debug info!");
     approach_state.printStateInfo();
     approach_state.printTransforms();
-
-
 
     // ---------------------------------------------------------------------------------------------
     // Settings for computeCartesianPath
 
     // End effector parent link
-    const std::string &ik_link = rviz_tools_->getEEParentLink(); // eef->getEndEffectorParentGroup().second;
+    const std::string &ik_link = rviz_tools_->getEEParentLink();
 
     // Resolution of trajectory
     double max_step = 0.001; // The maximum distance in Cartesian space between consecutive points on the resulting path
@@ -362,7 +323,6 @@ public:
     // -----------------------------------------------------------------------------------------------
     // Compute Cartesian Path
     ROS_INFO_STREAM_NAMED("verticle_test","Preparing to computer cartesian path");
-
 
     /** \brief Compute the sequence of joint values that correspond to a Cartesian path.
 
@@ -387,9 +347,7 @@ public:
         ............................double distance, double max_step, double jump_threshold, const StateValidityCallbackFn &validCallback = StateValidityCallbackFn());
     */
 
-    //moveit_msgs::RobotTrajectory approach_traj_result; // create resulting generated trajectory (result)
     std::vector<robot_state::RobotStatePtr> approach_traj_result; // create resulting generated trajectory (result)
-    //    std::vector<boost::shared_ptr<robot_state::RobotState> > approach_traj_result; // create resulting generated trajectory (result)
 
     double d_approach =
       approach_state.getJointStateGroup(PLANNING_GROUP_NAME)->computeCartesianPath(approach_traj_result,
@@ -402,8 +360,6 @@ public:
         // TODO approach_validCallback
       );
 
-    //    double robot_state::JointStateGroup::computeCartesianPath(std::vector<boost::shared_ptr<robot_state::RobotState> >&, const string&, const Vector3d&, bool, double, double, double, const StateValidityCallbackFn&)
-
     ROS_INFO_STREAM("Approach distance: " << d_approach );
     if( d_approach == 0 )
     {
@@ -414,7 +370,6 @@ public:
     // -----------------------------------------------------------------------------------------------
     // Get current RobotState  (in order to specify all joints not in approach_traj_result)
     robot_state::RobotState this_robot_state = planning_scene->getCurrentState();
-    //    robot_state::kinematicStateToRobotState( planning_scene->getCurrentState(), this_robot_state );
 
     // -----------------------------------------------------------------------------------------------
     // Smooth the path and add velocities/accelerations
@@ -426,7 +381,6 @@ public:
     const robot_model::JointModelGroup *joint_model_group =
       planning_scene->getRobotModel()->getJointModelGroup(PLANNING_GROUP_NAME);
     const std::vector<moveit_msgs::JointLimits> &joint_limits = joint_model_group->getVariableLimits();
-
 
     // Copy the vector of RobotStates to a RobotTrajectory
     robot_trajectory::RobotTrajectoryPtr approach_traj(new robot_trajectory::RobotTrajectory(planning_scene->getRobotModel(), PLANNING_GROUP_NAME));
@@ -441,9 +395,6 @@ public:
                                                this_robot_state // start_state
                                                );
     */
-
-    // Copy results to robot trajectory message:
-    //    approach_traj_result = approach_traj;
 
     ROS_INFO_STREAM("New trajectory\n" << approach_traj);
 
@@ -471,8 +422,8 @@ public:
     display_path_publisher_.publish(rviz_display);
     ROS_INFO_STREAM_NAMED("verticle_test","Sent display trajectory message");
 
-    ROS_INFO_STREAM_NAMED("verticle_test","Sleeping 1...\n\n");
-    ros::Duration(1.0).sleep();
+    ROS_INFO_STREAM_NAMED("verticle_test","Sleeping 5...\n\n");
+    ros::Duration(5.0).sleep();
 
     // -----------------------------------------------------------------------------------------------
     // Execute the planned trajectory
@@ -526,7 +477,7 @@ public:
     start_pose.position.z = 0; // torso
 
     // Orientation
-    double angle = M_PI / 2;
+    double angle = M_PI;
     Eigen::Quaterniond quat(Eigen::AngleAxis<double>(double(angle), Eigen::Vector3d::UnitY()));
     start_pose.orientation.x = quat.x();
     start_pose.orientation.y = quat.y();
@@ -537,25 +488,59 @@ public:
   }
 
   /**
-   * \brief Helper function to wait for planning scene to be ready
+   * \brief Load a planning scene monitor
+   * \return true if successful in loading
    */
-  void waitForPlanningScene()
+  bool loadPlanningSceneMonitor()
   {
+    // ---------------------------------------------------------------------------------------------
+    // Create planning scene monitor
+    planning_scene_monitor_.reset(new planning_scene_monitor::PlanningSceneMonitor(ROBOT_DESCRIPTION));
+
+    ros::spinOnce();
+    ros::Duration(0.5).sleep();
+    ros::spinOnce();
+
+    if (planning_scene_monitor_->getPlanningScene())
+    {
+      planning_scene_monitor_->startWorldGeometryMonitor();
+      planning_scene_monitor_->startSceneMonitor("/move_group/monitored_planning_scene");
+      planning_scene_monitor_->startStateMonitor("/joint_states", "/attached_collision_object");
+      //planning_scene_monitor_->startPublishingPlanningScene(planning_scene_monitor::PlanningSceneMonitor::UPDATE_SCENE,
+      //  "dave_planning_scene");
+    }
+    else
+    {
+      ROS_FATAL_STREAM_NAMED("verticle_test","Planning scene not configured");
+      return false;
+    }
+
+    ros::spinOnce();
+    ros::Duration(0.5).sleep();
+    ros::spinOnce();
+
     // Wait for complete state to be recieved
     std::vector<std::string> missing_joints;
-    while( !planning_scene_monitor_->getStateMonitor()->haveCompleteState() )
+    int counter = 0;
+    while( !planning_scene_monitor_->getStateMonitor()->haveCompleteState() && ros::ok() )
     {
-      ros::Duration(0.1).sleep();
+      ROS_INFO_STREAM_NAMED("verticle_test","Waiting for complete state...");
+      ros::Duration(0.25).sleep();
       ros::spinOnce();
-      ROS_INFO_STREAM_NAMED("pick place","Waiting for complete state...");
 
       // Show unpublished joints
-      planning_scene_monitor_->getStateMonitor()->haveCompleteState( missing_joints );
-      for(int i = 0; i < missing_joints.size(); ++i)
-        ROS_WARN_STREAM_NAMED("verticle_test","Unpublished joints: " << missing_joints[i]);
+      if( counter > 6 )
+      {
+        planning_scene_monitor_->getStateMonitor()->haveCompleteState( missing_joints );
+        for(int i = 0; i < missing_joints.size(); ++i)
+          ROS_WARN_STREAM_NAMED("verticle_test","Unpublished joints: " << missing_joints[i]);
+      }
+      counter++;
     }
+
+    return true;
   }
-  
+
 }; // end of class
 
 } // namespace
