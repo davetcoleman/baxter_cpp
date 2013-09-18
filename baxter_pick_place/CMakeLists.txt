@@ -42,6 +42,10 @@ target_link_libraries(block_pick_place ${catkin_LIBRARIES} ${Boost_LIBRARIES})
 add_executable(block_grasp_generator_test src/tests/block_grasp_generator_test.cpp)
 target_link_libraries(block_grasp_generator_test ${catkin_LIBRARIES} ${Boost_LIBRARIES})
 
+# Test executable
+add_executable(verticle_approach_test src/tests/verticle_approach_test.cpp)
+target_link_libraries(verticle_approach_test ${catkin_LIBRARIES} ${Boost_LIBRARIES})
+
 # Demos
 add_executable(random_planning src/demos/random_planning.cpp)
 target_link_libraries(random_planning ${catkin_LIBRARIES} ${Boost_LIBRARIES})

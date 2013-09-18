@@ -99,6 +99,8 @@ protected:
   baxter_msgs::GripperStateConstPtr gripper_state_;
   ros::Time gripper_state_timestamp_;
 
+  enum gripper_error_msgs {NO_ERROR, EXPIRED, CALIBRATED, ENABLED, ERROR, READY};
+
   // Button states
   bool cuff_grasp_pressed_;
   bool cuff_ok_pressed_;
@@ -195,8 +197,8 @@ public:
     finger_joint_stroke_ = FINGER_JOINT_UPPER - FINGER_JOINT_LOWER;
     finger_joint_midpoint_ = FINGER_JOINT_LOWER + finger_joint_stroke_ / 2;
 
-    // Get the EE ready to be used
-    autoFix();
+    // Get the EE ready to be used - calibrate if needed
+    autoFix(false);
 
     // Error report
     if( hasError() )
@@ -215,7 +217,7 @@ public:
     }
   }
 
-  bool autoFix()
+  bool autoFix(bool verbose = true)
   {
     int attempts = 0;
     bool result = false;
@@ -224,26 +226,45 @@ public:
     {
       bool recheck = false;
 
-      // Reset error if necessary
-      if( gripper_state_->error )
+      switch(checkError())
       {
-        resetError();
-        if( gripper_state_->error )
+        case EXPIRED:
+          ROS_DEBUG_STREAM_NAMED("temp","recheck source is expired");
           recheck = true;
-      }
+          break;
 
-      // Calibrate
-      if( !gripper_state_->calibrated )
-      {
-        calibrate();
-        if( !gripper_state_->calibrated )
+        case ENABLED:
+          ROS_ERROR_STREAM_NAMED(arm_name_,"Gripper " << arm_name_ << " not enabled. State: \n" << *gripper_state_ );
           recheck = true;
-      }
+          break;
 
-      // Check for ready/moving/gripping
-      if( !isReadyMovingGrippingOK() )
-      {
-        recheck = true;
+        case ERROR:
+          resetError();
+          if( gripper_state_->error )
+          {
+            ROS_DEBUG_STREAM_NAMED("temp","recheck source is error");
+            recheck = true;
+          }
+          break;
+
+        case CALIBRATED:
+          calibrate();
+          if( !gripper_state_->calibrated )
+          {
+            ROS_DEBUG_STREAM_NAMED("temp","recheck source is calibrated");
+            recheck = true;
+          }
+          break;
+
+        case READY:
+          ROS_DEBUG_STREAM_NAMED("temp","recheck source is OK");
+          recheck = true;
+          break;
+
+        case NO_ERROR:
+        default:
+          break;
+          // do nothing
       }
 
       // Check if we need to loop again
@@ -260,7 +281,8 @@ public:
         break;
       }
 
-      ROS_WARN_STREAM_NAMED(arm_name_,"Autofix detected issue with end effector " << arm_name_ << ". Attempting to fix. State: \n" << *gripper_state_);
+      if(verbose)
+        ROS_WARN_STREAM_NAMED(arm_name_,"Autofix detected issue with end effector " << arm_name_ << ". Attempting to fix. State: \n" << *gripper_state_);
 
       ros::Duration(WAIT_STATE_MSG_SEC).sleep();
       ros::spinOnce();
@@ -314,7 +336,7 @@ public:
 
       calibrate_topic_.publish(empty_msg_);
       ros::spinOnce();
-      ros::Duration(1.5).sleep();
+      ros::Duration(2.0).sleep();
     }
   }
 
@@ -376,6 +398,28 @@ public:
 
   /**
    * \brief Check if gripper is in good state
+   * \return error type if there is one
+   */
+  gripper_error_msgs checkError()
+  {
+    // Run Checks
+    if( !in_simulation_ &&
+      ros::Time::now() > gripper_state_timestamp_ + ros::Duration(2.0)) // check that the message timestamp is no older than 1 second
+      return EXPIRED;
+    if( !gripper_state_->enabled )
+      return ENABLED;
+    if( gripper_state_->error )
+      return ERROR;
+    if( !gripper_state_->calibrated )
+      return CALIBRATED;
+    if( !isReadyMovingGrippingOK() )
+      return READY;
+
+    return NO_ERROR;
+  }
+
+  /**
+   * \brief Check if gripper is in good state
    * \return true if there is no error
    */
   bool hasError()
@@ -386,52 +430,51 @@ public:
     action_result_.stalled = false; // \todo implement
     action_result_.reached_goal = false;
 
-    // Run Checks
-    if( !in_simulation_ &&
-      ros::Time::now() > gripper_state_timestamp_ + ros::Duration(2.0)) // check that the message timestamp is no older than 1 second
+    switch(checkError())
     {
-      ROS_ERROR_STREAM_NAMED(arm_name_,"Gripper " << arm_name_ << " state expired. State: \n" << *gripper_state_ );
+      case EXPIRED:
+        ROS_ERROR_STREAM_NAMED(arm_name_,"Gripper " << arm_name_ << " state expired. State: \n" << *gripper_state_ );
 
-      if( action_server_.isActive() )
-        action_server_.setAborted(action_result_,std::string("Gripper state expired"));
+        if( action_server_.isActive() )
+          action_server_.setAborted(action_result_,std::string("Gripper state expired"));
 
-      return true;
-    }
-    if( !gripper_state_->enabled )
-    {
-      ROS_ERROR_STREAM_NAMED(arm_name_,"Gripper " << arm_name_ << " not enabled. State: \n" << *gripper_state_ );
+        return true;
 
-      if( action_server_.isActive() )
-        action_server_.setAborted(action_result_,"Gripper not enabled");
+      case ENABLED:
+        ROS_ERROR_STREAM_NAMED(arm_name_,"Gripper " << arm_name_ << " not enabled. State: \n" << *gripper_state_ );
 
-      return true;
-    }
-    if( gripper_state_->error )
-    {
-      ROS_ERROR_STREAM_NAMED(arm_name_,"Gripper " << arm_name_ << " has error. State: \n" << *gripper_state_ );
+        if( action_server_.isActive() )
+          action_server_.setAborted(action_result_,"Gripper not enabled");
 
-      if( action_server_.isActive() )
-        action_server_.setAborted(action_result_,"Gripper has error");
+        return true;
 
-      return true;
-    }
-    if( !gripper_state_->calibrated )
-    {
-      ROS_ERROR_STREAM_NAMED(arm_name_,"Gripper " << arm_name_ << " not calibrated. State: \n" << *gripper_state_ );
+      case ERROR:
+        ROS_ERROR_STREAM_NAMED(arm_name_,"Gripper " << arm_name_ << " has error. State: \n" << *gripper_state_ );
 
-      if( action_server_.isActive() )
-        action_server_.setAborted(action_result_,"Gripper not calibrated");
+        if( action_server_.isActive() )
+          action_server_.setAborted(action_result_,"Gripper has error");
 
-      return true;
-    }
+        return true;
 
-    if( !isReadyMovingGrippingOK() )
-    {
-      ROS_ERROR_STREAM_NAMED(arm_name_,"Gripper " << arm_name_ << " not ready. State: \n" << *gripper_state_ );
+      case CALIBRATED:
+        ROS_ERROR_STREAM_NAMED(arm_name_,"Gripper " << arm_name_ << " not calibrated. State: \n" << *gripper_state_ );
 
-      if( action_server_.isActive() )
-        action_server_.setAborted(action_result_,"Gripper not ready");
-      return true;
+        if( action_server_.isActive() )
+          action_server_.setAborted(action_result_,"Gripper not calibrated");
+
+        return true;
+
+      case READY:
+        ROS_ERROR_STREAM_NAMED(arm_name_,"Gripper " << arm_name_ << " not ready. State: \n" << *gripper_state_ );
+
+        if( action_server_.isActive() )
+          action_server_.setAborted(action_result_,"Gripper not ready");
+        return true;
+
+      case NO_ERROR:
+      default:
+        // do nothing
+        break;
     }
 
     return false;
