@@ -37,6 +37,7 @@
  * \author  Dave Coleman
  */
 
+// ROS
 #include <ros/ros.h>
 
 // MoveIt!
@@ -55,10 +56,6 @@
 
 namespace baxter_pick_place
 {
-
-static const std::string PLANNING_GROUP_NAME = "right_arm";
-static const std::string RVIZ_MARKER_TOPIC = "/end_effector_marker";
-static const std::string BLOCK_NAME = "block1";
 
 struct MetaBlock
 {
@@ -85,30 +82,37 @@ public:
   // baxter helper
   baxter_control::BaxterUtilities baxter_util_;
 
+  // which baxter arm are we using
+  std::string arm_;
+  std::string planning_group_name_;
+
   // settings
   bool auto_reset_;
   int auto_reset_sec_;
 
   SimplePickPlace()
     : auto_reset_(false),
-      auto_reset_sec_(4)
+      auto_reset_sec_(4),
+      arm_("right"),
+      planning_group_name_(arm_+"_arm")
   {
     ros::NodeHandle nh;
 
-    // Create MoveGroup for right arm
-    move_group_.reset(new move_group_interface::MoveGroup(PLANNING_GROUP_NAME));
+    // Create MoveGroup for one of the planning groups
+    move_group_.reset(new move_group_interface::MoveGroup(planning_group_name_));
     move_group_->setPlanningTime(30.0);
 
     // Load grasp generator
-    grasp_data_ = loadRobotGraspData("right", BLOCK_SIZE); // Load robot specific data
+    grasp_data_ = loadRobotGraspData(arm_, BLOCK_SIZE); // Load robot specific data
 
     // Load the Robot Viz Tools for publishing to rviz
-    visual_tools_.reset(new block_grasp_generator::VisualizationTools( RVIZ_MARKER_TOPIC, BASE_LINK));
+    visual_tools_.reset(new block_grasp_generator::VisualizationTools( BASE_LINK));
     visual_tools_->setFloorToBaseHeight(FLOOR_TO_BASE_HEIGHT);
     visual_tools_->setEEGroupName(grasp_data_.ee_group_);
-    visual_tools_->setPlanningGroupName(PLANNING_GROUP_NAME);
+    visual_tools_->setPlanningGroupName(planning_group_name_);
 
     block_grasp_generator_.reset(new block_grasp_generator::BlockGraspGenerator(visual_tools_));
+    block_grasp_generator_->setAnimateGrasps(false);
 
     // Let everything load
     ros::Duration(1.0).sleep();

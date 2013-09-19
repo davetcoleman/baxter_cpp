@@ -74,10 +74,6 @@
 namespace baxter_pick_place
 {
 
-// Static const vars
-static const std::string PLANNING_GROUP_NAME = "left_arm";
-static const std::string RVIZ_MARKER_TOPIC = "/end_effector_marker";
-
 // Class
 class VerticleApproachTest
 {
@@ -106,12 +102,14 @@ private:
 
   // which baxter arm are we using
   std::string arm_;
+  std::string planning_group_name_;
 
 public:
 
   // Constructor
   VerticleApproachTest()
-    : arm_("left")
+    : arm_("left"),
+      planning_group_name_(arm_+"_arm")
   {
 
     // -----------------------------------------------------------------------------------------------
@@ -135,13 +133,12 @@ public:
 
     // ---------------------------------------------------------------------------------------------
     // Load the Robot Viz Tools for publishing to Rviz
-    visual_tools_.reset(new block_grasp_generator::VisualizationTools(RVIZ_MARKER_TOPIC, 
-        baxter_pick_place::BASE_LINK));
+    visual_tools_.reset(new block_grasp_generator::VisualizationTools(baxter_pick_place::BASE_LINK));
     visual_tools_->setLifetime(120.0);
     visual_tools_->setMuted(false);
     visual_tools_->setGraspPoseToEEFPose(grasp_data_.grasp_pose_to_eef_pose_);
     visual_tools_->setEEGroupName(grasp_data_.ee_group_);
-    visual_tools_->setPlanningGroupName(PLANNING_GROUP_NAME);
+    visual_tools_->setPlanningGroupName(planning_group_name_);
 
     // ---------------------------------------------------------------------------------------------
     // Enable baxter
@@ -172,6 +169,9 @@ public:
       return false;
     }
 
+
+    return true;
+
     // ---------------------------------------------------------------------------------------------
     // Compute the trajectory once
 
@@ -189,17 +189,22 @@ public:
       return false;
     }
 
+    bool runTrajectory = false;
+
     while(ros::ok())
     {
       // -------------------------------------------------------------------------------------------
       ROS_INFO_STREAM_NAMED("verticle_test","Lowering down --------------------------------------");
 
       // Display the generated path
-      if( !visual_tools_->publishTrajectoryPath(trajectory_msg) )
+      if( !visual_tools_->publishTrajectoryPath(trajectory_msg, !runTrajectory ) )
         return false;
 
       // Execute the path
-      executeTrajectoryMsg(trajectory_msg);
+      if(runTrajectory)
+      {
+        executeTrajectoryMsg(trajectory_msg);
+      }
 
       ros::Duration(1).sleep();
 
@@ -207,11 +212,17 @@ public:
       ROS_INFO_STREAM_NAMED("verticle_test","Raising up -----------------------------------------");
 
       // Display the generated path
-      if( !visual_tools_->publishTrajectoryPath(reverse_trajectory_msg) )
+      if( !visual_tools_->publishTrajectoryPath(reverse_trajectory_msg, !runTrajectory ) )
         return false;
 
       // Execute the path
-      executeTrajectoryMsg(reverse_trajectory_msg);
+      if(runTrajectory)
+      {
+        executeTrajectoryMsg(reverse_trajectory_msg);
+      }
+
+      // Execute the path
+      //      executeTrajectoryMsg(reverse_trajectory_msg);
 
       ros::Duration(1).sleep();
     }
@@ -231,10 +242,12 @@ public:
     geometry_msgs::PoseStamped goal_pose;
     goal_pose.pose = pose;
 
+    ROS_INFO_STREAM_NAMED("temp","here = "<< goal_pose);
+
     // -----------------------------------------------------------------------------------------------
     // Create move_group goal
     moveit_msgs::MoveGroupGoal goal;
-    goal.request.group_name = PLANNING_GROUP_NAME;
+    goal.request.group_name = planning_group_name_;
     goal.request.num_planning_attempts = 1;
     goal.request.allowed_planning_time = 5.0;
 
@@ -262,6 +275,10 @@ public:
     // Visualize goals in rviz
     visual_tools_->publishArrow(goal_pose.pose, block_grasp_generator::GREEN);
     visual_tools_->publishEEMarkers(goal_pose.pose, block_grasp_generator::GREEN);
+
+    
+    ROS_DEBUG_STREAM_NAMED("temp","goal = \n" << goal);
+    ros::Duration(5.0).sleep();
 
     // -------------------------------------------------------------------------------------------
     // Plan
@@ -318,11 +335,11 @@ public:
 
     // ---------------------------------------------------------------------------------------------
     // Check for kinematic solver
-    if( !approach_state.getJointStateGroup(PLANNING_GROUP_NAME)->getJointModelGroup()->canSetStateFromIK( ik_link ) )
+    if( !approach_state.getJointStateGroup(planning_group_name_)->getJointModelGroup()->canSetStateFromIK( ik_link ) )
     {
       // Set kinematic solver
       const std::pair<robot_model::SolverAllocatorFn, robot_model::SolverAllocatorMapFn> &allocators =
-        approach_state.getJointStateGroup(PLANNING_GROUP_NAME)->getJointModelGroup()->getSolverAllocators();
+        approach_state.getJointStateGroup(planning_group_name_)->getJointModelGroup()->getSolverAllocators();
       if( !allocators.first)
         ROS_ERROR_STREAM_NAMED("verticle_test","No IK Solver loaded - make sure moveit_config/kinamatics.yaml is loaded in this namespace");
     }
@@ -357,7 +374,7 @@ public:
     std::vector<robot_state::RobotStatePtr> robot_state_trajectory; // create resulting generated trajectory (result)
 
     double d_approach =
-      approach_state.getJointStateGroup(PLANNING_GROUP_NAME)->computeCartesianPath(robot_state_trajectory,
+      approach_state.getJointStateGroup(planning_group_name_)->computeCartesianPath(robot_state_trajectory,
         ik_link,                   // link name
         approach_direction,
         true,                      // direction is in global reference frame
@@ -383,12 +400,12 @@ public:
 
     // Get the joint limits of planning group
     const robot_model::JointModelGroup *joint_model_group =
-      planning_scene->getRobotModel()->getJointModelGroup(PLANNING_GROUP_NAME);
+      planning_scene->getRobotModel()->getJointModelGroup(planning_group_name_);
     const std::vector<moveit_msgs::JointLimits> &joint_limits = joint_model_group->getVariableLimits();
 
     // Copy the vector of RobotStates to a RobotTrajectory
     robot_trajectory::RobotTrajectoryPtr robot_trajectory(new robot_trajectory::RobotTrajectory(
-        planning_scene->getRobotModel(), PLANNING_GROUP_NAME));
+        planning_scene->getRobotModel(), planning_group_name_));
 
     for (std::size_t k = 0 ; k < robot_state_trajectory.size() ; ++k)
       robot_trajectory->addSuffixWayPoint(robot_state_trajectory[k], 0.0);
@@ -411,7 +428,7 @@ public:
     // ----------------------------------------------------------------------
     // Experimental: reverse the trajectory
     robot_trajectory::RobotTrajectoryPtr robot_trajectory_reverse(new robot_trajectory::RobotTrajectory(
-        planning_scene->getRobotModel(), PLANNING_GROUP_NAME));
+        planning_scene->getRobotModel(), planning_group_name_));
 
     for (std::size_t k = 0 ; k < robot_state_trajectory.size() ; ++k)
       robot_trajectory_reverse->addPrefixWayPoint(robot_state_trajectory[k], 0.0);
@@ -488,7 +505,7 @@ public:
     if( arm_.compare("right") == 0 ) // equal
       start_pose.position.y = -0.4;
     else
-      start_pose.position.y = 0.4;
+      start_pose.position.y = 0.3;
 
     // Orientation
     /*
@@ -499,6 +516,7 @@ public:
     start_pose.orientation.z = quat.z();
     start_pose.orientation.w = quat.w();
     */
+
     double angle = M_PI/2;
     Eigen::Quaterniond quat(Eigen::AngleAxis<double>(double(angle), Eigen::Vector3d::UnitX()));
     start_pose.orientation.x = quat.x();

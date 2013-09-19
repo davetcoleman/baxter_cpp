@@ -62,7 +62,6 @@
 namespace baxter_pick_place
 {
 
-static const std::string RVIZ_MARKER_TOPIC = "/end_effector_marker";
 static const std::string PLANNING_GROUP_NAME = "both_arms";
 
 class RandomPlanning
@@ -96,7 +95,7 @@ public:
 
     // ---------------------------------------------------------------------------------------------
     // Load the Robot Viz Tools for publishing to rviz
-    visual_tools_.reset(new block_grasp_generator::VisualizationTools( RVIZ_MARKER_TOPIC, BASE_LINK));
+    visual_tools_.reset(new block_grasp_generator::VisualizationTools( BASE_LINK));
     visual_tools_->setEEGroupName(grasp_data_.ee_group_);
     visual_tools_->setPlanningGroupName(PLANNING_GROUP_NAME);    
 

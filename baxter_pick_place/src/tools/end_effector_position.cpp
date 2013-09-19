@@ -53,7 +53,6 @@ namespace baxter_pick_place
 {
 
 static const std::string ROBOT_DESCRIPTION="robot_description";
-static const std::string RVIZ_MARKER_TOPIC = "/end_effector_marker";
 static const std::string PLANNING_GROUP_NAME = "right_arm";
 static const std::string SUPPORT_SURFACE_NAME = "workbench";
 static const std::string SUPPORT_SURFACE_NAME2 = "little_table";
@@ -78,13 +77,6 @@ public:
   EndEffectorPosition()
   {
     ros::NodeHandle nh;
-
-    // ---------------------------------------------------------------------------------------------
-    // Load the Robot Viz Tools for publishing to rviz
-    /*
-      visual_tools_.reset(new block_grasp_generator::VisualizationTools( RVIZ_MARKER_TOPIC, EE_GROUP,
-      PLANNING_GROUP_NAME, BASE_LINK));
-    */
 
     // --------------------------------------------------------------------------------------------------------
     // Enable servos

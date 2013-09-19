@@ -47,12 +47,10 @@
 
 // Baxter specific properties
 #include <baxter_pick_place/baxter_data.h>
+#include <baxter_pick_place/custom_environment.h>
 
-namespace block_grasp_generator
+namespace baxter_pick_place
 {
-
-static const std::string RVIZ_MARKER_TOPIC = "/end_effector_marker";
-static const double BLOCK_SIZE = 0.04;
 
 class GraspGeneratorTest
 {
@@ -71,14 +69,13 @@ private:
 
   // which baxter arm are we using
   std::string arm_;
-
   std::string planning_group_name_;
 
 public:
 
   // Constructor
   GraspGeneratorTest(int num_tests)
-    : arm_("left"),
+    : arm_("right"),
       planning_group_name_(arm_+"_arm"),
       nh_("~")
   {
@@ -88,7 +85,7 @@ public:
 
     // ---------------------------------------------------------------------------------------------
     // Load the Robot Viz Tools for publishing to Rviz
-    visual_tools_.reset(new block_grasp_generator::VisualizationTools(RVIZ_MARKER_TOPIC, baxter_pick_place::BASE_LINK));
+    visual_tools_.reset(new block_grasp_generator::VisualizationTools(baxter_pick_place::BASE_LINK));
     visual_tools_->setLifetime(120.0);
     visual_tools_->setMuted(false);
     visual_tools_->setEEGroupName(grasp_data_.ee_group_);
@@ -205,7 +202,7 @@ int main(int argc, char *argv[])
   start_time = ros::Time::now();
 
   // Run Tests
-  block_grasp_generator::GraspGeneratorTest tester(num_tests);
+  baxter_pick_place::GraspGeneratorTest tester(num_tests);
 
   // Benchmark time
   double duration = (ros::Time::now() - start_time).toNSec() * 1e-6;
