@@ -1,9 +1,9 @@
 baxter
 ======
 
-Unofficial Baxter packages that add-on to the Rethink SDK. It is entirely written in C++ and is the location of on going development by [Dave Coleman](http://davetcoleman.com). 
+Unofficial Baxter packages that add-on to the Rethink SDK. It is entirely written in C++ and currently contains Gazebo simulation and pick and place MoveIt code for Baxter. 
 
-Currently it contains Gazebo simulation and pick and place MoveIt code for Baxter. The stabler version is the groovy-devel branch, but more progress has been made for hydro-devel.
+The groovy-devel branch is no longer being actively developed but on going development continues in the hydro-devel branch by [Dave Coleman](http://davetcoleman.com). 
 
 ![alt tag](https://raw.github.com/davetcoleman/baxter/hydro-devel/baxter_pick_place/resource/BaxterPickPlace.png)
 
@@ -45,7 +45,7 @@ We have chosen to freeze the version of MoveIt! we are using for the short-run t
     echo 'source ~/ros/ws_moveit/devel/setup.bash' >> ~/.bashrc
     ```
 
-## Install Baxter Software
+## Baxter Installation
 
 * Create a catkin workspace (we recommend a separate one for Baxter) and use wstool to install the individual repositories
 
@@ -79,6 +79,7 @@ We have chosen to freeze the version of MoveIt! we are using for the short-run t
     rosdep install --from-paths . --ignore-src --rosdistro hydro -y
     catkin_make
     ```
+You may need to run this command multiple times if there is a message dependency issue.
 
 * Add Baxter setup.bash to your .bashrc (recommended)
 
