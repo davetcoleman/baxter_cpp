@@ -167,21 +167,21 @@ public:
     }
 
     // If in simulation, fill in dummy state values
-    if( in_simulation )
+    if( in_simulation_ )
     {
-      baxter_msgs::GripperStatePtr simulation_state_;
-      simulation_state_.reset(new baxter_msgs::GripperState());
-      simulation_state_->enabled = 1;
-      simulation_state_->calibrated = 1;
-      simulation_state_->ready = 1;
-      simulation_state_->moving = 0;
-      simulation_state_->gripping = 0;
-      simulation_state_->missed = 0;
-      simulation_state_->error = 0;
-      simulation_state_->command = 0; // \todo
-      simulation_state_->position = 0; // \todo
-      simulation_state_->force = 7; // base line value unloaded
-      gripper_state_ = simulation_state_;
+      baxter_msgs::GripperStatePtr simulation_state;
+      simulation_state.reset(new baxter_msgs::GripperState());
+      simulation_state->enabled = 1;
+      simulation_state->calibrated = 1;
+      simulation_state->ready = 1;
+      simulation_state->moving = 0;
+      simulation_state->gripping = 0;
+      simulation_state->missed = 0;
+      simulation_state->error = 0;
+      simulation_state->command = 0; // \todo
+      simulation_state->position = 0; // \todo
+      simulation_state->force = 7; // base line value unloaded
+      gripper_state_ = simulation_state;
     }
 
     // Gazebo publishes a joint state for the gripper, but Baxter does not do so in the right format

@@ -96,6 +96,7 @@ public:
     // ---------------------------------------------------------------------------------------------
     // Load the Robot Viz Tools for publishing to rviz
     visual_tools_.reset(new block_grasp_generator::VisualizationTools( BASE_LINK));
+    visual_tools_->setFloorToBaseHeight(FLOOR_TO_BASE_HEIGHT);
     visual_tools_->setEEGroupName(grasp_data_.ee_group_);
     visual_tools_->setPlanningGroupName(PLANNING_GROUP_NAME);    
 

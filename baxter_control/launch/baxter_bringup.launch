@@ -1,5 +1,10 @@
 <launch>
 
+  <!-- GDB functionality -->
+  <arg name="debug" default="false" />
+  <arg unless="$(arg debug)" name="launch_prefix" value="" />
+  <arg     if="$(arg debug)" name="launch_prefix" value="gdb --ex run --args" />
+
   <!-- load Baxter's trajectory controller -->
   <node name="baxter_trajectory_controller" pkg="baxter_interface" type="trajectory_controller.py"
       respawn="false" output="screen" args="-l both">
@@ -16,6 +21,6 @@
 
   <!-- Load gripper controller -->
   <node name="baxter_gripper_server" pkg="baxter_gripper_server" type="gripper_action_server" 
-	respawn="false" output="screen" />
+	respawn="false" output="screen" launch-prefix="$(arg launch_prefix)" />
   
 </launch>
