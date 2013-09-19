@@ -1,7 +1,7 @@
 baxter
 ======
 
-Unofficial Baxter packages that add-on to the Rethink SDK. It is entirely written in C++ and is the location of on going development by [Dave Coleman](http://davetcoleman.com). 
+Unofficial Baxter packages that add-on to the Rethink SDK. It is entirely written in C++ and is the location of on going development.
 
 Currently it contains Gazebo simulation and pick and place MoveIt code for Baxter. The stabler version is the groovy-devel branch, but more progress has been made for hydro-devel.
 
