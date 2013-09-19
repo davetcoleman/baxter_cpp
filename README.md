@@ -3,7 +3,9 @@ baxter
 
 Unofficial Baxter packages that add-on to the Rethink SDK. It is entirely written in C++ and is the location of on going development by [Dave Coleman](http://davetcoleman.com). 
 
-Currently it contains Gazebo simulation and pick and place MoveIt code for Baxter. The more stable version is the groovy-devel branch.
+Currently it contains Gazebo simulation and pick and place MoveIt code for Baxter. The stabler version is the groovy-devel branch, but more progress has been made for hydro-devel.
+
+![alt tag](https://raw.github.com/davetcoleman/baxter/hydro-devel/baxter_pick_place/resource/BaxterPickPlace.png)
 
 **Note:** This is the ROS Hydro readme version. See groovy-devel branch for ROS Groovy instructions.
 
@@ -12,18 +14,17 @@ Currently it contains Gazebo simulation and pick and place MoveIt code for Baxte
  * A Baxter with dual parallel grippers, or the desire to see one in simulation
  * [ROS Hydro](http://wiki.ros.org/ROS/Installation)
  * Access to the private Rethink [sdk-examples](https://github.com/RethinkRobotics/sdk-examples) repository - we are using the baxter_interface and head_control packages from the SDK. Contact [Dave](davetcoleman@gmail.com) if you should have access to this.
- * Setup Github - the git@github.com urls, below, only work if you have [Setup Github](https://help.github.com/articles/set-up-git) and generated [SSH Keys for Github](https://help.github.com/articles/generating-ssh-keys). 
+ * Setup Github - the git@github.com urls, below, only work if you have [Setup Github](https://help.github.com/articles/set-up-git) and generated [SSH Keys for Github](https://help.github.com/articles/generating-ssh-keys).
  * Install wstool package
-
     ```
     sudo apt-get install python-wstool
     ```
 
 ## Install MoveIt From Source
 
-**Note:** Currently you can skip this section - the debians are still the same as of Sep 9, 2013. 
+**Note:** Currently you can skip this section - the debians are still the same on version 0.5.1 as of Sep 9, 2013. 
 
-We have chosen to freeze the version of MoveIt! we are using for the short-run to ensure compatibilty with our customizations. We recommend you install this in a seperate workspace to decrease built times.
+We have chosen to freeze the version of MoveIt! we are using for the short-run to ensure compatibilty with our customizations. We recommend you install this in a seperate workspace (following the following insructions) to decrease built times.
 
 * Setup workspace, download repositories and build
 
@@ -96,11 +97,13 @@ We have chosen to freeze the version of MoveIt! we are using for the short-run t
 
  * Turn on baxter
 
- * Enable robot:
+
+ * Optional: Enable robot 
+   Most demos in this repo automatically will enable baxter
    ```
    rosrun tools enable_robot.py -e
    ```
- 
+
 ### Simulation 
 
  * Ensure you have the correct ROS_MASTER_URI exported:
@@ -129,6 +132,7 @@ We have chosen to freeze the version of MoveIt! we are using for the short-run t
 Works with simulation or hardware:
 
  * Bringup Baxter Hardware Interface:
+   This contains the gripper action server, trajectory controller, head image publisher and sonar muter.
 
    ```
    roslaunch baxter_control baxter_bringup.launch
@@ -140,9 +144,9 @@ Works with simulation or hardware:
    roslaunch baxter_moveit_config baxter_moveit.launch
    ```
 
-## Pick and place demo
+## Block pick and place demo
 
-Still under development - moves blocks located on a table in front of Baxter.
+Picks small blocks located on a table in front of Baxter and places them to Baxter's left. Assumes perfect perception (doesn't have perception) as defined in custom_environment.h.
 
    ```
    roslaunch baxter_pick_place block_pick_place.launch
