@@ -36,7 +36,7 @@
    Desc:   Custom environments for running MoveIt!
 */
 
-#include <block_grasp_generator/robot_viz_tools.h> // simple tool for showing grasps
+#include <block_grasp_generator/visualization_tools.h> // simple tool for showing grasps
 
 #ifndef BAXTER_PICK_PLACE__CUSTOM_ENVIRONMENT_
 #define BAXTER_PICK_PLACE__CUSTOM_ENVIRONMENT_
@@ -63,26 +63,26 @@ static const double TABLE_Y = 0.15;
 // block dimensions
 static const double BLOCK_SIZE = 0.04;
 
-void createEnvironment(block_grasp_generator::RobotVizToolsPtr rviz_tools_)
+void createEnvironment(block_grasp_generator::VisualizationToolsPtr visual_tools_)
 {
-  rviz_tools_->cleanupCO(SUPPORT_SURFACE1_NAME);
-  rviz_tools_->cleanupCO(SUPPORT_SURFACE2_NAME);
-  rviz_tools_->cleanupCO(WALL1_NAME);
-  rviz_tools_->cleanupCO(WALL2_NAME);
-  rviz_tools_->cleanupCO(WALL3_NAME);
+  visual_tools_->cleanupCO(SUPPORT_SURFACE1_NAME);
+  visual_tools_->cleanupCO(SUPPORT_SURFACE2_NAME);
+  visual_tools_->cleanupCO(WALL1_NAME);
+  visual_tools_->cleanupCO(WALL2_NAME);
+  visual_tools_->cleanupCO(WALL3_NAME);
 
   // --------------------------------------------------------------------------------------------
   // Add objects to scene
 
   // Walls                          x,     y,     angle,  width, name
-  rviz_tools_->publishCollisionWall(-0.55, 0,     0,      2.2,   WALL1_NAME);  // back wall
-  rviz_tools_->publishCollisionWall(0.05,  -1.1,  M_PI/2, 2.0,   WALL2_NAME);  // baxter's right
-  rviz_tools_->publishCollisionWall(0.05,  1.1,   M_PI/2, 2.0,   WALL3_NAME);  // baxter's left
+  visual_tools_->publishCollisionWall(-0.55, 0,     0,      2.2,   WALL1_NAME);  // back wall
+  visual_tools_->publishCollisionWall(0.05,  -1.1,  M_PI/2, 2.0,   WALL2_NAME);  // baxter's right
+  visual_tools_->publishCollisionWall(0.05,  1.1,   M_PI/2, 2.0,   WALL3_NAME);  // baxter's left
 
   // Tables                          x,       y,       angle, width,       height,       depth,       name
-  rviz_tools_->publishCollisionTable(0.78,    -0.8,    0,     0.4,         1.4,          0.47,        SUPPORT_SURFACE1_NAME); // computer monitor
-  rviz_tools_->publishCollisionTable(0.78,    -0.45,   0,     0.4,         0.7,          0.47,        SUPPORT_SURFACE2_NAME); // my desk
-  rviz_tools_->publishCollisionTable(TABLE_X, TABLE_Y, 0,     TABLE_WIDTH, TABLE_HEIGHT, TABLE_DEPTH, SUPPORT_SURFACE3_NAME); // andy table
+  visual_tools_->publishCollisionTable(0.78,    -0.8,    0,     0.4,         1.4,          0.47,        SUPPORT_SURFACE1_NAME); // computer monitor
+  visual_tools_->publishCollisionTable(0.78,    -0.45,   0,     0.4,         0.7,          0.47,        SUPPORT_SURFACE2_NAME); // my desk
+  visual_tools_->publishCollisionTable(TABLE_X, TABLE_Y, 0,     TABLE_WIDTH, TABLE_HEIGHT, TABLE_DEPTH, SUPPORT_SURFACE3_NAME); // andy table
 }
 
 double getTableHeight(double floor_offset)

@@ -108,8 +108,6 @@ public:
 
   bool resetBaxter();
 
-  bool setPlanningGroup();
-
   bool positionBaxterReady();
 
   bool positionBaxterNeutral();

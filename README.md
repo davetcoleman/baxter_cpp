@@ -165,7 +165,7 @@ roslaunch baxter_pick_place verticle_approach_test.launch
 Test grasp poses of blocks
 
 ```
-roslaunch baxter_pick_place grasp_generator_test.launch
+roslaunch baxter_pick_place block_grasp_generator_test.launch
 ```
 
 ## Programmed Buttons

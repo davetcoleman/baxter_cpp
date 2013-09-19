@@ -46,8 +46,6 @@ BaxterUtilities::BaxterUtilities()
 {
   ros::NodeHandle nh;
 
-  move_group_.reset(new move_group_interface::MoveGroup(PLANNING_GROUP_NAME));
-
   // Preload Messages
   disable_msg_.data = false;
   enable_msg_.data = true;
@@ -273,14 +271,6 @@ bool BaxterUtilities::resetBaxter()
   return true;
 }
 
-bool BaxterUtilities::setPlanningGroup()
-{
-  //std::string group_name = move_group_->getName();
-
-  // Create MoveGroup for both arms
-  move_group_.reset(new move_group_interface::MoveGroup(PLANNING_GROUP_NAME));
-}
-
 bool BaxterUtilities::positionBaxterReady()
 {
   return sendToPose("both_ready");
@@ -293,7 +283,13 @@ bool BaxterUtilities::positionBaxterNeutral()
 
 bool BaxterUtilities::sendToPose(const std::string &pose_name)
 {
-  //    setPlanningGroup();
+  // Check if move group has been loaded yet
+  // We only load it here so that applications that don't need this aspect of baxter_utilities 
+  // don't have to load it every time.
+  if( !move_group_ )
+  {
+    move_group_.reset(new move_group_interface::MoveGroup(PLANNING_GROUP_NAME));
+  }
 
   // Send to ready position
   ROS_INFO_STREAM_NAMED("pick_place","Sending to right and left arm ready positions...");

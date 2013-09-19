@@ -47,7 +47,7 @@
 
 // Grasp generation
 #include <block_grasp_generator/block_grasp_generator.h>
-#include <block_grasp_generator/robot_viz_tools.h> // simple tool for showing graspsp
+#include <block_grasp_generator/visualization_tools.h> // simple tool for showing graspsp
 
 // Baxter specific properties
 #include <baxter_pick_place/baxter_data.h>
@@ -74,7 +74,7 @@ public:
   // grasp generator
   block_grasp_generator::BlockGraspGeneratorPtr block_grasp_generator_;
 
-  block_grasp_generator::RobotVizToolsPtr rviz_tools_;
+  block_grasp_generator::VisualizationToolsPtr visual_tools_;
 
   // data for generating grasps
   block_grasp_generator::RobotGraspData grasp_data_;
@@ -99,15 +99,16 @@ public:
     move_group_.reset(new move_group_interface::MoveGroup(PLANNING_GROUP_NAME));
     move_group_->setPlanningTime(30.0);
 
-    // Load the Robot Viz Tools for publishing to rviz
-    rviz_tools_.reset(new block_grasp_generator::RobotVizTools( RVIZ_MARKER_TOPIC, EE_GROUP,
-        PLANNING_GROUP_NAME, BASE_LINK));
-    rviz_tools_->setFloorToBaseHeight(FLOOR_TO_BASE_HEIGHT);
-
     // Load grasp generator
-    grasp_data_ = loadRobotGraspData(BLOCK_SIZE); // Load robot specific data
+    grasp_data_ = loadRobotGraspData("right", BLOCK_SIZE); // Load robot specific data
 
-    block_grasp_generator_.reset(new block_grasp_generator::BlockGraspGenerator(rviz_tools_));
+    // Load the Robot Viz Tools for publishing to rviz
+    visual_tools_.reset(new block_grasp_generator::VisualizationTools( RVIZ_MARKER_TOPIC, BASE_LINK));
+    visual_tools_->setFloorToBaseHeight(FLOOR_TO_BASE_HEIGHT);
+    visual_tools_->setEEGroupName(grasp_data_.ee_group_);
+    visual_tools_->setPlanningGroupName(PLANNING_GROUP_NAME);
+
+    block_grasp_generator_.reset(new block_grasp_generator::BlockGraspGenerator(visual_tools_));
 
     // Let everything load
     ros::Duration(1.0).sleep();
@@ -149,10 +150,10 @@ public:
     }
 
     // Show grasp visualizations or not
-    rviz_tools_->setMuted(false);
+    visual_tools_->setMuted(false);
 
     // Create the walls and tables
-    createEnvironment(rviz_tools_);
+    createEnvironment(visual_tools_);
 
     // --------------------------------------------------------------------------------------------------------
     // Repeat pick and place forever
@@ -179,7 +180,7 @@ public:
           ROS_INFO_STREAM_NAMED("pick_place","Picking '" << blocks[block_id].name << "'");
 
           // Visualize the block we are about to pick
-          rviz_tools_->publishBlock( blocks[block_id].start_pose, BLOCK_SIZE, false );
+          visual_tools_->publishBlock( blocks[block_id].start_pose, BLOCK_SIZE, false );
 
           if( !pick(blocks[block_id].start_pose, blocks[block_id].name) )
           {
@@ -205,7 +206,7 @@ public:
           ROS_INFO_STREAM_NAMED("pick_place","Placing '" << blocks[block_id].name << "'");
 
           // Publish goal block location
-          rviz_tools_->publishBlock( blocks[block_id].goal_pose, BLOCK_SIZE, true );
+          visual_tools_->publishBlock( blocks[block_id].goal_pose, BLOCK_SIZE, true );
 
           if( !place(blocks[block_id].goal_pose, blocks[block_id].name) )
           {
@@ -260,13 +261,13 @@ public:
   void resetBlock(MetaBlock block)
   {
     // Remove attached object
-    rviz_tools_->cleanupACO(block.name);
+    visual_tools_->cleanupACO(block.name);
 
     // Remove collision object
-    rviz_tools_->cleanupCO(block.name);
+    visual_tools_->cleanupCO(block.name);
 
     // Add the collision block
-    rviz_tools_->publishCollisionBlock(block.start_pose, block.name, BLOCK_SIZE);
+    visual_tools_->publishCollisionBlock(block.start_pose, block.name, BLOCK_SIZE);
   }
 
   MetaBlock createStartBlock(double x, double y, const std::string name)
@@ -354,7 +355,7 @@ public:
 
       place_loc.place_pose = pose_stamped;
 
-      rviz_tools_->publishBlock( place_loc.place_pose.pose, BLOCK_SIZE, true );
+      visual_tools_->publishBlock( place_loc.place_pose.pose, BLOCK_SIZE, true );
 
       // Approach
       manipulation_msgs::GripperTranslation gripper_approach;

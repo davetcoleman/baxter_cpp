@@ -5,16 +5,13 @@ Panels:
     Property Tree Widget:
       Expanded:
         - /Grid1/Offset1
-        - /MotionPlanning1
         - /MotionPlanning1/Scene Geometry1
         - /MotionPlanning1/Scene Robot1
         - /MotionPlanning1/Planning Request1
         - /MotionPlanning1/Planned Path1
         - /RobotModel1/Links1
-        - /EE Grasp Poses1/Namespaces1
-        - /MoveItGrasps1
       Splitter Ratio: 0.711462
-    Tree Height: 337
+    Tree Height: 451
   - Class: rviz/Help
     Name: Help
   - Class: rviz/Views
@@ -589,30 +586,7 @@ Visualization Manager:
     - Class: rviz/Marker
       Enabled: true
       Marker Topic: /end_effector_marker
-      Name: EndEffector
-      Namespaces:
-        {}
-      Queue Size: 100
-      Value: true
-    - Arrow Length: 0.1
-      Class: rviz/PoseArray
-      Color: 255; 25; 0
-      Enabled: true
-      Name: BlockPoseArray
-      Topic: /block_detection_server/block_orientation
-      Value: true
-    - Class: rviz/Marker
-      Enabled: true
-      Marker Topic: /block_perception_server/block_marker
-      Name: RecognizedBlocks
-      Namespaces:
-        {}
-      Queue Size: 100
-      Value: true
-    - Class: rviz/Marker
-      Enabled: true
-      Marker Topic: /end_effector_marker
-      Name: EE Grasp Poses
+      Name: block_grasp_generator
       Namespaces:
         {}
       Queue Size: 100
@@ -620,19 +594,19 @@ Visualization Manager:
     - Class: rviz/MarkerArray
       Enabled: true
       Marker Topic: /move_group/display_contacts
-      Name: MarkerArray
+      Name: MoveIt Contacts
       Namespaces:
         {}
       Queue Size: 100
       Value: true
     - Class: rviz/MarkerArray
-      Enabled: false
+      Enabled: true
       Marker Topic: /move_group/display_grasp_markers
       Name: MoveItGrasps
       Namespaces:
         {}
       Queue Size: 100
-      Value: false
+      Value: true
   Enabled: true
   Global Options:
     Background Color: 48; 48; 48
@@ -648,31 +622,31 @@ Visualization Manager:
   Views:
     Current:
       Class: rviz/XYOrbit
-      Distance: 2.32353
+      Distance: 0.653013
       Focal Point:
-        X: 1.78691
-        Y: -0.261097
-        Z: -1.24525e-06
+        X: 0.46891
+        Y: 0.487958
+        Z: -1.14094e-06
       Name: Current View
       Near Clip Distance: 0.01
-      Pitch: 0.629794
+      Pitch: 0.394794
       Target Frame: base_link
       Value: XYOrbit (rviz)
-      Yaw: 0.0603947
+      Yaw: 0.20539
     Saved: ~
 Window Geometry:
   Displays:
     collapsed: false
-  Height: 1172
+  Height: 1171
   Help:
     collapsed: false
   Hide Left Dock: false
   Hide Right Dock: true
   Motion Planning:
     collapsed: false
-  QMainWindow State: 000000ff00000000fd0000000100000000000002a200000435fc0200000005fb000000100044006900730070006c006100790073010000004100000192000000dd00fffffffb0000000800480065006c00700000000342000000bb0000007600fffffffb0000000a0056006900650077007301000001d9000000cf000000b000fffffffb0000000c00430061006d00650072006100000002ff000001610000000000000000fb0000001e004d006f00740069006f006e00200050006c0061006e006e0069006e006701000002ae000001c80000017f00ffffff000003980000043500000001000000020000000100000002fc0000000100000002000000010000000a0054006f006f006c00730100000000ffffffff0000000000000000
+  QMainWindow State: 000000ff00000000fd0000000100000000000002a200000434fc0200000005fb000000100044006900730070006c006100790073010000004100000204000000dd00fffffffb0000000800480065006c00700000000342000000bb0000007600fffffffb0000000a00560069006500770073010000024b000000b0000000b000fffffffb0000000c00430061006d00650072006100000002ff000001610000000000000000fb0000001e004d006f00740069006f006e00200050006c0061006e006e0069006e00670100000301000001740000017400ffffff000003960000043400000001000000020000000100000002fc0000000100000002000000010000000a0054006f006f006c00730100000000ffffffff0000000000000000
   Views:
     collapsed: false
-  Width: 1600
-  X: 3839
+  Width: 1598
+  X: 3840
   Y: 0

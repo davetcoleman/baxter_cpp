@@ -42,19 +42,6 @@
 #include <Eigen/Core>
 #include <Eigen/Geometry>
 
-// MoveIt
-//#include <moveit_msgs/MoveGroupAction.h>
-//#include <moveit_msgs/DisplayTrajectory.h>
-//#include <moveit_msgs/RobotState.h>
-//#include <moveit/kinematic_constraints/utils.h>
-//#include <moveit/robot_state/robot_state.h>
-//#include <moveit/robot_state/conversions.h>
-//#include <moveit/robot_model_loader/robot_model_loader.h>
-//#include <moveit/plan_execution/plan_execution.h>
-//#include <moveit/plan_execution/plan_with_sensing.h>
-//#include <moveit/trajectory_processing/trajectory_tools.h> // for plan_execution
-//#include <moveit/trajectory_processing/iterative_time_parameterization.h>
-
 // Grasp generation
 #include <block_grasp_generator/block_grasp_generator.h>
 
@@ -64,11 +51,9 @@
 namespace block_grasp_generator
 {
 
-static const std::string PLANNING_GROUP_NAME = "right_arm";
 static const std::string RVIZ_MARKER_TOPIC = "/end_effector_marker";
-static const std::string BLOCK_NAME = "block1";
 static const double BLOCK_SIZE = 0.04;
- 
+
 class GraspGeneratorTest
 {
 private:
@@ -79,28 +64,39 @@ private:
   block_grasp_generator::BlockGraspGeneratorPtr block_grasp_generator_;
 
   // class for publishing stuff to rviz
-  block_grasp_generator::RobotVizToolsPtr rviz_tools_;
+  block_grasp_generator::VisualizationToolsPtr visual_tools_;
 
-  // data for generating grasps
+  // robot-specific data for generating grasps
   block_grasp_generator::RobotGraspData grasp_data_;
+
+  // which baxter arm are we using
+  std::string arm_;
+
+  std::string planning_group_name_;
 
 public:
 
   // Constructor
-  GraspGeneratorTest(int num_tests) :
-    nh_("~")
+  GraspGeneratorTest(int num_tests)
+    : arm_("left"),
+      planning_group_name_(arm_+"_arm"),
+      nh_("~")
   {
     // ---------------------------------------------------------------------------------------------
+    // Load grasp data specific to our robot
+    grasp_data_ = baxter_pick_place::loadRobotGraspData(arm_, BLOCK_SIZE); // Load robot specific data
+
+    // ---------------------------------------------------------------------------------------------
     // Load the Robot Viz Tools for publishing to Rviz
-    rviz_tools_.reset(new block_grasp_generator::RobotVizTools(RVIZ_MARKER_TOPIC, baxter_pick_place::EE_GROUP, 
-        PLANNING_GROUP_NAME, baxter_pick_place::BASE_LINK));
-    rviz_tools_->setLifetime(120.0);
-    rviz_tools_->setMuted(false);
+    visual_tools_.reset(new block_grasp_generator::VisualizationTools(RVIZ_MARKER_TOPIC, baxter_pick_place::BASE_LINK));
+    visual_tools_->setLifetime(120.0);
+    visual_tools_->setMuted(false);
+    visual_tools_->setEEGroupName(grasp_data_.ee_group_);
+    visual_tools_->setPlanningGroupName(planning_group_name_);
 
     // ---------------------------------------------------------------------------------------------
     // Load grasp generator
-    grasp_data_ = baxter_pick_place::loadRobotGraspData(BLOCK_SIZE); // Load robot specific data for baxter
-    block_grasp_generator_.reset( new block_grasp_generator::BlockGraspGenerator(rviz_tools_) );
+    block_grasp_generator_.reset( new block_grasp_generator::BlockGraspGenerator(visual_tools_) );
 
     // ---------------------------------------------------------------------------------------------
     // Generate grasps for a bunch of random blocks
@@ -135,9 +131,9 @@ public:
     geometry_msgs::Pose start_block_pose;
     geometry_msgs::Pose end_block_pose;
 
-    start_block_pose.position.x = 0.2;
-    start_block_pose.position.y = 0.0;
-    start_block_pose.position.z = 0.02;
+    start_block_pose.position.x = 0.4;
+    start_block_pose.position.y = -0.2;
+    start_block_pose.position.z = 0.0;
 
     end_block_pose.position.x = 0.25;
     end_block_pose.position.y = 0.15;
@@ -161,7 +157,7 @@ public:
     // Choose which block to test
     block_pose = start_block_pose;
 
-    rviz_tools_->publishBlock( block_pose, BLOCK_SIZE, true );
+    visual_tools_->publishBlock( block_pose, BLOCK_SIZE, true );
   }
 
   void generateRandomBlock(geometry_msgs::Pose& block_pose)

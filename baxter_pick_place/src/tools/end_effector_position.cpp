@@ -42,7 +42,7 @@
 // MoveIt!
 #include <moveit/move_group_interface/move_group.h>
 
-#include <block_grasp_generator/robot_viz_tools.h> // simple tool for showing grasps
+#include <block_grasp_generator/visualization_tools.h> // simple tool for showing grasps
 
 #include <geometry_msgs/PoseStamped.h>
 
@@ -67,7 +67,7 @@ class EndEffectorPosition
 {
 public:
 
-  block_grasp_generator::RobotVizToolsPtr rviz_tools_;
+  block_grasp_generator::VisualizationToolsPtr visual_tools_;
 
   // our interface with MoveIt
   boost::scoped_ptr<move_group_interface::MoveGroup> group_;
@@ -82,7 +82,7 @@ public:
     // ---------------------------------------------------------------------------------------------
     // Load the Robot Viz Tools for publishing to rviz
     /*
-      rviz_tools_.reset(new block_grasp_generator::RobotVizTools( RVIZ_MARKER_TOPIC, EE_GROUP,
+      visual_tools_.reset(new block_grasp_generator::VisualizationTools( RVIZ_MARKER_TOPIC, EE_GROUP,
       PLANNING_GROUP_NAME, BASE_LINK));
     */
 

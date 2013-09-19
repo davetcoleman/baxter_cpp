@@ -47,7 +47,7 @@
 #include <baxter_control/baxter_utilities.h>
 
 // Visualization
-#include <block_grasp_generator/robot_viz_tools.h> // simple tool for showing graspsp
+#include <block_grasp_generator/visualization_tools.h> // simple tool for showing graspsp
 
 #include <std_msgs/Float64.h>
 #include <std_msgs/Float32.h>
@@ -70,7 +70,7 @@ class RandomPlanning
 public:
 
   // class for publishing stuff to rviz
-  block_grasp_generator::RobotVizToolsPtr rviz_tools_;
+  block_grasp_generator::VisualizationToolsPtr visual_tools_;
 
   // our interface with MoveIt
   boost::scoped_ptr<move_group_interface::MoveGroup> group_;
@@ -83,16 +83,22 @@ public:
   ros::Publisher head_nod_topic_;
   ros::Publisher head_turn_topic_;
 
+  // robot-specific data for generating grasps
+  block_grasp_generator::RobotGraspData grasp_data_;
+
   RandomPlanning()
   {
     ros::NodeHandle nh;
 
-    
+    // ---------------------------------------------------------------------------------------------
+    // Load grasp generator
+    grasp_data_ = loadRobotGraspData("right", BLOCK_SIZE); // Load robot specific data
 
     // ---------------------------------------------------------------------------------------------
     // Load the Robot Viz Tools for publishing to rviz
-    rviz_tools_.reset(new block_grasp_generator::RobotVizTools( RVIZ_MARKER_TOPIC, EE_GROUP,
-        PLANNING_GROUP_NAME, BASE_LINK));
+    visual_tools_.reset(new block_grasp_generator::VisualizationTools( RVIZ_MARKER_TOPIC, BASE_LINK));
+    visual_tools_->setEEGroupName(grasp_data_.ee_group_);
+    visual_tools_->setPlanningGroupName(PLANNING_GROUP_NAME);    
 
     // ---------------------------------------------------------------------------------------------
     // Create MoveGroup
@@ -101,7 +107,7 @@ public:
 
     // --------------------------------------------------------------------------------------------------------
     // Add objects to scene
-    createEnvironment(rviz_tools_);
+    createEnvironment(visual_tools_);
 
     // --------------------------------------------------------------------------------------------------------
     // Create publishers for stuff

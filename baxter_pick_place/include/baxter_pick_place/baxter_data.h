@@ -44,9 +44,6 @@ namespace baxter_pick_place
 
 static const std::string ROBOT_DESCRIPTION="robot_description";
 static const std::string BASE_LINK = "base";
-static const std::string EE_GROUP = "right_hand";
-static const std::string EE_JOINT = "right_gripper_l_finger_joint";
-static const std::string EE_PARENT_LINK = "right_wrist";
 
 // Copied from URDF \todo read straight from URDF?
 static const double FINGER_JOINT_UPPER = 0.0095; //open
@@ -55,7 +52,7 @@ static const double FINGER_JOINT_LOWER = -0.0125; //close
 // robot dimensions
 static const double FLOOR_TO_BASE_HEIGHT = -0.9;
 
-block_grasp_generator::RobotGraspData loadRobotGraspData(double block_size)
+block_grasp_generator::RobotGraspData loadRobotGraspData(const std::string& arm, double block_size)
 {
   block_grasp_generator::RobotGraspData grasp_data;
 
@@ -82,7 +79,7 @@ block_grasp_generator::RobotGraspData loadRobotGraspData(double block_size)
   grasp_data.pre_grasp_posture_.header.stamp = ros::Time::now();
   // Name of joints:
   grasp_data.pre_grasp_posture_.name.resize(1);
-  grasp_data.pre_grasp_posture_.name[0] = EE_JOINT;
+  grasp_data.pre_grasp_posture_.name[0] = arm + "_gripper_l_finger_joint";
   // Position of joints
   grasp_data.pre_grasp_posture_.position.resize(1);
   grasp_data.pre_grasp_posture_.position[0] = FINGER_JOINT_UPPER;
@@ -93,15 +90,17 @@ block_grasp_generator::RobotGraspData loadRobotGraspData(double block_size)
   grasp_data.grasp_posture_.header.stamp = ros::Time::now();
   // Name of joints:
   grasp_data.grasp_posture_.name.resize(1);
-  grasp_data.grasp_posture_.name[0] = EE_JOINT;
+  grasp_data.grasp_posture_.name[0] = arm + "_gripper_l_finger_joint";
   // Position of joints
   grasp_data.grasp_posture_.position.resize(1);
   grasp_data.grasp_posture_.position[0] = FINGER_JOINT_LOWER;
 
   // -------------------------------
-  // Links
+  // SRDF Info
   grasp_data.base_link_ = BASE_LINK;
-  grasp_data.ee_parent_link_ = EE_PARENT_LINK;
+  grasp_data.ee_parent_link_ = arm + "_wrist";
+  grasp_data.ee_group_ = arm + "_hand";
+  grasp_data.ee_joint_ = arm + "_gripper_l_finger_joint";
 
   // -------------------------------
   // Nums
