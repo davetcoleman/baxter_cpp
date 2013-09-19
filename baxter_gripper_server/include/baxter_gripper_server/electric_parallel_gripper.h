@@ -156,7 +156,7 @@ public:
       {
         if( count > 40 ) // 20 is an arbitrary number for when to assume we are in simulation mode
         {
-          ROS_INFO_STREAM_NAMED(arm_name_,"Assuming Baxter is in simulaion mode because unable to get gripper state");
+          ROS_INFO_STREAM_NAMED(arm_name_,"Assuming Baxter is in simulation mode because unable to get gripper state");
           in_simulation_ = true;
           break;
         }
@@ -210,6 +210,7 @@ public:
     {
       // Register the goal and start
       action_server_.registerGoalCallback(boost::bind(&ElectricParallelGripper::goalCallback, this));
+
       action_server_.start();
 
       // Announce state

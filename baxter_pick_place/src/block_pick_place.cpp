@@ -343,8 +343,6 @@ public:
     // Create 360 degrees of place location rotated around a center
     for (double angle = 0; angle < 2*M_PI; angle += M_PI/2)
     {
-      ROS_INFO_STREAM_NAMED("temp","angle = " << angle);
-
       pose_stamped.pose = goal_block_pose;
 
       // Orientation
