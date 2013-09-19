@@ -57,7 +57,7 @@
 
 // Baxter specific properties
 #include <baxter_pick_place/baxter_data.h>
-#include <baxter_pick_place/custom_environment.h>
+#include <baxter_pick_place/custom_environment2.h>
 
 namespace baxter_pick_place
 {
