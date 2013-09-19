@@ -62,7 +62,6 @@
 
 // Grasp generation
 #include <block_grasp_generator/block_grasp_generator.h>
-//#include <block_grasp_generator/grasp_filter.h>
 
 // Baxter specific properties
 #include <baxter_pick_place/baxter_data.h>
@@ -150,11 +149,21 @@ public:
     geometry_msgs::Pose start_pose = createStartPose();
     createVerticleTrajectory(start_pose);
 
-    ROS_INFO_STREAM_NAMED("verticle_test","Success! Waiting 10 sec before shutting down.");
-    ros::Duration(10).sleep();
+    ROS_INFO_STREAM_NAMED("verticle_test","Success! Waiting 5 sec before shutting down.");
+    ros::Duration(5).sleep();
 
     // Shutdown
     baxter_util_.disableBaxter();
+  }
+
+  ~VerticleApproachTest()
+  {
+    ROS_INFO_STREAM_NAMED("temp","shutting down");
+    std::cout << "deconstructor";
+    // Shutdown
+    baxter_util_.disableBaxter();
+    ros::spinOnce();
+    ros::Duration(1.0).sleep();
   }
 
   bool createVerticleTrajectory(const geometry_msgs::Pose& start_pose)
@@ -169,9 +178,6 @@ public:
       return false;
     }
 
-
-    return true;
-
     // ---------------------------------------------------------------------------------------------
     // Compute the trajectory once
 
@@ -182,14 +188,14 @@ public:
 
     moveit_msgs::RobotTrajectory trajectory_msg; // the resulting path
     moveit_msgs::RobotTrajectory reverse_trajectory_msg;
-    if( !computeStraightLinePath(approach_direction, desired_approach_distance, trajectory_msg, 
+    if( !computeStraightLinePath(approach_direction, desired_approach_distance, trajectory_msg,
         reverse_trajectory_msg) )
     {
       ROS_ERROR_STREAM_NAMED("verticle_test","Failed to generate straight line path");
       return false;
     }
 
-    bool runTrajectory = false;
+    bool runTrajectory = true;
 
     while(ros::ok())
     {
@@ -221,9 +227,6 @@ public:
         executeTrajectoryMsg(reverse_trajectory_msg);
       }
 
-      // Execute the path
-      //      executeTrajectoryMsg(reverse_trajectory_msg);
-
       ros::Duration(1).sleep();
     }
 
@@ -242,8 +245,6 @@ public:
     geometry_msgs::PoseStamped goal_pose;
     goal_pose.pose = pose;
 
-    ROS_INFO_STREAM_NAMED("temp","here = "<< goal_pose);
-
     // -----------------------------------------------------------------------------------------------
     // Create move_group goal
     moveit_msgs::MoveGroupGoal goal;
@@ -259,11 +260,10 @@ public:
     moveit_msgs::Constraints goal_constraint0 = kinematic_constraints::constructGoalConstraints(
       visual_tools_->getEEParentLink(), goal_pose, tolerance_pose, tolerance_angle);
 
-    double x_offset = 0;
-    ROS_INFO_STREAM_NAMED("verticle_test","Goal pose with x_offset of: " << x_offset << "\n" << goal_pose);
+    //ROS_INFO_STREAM_NAMED("verticle_test","Goal pose " << goal_pose);
 
     // Create offset constraint
-    goal_constraint0.position_constraints[0].target_point_offset.x = x_offset;
+    goal_constraint0.position_constraints[0].target_point_offset.x = 0.0;
     goal_constraint0.position_constraints[0].target_point_offset.y = 0.0;
     goal_constraint0.position_constraints[0].target_point_offset.z = 0.0;
 
@@ -274,19 +274,16 @@ public:
     // -------------------------------------------------------------------------------------------
     // Visualize goals in rviz
     visual_tools_->publishArrow(goal_pose.pose, block_grasp_generator::GREEN);
-    visual_tools_->publishEEMarkers(goal_pose.pose, block_grasp_generator::GREEN);
 
-    
-    ROS_DEBUG_STREAM_NAMED("temp","goal = \n" << goal);
-    ros::Duration(5.0).sleep();
+    visual_tools_->publishEEMarkers(goal_pose.pose, block_grasp_generator::GREEN);
 
     // -------------------------------------------------------------------------------------------
     // Plan
     movegroup_action_->sendGoal(goal);
 
-    if(!movegroup_action_->waitForResult(ros::Duration(5.0)))
+    if(!movegroup_action_->waitForResult(ros::Duration(20.0)))
     {
-      ROS_INFO_STREAM_NAMED("verticle_test","Returned early?");
+      ROS_INFO_STREAM_NAMED("verticle_test","Did not finish in time.");
       return false;
     }
     if (movegroup_action_->getState() == actionlib::SimpleClientGoalState::SUCCEEDED)
@@ -501,28 +498,20 @@ public:
 
     // Position
     start_pose.position.x = 0.6;
-    start_pose.position.z = 0.2; 
+    start_pose.position.z = 0.2;
     if( arm_.compare("right") == 0 ) // equal
       start_pose.position.y = -0.4;
     else
       start_pose.position.y = 0.3;
 
     // Orientation
-    /*
     double angle = M_PI;
     Eigen::Quaterniond quat(Eigen::AngleAxis<double>(double(angle), Eigen::Vector3d::UnitY()));
     start_pose.orientation.x = quat.x();
     start_pose.orientation.y = quat.y();
     start_pose.orientation.z = quat.z();
     start_pose.orientation.w = quat.w();
-    */
 
-    double angle = M_PI/2;
-    Eigen::Quaterniond quat(Eigen::AngleAxis<double>(double(angle), Eigen::Vector3d::UnitX()));
-    start_pose.orientation.x = quat.x();
-    start_pose.orientation.y = quat.y();
-    start_pose.orientation.z = quat.z();
-    start_pose.orientation.w = quat.w();
 
     return start_pose;
   }
@@ -539,16 +528,16 @@ public:
     planning_scene_monitor_.reset(new planning_scene_monitor::PlanningSceneMonitor(ROBOT_DESCRIPTION, tf_));
 
     ros::spinOnce();
-    ros::Duration(0.5).sleep();
+    ros::Duration(0.1).sleep();
     ros::spinOnce();
 
     if (planning_scene_monitor_->getPlanningScene())
     {
-      planning_scene_monitor_->startWorldGeometryMonitor();
-      planning_scene_monitor_->startSceneMonitor("/move_group/monitored_planning_scene");
+      //planning_scene_monitor_->startWorldGeometryMonitor();
+      //planning_scene_monitor_->startSceneMonitor("/move_group/monitored_planning_scene");
       planning_scene_monitor_->startStateMonitor("/joint_states", "/attached_collision_object");
       //planning_scene_monitor_->startPublishingPlanningScene(planning_scene_monitor::PlanningSceneMonitor::UPDATE_SCENE,
-      //  "dave_planning_scene");
+      //"dave_planning_scene");
     }
     else
     {
@@ -557,7 +546,7 @@ public:
     }
 
     ros::spinOnce();
-    ros::Duration(0.5).sleep();
+    ros::Duration(0.1).sleep();
     ros::spinOnce();
 
     // Wait for complete state to be recieved

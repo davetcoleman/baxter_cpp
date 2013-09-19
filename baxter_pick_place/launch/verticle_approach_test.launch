@@ -1,6 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <launch>
 
+  <arg name="debug" default="false" />
+  <arg unless="$(arg debug)" name="launch_prefix" value="" />
+  <arg     if="$(arg debug)" name="launch_prefix" value="gdb --ex run --args" />
+
   <arg name="allow_trajectory_execution" default="true"/>
 
   <!-- Launch controller manager in this namespace -->
@@ -15,7 +19,8 @@
   </include>
 
   <!--Start the test -->
-  <node name="verticle_approach_test" pkg="baxter_pick_place" type="verticle_approach_test" output="screen">
+  <node name="verticle_approach_test" pkg="baxter_pick_place" type="verticle_approach_test" 
+	output="screen" launch-prefix="$(arg launch_prefix)">
     <remap from="/joint_states" to="/robot/joint_states" />
     <rosparam command="load" file="$(find baxter_moveit_config)/config/kinematics.yaml"/>
   </node>
