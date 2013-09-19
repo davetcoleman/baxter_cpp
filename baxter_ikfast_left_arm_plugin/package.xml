@@ -1,7 +1,7 @@
 <?xml version='1.0' encoding='ASCII'?>
 <package>
   <name>baxter_ikfast_left_arm_plugin</name>
-  <version>0.0.0</version>
+  <version>0.1.0</version>
   <description>The baxter_ikfast_left_arm_plugin package</description>
   <!-- One maintainer tag required, multiple allowed, one person per tag -->
   <!-- Example:  -->

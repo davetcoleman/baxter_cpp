@@ -1,6 +1,6 @@
 <package>
   <name>baxter_controllers</name>
-  <version>0.0.0</version>
+  <version>0.1.0</version>
   <description>baxter_controllers</description>
   <maintainer email="davetcoleman@gmail.com">Dave Coleman</maintainer>
 
