@@ -5,6 +5,7 @@ Panels:
     Property Tree Widget:
       Expanded:
         - /Grid1/Offset1
+        - /MotionPlanning1
         - /MotionPlanning1/Scene Geometry1
         - /MotionPlanning1/Scene Robot1
         - /MotionPlanning1/Planning Request1
@@ -310,7 +311,7 @@ Visualization Manager:
         Joint Violation Color: 255; 0; 255
         Planning Group: right_arm
         Query Goal State: false
-        Query Start State: false
+        Query Start State: true
         Show Workspace: false
         Start State Alpha: 1
         Start State Color: 0; 255; 0
@@ -588,8 +589,7 @@ Visualization Manager:
       Marker Topic: /end_effector_marker
       Name: block_grasp_generator
       Namespaces:
-        Arrow: true
-        Block: true
+        {}
       Queue Size: 100
       Value: true
     - Class: rviz/MarkerArray
@@ -649,5 +649,5 @@ Window Geometry:
   Views:
     collapsed: false
   Width: 1598
-  X: 2240
-  Y: 24
+  X: 292
+  Y: 20
