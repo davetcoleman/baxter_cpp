@@ -38,6 +38,9 @@ We have chosen to freeze the version of MoveIt! we are using for the short-run t
     rosdep install --from-paths src --ignore-src --rosdistro hydro -y
     catkin_make
     ```
+    
+    **Note:** If you run into the error ``moveit_ros_perception: Cannot locate rosdep definition for [pcl]`` a temporary fix is to manually install PCL via ``sudo apt-get install ros-hydro-pcl``
+
 
 * Add MoveIt setup.bash to your .bashrc (recommended)
 
