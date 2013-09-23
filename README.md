@@ -63,7 +63,7 @@ We have chosen to freeze the version of MoveIt! we are using for the short-run t
     git clone git@github.com:RethinkRobotics/sdk-examples.git -b gazebo_dev
     ```
 
-**Note:** CU Boulder users can gain access to the SDK Examples by cloning this repository:
+    **Note:** CU Boulder users can gain access to the SDK Examples by cloning this repository:
 
     ```
     git clone git@github.com:correlllab/baxter_sdk -b gazebo_dev
