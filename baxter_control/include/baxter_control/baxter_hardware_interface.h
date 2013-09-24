@@ -63,7 +63,6 @@ private:
 
   // Node Handles
   ros::NodeHandle nh_; // no namespace
-  ros::NodeHandle model_nh_; // namespaces to robot name
 
   // Strings
   std::string robot_namespace_;

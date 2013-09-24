@@ -57,7 +57,6 @@ bool BaxterHardwareInterface::init()
   robot_description_ = "robot_description"; // default
 
   // Get parameters/settings for controllers from ROS param server
-  model_nh_ = ros::NodeHandle(robot_namespace_);
   nh_ = ros::NodeHandle("/");
   ROS_INFO_NAMED("hardware_interface", "Starting baxter_control in namespace: %s", robot_namespace_.c_str());
 
@@ -116,9 +115,9 @@ bool BaxterHardwareInterface::init()
 
     // Add data from transmission
     joint_names_[j] = transmissions_[j].joints_[0].name_;
-    joint_position_[j] = 1.0;
+    joint_position_[j] = 0.0;
     joint_velocity_[j] = 0.0;
-    joint_effort_[j] = 1.0;  // N/m for continuous joints
+    joint_effort_[j] = 0.0;  // N/m for continuous joints
     joint_position_command_[j] = 0.0;
     joint_effort_command_[j] = 0.0;
     joint_velocity_command_[j] = 0.0;
@@ -172,8 +171,20 @@ bool BaxterHardwareInterface::init()
   sub_joint_state_ = nh_.subscribe<sensor_msgs::JointState>("/robot/joint_states/",
                      1, &BaxterHardwareInterface::stateCallback, this);
 
-  ros::spinOnce();
-  ros::Duration(5.0).sleep();
+
+  // Wait for first state message to be recieved
+  while(ros::ok() && state_msg_timestamp_.toSec() == 0)
+  {
+    ROS_INFO_STREAM_NAMED("hardware_interface","Waiting for first state message to be recieved");
+    ros::spinOnce();
+    ros::Duration(0.25).sleep();
+  }
+
+  // Set the initial command values based on current state
+  for (std::size_t i = 0; i < n_dof_; ++i)
+  {
+    joint_position_command_[i] = state_msg_->position[joint_interface_to_joint_state_[i]];
+  }
 
   ROS_INFO_NAMED("hardware_interface", "Loaded baxter_hardware_interface.");
   return true;
@@ -239,12 +250,14 @@ void BaxterHardwareInterface::loadJointStateNameMap()
 
 bool BaxterHardwareInterface::stateExpired()
 {
+  static const double STATE_EXPIRED_TIMEOUT = 2.0;
+
   // Check that we have a non-expired state message
   // \todo lower the expiration duration
-  if( ros::Time::now() > state_msg_timestamp_ + ros::Duration(10.0)) // check that the message timestamp is no older than 1 second
+  if( ros::Time::now() > state_msg_timestamp_ + ros::Duration(STATE_EXPIRED_TIMEOUT)) // check that the message timestamp is no older than 1 second
   {
     ROS_WARN_STREAM_NAMED("ros_control","State expired. \n" << ros::Time::now() << "\n" <<
-      state_msg_timestamp_ + ros::Duration(10.0) << "\n" << " State: \n" << *state_msg_ );
+      state_msg_timestamp_ + ros::Duration(STATE_EXPIRED_TIMEOUT) << "\n" << " State: \n" << *state_msg_ );
     return true;
   }
   return false;
@@ -374,13 +387,22 @@ int main(int argc, char** argv)
   controller_manager::ControllerManager controller_manager(&baxter, nh);
   ROS_DEBUG_STREAM_NAMED("hardware_interface","Loading controller_manager");
 
+  double total_sec = 0;
+  std::size_t total_samples = 0;
+
   // Update controllers
   ros::Rate rate(100); // 50 hz
   while (ros::ok())
   {
     baxter.read();
-    controller_manager.update(ros::Time::now(), rate.cycleTime() ); // get the actual run time of a cycle from start to sleep
+    controller_manager.update(ros::Time::now(), rate.cycleTime() ); // get the actual run time of a cycle from start to ros::Duration(5.0).sleep();
     baxter.write();
+
+    total_sec += rate.cycleTime().toSec();
+    total_samples++;
+    if( total_samples % 100 == 0 )
+      ROS_INFO_STREAM_NAMED("hardware_interface", "Avg Rate:" << total_sec / total_samples);
+
     rate.sleep();    
   }
 

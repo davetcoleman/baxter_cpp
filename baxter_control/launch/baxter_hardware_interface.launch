@@ -23,6 +23,6 @@
     <!-- Load the default controllers -->
     <node name="controller_spawner" pkg="controller_manager" type="spawner" respawn="false"
 	  output="screen" ns="/robot" args="right_joint_position_trajectory_controller	   
-					    " />  
+					    " />
   </group>
 </launch>
