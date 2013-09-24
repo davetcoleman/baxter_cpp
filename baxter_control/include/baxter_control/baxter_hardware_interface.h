@@ -100,7 +100,8 @@ private:
 
   // Buffer of joint states
   sensor_msgs::JointStateConstPtr state_msg_;
-
+  ros::Time state_msg_timestamp_;
+  
   std::vector<int> joint_interface_to_joint_state_;
   bool has_joint_interface_to_joint_state_;
 
@@ -125,6 +126,12 @@ public:
    * \brief At startup, maps the baxter message joint_names vector into our URDF-parsed vector
    */
   void loadJointStateNameMap();
+
+  /**
+   * \brief Checks if the state message from Baxter is out of date
+   * \return true if expired
+   */
+  bool stateExpired();
 
   /**
    * \brief Copy the joint state message into our hardware interface datastructures

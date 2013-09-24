@@ -46,31 +46,27 @@ namespace baxter_control
 
 // Contructor
 BaxterHardwareInterface::BaxterHardwareInterface()
-  : has_joint_interface_to_joint_state_(false)
+  : has_joint_interface_to_joint_state_(false),
+    state_msg_(new sensor_msgs::JointState())
 {
 }
 
 bool BaxterHardwareInterface::init()
 {
-  ROS_INFO_STREAM_NAMED("baxter_control","Loading baxter_control hardware interface");
-
   robot_namespace_ = "robot";
   robot_description_ = "robot_description"; // default
 
-  // Get the Gazebo simulation period
-  ros::Duration gazebo_period(50);
-
   // Get parameters/settings for controllers from ROS param server
   model_nh_ = ros::NodeHandle(robot_namespace_);
-  nh_ = ros::NodeHandle();
-  ROS_INFO_NAMED("baxter_control", "Starting baxter_control plugin in namespace: %s", robot_namespace_.c_str());
+  nh_ = ros::NodeHandle("/");
+  ROS_INFO_NAMED("hardware_interface", "Starting baxter_control in namespace: %s", robot_namespace_.c_str());
 
   // Read urdf from ros parameter server then
   // setup actuators and mechanism control node.
   // This call will block if ROS is not properly initialized.
   if (!parseTransmissionsFromURDF())
   {
-    ROS_ERROR_STREAM_NAMED("baxter_control", "Error parsing URDF in baxter_control plugin, plugin not active.\n");
+    ROS_ERROR_STREAM_NAMED("hardware_interface", "Error parsing URDF.\n");
     return false;
   }
 
@@ -83,7 +79,6 @@ bool BaxterHardwareInterface::init()
   joint_position_command_.resize(n_dof_);
   joint_effort_command_.resize(n_dof_);
   joint_velocity_command_.resize(n_dof_);
-  output_msg_.angles.resize(n_dof_);
   joint_interface_to_joint_state_.resize(n_dof_);
 
   // Initialize values
@@ -92,13 +87,13 @@ bool BaxterHardwareInterface::init()
     // Check that this transmission has one joint
     if(transmissions_[j].joints_.size() == 0)
     {
-      ROS_WARN_STREAM_NAMED("baxter_control","Transmission " << transmissions_[j].name_
+      ROS_WARN_STREAM_NAMED("hardware_interface","Transmission " << transmissions_[j].name_
         << " has no associated joints.");
       continue;
     }
     else if(transmissions_[j].joints_.size() > 1)
     {
-      ROS_WARN_STREAM_NAMED("baxter_control","Transmission " << transmissions_[j].name_
+      ROS_WARN_STREAM_NAMED("hardware_interface","Transmission " << transmissions_[j].name_
         << " has more than one joint. Currently this "
         << " interface only supports one.");
       continue;
@@ -107,13 +102,13 @@ bool BaxterHardwareInterface::init()
     // Check that this transmission has one actuator
     if(transmissions_[j].actuators_.size() == 0)
     {
-      ROS_WARN_STREAM_NAMED("baxter_control","Transmission " << transmissions_[j].name_
+      ROS_WARN_STREAM_NAMED("hardware_interface","Transmission " << transmissions_[j].name_
         << " has no associated actuators.");
       continue;
     }
     else if(transmissions_[j].actuators_.size() > 1)
     {
-      ROS_WARN_STREAM_NAMED("baxter_control","Transmission " << transmissions_[j].name_
+      ROS_WARN_STREAM_NAMED("hardware_interface","Transmission " << transmissions_[j].name_
         << " has more than one actuator. Currently the default robot hardware simulation "
         << " interface only supports one.");
       continue;
@@ -131,7 +126,7 @@ bool BaxterHardwareInterface::init()
     const std::string& hardware_interface = "PositionJointInterface"; //transmissions_[j].actuators_[0].hardware_interface_;
 
     // Debug
-    ROS_DEBUG_STREAM_NAMED("baxter_control","Loading joint '" << joint_names_[j]
+    ROS_DEBUG_STREAM_NAMED("hardware_interface","Loading joint '" << joint_names_[j]
       << "' of type '" << hardware_interface << "'");
 
     // Create joint state interface for all joints
@@ -159,7 +154,7 @@ bool BaxterHardwareInterface::init()
     }
     else
     {
-      ROS_FATAL_STREAM_NAMED("baxter_control","No matching hardware interface found for '"
+      ROS_FATAL_STREAM_NAMED("hardware_interface","No matching hardware interface found for '"
         << hardware_interface );
       return false;
     }
@@ -177,7 +172,10 @@ bool BaxterHardwareInterface::init()
   sub_joint_state_ = nh_.subscribe<sensor_msgs::JointState>("/robot/joint_states/",
                      1, &BaxterHardwareInterface::stateCallback, this);
 
-  ROS_INFO_NAMED("baxter_control", "Loaded baxter_hardware_interface.");
+  ros::spinOnce();
+  ros::Duration(5.0).sleep();
+
+  ROS_INFO_NAMED("hardware_interface", "Loaded baxter_hardware_interface.");
   return true;
 }
 
@@ -189,43 +187,89 @@ void BaxterHardwareInterface::stateCallback(const sensor_msgs::JointStateConstPt
 {
   // Copy the latest message into a buffer
   state_msg_ = msg;
+  state_msg_timestamp_ = ros::Time::now();
 
-  if( !has_joint_interface_to_joint_state_)
+  //ROS_DEBUG_STREAM_NAMED("temp","recieved message \n" << *msg);
+
+  if( has_joint_interface_to_joint_state_ == false)
   {
-    loadJointStateNameMap();
     has_joint_interface_to_joint_state_ = true;
+    loadJointStateNameMap();
   }
 }
 
 void BaxterHardwareInterface::loadJointStateNameMap()
 {
+  int controlled_joints_count = 0;
   for (std::size_t i = 0; i < joint_names_.size(); ++i)
   {
     // Find the name in the state message that corresponds to the transmission index
-    std::vector<std::string>::iterator name_it;
-    name_it = std::find(joint_names_.begin(), joint_names_.end(), state_msg_->name[i]);
+    std::vector<std::string>::const_iterator name_it;
+    name_it = std::find(state_msg_->name.begin(), state_msg_->name.end(), joint_names_[i]);
 
     // Error check
-    if( name_it == joint_names_.end() )
+    if( name_it == state_msg_->name.end() )
     {
-      ROS_ERROR_STREAM_NAMED("baxter_control","Unable to find mapping for joint '" <<
-        state_msg_->name[i] << "' in the loaded transmission elements at index " << i);
+      ROS_DEBUG_STREAM_NAMED("hardware_interface","No mapping for '" <<
+        joint_names_[i] << "' in Baxter state message");
+    }
+    else
+    {
+      // We will use this in our published command message - keep track of size of vector
+      controlled_joints_count++;
     }
 
     // Copy index of found joint name
-    joint_interface_to_joint_state_[i] = name_it - joint_names_.begin();
+    joint_interface_to_joint_state_[i] = name_it - state_msg_->name.begin() - 1;
   }
+
+  //std::copy(joint_interface_to_joint_state_.begin(), joint_interface_to_joint_state_.end(), 
+  //  std::ostream_iterator<double>(std::cout, "\n"));      
+
+  // Resize the output publisher message to match input message
+  output_msg_.angles.resize(controlled_joints_count);
+  output_msg_.names.resize(controlled_joints_count);
+
+  ROS_DEBUG_STREAM_NAMED("ros_control","Matched " << controlled_joints_count << 
+    " joints from state message and URDF transmissions");
+
+  // \temp
+  sleep(2);
+}
+
+bool BaxterHardwareInterface::stateExpired()
+{
+  // Check that we have a non-expired state message
+  // \todo lower the expiration duration
+  if( ros::Time::now() > state_msg_timestamp_ + ros::Duration(10.0)) // check that the message timestamp is no older than 1 second
+  {
+    ROS_WARN_STREAM_NAMED("ros_control","State expired. \n" << ros::Time::now() << "\n" <<
+      state_msg_timestamp_ + ros::Duration(10.0) << "\n" << " State: \n" << *state_msg_ );
+    return true;
+  }
+  return false;
 }
 
 void BaxterHardwareInterface::read()
 {  
-  ROS_INFO_STREAM_NAMED("temp","degrees of freedom = " << n_dof_);
+  if( stateExpired() )
+    return;
 
   // Copy state message to our datastructures
   for (std::size_t i = 0; i < n_dof_; ++i)
   {
-    ROS_INFO_STREAM_NAMED("temp","on index " << i << " which maps to " << joint_interface_to_joint_state_[i]);
-    ROS_INFO_STREAM_NAMED("temp","and the max message is " << state_msg_->position.size() );
+    //ROS_INFO_STREAM_NAMED("read","on index " << i << " which maps to " << joint_interface_to_joint_state_[i]);
+    //ROS_INFO_STREAM_NAMED("read","and the max message is " << state_msg_->position.size() );
+    //ROS_INFO_STREAM_NAMED("read","joint_position size is " << joint_position_.size());
+    //ROS_INFO_STREAM_NAMED("read","state_msg position size is " << state_msg_->position.size());
+    //ROS_INFO_STREAM_NAMED("read","position is " << state_msg_->position[joint_interface_to_joint_state_[i]]);
+
+    // Check if this joint has no mapping
+    if( joint_interface_to_joint_state_[i] >= state_msg_->name.size() - 1)
+    {
+      ROS_WARN_STREAM_ONCE_NAMED("read","Skipping joint " << joint_names_[i]);
+      continue;
+    }
 
     joint_position_[i] = state_msg_->position[joint_interface_to_joint_state_[i]];
     joint_velocity_[i] = state_msg_->velocity[joint_interface_to_joint_state_[i]];
@@ -235,11 +279,27 @@ void BaxterHardwareInterface::read()
 
 void BaxterHardwareInterface::write()
 {
+  if( stateExpired() )
+    return;
+
+  //ROS_ERROR_STREAM_NAMED("temp","WRITING ----------------------------------");
 
   for (std::size_t i = 0; i < n_dof_; ++i)
   {
-    std::cout << joint_names_[i] << " ";
+    //ROS_INFO_STREAM_NAMED("write","id = "<<i);
+    //ROS_INFO_STREAM_NAMED("write","name = " << joint_names_[i]);
+    //ROS_INFO_STREAM_NAMED("write","mapping = " << joint_interface_to_joint_state_[i]);
+
+    // Check if this joint has no mapping
+    if( joint_interface_to_joint_state_[i] >= state_msg_->name.size() - 1 )
+    {
+      ROS_WARN_STREAM_ONCE_NAMED("write","Skipping joint " << joint_names_[i]);
+      continue;
+    }
+
     output_msg_.angles[joint_interface_to_joint_state_[i]] = joint_position_command_[i];
+    // Add to output message
+    output_msg_.names[joint_interface_to_joint_state_[i]] = joint_names_[i];
   }
 
   pub_position_command_.publish(output_msg_);
@@ -251,27 +311,26 @@ std::string BaxterHardwareInterface::getURDF(std::string param_name) const
   std::string urdf_string;
 
   // search and wait for robot_description on param server
-  while (urdf_string.empty())
+  while (urdf_string.empty() && ros::ok())
   {
     std::string search_param_name;
     if (nh_.searchParam(param_name, search_param_name))
     {
-      ROS_INFO_ONCE_NAMED("baxter_control", "baxter_control plugin is waiting for model"
-        " URDF in parameter [%s] on the ROS param server.", search_param_name.c_str());
+      ROS_INFO_STREAM_NAMED("hardware_interface", "waiting for URDF on parameter server " << param_name 
+        << " in namespace " << nh_.getNamespace());
 
       nh_.getParam(search_param_name, urdf_string);
     }
     else
     {
-      ROS_INFO_ONCE_NAMED("baxter_control", "baxter_control plugin is waiting for model"
-        " URDF in parameter [%s] on the ROS param server.", robot_description_.c_str());
+      ROS_INFO_STREAM_NAMED("hardware_interface", "waiting for URDF on parameter server " << param_name 
+        << " in namespace " << nh_.getNamespace());
 
       nh_.getParam(param_name, urdf_string);
     }
-
-    usleep(100000);
+    ros::Duration(1.0).sleep();
   }
-  ROS_DEBUG_STREAM_NAMED("baxter_control", "Recieved urdf from param server, parsing...");
+  ROS_DEBUG_STREAM_NAMED("hardware_interface", "Recieved urdf from param server, parsing...");
 
   return urdf_string;
 }
@@ -281,14 +340,11 @@ bool BaxterHardwareInterface::parseTransmissionsFromURDF()
 {
   std::string urdf_string = getURDF(robot_description_);
 
-  ROS_INFO_STREAM_NAMED("baxter_control","loaded urdf " << urdf_string);
-
-
   transmission_interface::TransmissionParser::parse(urdf_string, transmissions_);
 
   if( transmissions_.size() == 0)
   {
-    ROS_ERROR_STREAM_NAMED("baxter_control","No transmissions found in URDF. Unable to setup any hardware interfaces.");
+    ROS_ERROR_STREAM_NAMED("hardware_interface","No transmissions found in URDF. Unable to setup any hardware interfaces.");
     return false;
   }
 
@@ -300,7 +356,7 @@ bool BaxterHardwareInterface::parseTransmissionsFromURDF()
 
 int main(int argc, char** argv)
 {
-  ROS_INFO_STREAM_NAMED("baxter_control","baxter_hardware_interface");
+  ROS_INFO_STREAM_NAMED("hardware_interface","Starting hardware interface...");
 
   ros::init(argc, argv, "baxter_hardware_interface");
 
@@ -316,19 +372,19 @@ int main(int argc, char** argv)
 
   // Create the controller manager
   controller_manager::ControllerManager controller_manager(&baxter, nh);
-  ROS_DEBUG_STREAM_NAMED("baxter_control","Loading controller_manager");
+  ROS_DEBUG_STREAM_NAMED("hardware_interface","Loading controller_manager");
 
   // Update controllers
-  ros::Rate rate(50); // 50 hz
+  ros::Rate rate(100); // 50 hz
   while (ros::ok())
   {
     baxter.read();
     controller_manager.update(ros::Time::now(), rate.cycleTime() ); // get the actual run time of a cycle from start to sleep
     baxter.write();
-    rate.sleep();
+    rate.sleep();    
   }
 
-  ROS_INFO_STREAM_NAMED("baxter_control","Shutting down.");
+  ROS_INFO_STREAM_NAMED("hardware_interface","Shutting down.");
 
   return 0;
 }
