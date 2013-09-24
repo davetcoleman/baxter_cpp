@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<launch>
+
+  <!-- GDB functionality -->
+  <arg name="debug" default="false" />
+  <arg unless="$(arg debug)" name="launch_prefix" value="" />
+  <arg     if="$(arg debug)" name="launch_prefix" value="gdb --ex run --args" />
+
+  <!-- Load hardware interface -->
+  <node name="baxter_hardware_interface" pkg="baxter_control" type="baxter_hardware_interface" 
+	respawn="false" output="screen" launch-prefix="$(arg launch_prefix)" />
+  
+</launch>

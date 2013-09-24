@@ -9,6 +9,10 @@ find_package(catkin REQUIRED
     std_msgs
     roscpp
     baxter_msgs
+    controller_manager
+    transmission_interface
+    hardware_interface
+    sensor_msgs
 )
 
 ## System dependencies are found with CMake's conventions
@@ -30,6 +34,10 @@ catkin_package(
     std_msgs
     roscpp
     baxter_msgs
+    controller_manager
+    transmission_interface
+    hardware_interface
+    sensor_msgs
 #  DEPENDS system_lib
 )
 
@@ -44,6 +52,10 @@ include_directories(include ${catkin_INCLUDE_DIRS} ${Boost_INCLUDE_DIRS})
 add_library(baxter_utilities src/baxter_utilities.cpp)
 target_link_libraries(baxter_utilities ${catkin_LIBRARIES} ${Boost_LIBRARIES})
 add_dependencies(baxter_utilities ${catkin_EXPORTED_TARGETS}) # don't build until necessary msgs are finished
+
+add_executable(baxter_hardware_interface src/baxter_hardware_interface.cpp)
+target_link_libraries(baxter_hardware_interface ${catkin_LIBRARIES} ${Boost_LIBRARIES})
+add_dependencies(baxter_hardware_interface ${catkin_EXPORTED_TARGETS}) # don't build until necessary msgs are finish
 
 #############
 ## Install ##
