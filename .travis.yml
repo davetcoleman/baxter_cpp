@@ -24,7 +24,7 @@ install:
   - touch sdk-examples/baxter_description/CATKIN_IGNORE
   - touch sdk-examples/baxter_msgs/CATKIN_IGNORE
   # symlink the original checkout of baxter into the catkin workspace
-  - ln -s `eval echo $(dirs +1)` .
+  #- ln -s `eval echo $(dirs +1)` .
   - cd ../
   - rosdep install --from-paths . --ignore-src --rosdistro hydro -y
 script:
