@@ -21,7 +21,13 @@ install:
   - wstool merge https://raw.github.com/davetcoleman/baxter/hydro-devel/moveit.rosinstall
   - wstool merge https://raw.github.com/davetcoleman/baxter/hydro-devel/baxter.rosinstall
   - wstool update
-  - git clone http://davetcoleman.com/baxter/sdk-examples/ -b gazebo_dev
+  #- git clone http://davetcoleman.com/baxter/sdk-examples/ -b gazebo_dev
+  - wget http://davetcoleman.com/baxter/sdk-examples.zip
+  - unzip sdk-examples.zip
+  - ls
+  - cd sdk-examples
+  - ls
+  - cd ../
   - touch sdk-examples/baxter_description/CATKIN_IGNORE
   - touch sdk-examples/baxter_msgs/CATKIN_IGNORE
   - cd ../
