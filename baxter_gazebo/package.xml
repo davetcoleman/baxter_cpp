@@ -27,6 +27,7 @@
   <run_depend>baxter_control</run_depend> 
   <run_depend>gazebo_ros</run_depend> 
   <run_depend>baxter_description</run_depend> 
+  <run_depend>robot_state_publisher</run_depend>
   
   <export>
     <gazebo plugin_path="${prefix}/lib" gazebo_media_path="${prefix}" />
