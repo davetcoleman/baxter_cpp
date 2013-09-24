@@ -18,13 +18,12 @@ install:
   - mkdir -p ~/ros/ws_baxter/src
   - cd ~/ros/ws_baxter/src
   - wstool init .
+  - wstool merge https://raw.github.com/davetcoleman/baxter/hydro-devel/moveit.rosinstall
   - wstool merge https://raw.github.com/davetcoleman/baxter/hydro-devel/baxter.rosinstall
   - wstool update
   - git clone http://davetcoleman.com/baxter/sdk-examples/ -b gazebo_dev
   - touch sdk-examples/baxter_description/CATKIN_IGNORE
   - touch sdk-examples/baxter_msgs/CATKIN_IGNORE
-  # symlink the original checkout of baxter into the catkin workspace
-  #- ln -s `eval echo $(dirs +1)` .
   - cd ../
   - rosdep install --from-paths . --ignore-src --rosdistro hydro -y
 script:
