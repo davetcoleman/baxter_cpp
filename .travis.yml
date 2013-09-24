@@ -22,7 +22,7 @@ install:
   - wstool init .
   - wstool merge https://raw.github.com/davetcoleman/baxter/hydro-devel/baxter.rosinstall
   - wstool update
-  - git clone git@github.com:correlllab/baxter_sdk -b gazebo_dev
+  - git clone http://davetcoleman.com/baxter/sdk-examples/ -b gazebo_dev
   - touch baxter_sdk/baxter_description/CATKIN_IGNORE
   - touch baxter_sdk/baxter_msgs/CATKIN_IGNORE
   # symlink the original checkout of baxter into the catkin workspace

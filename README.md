@@ -16,7 +16,6 @@ The groovy-devel branch is no longer being actively developed but on going devel
  * A Baxter with dual parallel grippers, or the desire to see one in simulation
  * [ROS Hydro](http://wiki.ros.org/ROS/Installation) on (suggested) Ubuntu 12.04
  * Access to the private Rethink [sdk-examples](https://github.com/RethinkRobotics/sdk-examples) repository - we are using the baxter_interface and head_control packages from the SDK. Contact [Dave](davetcoleman@gmail.com) if you should have access to this.
- * Setup Github - the git@github.com urls, below, only work if you have [Setup Github](https://help.github.com/articles/set-up-git) and generated [SSH Keys for Github](https://help.github.com/articles/generating-ssh-keys).
  * Install wstool package
     ```
     sudo apt-get install python-wstool
