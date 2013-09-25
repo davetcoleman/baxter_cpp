@@ -9,7 +9,7 @@ The groovy-devel branch is no longer being actively developed but on going devel
 
 **Note:** This is the ROS Hydro readme version. See groovy-devel branch for ROS Groovy instructions.
 
-[![Build Status](https://travis-ci.org/davetcoleman/baxter.png)](https://travis-ci.org/davetcoleman/baxter)
+[![Build Status](https://travis-ci.org/davetcoleman/baxter.png?branch=hydro-devel)](https://travis-ci.org/davetcoleman/baxter)
 
 ## Prerequisites
 
