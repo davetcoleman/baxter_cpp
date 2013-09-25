@@ -13,7 +13,7 @@ Unofficial Baxter packages that add-on to the Rethink SDK. It is entirely writte
    * Not implemented yet: simulated camera, sonars, or other sensors. Feel free to add!
  * Baxter pick and place with MoveIt!
    * Generate grasps for simple blocks on a table
-   * Execute a pick and place routine (not very robust yet)
+   * Execute a pick and place routine (not robust yet)
    * Other tools for testing trajectories
 
 **Note:** This is the ROS Hydro version. See groovy-devel branch for ROS Groovy instructions, although that branch is no longer being actively developed.
