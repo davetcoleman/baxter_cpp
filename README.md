@@ -10,7 +10,7 @@ Unofficial Baxter packages that add-on to the Rethink SDK. It is entirely writte
  * Baxter simulated in Gazebo
    * Simulated controllers using [ros_control](http://wiki.ros.org/ros_control)
    * Simulated head display
-   * Not implemented yet: simulated camera, sonars, or other sensors. Feel free to add!
+   * Not implemented yet: simulated cameras, sonars, or other sensors. Feel free to add!
  * Baxter pick and place with MoveIt!
    * Generate grasps for simple blocks on a table
    * Execute a pick and place routine (not robust yet)
@@ -28,7 +28,6 @@ Unofficial Baxter packages that add-on to the Rethink SDK. It is entirely writte
  * [ROS Hydro](http://wiki.ros.org/ROS/Installation) on (suggested) Ubuntu 12.04
  * Access to the private Rethink [sdk-examples](https://github.com/RethinkRobotics/sdk-examples) repository - we are using the baxter_interface and head_control packages from the SDK. Contact [Dave](davetcoleman@gmail.com) if you should have access to this.
  * Install wstool package
-
     ```
     sudo apt-get install python-wstool
     ```
