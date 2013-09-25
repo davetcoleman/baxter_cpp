@@ -28,6 +28,7 @@ Unofficial Baxter packages that add-on to the Rethink SDK. It is entirely writte
  * [ROS Hydro](http://wiki.ros.org/ROS/Installation) on (suggested) Ubuntu 12.04
  * Access to the private Rethink [sdk-examples](https://github.com/RethinkRobotics/sdk-examples) repository - we are using the baxter_interface and head_control packages from the SDK. Contact [Dave](davetcoleman@gmail.com) if you should have access to this.
  * Install wstool package
+
     ```
     sudo apt-get install python-wstool
     ```
