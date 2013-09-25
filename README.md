@@ -3,9 +3,9 @@ baxter
 
 Unofficial Baxter packages that add-on to the Rethink SDK. It is entirely written in C++ and currently contains Gazebo simulation and pick and place MoveIt code for Baxter. On going development continues in the hydro-devel branch by [Dave Coleman](http://davetcoleman.com). 
 
-## Features
-
 <img align="right" src="https://raw.github.com/davetcoleman/baxter/hydro-devel/baxter_pick_place/resource/BaxterPickPlace.png" />
+
+### Features
 
  * Baxter simulated in Gazebo
    * Simulated controllers using [ros_control](http://wiki.ros.org/ros_control)
@@ -18,7 +18,7 @@ Unofficial Baxter packages that add-on to the Rethink SDK. It is entirely writte
 
 **Note:** This is the ROS Hydro version. See groovy-devel branch for ROS Groovy instructions, although that branch is no longer being actively developed.
 
-## Build Status:
+### Build Status
 
 [![Build Status](https://travis-ci.org/davetcoleman/baxter.png?branch=hydro-devel)](https://travis-ci.org/davetcoleman/baxter) - currently MoveIt! and its PCL dependency is causing an issue that you can work around yourself, below.
 
