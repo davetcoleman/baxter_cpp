@@ -1,0 +1,17 @@
+Header header
+geometry_msgs/Pose statePose
+geometry_msgs/Twist stateTwist
+geometry_msgs/Pose commandPose
+geometry_msgs/Twist commandTwist
+float64[] stateJointAngles
+float64[] commandJointAngles
+float64[] commandJointVelocities
+float64[] nullspaceCommandJointVelocities
+float64[] fkCommandJointVelocities
+int32 ikVelValid
+float64 deltaTime
+float64 ikVelTime
+float64 ikPosTime
+float64 updateTime
+float64[] scaledJointError
+float64 conditionNumber
