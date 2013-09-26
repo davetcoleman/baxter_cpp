@@ -13,6 +13,7 @@ find_package(catkin REQUIRED
     transmission_interface
     hardware_interface
     sensor_msgs
+    trajectory_msgs
 )
 
 ## System dependencies are found with CMake's conventions
@@ -28,7 +29,9 @@ find_package(Boost REQUIRED COMPONENTS system)
 ## DEPENDS: system dependencies of this project that dependent projects also need
 catkin_package(
    INCLUDE_DIRS include
-   LIBRARIES baxter_utilities
+   LIBRARIES 
+    baxter_utilities
+    arm_hardware_interface
    CATKIN_DEPENDS 
     moveit_ros_planning_interface 
     std_msgs
@@ -38,6 +41,7 @@ catkin_package(
     transmission_interface
     hardware_interface
     sensor_msgs
+    trajectory_msgs
 #  DEPENDS system_lib
 )
 
@@ -53,9 +57,17 @@ add_library(baxter_utilities src/baxter_utilities.cpp)
 target_link_libraries(baxter_utilities ${catkin_LIBRARIES} ${Boost_LIBRARIES})
 add_dependencies(baxter_utilities ${catkin_EXPORTED_TARGETS}) # don't build until necessary msgs are finished
 
+add_library(arm_hardware_interface src/arm_hardware_interface.cpp)
+target_link_libraries(arm_hardware_interface ${catkin_LIBRARIES} ${Boost_LIBRARIES})
+add_dependencies(arm_hardware_interface ${catkin_EXPORTED_TARGETS}) # don't build until necessary msgs are finished
+
 add_executable(baxter_hardware_interface src/baxter_hardware_interface.cpp)
-target_link_libraries(baxter_hardware_interface ${catkin_LIBRARIES} ${Boost_LIBRARIES})
+target_link_libraries(baxter_hardware_interface baxter_utilities arm_hardware_interface ${catkin_LIBRARIES} ${Boost_LIBRARIES})
 add_dependencies(baxter_hardware_interface ${catkin_EXPORTED_TARGETS}) # don't build until necessary msgs are finish
+
+add_executable(trajectory_msg_test src/test/trajectory_msg_test.cpp)
+target_link_libraries(trajectory_msg_test ${catkin_LIBRARIES} ${Boost_LIBRARIES})
+add_dependencies(trajectory_msg_test ${catkin_EXPORTED_TARGETS}) # don't build until necessary msgs are finish
 
 #############
 ## Install ##

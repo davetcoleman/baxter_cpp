@@ -37,6 +37,9 @@
  * \author  Dave Coleman
  */
 
+#ifndef BAXTER_CONTROL__BAXTER_UTILITIES_
+#define BAXTER_CONTROL__BAXTER_UTILITIES_
+
 // ROS
 #include <ros/ros.h>
 
@@ -123,3 +126,4 @@ public:
 
 } //namespace
 
+#endif
