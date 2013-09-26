@@ -11,7 +11,7 @@ Panels:
         - /MotionPlanning1/Planning Request1
         - /MotionPlanning1/Planned Path1
       Splitter Ratio: 0.711462
-    Tree Height: 551
+    Tree Height: 550
   - Class: rviz/Help
     Name: Help
   - Class: rviz/Views
@@ -284,7 +284,7 @@ Visualization Manager:
         Goal State Color: 250; 128; 0
         Interactive Marker Size: 0.3
         Joint Violation Color: 255; 0; 255
-        Planning Group: right_arm
+        Planning Group: left_arm
         Query Goal State: true
         Query Start State: false
         Show Workspace: false
@@ -574,31 +574,31 @@ Visualization Manager:
   Views:
     Current:
       Class: rviz/XYOrbit
-      Distance: 3.98159
+      Distance: 1.89321
       Focal Point:
-        X: 0.606571
-        Y: 0.051056
-        Z: -2.03501e-06
+        X: 0.854256
+        Y: 0.117973
+        Z: -3.23083e-06
       Name: Current View
       Near Clip Distance: 0.01
-      Pitch: 0.324795
+      Pitch: 0.614798
       Target Frame: base_link
       Value: XYOrbit (rviz)
-      Yaw: 0.175381
+      Yaw: 6.13355
     Saved: ~
 Window Geometry:
   Displays:
     collapsed: false
-  Height: 1172
+  Height: 1171
   Help:
     collapsed: false
   Hide Left Dock: false
   Hide Right Dock: true
   Motion Planning:
     collapsed: false
-  QMainWindow State: 000000ff00000000fd0000000100000000000002a200000435fc0200000005fb000000100044006900730070006c006100790073010000004100000268000000dd00fffffffb0000000800480065006c00700000000342000000bb0000007600fffffffb0000000a005600690065007700730000000145000000cb000000b000fffffffb0000000c00430061006d00650072006100000002ff000001610000000000000000fb0000001e004d006f00740069006f006e00200050006c0061006e006e0069006e006701000002af000001c70000017400ffffff000003980000043500000001000000020000000100000002fc0000000100000002000000010000000a0054006f006f006c00730100000000ffffffff0000000000000000
+  QMainWindow State: 000000ff00000000fd0000000100000000000002a200000434fc0200000005fb000000100044006900730070006c006100790073010000004100000267000000dd00fffffffb0000000800480065006c00700000000342000000bb0000007600fffffffb0000000a005600690065007700730000000145000000cb000000b000fffffffb0000000c00430061006d00650072006100000002ff000001610000000000000000fb0000001e004d006f00740069006f006e00200050006c0061006e006e0069006e006701000002ae000001c70000017400ffffff000003960000043400000001000000020000000100000002fc0000000100000002000000010000000a0054006f006f006c00730100000000ffffffff0000000000000000
   Views:
     collapsed: false
-  Width: 1600
-  X: 3839
+  Width: 1598
+  X: 3840
   Y: 0

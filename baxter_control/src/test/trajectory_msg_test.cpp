@@ -65,23 +65,31 @@ private:
   ros::Subscriber sub_joint_state_;
   ros::Publisher traj_pub_;
 
+  // Joint to move
+  std::size_t joint_id_;
+
   std::string arm_name_;
-  
+
+  static const double WAYPOINT_INTERVALS = 0.4;
+
 public:
 
   /**
    * \brief Constructor
    */
   TrajectoryMsgTest()
-    : arm_name_("right")
+    : arm_name_("left"),
+      joint_id_(1)
   {
+    srand (time(NULL));
+
     // Listen to joint positions
     sub_joint_state_ = nh_.subscribe<sensor_msgs::JointState>("/robot/limb/" + arm_name_ +
                        "/joint_states", 1, &TrajectoryMsgTest::stateCallback, this);
 
     // Publish trajectories
     traj_pub_ = nh_.advertise<trajectory_msgs::JointTrajectory>(
-      "/robot/right_joint_position_trajectory_controller/command",10);
+      "/robot/"+arm_name_+"_joint_position_trajectory_controller/command",10);
 
     // Wait for first state message to be recieved
     while(ros::ok() && state_msg_timestamp_.toSec() == 0)
@@ -92,6 +100,13 @@ public:
     }
 
     sendTrajectory();
+  }
+
+  /**
+   * \brief Destructor
+   */
+  ~TrajectoryMsgTest()
+  {
   }
 
   void sendTrajectory()
@@ -107,18 +122,25 @@ public:
     msg_.joint_names.push_back(arm_name_+"_w2");
     n_dof_ = msg_.joint_names.size();
 
-    // Settings
-    int num_points = 2;
-    double start_a = 0; double end_a = -1;
-
-    // Math
-    double diff_a = start_a - end_a;
-    double increment_a = diff_a / num_points;
-    ROS_DEBUG_STREAM_NAMED("temp","diff a = " << diff_a);
-    ROS_DEBUG_STREAM_NAMED("temp","increment a = " << increment_a);
-
     // Add initial point - our current state
-    msg_.points.push_back(getCurrentPosition());
+    trajectory_msgs::JointTrajectoryPoint current_state = getCurrentPosition();
+    msg_.points.push_back(current_state);
+
+    //ROS_DEBUG_STREAM_NAMED("temp","current position2:\n" << current_state);
+
+    // Settings for a joint "a"
+    double max_a = 3.05417993878 - 1;
+    double min_a = -3.05417993878 + 1;
+    int num_points = 10;
+    double start_a = current_state.positions[joint_id_];
+    double end_a; 
+    double diff_a;
+    do
+    {
+      end_a = fRand(min_a, max_a);
+      diff_a = end_a - start_a;
+    } while ( abs(diff_a) < 0.5 );
+    double increment_a = diff_a / num_points;
 
     // Generate
     for (std::size_t i = 0; i < num_points; ++i)
@@ -127,19 +149,22 @@ public:
     }
 
     ROS_DEBUG_STREAM_NAMED("temp","sending traj message:\n" << msg_);
+    ROS_INFO_STREAM_NAMED("trajectory_test","Moving joint " << msg_.joint_names[joint_id_]
+      << " from " << start_a << " to position " << end_a);
+    ROS_INFO_STREAM_NAMED("temp","diff a = " << diff_a << " increment a = " << increment_a);
 
     traj_pub_.publish(msg_);
     ros::spinOnce();
     sleep(5);
   }
 
-  trajectory_msgs::JointTrajectoryPoint createPoint(trajectory_msgs::JointTrajectoryPoint prev, 
+  trajectory_msgs::JointTrajectoryPoint createPoint(trajectory_msgs::JointTrajectoryPoint prev,
     double increment_a)
   {
     trajectory_msgs::JointTrajectoryPoint point = prev;
 
-    point.positions[0] += increment_a;
-    point.time_from_start = point.time_from_start + ros::Duration(2.0);
+    point.positions[joint_id_] += increment_a;
+    point.time_from_start = point.time_from_start + ros::Duration(WAYPOINT_INTERVALS);
 
     return point;
   }
@@ -147,15 +172,14 @@ public:
   trajectory_msgs::JointTrajectoryPoint getCurrentPosition()
   {
     trajectory_msgs::JointTrajectoryPoint point;
-    
+
     for (std::size_t i = 0; i < n_dof_; ++i)
     {
-      point.positions.push_back(state_msg_->position[i]);      
+      point.positions.push_back(state_msg_->position[i]);
+      point.velocities.push_back(0.0);
     }
 
-    point.time_from_start = point.time_from_start + ros::Duration(2.0);
-
-    ROS_DEBUG_STREAM_NAMED("temp","current position:\n" << point);
+    point.time_from_start = ros::Duration(WAYPOINT_INTERVALS);
 
     return point;
   }
@@ -167,12 +191,10 @@ public:
     state_msg_timestamp_ = ros::Time::now();
   }
 
-  /**
-   * \brief Destructor
-   */
-  ~TrajectoryMsgTest()
+  double fRand(double fMin, double fMax)
   {
-
+    double f = (double)rand() / RAND_MAX;
+    return fMin + f * (fMax - fMin);
   }
 
 }; // end class

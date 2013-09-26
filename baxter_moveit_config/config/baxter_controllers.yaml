@@ -11,6 +11,18 @@ controller_list:
       - right_w0
       - right_w1
       - right_w2
+  - name: /robot/left_joint_position_trajectory_controller
+    action_ns: follow_joint_trajectory
+    type: FollowJointTrajectory
+    default: true
+    joints:
+      - left_s0
+      - left_s1
+      - left_e0
+      - left_e1
+      - left_w0
+      - left_w1
+      - left_w2
   - name: baxter_left_gripper_action
     action_ns: gripper_action
     type: GripperCommand
