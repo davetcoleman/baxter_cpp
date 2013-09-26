@@ -6,9 +6,6 @@ python:
 compiler:
   - gcc
 before_install:
-  # temp:
-  - rm /var/cache/apt/archives/mongodb-clients_1%3a2.0.4-1ubuntu2.1_amd64.deb
-  - rm /var/cache/apt/archives/mongodb-server_1%3a2.0.4-1ubuntu2.1_amd64.deb
   - sudo sh -c 'echo "deb http://packages.ros.org/ros/ubuntu precise main" > /etc/apt/sources.list.d/ros-latest.list'
   - wget http://packages.ros.org/ros.key -O - | sudo apt-key add -
   - sudo apt-get update
