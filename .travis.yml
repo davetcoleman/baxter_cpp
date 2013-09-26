@@ -1,8 +1,6 @@
 language:
   - cpp
   - python
-#  - ruby
-#  - lua
 python:
   - "2.7"
 compiler:
@@ -21,16 +19,14 @@ install:
   - wstool merge https://raw.github.com/davetcoleman/baxter/hydro-devel/moveit.rosinstall
   - wstool merge https://raw.github.com/davetcoleman/baxter/hydro-devel/baxter.rosinstall
   - wstool update
-  #- git clone http://davetcoleman.com/baxter/sdk-examples/ -b gazebo_dev
   - wget http://davetcoleman.com/baxter/sdk-examples.zip
   - unzip sdk-examples.zip
   - touch sdk-examples/baxter_description/CATKIN_IGNORE
   - touch sdk-examples/baxter_msgs/CATKIN_IGNORE
   - cd ../
-  #- sudo apt-get install ros-hydro-pcl # temporary fix
-  - rosdep install --from-paths . --ignore-src --rosdistro hydro -y
+  - rosdep install --from-paths src --ignore-src --rosdistro hydro -y
 script:
   - source /opt/ros/hydro/setup.bash
   - catkin_make all run_tests 
-#  - catkin_make_isolated --source . -j1 --cmake-args --install
+  #- catkin_make_isolated --source . -j1 --cmake-args --install
 
