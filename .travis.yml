@@ -7,7 +7,7 @@ compiler:
   - gcc
 before_install:
   # Define some config vars
-  - export ROS_DISTRO=groovy
+  - export ROS_DISTRO=hydro
   - export CI_SOURCE_PATH=$(pwd)
   - echo "Testing branch $TRAVIS_BRANCH "
   - pwd
