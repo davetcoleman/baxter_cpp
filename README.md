@@ -1,20 +1,32 @@
 baxter
 ======
 
-Unofficial Baxter packages that add-on to the Rethink SDK. It is entirely written in C++ and is the location of on going development by [Dave Coleman](http://davetcoleman.com). 
+Unofficial Baxter packages that add-on to the Rethink SDK. It is entirely written in C++ and currently contains Gazebo simulation and pick and place MoveIt code for Baxter. On going development continues in the hydro-devel branch by [Dave Coleman](http://davetcoleman.com). 
 
-Currently it contains Gazebo simulation and pick and place MoveIt code for Baxter. The stabler version is the groovy-devel branch, but more progress has been made for hydro-devel.
+<img align="right" src="https://raw.github.com/davetcoleman/baxter/hydro-devel/baxter_pick_place/resource/BaxterPickPlace.png" />
 
-![alt tag](https://raw.github.com/davetcoleman/baxter/hydro-devel/baxter_pick_place/resource/BaxterPickPlace.png)
+### Features
 
-**Note:** This is the ROS Hydro readme version. See groovy-devel branch for ROS Groovy instructions.
+ * Baxter simulated in Gazebo
+   * Simulated controllers using [ros_control](http://wiki.ros.org/ros_control)
+   * Simulated head display
+   * Not implemented yet: simulated cameras, sonars, or other sensors. Feel free to add!
+ * Baxter pick and place with MoveIt!
+   * Generate grasps for simple blocks on a table
+   * Execute a pick and place routine (not robust yet)
+   * Other tools for testing trajectories
+
+**Note:** This is the ROS Hydro version. See groovy-devel branch for ROS Groovy instructions, although that branch is no longer being actively developed.
+
+### Build Status
+
+[![Build Status](https://travis-ci.org/davetcoleman/baxter.png?branch=hydro-devel)](https://travis-ci.org/davetcoleman/baxter) - currently MoveIt! and its PCL dependency is causing an issue that you can work around yourself, below.
 
 ## Prerequisites
 
  * A Baxter with dual parallel grippers, or the desire to see one in simulation
  * [ROS Hydro](http://wiki.ros.org/ROS/Installation) on (suggested) Ubuntu 12.04
  * Access to the private Rethink [sdk-examples](https://github.com/RethinkRobotics/sdk-examples) repository - we are using the baxter_interface and head_control packages from the SDK. Contact [Dave](davetcoleman@gmail.com) if you should have access to this.
- * Setup Github - the git@github.com urls, below, only work if you have [Setup Github](https://help.github.com/articles/set-up-git) and generated [SSH Keys for Github](https://help.github.com/articles/generating-ssh-keys).
  * Install wstool package
     ```
     sudo apt-get install python-wstool
@@ -38,6 +50,9 @@ We have chosen to freeze the version of MoveIt! we are using for the short-run t
     rosdep install --from-paths src --ignore-src --rosdistro hydro -y
     catkin_make
     ```
+    
+    **Note:** If you run into the error ``moveit_ros_perception: Cannot locate rosdep definition for [pcl]`` a temporary fix is to manually install PCL via ``sudo apt-get install ros-hydro-pcl``
+
 
 * Add MoveIt setup.bash to your .bashrc (recommended)
 
@@ -45,7 +60,7 @@ We have chosen to freeze the version of MoveIt! we are using for the short-run t
     echo 'source ~/ros/ws_moveit/devel/setup.bash' >> ~/.bashrc
     ```
 
-## Install Baxter Software
+## Baxter Installation
 
 * Create a catkin workspace (we recommend a separate one for Baxter) and use wstool to install the individual repositories
 
@@ -63,7 +78,7 @@ We have chosen to freeze the version of MoveIt! we are using for the short-run t
     git clone git@github.com:RethinkRobotics/sdk-examples.git -b gazebo_dev
     ```
 
-**Note:** CU Boulder users can gain access to the SDK Examples by cloning this repository:
+    **Note:** CU Boulder users can gain access to the SDK Examples by cloning this repository:
 
     ```
     git clone git@github.com:correlllab/baxter_sdk -b gazebo_dev
@@ -85,6 +100,7 @@ We have chosen to freeze the version of MoveIt! we are using for the short-run t
     rosdep install --from-paths . --ignore-src --rosdistro hydro -y
     catkin_make
     ```
+You may need to run this command multiple times if there is a message dependency issue.
 
 * Add Baxter setup.bash to your .bashrc (recommended)
 
