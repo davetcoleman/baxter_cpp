@@ -140,7 +140,7 @@ This uses an actual physics engine from the [Gazebo Simulator](http://gazebosim.
    ```
    By default, an effort-based trajectory controller is started
 
-## Rviz Visualization
+### Rviz Visualization
 
 This only shows a vritual Baxter in [Rviz](http://www.ros.org/wiki/rviz) without any physics simulator. Good for testing MoveIt.
 
@@ -153,7 +153,7 @@ This only shows a vritual Baxter in [Rviz](http://www.ros.org/wiki/rviz) without
    ```
    roslaunch baxter_control baxter_visualization.launch
    ```
-   Note: you will not see anything when you launch this, only the ``/robot/joint_states`` topic starts being published. Proceed to the MoveIt section below:
+   **Note:** you will not see anything when you launch this, only the ``/robot/joint_states`` topic starts being published. Proceed to the MoveIt section below:
 
 ## Start MoveIt
 
@@ -171,7 +171,7 @@ Works with simulation or hardware:
    ```
    roslaunch baxter_moveit_config baxter_moveit.launch
    ```
-   ''Note:'' if you are using only Baxter visualized, append the launch command with " allow_trajectory_execution:=false"
+   **Note:** if you are using only Baxter visualized, append the launch command with " allow_trajectory_execution:=false"
 
 ## Block pick and place demo
 
