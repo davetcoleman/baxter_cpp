@@ -81,7 +81,7 @@ We have chosen to freeze the version of MoveIt! we are using for the short-run t
     **Note:** CU Boulder users can gain access to the SDK Examples by cloning this repository:
 
     ```
-    git clone git@github.com:correlllab/baxter_sdk -b gazebo_dev
+    git clone git@github.com:correlllab/sdk-examples -b gazebo_dev
     ```
 
 * Disable duplicate packages
