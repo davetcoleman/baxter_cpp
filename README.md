@@ -24,7 +24,7 @@ Unofficial Baxter packages that add-on to the Rethink SDK. It is entirely writte
 
 ## Prerequisites
 
- * A Baxter with dual parallel grippers, or the desire to see one in simulation
+ * A Baxter with dual parallel grippers, or the desire to see one visualized or simulated
  * [ROS Hydro](http://wiki.ros.org/ROS/Installation) on (suggested) Ubuntu 12.04
  * Install wstool package
     ```
@@ -35,7 +35,7 @@ Unofficial Baxter packages that add-on to the Rethink SDK. It is entirely writte
 
 You should install MoveIt from source if:
 
- * The current moveit_core debian release is not 0.5.2 (check [here](https://github.com/ros-planning/moveit_core/releases))
+ * The current public moveit_core debian release is not 0.5.2 (check [here](http://ros.org/debbuild/hydro.html) and search for moveit_core, then hover your mouse over the third column under HbinP64. Or check [here](https://github.com/ros-planning/moveit_core/releases))
  * You want to install MoveIt from source for development reasons but also want to ensure your source checkout is compatible with this repo
 
 Otherwise you can just skip this section and install the Baxter code and it will automatically pull the necessary debians for MoveIt!

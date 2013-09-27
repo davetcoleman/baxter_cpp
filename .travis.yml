@@ -9,7 +9,7 @@ before_install:
   # Define some config vars
   - export ROS_DISTRO=groovy
   - export CI_SOURCE_PATH=$(pwd)
-  - export GIT_BRANCH=${git rev-parse --abbrev-ref HEAD)
+  - export GIT_BRANCH=$(git rev-parse --abbrev-ref HEAD)
   - echo "Testing branch $GIT_BRANCH"
   - sudo sh -c 'echo "deb http://packages.ros.org/ros/ubuntu precise main" > /etc/apt/sources.list.d/ros-latest.list'
   - wget http://packages.ros.org/ros.key -O - | sudo apt-key add -
