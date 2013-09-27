@@ -90,9 +90,8 @@ Otherwise you can just skip this section and install the Baxter code and it will
     There is currently a duplication of packages in sdk-examples and baxter_common that must be fixed manually. This issue should be fixed in Rethink's next release of their SDK:
 
     ```
-    cd ~/ros/ws_baxter/
-    touch src/sdk-examples/baxter_description/CATKIN_IGNORE
-    touch src/sdk-examples/baxter_msgs/CATKIN_IGNORE
+    touch sdk-examples/baxter_description/CATKIN_IGNORE
+    touch sdk-examples/baxter_msgs/CATKIN_IGNORE
     ```
 
 * Install dependencies and build
@@ -114,21 +113,19 @@ You may need to run this command multiple times if there is a message dependency
 
 ### Hardware
 
+ * Power on baxter
+
  * Ensure you have the correct ROS_MASTER_URI exported, this depends on your robot serial number:
    ```
    export ROS_MASTER_URI=http://011305P0009.local:11311
    ```
 
- * Turn on baxter
-
-
- * Optional: Enable robot 
-   Most demos in this repo automatically will enable baxter
+ * Bringup ros_control controllers - starts a position-based trajectory controller
    ```
-   rosrun tools enable_robot.py -e
+   roslaunch ros_control baxter_hardware_interface.launch
    ```
 
-### Simulation 
+### Gazebo Simulation 
 
  * Ensure you have the correct ROS_MASTER_URI exported:
    ```
@@ -139,7 +136,7 @@ You may need to run this command multiple times if there is a message dependency
    ```
    roslaunch baxter_gazebo baxter_world.launch
    ```
-   By default the position controllers are started. To switch, use the JointCommandMode topic as documented in the Baxter SDK.
+   By default, an effort-based trajectory controller
 
  * Optional: Test/tune the velocity controllers or position controllers using a RQT dashboard GUI. Make sure you are in the right joint command mode when using these:
 

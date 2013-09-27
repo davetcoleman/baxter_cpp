@@ -26,16 +26,18 @@ install:
   - mkdir -p ~/ros/ws_baxter/src
   - cd ~/ros/ws_baxter/src
   - wstool init .
-  # Link the repo we are testing to the new workspace
-  #- ln -s $CI_SOURCE_PATH .
   # Download non-debian stuff
   - wstool merge https://raw.github.com/davetcoleman/baxter/$GIT_BRANCH/moveit.rosinstall
   - wstool merge https://raw.github.com/davetcoleman/baxter/$GIT_BRANCH/baxter.rosinstall
   - wstool update
-  - wget http://davetcoleman.com/baxter/sdk-examples.zip
-  - unzip sdk-examples.zip
-  - touch sdk-examples/baxter_description/CATKIN_IGNORE
-  - touch sdk-examples/baxter_msgs/CATKIN_IGNORE
+  # Delete the baxter.rosinstall version of the repo and use the one of the branch we are testing
+  - rm -rf baxter/
+  - ln -s $CI_SOURCE_PATH . # Link the repo we are testing to the new workspace
+  # Optional: Pull in sdk-examples
+  #- wget http://davetcoleman.com/baxter/sdk-examples.zip
+  #- unzip sdk-examples.zip
+  #- touch sdk-examples/baxter_description/CATKIN_IGNORE
+  #- touch sdk-examples/baxter_msgs/CATKIN_IGNORE
   - cd ../
   # Install dependencies for source repos
   - rosdep install --from-paths src --ignore-src --rosdistro $ROS_DISTRO -y
