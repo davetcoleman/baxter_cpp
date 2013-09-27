@@ -9,8 +9,9 @@ before_install:
   # Define some config vars
   - export ROS_DISTRO=groovy
   - export CI_SOURCE_PATH=$(pwd)
-  - export GIT_BRANCH=$(git rev-parse --abbrev-ref HEAD)
-  - echo "Testing branch $GIT_BRANCH"
+  - echo "Testing branch $TRAVIS_BRANCH "
+  - echo "ABS PATH to repo: $TRAVIS_BUILD_DIR"
+  - pwd
   - sudo sh -c 'echo "deb http://packages.ros.org/ros/ubuntu precise main" > /etc/apt/sources.list.d/ros-latest.list'
   - wget http://packages.ros.org/ros.key -O - | sudo apt-key add -
   - sudo apt-get update
@@ -27,8 +28,8 @@ install:
   - cd ~/ros/ws_baxter/src
   - wstool init .
   # Download non-debian stuff
-  - wstool merge https://raw.github.com/davetcoleman/baxter/$GIT_BRANCH/moveit.rosinstall
-  - wstool merge https://raw.github.com/davetcoleman/baxter/$GIT_BRANCH/baxter.rosinstall
+  - wstool merge https://raw.github.com/davetcoleman/baxter/$TRAVIS_BRANCH/moveit.rosinstall
+  - wstool merge https://raw.github.com/davetcoleman/baxter/$TRAVIS_BRANCH/baxter.rosinstall
   - wstool update
   # Delete the baxter.rosinstall version of the repo and use the one of the branch we are testing
   - rm -rf baxter/

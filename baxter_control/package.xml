@@ -38,6 +38,7 @@
   <run_depend>sensor_msgs</run_depend>
   <run_depend>trajectory_msgs</run_depend>
   <run_depend>joint_limits_interface</run_depend>
+  <run_depend>baxter_description</run_depend>
 
 </package>
 

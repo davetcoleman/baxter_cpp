@@ -11,7 +11,7 @@ Unofficial Baxter packages that add-on to the Rethink SDK. It is entirely writte
    * Simulated controllers using [ros_control](http://wiki.ros.org/ros_control)
    * Simulated head display
    * Not implemented yet: simulated cameras, sonars, or other sensors. Feel free to add!
- * Baxter pick and place with MoveIt!
+ * Baxter pick and place with MoveIt
    * Generate grasps for simple blocks on a table
    * Execute a pick and place routine (not robust yet)
    * Other tools for testing trajectories
@@ -38,7 +38,7 @@ You should install MoveIt from source if:
  * The current public moveit_core debian release is not 0.5.2 (check [here](http://ros.org/debbuild/hydro.html) and search for moveit_core, then hover your mouse over the third column under HbinP64. Or check [here](https://github.com/ros-planning/moveit_core/releases))
  * You want to install MoveIt from source for development reasons but also want to ensure your source checkout is compatible with this repo
 
-Otherwise you can just skip this section and install the Baxter code and it will automatically pull the necessary debians for MoveIt!
+Otherwise you can just skip this section and install the Baxter code and it will automatically pull the necessary debians for MoveIt
 
 * Setup workspace, download repositories and build
 
@@ -127,6 +127,8 @@ You may need to run this command multiple times if there is a message dependency
 
 ### Gazebo Simulation 
 
+This uses an actual physics engine from the [Gazebo Simulator](http://gazebosim.org/).
+
  * Ensure you have the correct ROS_MASTER_URI exported:
    ```
    export ROS_MASTER_URI=http://localhost:11311
@@ -136,17 +138,22 @@ You may need to run this command multiple times if there is a message dependency
    ```
    roslaunch baxter_gazebo baxter_world.launch
    ```
-   By default, an effort-based trajectory controller
+   By default, an effort-based trajectory controller is started
 
- * Optional: Test/tune the velocity controllers or position controllers using a RQT dashboard GUI. Make sure you are in the right joint command mode when using these:
+## Rviz Visualization
 
+This only shows a vritual Baxter in [Rviz](http://www.ros.org/wiki/rviz) without any physics simulator. Good for testing MoveIt.
+
+ * Ensure you have the correct ROS_MASTER_URI exported:
    ```
-   roslaunch baxter_control baxter_sdk_position_rqt.launch
+   export ROS_MASTER_URI=http://localhost:11311
    ```
-   or
+
+ * Start visualization:
    ```
-   roslaunch baxter_control baxter_sdk_velocity_rqt.launch 
+   roslaunch baxter_control baxter_visualization.launch
    ```
+   Note: you will not see anything when you launch this, only the ``/robot/joint_states`` topic starts being published. Proceed to the MoveIt section below:
 
 ## Start MoveIt
 

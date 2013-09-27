@@ -46,6 +46,6 @@
 	args="--file=$(find baxter_description)/media/researchsdk.png --delay=5" />
 
   <!-- ros_control baxter launch file -->
-  <include file="$(find baxter_control)/launch/baxter_sdk_control.launch" />
+  <include file="$(find baxter_control)/launch/baxter_ros_control.launch" />
 
 </launch>
