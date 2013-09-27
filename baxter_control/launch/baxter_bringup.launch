@@ -13,11 +13,11 @@
   </node-->
 
   <!-- Display image on Baxter face -->
-  <node name="face" pkg="baxter_control" type="xdisplay_image.py" 
+  <node name="face" pkg="baxter_scripts" type="xdisplay_image.py" 
 	args="--file=$(find baxter_moveit_config)/media/hal.jpg" />
 
   <!-- Mute Baxter's sonars -->
-  <node name="baxter_mute_sonar" pkg="baxter_control" type="sonar_enable.py"
+  <node name="baxter_mute_sonar" pkg="baxter_scripts" type="sonar_enable.py"
 	respawn="false" output="screen" args="--enable=0"/>
 
   <!-- Load gripper controller -->

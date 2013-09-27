@@ -171,6 +171,7 @@ Works with simulation or hardware:
    ```
    roslaunch baxter_moveit_config baxter_moveit.launch
    ```
+   ''Note:'' if you are using only Baxter visualized, append the launch command with " allow_trajectory_execution:=false"
 
 ## Block pick and place demo
 

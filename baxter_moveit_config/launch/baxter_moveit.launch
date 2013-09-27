@@ -2,6 +2,7 @@
 
   <!-- input arguments -->
   <arg name="debug" default="false" />
+  <arg name="allow_trajectory_execution" default="true"/>
 
   <!-- load urdf, srdf -->
   <include file="$(find baxter_moveit_config)/launch/planning_context.launch">
@@ -10,7 +11,7 @@
 
   <!-- start move_group -->
   <include file="$(find baxter_moveit_config)/launch/move_group.launch">
-    <arg name="allow_trajectory_execution" value="true"/>
+    <arg name="allow_trajectory_execution" value="$(arg allow_trajectory_execution)"/>
     <arg name="debug" value="$(arg debug)"/>
     <arg name="info" value="true"/>
   </include>

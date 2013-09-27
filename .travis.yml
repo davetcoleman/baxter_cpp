@@ -39,13 +39,13 @@ install:
   #- touch sdk-examples/baxter_description/CATKIN_IGNORE
   #- touch sdk-examples/baxter_msgs/CATKIN_IGNORE
   - cd ../
-  # Source
-  - source /opt/ros/$ROS_DISTRO/setup.bash
   # Test manual install
   - sudo apt-get install ros-hydro-gazebo-ros ros-hydro-ros-controllers
   # Install dependencies for source repos
   - rosdep install --from-paths src --ignore-src --rosdistro $ROS_DISTRO -y
 script:
+  # Source
+  - source /opt/ros/$ROS_DISTRO/setup.bash
   - catkin_make all run_tests 
   #- catkin_make_isolated --source . -j1 --cmake-args --install
 
