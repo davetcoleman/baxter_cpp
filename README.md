@@ -20,7 +20,7 @@ Unofficial Baxter packages that add-on to the Rethink SDK. It is entirely writte
 
 ### Build Status
 
-[![Build Status](https://travis-ci.org/davetcoleman/baxter.png?branch=hydro-devel)](https://travis-ci.org/davetcoleman/baxter) - currently MoveIt! and its PCL dependency is causing an issue that you can work around yourself, below.
+[![Build Status](https://travis-ci.org/davetcoleman/baxter.png?branch=hydro-devel)](https://travis-ci.org/davetcoleman/baxter) - currently Travis is having an issue pulling the correct version of MongoDB - work in progress.
 
 ## Prerequisites
 
