@@ -20,13 +20,12 @@ Unofficial Baxter packages that add-on to the Rethink SDK. It is entirely writte
 
 ### Build Status
 
-[![Build Status](https://travis-ci.org/davetcoleman/baxter.png?branch=hydro-devel)](https://travis-ci.org/davetcoleman/baxter) - currently MoveIt! and its PCL dependency is causing an issue that you can work around yourself, below.
+[![Build Status](https://travis-ci.org/davetcoleman/baxter.png?branch=hydro-devel)](https://travis-ci.org/davetcoleman/baxter)
 
 ## Prerequisites
 
  * A Baxter with dual parallel grippers, or the desire to see one in simulation
  * [ROS Hydro](http://wiki.ros.org/ROS/Installation) on (suggested) Ubuntu 12.04
- * Access to the private Rethink [sdk-examples](https://github.com/RethinkRobotics/sdk-examples) repository - we are using the baxter_interface and head_control packages from the SDK. Contact [Dave](davetcoleman@gmail.com) if you should have access to this.
  * Install wstool package
     ```
     sudo apt-get install python-wstool
@@ -58,7 +57,6 @@ Otherwise you can just skip this section and install the Baxter code and it will
     
     **Note:** If you run into the error ``moveit_ros_perception: Cannot locate rosdep definition for [pcl]`` a temporary fix is to manually install PCL via ``sudo apt-get install ros-hydro-pcl``
 
-
 * Add MoveIt setup.bash to your .bashrc (recommended)
 
     ```
@@ -77,20 +75,18 @@ Otherwise you can just skip this section and install the Baxter code and it will
     wstool update
     ```
 
-* Also install from source the private RethinkRobotics SDK:
+* Optional: install from source the private Rethink [sdk-examples](https://github.com/RethinkRobotics/sdk-examples) repository if you have access.
 
     ```
     git clone git@github.com:RethinkRobotics/sdk-examples.git -b gazebo_dev
     ```
 
-    **Note:** CU Boulder users can gain access to the SDK Examples by cloning this repository:
+    **Note:** CU Boulder users can gain access to the SDK Examples by cloning this repository. Contact [Dave](davetcoleman@gmail.com) with your Github user name if you should have access to this.
 
     ```
     git clone git@github.com:correlllab/baxter_sdk -b gazebo_dev
     ```
-
-* Disable duplicate packages
-
+    
     There is currently a duplication of packages in sdk-examples and baxter_common that must be fixed manually. This issue should be fixed in Rethink's next release of their SDK:
 
     ```
@@ -105,6 +101,7 @@ Otherwise you can just skip this section and install the Baxter code and it will
     rosdep install --from-paths . --ignore-src --rosdistro hydro -y
     catkin_make
     ```
+
 You may need to run this command multiple times if there is a message dependency issue.
 
 * Add Baxter setup.bash to your .bashrc (recommended)
