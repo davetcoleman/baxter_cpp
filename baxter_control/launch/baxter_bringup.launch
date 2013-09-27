@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <launch>
 
   <!-- GDB functionality -->
@@ -6,10 +7,10 @@
   <arg     if="$(arg debug)" name="launch_prefix" value="gdb --ex run --args" />
 
   <!-- load Baxter's trajectory controller -->
-  <node name="baxter_trajectory_controller" pkg="baxter_interface" type="trajectory_controller.py"
+  <!--node name="baxter_trajectory_controller" pkg="baxter_interface" type="trajectory_controller.py"
       respawn="false" output="screen" args="-l both">
     <rosparam command="load" file="$(find baxter_control)/config/trajectory_controller.yaml"/>
-  </node>
+  </node-->
 
   <!-- Display image on Baxter face -->
   <node name="face" pkg="head_control" type="xdisplay_image.py" 

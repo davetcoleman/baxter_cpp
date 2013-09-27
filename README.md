@@ -34,11 +34,16 @@ Unofficial Baxter packages that add-on to the Rethink SDK. It is entirely writte
 
 ## Install MoveIt From Source
 
-**Note:** Currently you can skip this section - the debians are still the same on version 0.5.1 as of Sep 9, 2013. 
+You should install MoveIt from source if:
 
-We have chosen to freeze the version of MoveIt! we are using for the short-run to ensure compatibilty with our customizations. We recommend you install this in a seperate workspace (following the following insructions) to decrease built times.
+ * The current moveit_core debian release is not 0.5.2 (check [here](https://github.com/ros-planning/moveit_core/releases))
+ * You want to install MoveIt from source for development reasons but also want to ensure your source checkout is compatible with this repo
+
+Otherwise you can just skip this section and install the Baxter code and it will automatically pull the necessary debians for MoveIt!
 
 * Setup workspace, download repositories and build
+
+    We recommend you install this in a seperate workspace (following the following insructions) to decrease built times.
 
     ```
     mkdir -p ~/ros/ws_moveit/src

@@ -53,7 +53,7 @@
 #include <moveit/planning_scene_monitor/planning_scene_monitor.h>
 #include <moveit/robot_state/robot_state.h>
 #include <moveit/robot_state/conversions.h>
-#include <moveit/robot_state/joint_state_group.h>
+//#include <moveit/robot_state/joint_state_group.h>
 #include <moveit/robot_model_loader/robot_model_loader.h>
 #include <moveit/plan_execution/plan_execution.h>
 #include <moveit/plan_execution/plan_with_sensing.h>
@@ -332,11 +332,14 @@ public:
 
     // ---------------------------------------------------------------------------------------------
     // Check for kinematic solver
-    if( !approach_state.getJointStateGroup(planning_group_name_)->getJointModelGroup()->canSetStateFromIK( ik_link ) )
+    if( !approach_state.getJointModelGroup(planning_group_name_)->canSetStateFromIK( ik_link ) )
     {
       // Set kinematic solver
-      const std::pair<robot_model::SolverAllocatorFn, robot_model::SolverAllocatorMapFn> &allocators =
-        approach_state.getJointStateGroup(planning_group_name_)->getJointModelGroup()->getSolverAllocators();
+      const std::pair<robot_model::JointModelGroup::KinematicsSolver, 
+                      robot_model::JointModelGroup::KinematicsSolverMap>& allocators =        
+        approach_state.getJointModelGroup(planning_group_name_)->getGroupKinematics();
+      //const std::pair<robot_model::SolverAllocatorFn, robot_model::SolverAllocatorMapFn> &allocators =
+      //approach_state.getJointModelGroup(planning_group_name_)->getSolverAllocators();
       if( !allocators.first)
         ROS_ERROR_STREAM_NAMED("verticle_test","No IK Solver loaded - make sure moveit_config/kinamatics.yaml is loaded in this namespace");
     }
@@ -371,7 +374,9 @@ public:
     std::vector<robot_state::RobotStatePtr> robot_state_trajectory; // create resulting generated trajectory (result)
 
     double d_approach =
-      approach_state.getJointStateGroup(planning_group_name_)->computeCartesianPath(robot_state_trajectory,
+      approach_state.computeCartesianPath(
+        planning_group_name_,
+        robot_state_trajectory,
         ik_link,                   // link name
         approach_direction,
         true,                      // direction is in global reference frame
