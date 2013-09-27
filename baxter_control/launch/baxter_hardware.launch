@@ -8,13 +8,12 @@
     <arg unless="$(arg debug)" name="launch_prefix" value="" />
     <arg     if="$(arg debug)" name="launch_prefix" value="gdb --ex run --args" />
 
-    <!-- Load URDF -->
-    <include file="$(find baxter_moveit_config)/launch/planning_context.launch">
-      <arg name="load_robot_description" value="true"/>
-    </include>
+    <!-- Load the URDF into the ROS Parameter Server -->
+    <param name="robot_description"
+	   command="cat '$(find baxter_description)/urdf/baxter.urdf'" />
 
     <!-- Load hardware interface -->
-    <node name="baxter_hardware_interface" pkg="baxter_control" type="baxter_hardware_interface" 
+    <node name="baxter_hardware_interface" pkg="baxter_control" type="baxter_hardware_interface"
 	  respawn="false" output="screen" launch-prefix="$(arg launch_prefix)" />
 
     <!-- Load joint controller configurations from YAML file to parameter server -->
@@ -25,9 +24,9 @@
 	  output="screen" ns="/robot" args="right_joint_position_trajectory_controller
 					    left_joint_position_trajectory_controller
 					    " />
-<!-- 
-right_s0_joint_position_controller
+    <!--
+	right_s0_joint_position_controller
 
- -->
+    -->
   </group>
 </launch>

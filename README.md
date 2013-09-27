@@ -122,7 +122,7 @@ You may need to run this command multiple times if there is a message dependency
 
  * Bringup ros_control controllers - starts a position-based trajectory controller
    ```
-   roslaunch ros_control baxter_hardware_interface.launch
+   roslaunch ros_control baxter_hardware.launch
    ```
 
 ### Gazebo Simulation 
@@ -136,7 +136,7 @@ This uses an actual physics engine from the [Gazebo Simulator](http://gazebosim.
 
  * Start simulation with controllers:
    ```
-   roslaunch baxter_gazebo baxter_world.launch
+   roslaunch baxter_gazebo baxter_gazebo.launch
    ```
    By default, an effort-based trajectory controller is started
 
