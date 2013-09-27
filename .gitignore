@@ -35,4 +35,3 @@ baxter_interface/cfg/cpp
 
 # Catkin Workspace
 /CMakeLists.txt
-CATKIN_IGNORE

@@ -13,7 +13,7 @@
   </node-->
 
   <!-- Display image on Baxter face -->
-  <node name="face" pkg="head_control" type="xdisplay_image.py" 
+  <node name="face" pkg="baxter_control" type="xdisplay_image.py" 
 	args="--file=$(find baxter_moveit_config)/media/hal.jpg" />
 
   <!-- Mute Baxter's sonars -->
