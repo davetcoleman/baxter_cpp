@@ -1,0 +1,2 @@
+string[] names
+LimbState[] states

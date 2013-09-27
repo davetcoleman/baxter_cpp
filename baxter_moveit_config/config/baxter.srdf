@@ -105,7 +105,6 @@
     <disable_collisions link1="head" link2="left_lower_elbow" reason="Never" />
     <disable_collisions link1="head" link2="left_lower_shoulder" reason="Never" />
     <disable_collisions link1="head" link2="left_upper_elbow" reason="Never" />
-    <disable_collisions link1="head" link2="left_upper_elbow_visual" reason="Never" />
     <disable_collisions link1="head" link2="left_upper_shoulder" reason="Never" />
     <disable_collisions link1="head" link2="pedestal" reason="Never" />
     <disable_collisions link1="head" link2="right_gripper_l_finger" reason="Never" />
@@ -115,7 +114,6 @@
     <disable_collisions link1="head" link2="right_lower_elbow" reason="Never" />
     <disable_collisions link1="head" link2="right_lower_shoulder" reason="Never" />
     <disable_collisions link1="head" link2="right_upper_elbow" reason="Never" />
-    <disable_collisions link1="head" link2="right_upper_elbow_visual" reason="Never" />
     <disable_collisions link1="head" link2="right_upper_shoulder" reason="Never" />
     <disable_collisions link1="head" link2="screen" reason="Adjacent" />
     <disable_collisions link1="head" link2="screen_visual" reason="Never" />
@@ -128,7 +126,6 @@
     <disable_collisions link1="left_gripper" link2="left_hand_range" reason="Default" />
     <disable_collisions link1="left_gripper" link2="left_lower_elbow" reason="Never" />
     <disable_collisions link1="left_gripper" link2="left_lower_forearm" reason="Never" />
-    <disable_collisions link1="left_gripper" link2="left_upper_elbow_visual" reason="Never" />
     <disable_collisions link1="left_gripper" link2="left_upper_forearm" reason="Never" />
     <disable_collisions link1="left_gripper" link2="left_upper_forearm_visual" reason="Never" />
     <disable_collisions link1="left_gripper" link2="left_wrist" reason="Never" />
@@ -157,21 +154,18 @@
     <disable_collisions link1="left_hand" link2="left_hand_range" reason="Adjacent" />
     <disable_collisions link1="left_hand" link2="left_lower_elbow" reason="Never" />
     <disable_collisions link1="left_hand" link2="left_lower_forearm" reason="Never" />
-    <disable_collisions link1="left_hand" link2="left_upper_elbow_visual" reason="Never" />
     <disable_collisions link1="left_hand" link2="left_upper_forearm" reason="Never" />
     <disable_collisions link1="left_hand" link2="left_upper_forearm_visual" reason="Never" />
     <disable_collisions link1="left_hand" link2="left_wrist" reason="Adjacent" />
     <disable_collisions link1="left_hand_camera" link2="left_hand_range" reason="Never" />
     <disable_collisions link1="left_hand_camera" link2="left_lower_elbow" reason="Never" />
     <disable_collisions link1="left_hand_camera" link2="left_lower_forearm" reason="Never" />
-    <disable_collisions link1="left_hand_camera" link2="left_upper_elbow_visual" reason="Never" />
     <disable_collisions link1="left_hand_camera" link2="left_upper_forearm" reason="Never" />
     <disable_collisions link1="left_hand_camera" link2="left_upper_forearm_visual" reason="Never" />
     <disable_collisions link1="left_hand_camera" link2="left_wrist" reason="Never" />
     <disable_collisions link1="left_hand_camera" link2="sonar_ring" reason="Never" />
     <disable_collisions link1="left_hand_range" link2="left_lower_elbow" reason="Never" />
     <disable_collisions link1="left_hand_range" link2="left_lower_forearm" reason="Never" />
-    <disable_collisions link1="left_hand_range" link2="left_upper_elbow_visual" reason="Never" />
     <disable_collisions link1="left_hand_range" link2="left_upper_forearm" reason="Never" />
     <disable_collisions link1="left_hand_range" link2="left_upper_forearm_visual" reason="Never" />
     <disable_collisions link1="left_hand_range" link2="left_wrist" reason="Never" />
@@ -181,7 +175,6 @@
     <disable_collisions link1="left_lower_elbow" link2="left_lower_forearm" reason="Never" />
     <disable_collisions link1="left_lower_elbow" link2="left_lower_shoulder" reason="Never" />
     <disable_collisions link1="left_lower_elbow" link2="left_upper_elbow" reason="Adjacent" />
-    <disable_collisions link1="left_lower_elbow" link2="left_upper_elbow_visual" reason="Default" />
     <disable_collisions link1="left_lower_elbow" link2="left_upper_forearm" reason="Adjacent" />
     <disable_collisions link1="left_lower_elbow" link2="left_upper_forearm_visual" reason="Adjacent" />
     <disable_collisions link1="left_lower_elbow" link2="left_upper_shoulder" reason="Never" />
@@ -193,12 +186,10 @@
     <disable_collisions link1="left_lower_elbow" link2="sonar_ring" reason="Never" />
     <disable_collisions link1="left_lower_forearm" link2="left_lower_shoulder" reason="Never" />
     <disable_collisions link1="left_lower_forearm" link2="left_upper_elbow" reason="Never" />
-    <disable_collisions link1="left_lower_forearm" link2="left_upper_elbow_visual" reason="Never" />
     <disable_collisions link1="left_lower_forearm" link2="left_upper_forearm" reason="Adjacent" />
     <disable_collisions link1="left_lower_forearm" link2="left_upper_forearm_visual" reason="Default" />
     <disable_collisions link1="left_lower_forearm" link2="left_wrist" reason="Adjacent" />
     <disable_collisions link1="left_lower_shoulder" link2="left_upper_elbow" reason="Adjacent" />
-    <disable_collisions link1="left_lower_shoulder" link2="left_upper_elbow_visual" reason="Adjacent" />
     <disable_collisions link1="left_lower_shoulder" link2="left_upper_forearm" reason="Never" />
     <disable_collisions link1="left_lower_shoulder" link2="left_upper_forearm_visual" reason="Never" />
     <disable_collisions link1="left_lower_shoulder" link2="left_upper_shoulder" reason="Adjacent" />
@@ -206,33 +197,22 @@
     <disable_collisions link1="left_lower_shoulder" link2="right_lower_elbow" reason="Never" />
     <disable_collisions link1="left_lower_shoulder" link2="right_lower_shoulder" reason="Never" />
     <disable_collisions link1="left_lower_shoulder" link2="right_upper_elbow" reason="Never" />
-    <disable_collisions link1="left_lower_shoulder" link2="right_upper_elbow_visual" reason="Never" />
     <disable_collisions link1="left_lower_shoulder" link2="right_upper_forearm" reason="Never" />
     <disable_collisions link1="left_lower_shoulder" link2="right_upper_shoulder" reason="Never" />
     <disable_collisions link1="left_lower_shoulder" link2="screen" reason="Never" />
     <disable_collisions link1="left_lower_shoulder" link2="screen_visual" reason="Never" />
     <disable_collisions link1="left_lower_shoulder" link2="sonar_ring" reason="Never" />
     <disable_collisions link1="left_lower_shoulder" link2="torso" reason="Never" />
-    <disable_collisions link1="left_upper_elbow" link2="left_upper_elbow_visual" reason="Never" />
     <disable_collisions link1="left_upper_elbow" link2="left_upper_forearm" reason="Never" />
     <disable_collisions link1="left_upper_elbow" link2="left_upper_forearm_visual" reason="Never" />
     <disable_collisions link1="left_upper_elbow" link2="pedestal" reason="Never" />
     <disable_collisions link1="left_upper_elbow" link2="right_lower_elbow" reason="Never" />
     <disable_collisions link1="left_upper_elbow" link2="right_lower_shoulder" reason="Never" />
     <disable_collisions link1="left_upper_elbow" link2="right_upper_elbow" reason="Never" />
-    <disable_collisions link1="left_upper_elbow" link2="right_upper_elbow_visual" reason="Never" />
     <disable_collisions link1="left_upper_elbow" link2="right_upper_shoulder" reason="Never" />
     <disable_collisions link1="left_upper_elbow" link2="screen" reason="Never" />
     <disable_collisions link1="left_upper_elbow" link2="screen_visual" reason="Never" />
     <disable_collisions link1="left_upper_elbow" link2="sonar_ring" reason="Never" />
-    <disable_collisions link1="left_upper_elbow_visual" link2="left_upper_forearm_visual" reason="Never" />
-    <disable_collisions link1="left_upper_elbow_visual" link2="left_upper_shoulder" reason="Never" />
-    <disable_collisions link1="left_upper_elbow_visual" link2="left_wrist" reason="Never" />
-    <disable_collisions link1="left_upper_elbow_visual" link2="pedestal" reason="Never" />
-    <disable_collisions link1="left_upper_elbow_visual" link2="right_lower_shoulder" reason="Never" />
-    <disable_collisions link1="left_upper_elbow_visual" link2="right_upper_elbow" reason="Never" />
-    <disable_collisions link1="left_upper_elbow_visual" link2="right_upper_shoulder" reason="Never" />
-    <disable_collisions link1="left_upper_elbow_visual" link2="sonar_ring" reason="Never" />
     <disable_collisions link1="left_upper_forearm" link2="left_upper_forearm_visual" reason="Default" />
     <disable_collisions link1="left_upper_forearm" link2="left_upper_shoulder" reason="Never" />
     <disable_collisions link1="left_upper_forearm" link2="left_wrist" reason="Never" />
@@ -242,7 +222,6 @@
     <disable_collisions link1="left_upper_shoulder" link2="right_lower_elbow" reason="Never" />
     <disable_collisions link1="left_upper_shoulder" link2="right_lower_shoulder" reason="Never" />
     <disable_collisions link1="left_upper_shoulder" link2="right_upper_elbow" reason="Never" />
-    <disable_collisions link1="left_upper_shoulder" link2="right_upper_elbow_visual" reason="Never" />
     <disable_collisions link1="left_upper_shoulder" link2="right_upper_forearm" reason="Never" />
     <disable_collisions link1="left_upper_shoulder" link2="right_upper_shoulder" reason="Never" />
     <disable_collisions link1="left_upper_shoulder" link2="screen" reason="Never" />
@@ -264,7 +243,6 @@
     <disable_collisions link1="right_gripper" link2="right_hand_range" reason="Adjacent" />
     <disable_collisions link1="right_gripper" link2="right_lower_elbow" reason="Never" />
     <disable_collisions link1="right_gripper" link2="right_lower_forearm" reason="Never" />
-    <disable_collisions link1="right_gripper" link2="right_upper_elbow_visual" reason="Never" />
     <disable_collisions link1="right_gripper" link2="right_upper_forearm" reason="Never" />
     <disable_collisions link1="right_gripper" link2="right_upper_forearm_visual" reason="Never" />
     <disable_collisions link1="right_gripper" link2="right_wrist" reason="Adjacent" />
@@ -290,14 +268,12 @@
     <disable_collisions link1="right_hand_camera" link2="right_hand_range" reason="Adjacent" />
     <disable_collisions link1="right_hand_camera" link2="right_lower_elbow" reason="Never" />
     <disable_collisions link1="right_hand_camera" link2="right_lower_forearm" reason="Never" />
-    <disable_collisions link1="right_hand_camera" link2="right_upper_elbow_visual" reason="Never" />
     <disable_collisions link1="right_hand_camera" link2="right_upper_forearm" reason="Never" />
     <disable_collisions link1="right_hand_camera" link2="right_upper_forearm_visual" reason="Never" />
     <disable_collisions link1="right_hand_camera" link2="right_wrist" reason="Adjacent" />
     <disable_collisions link1="right_hand_camera" link2="sonar_ring" reason="Never" />
     <disable_collisions link1="right_hand_range" link2="right_lower_elbow" reason="Never" />
     <disable_collisions link1="right_hand_range" link2="right_lower_forearm" reason="Never" />
-    <disable_collisions link1="right_hand_range" link2="right_upper_elbow_visual" reason="Never" />
     <disable_collisions link1="right_hand_range" link2="right_upper_forearm" reason="Never" />
     <disable_collisions link1="right_hand_range" link2="right_upper_forearm_visual" reason="Never" />
     <disable_collisions link1="right_hand_range" link2="right_wrist" reason="Adjacent" />
@@ -306,7 +282,6 @@
     <disable_collisions link1="right_lower_elbow" link2="right_lower_forearm" reason="Never" />
     <disable_collisions link1="right_lower_elbow" link2="right_lower_shoulder" reason="Never" />
     <disable_collisions link1="right_lower_elbow" link2="right_upper_elbow" reason="Adjacent" />
-    <disable_collisions link1="right_lower_elbow" link2="right_upper_elbow_visual" reason="Default" />
     <disable_collisions link1="right_lower_elbow" link2="right_upper_forearm" reason="Adjacent" />
     <disable_collisions link1="right_lower_elbow" link2="right_upper_forearm_visual" reason="Adjacent" />
     <disable_collisions link1="right_lower_elbow" link2="right_upper_shoulder" reason="Never" />
@@ -314,12 +289,10 @@
     <disable_collisions link1="right_lower_elbow" link2="sonar_ring" reason="Never" />
     <disable_collisions link1="right_lower_forearm" link2="right_lower_shoulder" reason="Never" />
     <disable_collisions link1="right_lower_forearm" link2="right_upper_elbow" reason="Never" />
-    <disable_collisions link1="right_lower_forearm" link2="right_upper_elbow_visual" reason="Never" />
     <disable_collisions link1="right_lower_forearm" link2="right_upper_forearm" reason="Adjacent" />
     <disable_collisions link1="right_lower_forearm" link2="right_upper_forearm_visual" reason="Default" />
     <disable_collisions link1="right_lower_forearm" link2="right_wrist" reason="Adjacent" />
     <disable_collisions link1="right_lower_shoulder" link2="right_upper_elbow" reason="Adjacent" />
-    <disable_collisions link1="right_lower_shoulder" link2="right_upper_elbow_visual" reason="Adjacent" />
     <disable_collisions link1="right_lower_shoulder" link2="right_upper_forearm" reason="Never" />
     <disable_collisions link1="right_lower_shoulder" link2="right_upper_forearm_visual" reason="Never" />
     <disable_collisions link1="right_lower_shoulder" link2="right_upper_shoulder" reason="Adjacent" />
@@ -327,18 +300,12 @@
     <disable_collisions link1="right_lower_shoulder" link2="screen_visual" reason="Never" />
     <disable_collisions link1="right_lower_shoulder" link2="sonar_ring" reason="Never" />
     <disable_collisions link1="right_lower_shoulder" link2="torso" reason="Never" />
-    <disable_collisions link1="right_upper_elbow" link2="right_upper_elbow_visual" reason="Never" />
     <disable_collisions link1="right_upper_elbow" link2="right_upper_forearm" reason="Never" />
     <disable_collisions link1="right_upper_elbow" link2="right_upper_forearm_visual" reason="Never" />
     <disable_collisions link1="right_upper_elbow" link2="screen" reason="Never" />
     <disable_collisions link1="right_upper_elbow" link2="screen_visual" reason="Never" />
     <disable_collisions link1="right_upper_elbow" link2="sonar_ring" reason="Never" />
     <disable_collisions link1="right_upper_elbow" link2="torso" reason="Never" />
-    <disable_collisions link1="right_upper_elbow_visual" link2="right_upper_forearm_visual" reason="Never" />
-    <disable_collisions link1="right_upper_elbow_visual" link2="right_upper_shoulder" reason="Never" />
-    <disable_collisions link1="right_upper_elbow_visual" link2="right_wrist" reason="Never" />
-    <disable_collisions link1="right_upper_elbow_visual" link2="sonar_ring" reason="Never" />
-    <disable_collisions link1="right_upper_elbow_visual" link2="torso" reason="Never" />
     <disable_collisions link1="right_upper_forearm" link2="right_upper_forearm_visual" reason="Default" />
     <disable_collisions link1="right_upper_forearm" link2="right_upper_shoulder" reason="Never" />
     <disable_collisions link1="right_upper_forearm" link2="right_wrist" reason="Never" />

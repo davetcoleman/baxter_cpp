@@ -1,5 +1,5 @@
 controller_list:
-  - name: /robot/right_joint_trajectory_controller
+  - name: /robot/right_joint_position_trajectory_controller
     action_ns: follow_joint_trajectory
     type: FollowJointTrajectory
     default: true
@@ -11,7 +11,7 @@ controller_list:
       - right_w0
       - right_w1
       - right_w2
-  - name: /robot/left_joint_trajectory_controller
+  - name: /robot/left_joint_position_trajectory_controller
     action_ns: follow_joint_trajectory
     type: FollowJointTrajectory
     default: true
