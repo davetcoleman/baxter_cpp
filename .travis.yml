@@ -10,7 +10,6 @@ before_install:
   - export ROS_DISTRO=groovy
   - export CI_SOURCE_PATH=$(pwd)
   - echo "Testing branch $TRAVIS_BRANCH "
-  - echo "ABS PATH to repo: $TRAVIS_BUILD_DIR"
   - pwd
   - sudo sh -c 'echo "deb http://packages.ros.org/ros/ubuntu precise main" > /etc/apt/sources.list.d/ros-latest.list'
   - wget http://packages.ros.org/ros.key -O - | sudo apt-key add -
