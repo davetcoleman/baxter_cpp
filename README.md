@@ -20,7 +20,7 @@ Unofficial Baxter packages that add-on to the Rethink SDK. It is entirely writte
 
 ### Build Status
 
-[![Build Status](https://travis-ci.org/davetcoleman/baxter.png?branch=hydro-devel)](https://travis-ci.org/davetcoleman/baxter) - currently MoveIt! and its PCL dependency is causing an issue that you can work around yourself, below.
+[![Build Status](https://travis-ci.org/davetcoleman/baxter.png?branch=hydro-devel)](https://travis-ci.org/davetcoleman/baxter) - currently Travis is having an issue pulling the correct version of MongoDB - work in progress.
 
 ## Prerequisites
 
@@ -81,7 +81,7 @@ We have chosen to freeze the version of MoveIt! we are using for the short-run t
     **Note:** CU Boulder users can gain access to the SDK Examples by cloning this repository:
 
     ```
-    git clone git@github.com:correlllab/baxter_sdk -b gazebo_dev
+    git clone git@github.com:correlllab/sdk-examples -b gazebo_dev
     ```
 
 * Disable duplicate packages
