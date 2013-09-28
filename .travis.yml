@@ -27,7 +27,7 @@ install:
   - cd ~/ros/ws_baxter/src
   - wstool init .
   # Download non-debian stuff
-  - wstool merge https://raw.github.com/davetcoleman/baxter/$TRAVIS_BRANCH/moveit.rosinstall
+  #- wstool merge https://raw.github.com/davetcoleman/baxter/$TRAVIS_BRANCH/moveit.rosinstall
   - wstool merge https://raw.github.com/davetcoleman/baxter/$TRAVIS_BRANCH/baxter.rosinstall
   - wstool update
   # Delete the baxter.rosinstall version of the repo and use the one of the branch we are testing
