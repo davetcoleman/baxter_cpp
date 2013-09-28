@@ -46,6 +46,6 @@ install:
 script:
   # Source
   - source /opt/ros/$ROS_DISTRO/setup.bash
-  - catkin_make #all run_tests 
+  - catkin_make DCMAKE_BUILD_TYPE=Debug
   #- catkin_make_isolated --source . -j1 --cmake-args --install
 
