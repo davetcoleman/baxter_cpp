@@ -42,9 +42,10 @@ before_script: # Use this to prepare your build for testing e.g. copy database c
 script: # All commands must exit with code 0 on success. Anything else is considered failure.
   # TEST 1 -------------------------------------------
   - catkin_make DCMAKE_BUILD_TYPE=Debug
+  - echo "Test 1 completed! ========================="
+  # TEST 2 -------------------------------------------
   # Now re-test with Rethink SDK included
   - cd src/
-  # TEST 2 -------------------------------------------
   # Optional: Pull in sdk-examples
   - wget http://davetcoleman.com/baxter/sdk-examples.zip
   - unzip sdk-examples.zip
@@ -55,13 +56,21 @@ script: # All commands must exit with code 0 on success. Anything else is consid
   - rm -rf build/ devel/
   - rosdep install --from-paths src --ignore-src --rosdistro $ROS_DISTRO -y
   - catkin_make DCMAKE_BUILD_TYPE=Debug
+  - echo "Test 2 completed! ========================="
   # TEST 3 -------------------------------------------
   # Build with MoveIt from source
+  - rm -rf build/ devel/ src/
+  - mkdir src/
   - cd src/
+  - wstool init .
+  # Download non-debian stuff
+  - wstool merge https://raw.github.com/davetcoleman/baxter/$TRAVIS_BRANCH/baxter.rosinstall
   - wstool merge https://raw.github.com/davetcoleman/baxter/$TRAVIS_BRANCH/moveit.rosinstall
   - wstool update
+  - rm -rf baxter/
+  - ln -s $CI_SOURCE_PATH . # Link the repo we are testing to the new workspace
   # Rebuild
   - cd ../
-  - rm -rf build/ devel/
   - rosdep install --from-paths src --ignore-src --rosdistro $ROS_DISTRO -y
   - catkin_make DCMAKE_BUILD_TYPE=Debug
+  - echo "Test 3 completed! ========================="
