@@ -58,19 +58,20 @@ script: # All commands must exit with code 0 on success. Anything else is consid
   - catkin_make DCMAKE_BUILD_TYPE=Debug
   - echo "Test 2 completed! ========================="
   # TEST 3 -------------------------------------------
-  # Build with MoveIt from source
-  - rm -rf build/ devel/ src/
-  - mkdir src/
-  - cd src/
+  # Create workspace
+  - mkdir -p ~/ros/ws_moveit/src
+  - cd ~/ros/ws_moveit/src
   - wstool init .
   # Download non-debian stuff
-  - wstool merge https://raw.github.com/davetcoleman/baxter/$TRAVIS_BRANCH/baxter.rosinstall
   - wstool merge https://raw.github.com/davetcoleman/baxter/$TRAVIS_BRANCH/moveit.rosinstall
   - wstool update
-  - rm -rf baxter/
-  - ln -s $CI_SOURCE_PATH . # Link the repo we are testing to the new workspace
-  # Rebuild
+  # Build MoveIt from source
   - cd ../
   - rosdep install --from-paths src --ignore-src --rosdistro $ROS_DISTRO -y
-  - catkin_make DCMAKE_BUILD_TYPE=Debug
+  - catkin_make
+  # Rebuild Baxter
+  - cd ~/ros/ws_baxter
+  - rm -rf devel/ build/
+  - source ~/ros/ws_moveit/devel/setup.bash
+  - catkin_make
   - echo "Test 3 completed! ========================="
