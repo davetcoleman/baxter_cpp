@@ -42,7 +42,7 @@ namespace baxter_control
 {
 
 ArmHardwareInterface::ArmHardwareInterface(const std::string &arm_name)
-  : arm_name_(arm_name),
+  : ArmInterface(arm_name),
     state_msg_(new sensor_msgs::JointState())
 {
   // Populate joints in this arm
@@ -88,11 +88,6 @@ bool ArmHardwareInterface::init(
 {
   for (std::size_t i = 0; i < n_dof_; ++i)
   {
-
-    // Debug
-    ROS_DEBUG_STREAM_NAMED(arm_name_,"Loading joint '" << joint_names_[i]
-      << "' of type '" << HARDWARE_INTERFACE << "'");
-
     // Create joint state interface for all joints
     js_interface.registerHandle(hardware_interface::JointStateHandle(
         joint_names_[i], &joint_position_[i], &joint_velocity_[i], &joint_effort_[i]));

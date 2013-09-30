@@ -53,6 +53,7 @@
 
 // Baxter
 #include <baxter_control/baxter_utilities.h>
+#include <baxter_control/arm_interface.h>
 #include <baxter_control/arm_hardware_interface.h>
 #include <baxter_control/arm_simulator_interface.h>
 
@@ -79,21 +80,21 @@ private:
   baxter_control::BaxterUtilities baxter_util_;
 
   // sub-hardware interfaces
-  //baxter_control::ArmHardwareInterface right_arm_hw_;
-  //baxter_control::ArmHardwareInterface left_arm_hw_;
-  baxter_control::ArmSimulatorInterface right_arm_hw_;
-  baxter_control::ArmSimulatorInterface left_arm_hw_;
+  ArmInterfacePtr right_arm_hw_;
+  ArmInterfacePtr left_arm_hw_;
 
   boost::shared_ptr<controller_manager::ControllerManager> controller_manager_;
 
   ros::Timer non_realtime_loop_;
+
+  bool in_simulation_;
 
 public:
 
   /**
    * \brief Constructor/Descructor
    */
-  BaxterHardwareInterface();
+  BaxterHardwareInterface(bool in_simulation);
   ~BaxterHardwareInterface();
 
   void update(const ros::TimerEvent& e);

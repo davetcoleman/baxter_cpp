@@ -144,7 +144,7 @@ This uses an actual physics engine from the [Gazebo Simulator](http://gazebosim.
 
 ### Rviz Visualization
 
-This only shows a vritual Baxter in [Rviz](http://www.ros.org/wiki/rviz) without any physics simulator. Good for testing MoveIt.
+This only shows a virtual Baxter in [Rviz](http://www.ros.org/wiki/rviz) without any physics simulator. Instead it uses a ros_control hardware interface that simply loops back to itself. Good for testing MoveIt.
 
  * Ensure you have the correct ROS_MASTER_URI exported:
    ```
@@ -165,12 +165,6 @@ Works with simulation, hardware or visualization:
 
    ```
    roslaunch baxter_moveit_config baxter_moveit.launch
-   ```
-
-   **Note:** if you are using only a visualization of Baxter, use this modified command:
-
-   ```
-   roslaunch baxter_moveit_config baxter_moveit.launch allow_trajectory_execution:=false
    ```
 
 ## Block pick and place demo

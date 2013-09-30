@@ -32,8 +32,7 @@ catkin_package(
    INCLUDE_DIRS include
    LIBRARIES 
     baxter_utilities
-    arm_hardware_interface
-    arm_simulator_interface
+    arm_interface
    CATKIN_DEPENDS 
     moveit_ros_planning_interface 
     std_msgs
@@ -60,19 +59,14 @@ add_library(baxter_utilities src/baxter_utilities.cpp)
 target_link_libraries(baxter_utilities ${catkin_LIBRARIES} ${Boost_LIBRARIES})
 add_dependencies(baxter_utilities ${catkin_EXPORTED_TARGETS}) # don't build until necessary msgs are finished
 
-add_library(arm_hardware_interface src/arm_hardware_interface.cpp)
-target_link_libraries(arm_hardware_interface ${catkin_LIBRARIES} ${Boost_LIBRARIES})
-add_dependencies(arm_hardware_interface ${catkin_EXPORTED_TARGETS}) # don't build until necessary msgs are finished
-
-add_library(arm_simulator_interface src/arm_simulator_interface.cpp)
-target_link_libraries(arm_simulator_interface ${catkin_LIBRARIES} ${Boost_LIBRARIES})
-add_dependencies(arm_simulator_interface ${catkin_EXPORTED_TARGETS}) # don't build until necessary msgs are finished
+add_library(arm_interface src/arm_hardware_interface.cpp src/arm_simulator_interface.cpp)
+target_link_libraries(arm_interface ${catkin_LIBRARIES} ${Boost_LIBRARIES})
+add_dependencies(arm_interface ${catkin_EXPORTED_TARGETS}) # don't build until necessary msgs are finished
 
 add_executable(baxter_hardware_interface src/baxter_hardware_interface.cpp)
 target_link_libraries(baxter_hardware_interface 
   baxter_utilities 
-  arm_hardware_interface 
-  arm_simulator_interface 
+  arm_interface 
   ${catkin_LIBRARIES} 
   ${Boost_LIBRARIES}
 )

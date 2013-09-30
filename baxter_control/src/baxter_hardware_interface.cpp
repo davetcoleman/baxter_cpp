@@ -41,13 +41,24 @@
 namespace baxter_control
 {
 
-BaxterHardwareInterface::BaxterHardwareInterface()
-  : right_arm_hw_("right"),
-    left_arm_hw_("left")
+BaxterHardwareInterface::BaxterHardwareInterface(bool in_simulation)
+  : in_simulation_(in_simulation)
 {
+  if( in_simulation_ )
+  {
+    ROS_INFO_STREAM_NAMED("hardware_interface","Running in simulation mode");
+    right_arm_hw_.reset(new baxter_control::ArmSimulatorInterface("right"));
+    left_arm_hw_.reset(new baxter_control::ArmSimulatorInterface("left"));
+  }
+  else
+  {
+    ROS_INFO_STREAM_NAMED("hardware_interface","Running in hardware mode");
+    right_arm_hw_.reset(new baxter_control::ArmHardwareInterface("right"));
+    left_arm_hw_.reset(new baxter_control::ArmHardwareInterface("left"));
+  }
   // Initialize right arm
-  right_arm_hw_.init(js_interface_, ej_interface_, vj_interface_, pj_interface_);
-  left_arm_hw_.init(js_interface_, ej_interface_, vj_interface_, pj_interface_);
+  right_arm_hw_->init(js_interface_, ej_interface_, vj_interface_, pj_interface_);
+  left_arm_hw_->init(js_interface_, ej_interface_, vj_interface_, pj_interface_);
 
   // Register interfaces
   registerInterface(&js_interface_);
@@ -83,15 +94,15 @@ void BaxterHardwareInterface::update(const ros::TimerEvent& e)
   //ROS_INFO_STREAM_THROTTLE_NAMED(10, "temp","Updating with period: " << (e.current_real - e.last_real)*100 << "hz" );
 
    // Input
-  right_arm_hw_.read();
-  left_arm_hw_.read();
+  right_arm_hw_->read();
+  left_arm_hw_->read();
 
   // Control
   controller_manager_->update(ros::Time::now(), ros::Duration(e.current_real - e.last_real) );
 
   // Output
-  right_arm_hw_.write();
-  left_arm_hw_.write();
+  right_arm_hw_->write();
+  left_arm_hw_->write();
  }
 
 
@@ -109,7 +120,19 @@ int main(int argc, char** argv)
 
   ros::NodeHandle nh;
 
-  baxter_control::BaxterHardwareInterface baxter;
+  bool in_simulation = false;
+
+  // Parse command line arguments
+  for (std::size_t i = 0; i < argc; ++i)
+  {
+    if( std::string(argv[i]).compare("--simulation") == 0 )
+    {
+      ROS_INFO_STREAM_NAMED("main","Gripper action server in simulation mode");
+      in_simulation = true;
+    }
+  }  
+
+  baxter_control::BaxterHardwareInterface baxter(in_simulation);
 
   ros::spin();
 

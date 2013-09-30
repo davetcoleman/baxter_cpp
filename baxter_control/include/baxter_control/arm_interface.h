@@ -36,8 +36,8 @@
    Desc:   ros_control hardware interface layer for Baxter
 */
 
-#ifndef BAXTER_CONTROL__ARM_HARDWARE_INTERFACE_
-#define BAXTER_CONTROL__ARM_HARDWARE_INTERFACE_
+#ifndef BAXTER_CONTROL__ARM_INTERFACE_
+#define BAXTER_CONTROL__ARM_INTERFACE_
 
 // Boost
 #include <boost/shared_ptr.hpp>
@@ -53,71 +53,72 @@
 // Baxter
 #include <baxter_msgs/JointPositions.h>
 
-// Parent class
-#include <baxter_control/arm_interface.h>
-
 namespace baxter_control
 {
 
-static const double STATE_EXPIRED_TIMEOUT = 2.0;
+//const std::string& HARDWARE_INTERFACE = "PositionJointInterface";
 
-class ArmHardwareInterface : public ArmInterface
+class ArmInterface
 {
-private:
+protected:
 
-  // Publishers
-  ros::Publisher pub_position_command_;
-  baxter_msgs::JointPositions output_command_msg_;
+  // Node Handles
+  ros::NodeHandle nh_; // no namespace
 
-  // Subscriber
-  ros::Subscriber sub_joint_state_;
+  // Number of joints we are using
+  unsigned int n_dof_;
 
-  // Buffer of joint states
-  sensor_msgs::JointStateConstPtr state_msg_;
-  ros::Time state_msg_timestamp_;
+  std::vector<std::string> joint_names_;
+  std::vector<double> joint_position_;
+  std::vector<double> joint_velocity_;
+  std::vector<double> joint_effort_;
+  std::vector<double> joint_position_command_;
+  std::vector<double> joint_effort_command_;
+  std::vector<double> joint_velocity_command_;
+
+  // Name of this arm
+  std::string arm_name_;
 
 public:
 
   /**
    * \brief Constructor/Descructor
    */
-  ArmHardwareInterface(const std::string &arm_name);
-  ~ArmHardwareInterface();
+  ArmInterface(const std::string &arm_name)
+    : arm_name_(arm_name)
+  {};
+
+  ~ArmInterface()
+  {};
 
   /**
    * \brief Initialice hardware interface
    * \return false if an error occurred during initialization
    */
-  bool init(
+  virtual bool init(
     hardware_interface::JointStateInterface&    js_interface,
     hardware_interface::EffortJointInterface&   ej_interface,
     hardware_interface::VelocityJointInterface& vj_interface,
     hardware_interface::PositionJointInterface& pj_interface
-  );
-
-  /**
-   * \brief Buffers joint state info from Baxter ROS topic
-   * \param
-   */
-  void stateCallback(const sensor_msgs::JointStateConstPtr& msg);
-
-  /**
-   * \brief Checks if the state message from Baxter is out of date
-   * \return true if expired
-   */
-  bool stateExpired();
+  ) 
+  { return true; };
 
   /**
    * \brief Copy the joint state message into our hardware interface datastructures
    */
-  void read();
+  virtual void read()
+  {};
 
   /**
    * \brief Publish our hardware interface datastructures commands to Baxter hardware
    */
-  void write();
+  virtual void write()
+  {};
 
 };
+
+typedef boost::shared_ptr<baxter_control::ArmInterface> ArmInterfacePtr;
+typedef boost::shared_ptr<const baxter_control::ArmInterface> ArmInterfaceConstPtr;
 
 } // namespace
 

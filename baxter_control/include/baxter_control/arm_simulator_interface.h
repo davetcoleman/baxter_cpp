@@ -33,11 +33,11 @@
  *********************************************************************/
 
 /* Author: Dave Coleman
-   Desc:   ros_control hardware interface layer for Baxter
+   Desc:   ros_control hardware interface layer for Baxter in simulation
 */
 
-#ifndef BAXTER_CONTROL__ARM_HARDWARE_INTERFACE_
-#define BAXTER_CONTROL__ARM_HARDWARE_INTERFACE_
+#ifndef BAXTER_CONTROL__ARM_SIMULATOR_INTERFACE_
+#define BAXTER_CONTROL__ARM_SIMULATOR_INTERFACE_
 
 // Boost
 #include <boost/shared_ptr.hpp>
@@ -59,30 +59,17 @@
 namespace baxter_control
 {
 
-static const double STATE_EXPIRED_TIMEOUT = 2.0;
-
-class ArmHardwareInterface : public ArmInterface
+class ArmSimulatorInterface : public ArmInterface
 {
 private:
-
-  // Publishers
-  ros::Publisher pub_position_command_;
-  baxter_msgs::JointPositions output_command_msg_;
-
-  // Subscriber
-  ros::Subscriber sub_joint_state_;
-
-  // Buffer of joint states
-  sensor_msgs::JointStateConstPtr state_msg_;
-  ros::Time state_msg_timestamp_;
 
 public:
 
   /**
    * \brief Constructor/Descructor
    */
-  ArmHardwareInterface(const std::string &arm_name);
-  ~ArmHardwareInterface();
+  ArmSimulatorInterface(const std::string &arm_name);
+  ~ArmSimulatorInterface();
 
   /**
    * \brief Initialice hardware interface

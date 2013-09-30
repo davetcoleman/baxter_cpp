@@ -1,19 +1,42 @@
+<?xml version="1.0" encoding="utf-8"?>
 <launch>
 
-  <!-- Load the URDF into the ROS Parameter Server -->
-  <param name="robot_description"
-	 command="cat '$(find baxter_description)/urdf/baxter.urdf'" />
+  <group ns="robot">
 
-  <node name="joint_state_publisher" pkg="joint_state_publisher" type="joint_state_publisher">
-    <param name="/use_gui" value="false"/>
-  </node>
-  
-  <node name="robot_state_publisher" pkg="robot_state_publisher" type="robot_state_publisher" respawn="true" output="screen" />
+    <!-- GDB functionality -->
+    <arg name="debug" default="false" />
+    <arg unless="$(arg debug)" name="launch_prefix" value="" />
+    <arg     if="$(arg debug)" name="launch_prefix" value="gdb --ex run --args" />
 
-  <!-- Load other configurations shared between all three Baxter run modes-->
-  <!--include file="$(find baxter_control)/launch/baxter_configure.launch"/-->
-  
-  <!-- Run fake state publisher -->
-  <node name="assembly_state_publisher" pkg="baxter_control" type="baxter_assembly_state"  respawn="true" output="screen" />
+    <!-- Load the URDF into the ROS Parameter Server -->
+    <param name="robot_description"
+	   command="cat '$(find baxter_description)/urdf/baxter.urdf'" />
 
+    <!-- Load hardware interface -->
+    <node name="baxter_hardware_interface" pkg="baxter_control" type="baxter_hardware_interface"
+	  respawn="false" output="screen" launch-prefix="$(arg launch_prefix)" args="--simulation"/>
+
+    <!-- Load joint controller configurations from YAML file to parameter server -->
+    <rosparam file="$(find baxter_control)/config/hardware_controllers.yaml" command="load"/>
+
+    <!-- Load the default controllers -->
+    <node name="controller_spawner" pkg="controller_manager" type="spawner" respawn="false"
+	  output="screen" ns="/robot" args="joint_state_controller
+					    right_joint_trajectory_controller
+					    left_joint_trajectory_controller
+					    " />
+
+    <!-- convert joint states to TF transforms -->
+    <node name="robot_state_publisher" pkg="robot_state_publisher" type="robot_state_publisher"
+	  respawn="false" output="screen">
+      <remap from="/joint_states" to="/robot/joint_states" />
+    </node>
+
+    <!-- Load other configurations shared between all three Baxter run modes-->
+    <include file="$(find baxter_control)/launch/baxter_configure.launch"/>    
+
+    <!-- Run fake state publisher -->
+    <node name="assembly_state_publisher" pkg="baxter_control" type="baxter_assembly_state"  respawn="true" output="screen" />
+
+  </group>
 </launch>
