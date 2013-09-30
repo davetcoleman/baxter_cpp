@@ -14,7 +14,11 @@ Unofficial Baxter packages that add-on to the Rethink SDK. It is entirely writte
  * Baxter pick and place with MoveIt
    * Generate grasps for simple blocks on a table
    * Execute a pick and place routine (not robust yet)
+   * Works on hardware, Gazebo and in an Rviz visualization
    * Other tools for testing trajectories
+ * Baxter position trajectory controller
+   * Uses the ros_control [joint_trajectory_controller](https://github.com/ros-controls/ros_controllers/tree/hydro-devel/joint_trajectory_controller) instead of the python trajectory controller that comes with the SDK
+   * This repository no longer requires access to RethinkRobotics/sdk-examples
 
 **Note:** This is the ROS Hydro version. See groovy-devel branch for ROS Groovy instructions, although that branch is no longer being actively developed.
 
