@@ -120,7 +120,7 @@ You may need to run this command multiple times if there is a message dependency
 
  * Bringup ros_control controllers - starts a position-based trajectory controller
    ```
-   roslaunch ros_control baxter_hardware.launch
+   roslaunch baxter_control baxter_hardware.launch
    ```
 
 ### Gazebo Simulation 
@@ -155,14 +155,7 @@ This only shows a vritual Baxter in [Rviz](http://www.ros.org/wiki/rviz) without
 
 ## Start MoveIt
 
-Works with simulation or hardware:
-
- * Bringup Baxter Hardware Interface:
-   This contains the gripper action server, trajectory controller, head image publisher and sonar muter.
-
-   ```
-   roslaunch baxter_control baxter_bringup.launch
-   ```
+Works with simulation, hardware or visualization:
 
  * Start MoveIt's move_group Server:
 

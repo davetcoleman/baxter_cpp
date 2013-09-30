@@ -88,8 +88,7 @@ public:
     // Gazebo publishes a joint state for the gripper, but Baxter does not do so in the right format
     if( in_simulation_ )
     {
-      ROS_INFO_STREAM_NAMED("temp","Simulated action server spinning..."); 
-      ros::spin(); // \todo fix this?
+      ros::spin();
     }
 
     // Publish joint_states

@@ -10,4 +10,7 @@
   
   <node name="robot_state_publisher" pkg="robot_state_publisher" type="robot_state_publisher" respawn="true" output="screen" />
 
+  <!-- Load other configurations shared between all three Baxter run modes-->
+  <include file="$(find baxter_control)/launch/baxter_configure.launch"/>    
+
 </launch>
