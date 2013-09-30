@@ -599,9 +599,9 @@ public:
         break;
       counter++;
     }
-    if( !gripper_state_->gripping )
+    if( !gripper_state_->gripping && !in_simulation_)
     {
-      ROS_ERROR_STREAM_NAMED(arm_name_,"No object detected in end effector");
+      ROS_WARN_STREAM_NAMED(arm_name_,"No object detected in end effector");
       return false;
     }
 

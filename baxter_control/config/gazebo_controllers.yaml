@@ -18,29 +18,29 @@
       - left_w2
 
     constraints:
-      goal_time: 0.5                   # Defaults to zero
-      stopped_velocity_tolerance: 0.02 # Defaults to 0.01
+      goal_time: 1.0                   # Defaults to zero
+      stopped_velocity_tolerance: 0.03 # Defaults to 0.01
       left_s0:
-        trajectory: 0.05 # Not enforced if unspecified
-        goal: 0.02       # Not enforced if unspecified
+        trajectory: 0.05 
+        goal: 0.02       
       left_s1:
-        trajectory: 0.05 # Not enforced if unspecified
-        goal: 0.02       # Not enforced if unspecified
+        trajectory: 0.05 
+        goal: 0.02       
       left_e0:
-        trajectory: 0.05 # Not enforced if unspecified
-        goal: 0.02       # Not enforced if unspecified
+        trajectory: 0.05 
+        goal: 0.02       
       left_e1:
-        trajectory: 0.05 # Not enforced if unspecified
-        goal: 0.02       # Not enforced if unspecified
+        trajectory: 0.05 
+        goal: 0.02       
       left_w0:
-        trajectory: 0.05 # Not enforced if unspecified
-        goal: 0.02       # Not enforced if unspecified
+        trajectory: 0.05 
+        goal: 0.02       
       left_w1:
-        trajectory: 0.05 # Not enforced if unspecified
-        goal: 0.02       # Not enforced if unspecified
+        trajectory: 0.05 
+        goal: 0.02       
       left_w2:
-        trajectory: 0.05 # Not enforced if unspecified
-        goal: 0.02       # Not enforced if unspecified
+        trajectory: 0.05 
+        goal: 0.02       
 
     gains: # Needed to map position+velocity commands to an effort command
       left_s0: {p: 700,  i: 0.01, d: 25, i_clamp: 1}
@@ -67,29 +67,29 @@
       - right_w2
 
     constraints:
-      goal_time: 0.5                   # Defaults to zero
-      stopped_velocity_tolerance: 0.02 # Defaults to 0.01
+      goal_time: 1.0                   
+      stopped_velocity_tolerance: 0.03 
       right_s0:
-        trajectory: 0.05 # Not enforced if unspecified
-        goal: 0.02       # Not enforced if unspecified
+        trajectory: 0.05 
+        goal: 0.02       
       right_s1:
-        trajectory: 0.05 # Not enforced if unspecified
-        goal: 0.02       # Not enforced if unspecified
+        trajectory: 0.05 
+        goal: 0.02       
       right_e0:
-        trajectory: 0.05 # Not enforced if unspecified
-        goal: 0.02       # Not enforced if unspecified
+        trajectory: 0.05 
+        goal: 0.02       
       right_e1:
-        trajectory: 0.05 # Not enforced if unspecified
-        goal: 0.02       # Not enforced if unspecified
+        trajectory: 0.05 
+        goal: 0.02       
       right_w0:
-        trajectory: 0.05 # Not enforced if unspecified
-        goal: 0.02       # Not enforced if unspecified
+        trajectory: 0.05 
+        goal: 0.02       
       right_w1:
-        trajectory: 0.05 # Not enforced if unspecified
-        goal: 0.02       # Not enforced if unspecified
+        trajectory: 0.05 
+        goal: 0.02       
       right_w2:
-        trajectory: 0.05 # Not enforced if unspecified
-        goal: 0.02       # Not enforced if unspecified
+        trajectory: 0.05 
+        goal: 0.02       
 
     gains: # Needed to map position+velocity commands to an effort command
       right_s0: {p: 700,  i: 0.01, d: 100, i_clamp: 1}
