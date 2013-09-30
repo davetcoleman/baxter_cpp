@@ -146,7 +146,7 @@ bool BaxterUtilities::isEnabled(bool verbose)
 
     }
 
-    ROS_ERROR_STREAM_NAMED("utilities","ESTOP Button: '" << estop_button << "'. Source: '" << estop_source << "'. State: \n" << *baxter_state_ );
+    ROS_ERROR_STREAM_NAMED("utilities","ESTOP Button State: '" << estop_button << "'. Source: '" << estop_source << "'");
     return false;
   }
 

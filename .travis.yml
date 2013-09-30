@@ -33,40 +33,26 @@ install: # Use this to install any prerequisites or dependencies necessary to ru
   # Delete the baxter.rosinstall version of the repo and use the one of the branch we are testing
   - rm -rf baxter/
   - ln -s $CI_SOURCE_PATH . # Link the repo we are testing to the new workspace
-  # Optional: Pull in sdk-examples
-  #- wget http://davetcoleman.com/baxter/sdk-examples.zip
-  #- unzip sdk-examples.zip
-  #- touch sdk-examples/baxter_description/CATKIN_IGNORE
-  #- touch sdk-examples/baxter_msgs/CATKIN_IGNORE
   - cd ../
   # Test manual install
-  - sudo apt-get install ros-hydro-gazebo-ros ros-hydro-ros-controllers
-  # Install dependencies for source repos
-  - rosdep install --from-paths src --ignore-src --rosdistro $ROS_DISTRO -y
-install: # Use this to install any prerequisites or dependencies necessary to run your build
-  # Create workspace
-  - mkdir -p ~/ros/ws_baxter/src
-  - cd ~/ros/ws_baxter/src
-  - wstool init .
-  # Download non-debian stuff
-  #- wstool merge https://raw.github.com/davetcoleman/baxter/$TRAVIS_BRANCH/moveit.rosinstall
-  - wstool merge https://raw.github.com/davetcoleman/baxter/$TRAVIS_BRANCH/baxter.rosinstall
-  - wstool update
-  # Delete the baxter.rosinstall version of the repo and use the one of the branch we are testing
-  - rm -rf baxter/
-  - ln -s $CI_SOURCE_PATH . # Link the repo we are testing to the new workspace
-  # Optional: Pull in sdk-examples
-  - wget http://davetcoleman.com/baxter/sdk-examples.zip
-  - unzip sdk-examples.zip
-  - touch sdk-examples/baxter_description/CATKIN_IGNORE
-  - touch sdk-examples/baxter_msgs/CATKIN_IGNORE
-  - cd ../
-  # Test manual install
-  - sudo apt-get install ros-hydro-gazebo-ros ros-hydro-ros-controllers
+  #- sudo apt-get install ros-hydro-gazebo-ros ros-hydro-ros-controllers
   # Install dependencies for source repos
   - rosdep install --from-paths src --ignore-src --rosdistro $ROS_DISTRO -y
 before_script: # Use this to prepare your build for testing e.g. copy database configurations, environment variables, etc.
   - source /opt/ros/$ROS_DISTRO/setup.bash  
 script: # All commands must exit with code 0 on success. Anything else is considered failure.
+  # TEST 1 -------------------------------------------
   - catkin_make DCMAKE_BUILD_TYPE=Debug
-  #- catkin_make_isolated --source . -j1 --cmake-args --install
+  # Now re-test with Rethink SDK included
+  - cd src/
+  # TEST 2 -------------------------------------------
+  # Optional: Pull in sdk-examples
+  - wget http://davetcoleman.com/baxter/sdk-examples.zip
+  - unzip sdk-examples.zip
+  - touch sdk-examples/baxter_description/CATKIN_IGNORE
+  - touch sdk-examples/baxter_msgs/CATKIN_IGNORE
+  # Rebuild
+  - cd ../
+  - rm -rf build/ devel/
+  - rosdep install --from-paths src --ignore-src --rosdistro $ROS_DISTRO -y
+  - catkin_make DCMAKE_BUILD_TYPE=Debug

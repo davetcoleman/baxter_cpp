@@ -52,7 +52,7 @@
 
 // Baxter specific properties
 #include <baxter_pick_place/baxter_data.h>
-#include <baxter_pick_place/custom_environment.h>
+#include <baxter_pick_place/custom_environment2.h>
 
 namespace baxter_pick_place
 {
@@ -93,7 +93,7 @@ public:
   SimplePickPlace()
     : auto_reset_(false),
       auto_reset_sec_(4),
-      arm_("right"),
+      arm_("left"),
       planning_group_name_(arm_+"_arm")
   {
     ros::NodeHandle nh;
@@ -125,7 +125,7 @@ public:
     startRoutine();
 
     // Shutdown
-    baxter_util_.disableBaxter();
+    //baxter_util_.disableBaxter();
   }
 
   bool startRoutine()
@@ -142,9 +142,13 @@ public:
 
     // Create start block positions (hard coded)
     std::vector<MetaBlock> blocks;
-    blocks.push_back( createStartBlock(0.55, -0.4, "Block1") );
-    blocks.push_back( createStartBlock(0.65, -0.4, "Block2") );
-    blocks.push_back( createStartBlock(0.75, -0.4, "Block3") );
+    double block_y = 0.4;
+    // Flip the side of the table the blocks are on depending on which arm we are using
+    if( arm_.compare("right") == 0 )
+      block_y *= -1;
+    blocks.push_back( createStartBlock(0.65, block_y, "Block1") );
+    blocks.push_back( createStartBlock(0.75, block_y, "Block2") );
+    blocks.push_back( createStartBlock(0.85, block_y, "Block3") );
 
     // The goal for each block is simply translating them on the y axis
     for (std::size_t i = 0; i < blocks.size(); ++i)
@@ -297,8 +301,6 @@ public:
 
   bool pick(const geometry_msgs::Pose& block_pose, std::string block_name)
   {
-    ROS_WARN_STREAM_NAMED("pick","Picking '"<< block_name << "'");
-
     std::vector<moveit_msgs::Grasp> grasps;
 
     // Pick grasp

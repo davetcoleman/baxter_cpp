@@ -84,7 +84,7 @@
                 }, 
                 "topics": {
                   "type": "repr", 
-                  "repr": "[u'/robot/left_joint_position_trajectory_controller/state/error/positions[3]', u'/robot/left_joint_position_trajectory_controller/state/error/positions[0]', u'/robot/left_joint_position_trajectory_controller/state/error/positions[1]', u'/robot/left_joint_position_trajectory_controller/state/error/positions[4]', u'/robot/left_joint_position_trajectory_controller/state/error/positions[5]', u'/robot/left_joint_position_trajectory_controller/state/error/positions[2]', u'/robot/left_joint_position_trajectory_controller/state/error/positions[6]']"
+                  "repr": "[u'/robot/left_joint_trajectory_controller/state/error/positions[3]', u'/robot/left_joint_trajectory_controller/state/error/positions[0]', u'/robot/left_joint_trajectory_controller/state/error/positions[1]', u'/robot/left_joint_trajectory_controller/state/error/positions[4]', u'/robot/left_joint_trajectory_controller/state/error/positions[5]', u'/robot/left_joint_trajectory_controller/state/error/positions[2]', u'/robot/left_joint_trajectory_controller/state/error/positions[6]']"
                 }
               }, 
               "groups": {}
@@ -115,7 +115,7 @@
                 }, 
                 "topics": {
                   "type": "repr", 
-                  "repr": "[u'/robot/left_joint_position_trajectory_controller/state/actual/positions[3]', u'/robot/left_joint_position_trajectory_controller/state/desired/positions[3]']"
+                  "repr": "[u'/robot/left_joint_trajectory_controller/state/actual/positions[3]', u'/robot/left_joint_trajectory_controller/state/desired/positions[3]']"
                 }
               }, 
               "groups": {}

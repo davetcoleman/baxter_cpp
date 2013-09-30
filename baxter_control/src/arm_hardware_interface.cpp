@@ -134,12 +134,10 @@ bool ArmHardwareInterface::init(
   for (std::size_t i = 0; i < n_dof_; ++i)
   {
     joint_position_command_[i] = state_msg_->position[i];
-    ROS_DEBUG_STREAM_NAMED("temp","set joint " << joint_names_[i] << " to position " << joint_position_command_[i]);
+    //ROS_DEBUG_STREAM_NAMED("temp","set joint " << joint_names_[i] << " to position " << joint_position_command_[i]);
 
     // Pre-load the joint names into the output messages just once
     output_command_msg_.names[i] = joint_names_[i];
-
-    ROS_DEBUG_STREAM_NAMED("temp","done here too");
   }
 
   ROS_INFO_NAMED(arm_name_, "Loaded baxter_hardware_interface.");

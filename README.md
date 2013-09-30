@@ -207,21 +207,18 @@ When using Baxter, it is very productive to have command shortcuts for diagnosin
 
 ### Turn on and off
 
-    alias be="rosrun tools enable_robot.py -e"
-    alias bd="rosrun tools enable_robot.py -d"
-    alias br="rosrun tools enable_robot.py -r"
+    alias be="rostopic pub -1 /robot/set_super_enable std_msgs/Bool True"
+    alias bd="rostopic pub -1 /robot/set_super_enable std_msgs/Bool False"
+    alias br="rostopic pub -1 /robot/set_super_reset std_msgs/Empty"
     alias bs="rostopic echo -c /sdk/robot/state"
     alias bsu="rosrun baxter_control sonar_enable.py --enable=0"
     alias bsd="rosrun baxter_control sonar_enable.py --enable=1"
 
-
 ### Launch scripts
 
-    alias btc="rosrun baxter_interface trajectory_controller.py"
     alias bbu="roslaunch baxter_control baxter_bringup.launch"
     alias bm="roslaunch baxter_moveit_config baxter_moveit.launch"
     alias bpp="roslaunch baxter_pick_place block_pick_place.launch"
-    alias bppa="roslaunch baxter_pick_place block_pick_place_all.launch"
     alias bw="rosrun joint_velocity wobbler.py"
 
 ### Calibrate/Tare
