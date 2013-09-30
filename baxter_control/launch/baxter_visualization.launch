@@ -12,5 +12,8 @@
 
   <!-- Load other configurations shared between all three Baxter run modes-->
   <!--include file="$(find baxter_control)/launch/baxter_configure.launch"/-->
+  
+  <!-- Run fake state publisher -->
+  <node name="assembly_state_publisher" pkg="baxter_control" type="baxter_assembly_state"  respawn="true" output="screen" />
 
 </launch>

@@ -77,13 +77,13 @@ Otherwise you can just skip this section and install the Baxter code and it will
     wstool update
     ```
 
-* Optional: install from source the private Rethink [sdk-examples](https://github.com/RethinkRobotics/sdk-examples) repository if you have access.
+* **Optional:** install from source the private Rethink [sdk-examples](https://github.com/RethinkRobotics/sdk-examples) repository if you have access.
 
     ```
     git clone git@github.com:RethinkRobotics/sdk-examples.git -b gazebo_dev
     ```
 
-    **Note:** CU Boulder users can gain access to the SDK Examples by cloning this repository. Contact [Dave](davetcoleman@gmail.com) with your Github user name if you should have access to this.
+    Note: CU Boulder users can gain access to the SDK Examples by cloning this repository. Contact [Dave](davetcoleman@gmail.com) with your Github user name if you should have access to this.
 
     ```
     git clone git@github.com:correlllab/sdk-examples -b gazebo_dev
@@ -177,9 +177,9 @@ Works with simulation, hardware or visualization:
 
 Picks small blocks located on a table in front of Baxter and places them to Baxter's left. Assumes perfect perception (doesn't have perception) as defined in custom_environment.h.
 
-   ```
-   roslaunch baxter_pick_place block_pick_place.launch
-   ```
+```
+roslaunch baxter_pick_place block_pick_place.launch
+```
 
 ## Test Programs
 
@@ -199,6 +199,15 @@ Test grasp poses of blocks
 
 ```
 roslaunch baxter_pick_place block_grasp_generator_test.launch
+```
+
+## Tune Trajectory Controllers
+
+Starts an RQT plot of the position error of the two arms' joints.
+
+```
+roslaunch baxter_control joint_position_left_trajectory_controller.launch
+roslaunch baxter_control joint_position_right_trajectory_controller.launch
 ```
 
 ## Programmed Buttons
