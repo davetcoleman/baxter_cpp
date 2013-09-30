@@ -55,8 +55,6 @@ Otherwise you can just skip this section and install the Baxter code and it will
     catkin_make
     ```
     
-    **Note:** If you run into the error ``moveit_ros_perception: Cannot locate rosdep definition for [pcl]`` a temporary fix is to manually install PCL via ``sudo apt-get install ros-hydro-pcl``
-
 * Add MoveIt setup.bash to your .bashrc (recommended)
 
     ```

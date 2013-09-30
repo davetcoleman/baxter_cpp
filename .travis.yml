@@ -5,7 +5,7 @@ python:
   - "2.7"
 compiler:
   - gcc
-before_install:
+before_install: # Use this to prepare the system to install prerequisites or dependencies
   # Define some config vars
   - export ROS_DISTRO=hydro
   - export CI_SOURCE_PATH=$(pwd)
@@ -21,7 +21,7 @@ before_install:
   # Setup rosdep
   - sudo rosdep init
   - rosdep update
-install:
+install: # Use this to install any prerequisites or dependencies necessary to run your build
   # Create workspace
   - mkdir -p ~/ros/ws_baxter/src
   - cd ~/ros/ws_baxter/src
@@ -43,8 +43,30 @@ install:
   - sudo apt-get install ros-hydro-gazebo-ros ros-hydro-ros-controllers
   # Install dependencies for source repos
   - rosdep install --from-paths src --ignore-src --rosdistro $ROS_DISTRO -y
-script:
-  # Source
-  - source /opt/ros/$ROS_DISTRO/setup.bash
+install: # Use this to install any prerequisites or dependencies necessary to run your build
+  # Create workspace
+  - mkdir -p ~/ros/ws_baxter/src
+  - cd ~/ros/ws_baxter/src
+  - wstool init .
+  # Download non-debian stuff
+  #- wstool merge https://raw.github.com/davetcoleman/baxter/$TRAVIS_BRANCH/moveit.rosinstall
+  - wstool merge https://raw.github.com/davetcoleman/baxter/$TRAVIS_BRANCH/baxter.rosinstall
+  - wstool update
+  # Delete the baxter.rosinstall version of the repo and use the one of the branch we are testing
+  - rm -rf baxter/
+  - ln -s $CI_SOURCE_PATH . # Link the repo we are testing to the new workspace
+  # Optional: Pull in sdk-examples
+  - wget http://davetcoleman.com/baxter/sdk-examples.zip
+  - unzip sdk-examples.zip
+  - touch sdk-examples/baxter_description/CATKIN_IGNORE
+  - touch sdk-examples/baxter_msgs/CATKIN_IGNORE
+  - cd ../
+  # Test manual install
+  - sudo apt-get install ros-hydro-gazebo-ros ros-hydro-ros-controllers
+  # Install dependencies for source repos
+  - rosdep install --from-paths src --ignore-src --rosdistro $ROS_DISTRO -y
+before_script: # Use this to prepare your build for testing e.g. copy database configurations, environment variables, etc.
+  - source /opt/ros/$ROS_DISTRO/setup.bash  
+script: # All commands must exit with code 0 on success. Anything else is considered failure.
   - catkin_make DCMAKE_BUILD_TYPE=Debug
   #- catkin_make_isolated --source . -j1 --cmake-args --install
