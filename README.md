@@ -84,7 +84,7 @@ Otherwise you can just skip this section and install the Baxter code and it will
     **Note:** CU Boulder users can gain access to the SDK Examples by cloning this repository. Contact [Dave](davetcoleman@gmail.com) with your Github user name if you should have access to this.
 
     ```
-    git clone git@github.com:correlllab/baxter_sdk -b gazebo_dev
+    git clone git@github.com:correlllab/sdk-examples -b gazebo_dev
     ```
     
     There is currently a duplication of packages in sdk-examples and baxter_common that must be fixed manually. This issue should be fixed in Rethink's next release of their SDK:
