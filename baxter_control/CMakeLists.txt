@@ -82,6 +82,10 @@ add_executable(trajectory_msg_test src/test/trajectory_msg_test.cpp)
 target_link_libraries(trajectory_msg_test ${catkin_LIBRARIES} ${Boost_LIBRARIES})
 add_dependencies(trajectory_msg_test ${catkin_EXPORTED_TARGETS}) # don't build until necessary msgs are finish
 
+add_executable(baxter_assembly_state src/baxter_assembly_state.cpp)
+target_link_libraries(baxter_assembly_state ${catkin_LIBRARIES} ${Boost_LIBRARIES})
+add_dependencies(baxter_assembly_state ${catkin_EXPORTED_TARGETS}) # don't build until necessary msgs are finish
+
 #############
 ## Install ##
 #############
