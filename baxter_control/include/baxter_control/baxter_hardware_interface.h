@@ -50,12 +50,11 @@
 #include <hardware_interface/joint_command_interface.h>
 #include <hardware_interface/joint_state_interface.h>
 #include <hardware_interface/robot_hw.h>
-//#include <joint_limits_interface/joint_limits.h>
-//#include <joint_limits_interface/joint_limits_urdf.h>
 
 // Baxter
 #include <baxter_control/baxter_utilities.h>
 #include <baxter_control/arm_hardware_interface.h>
+#include <baxter_control/arm_simulator_interface.h>
 
 namespace baxter_control
 {
@@ -80,8 +79,10 @@ private:
   baxter_control::BaxterUtilities baxter_util_;
 
   // sub-hardware interfaces
-  baxter_control::ArmHardwareInterface right_arm_hw_;
-  baxter_control::ArmHardwareInterface left_arm_hw_;
+  //baxter_control::ArmHardwareInterface right_arm_hw_;
+  //baxter_control::ArmHardwareInterface left_arm_hw_;
+  baxter_control::ArmSimulatorInterface right_arm_hw_;
+  baxter_control::ArmSimulatorInterface left_arm_hw_;
 
   boost::shared_ptr<controller_manager::ControllerManager> controller_manager_;
 

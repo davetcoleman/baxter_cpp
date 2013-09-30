@@ -66,9 +66,6 @@ BaxterHardwareInterface::BaxterHardwareInterface()
   ROS_DEBUG_STREAM_NAMED("hardware_interface","Loading controller_manager");
   controller_manager_.reset(new controller_manager::ControllerManager(this, nh_));
 
-  //double total_sec = 0;
-  //std::size_t total_samples = 0;
-
   double hz = 100;
   ros::Duration update_freq = ros::Duration(1.0/hz);
   non_realtime_loop_ = nh_.createTimer(update_freq, &BaxterHardwareInterface::update, this);
@@ -100,11 +97,6 @@ void BaxterHardwareInterface::update(const ros::TimerEvent& e)
 
 } // namespace
 
-void callback1(const ros::TimerEvent& e)
-{
-  ROS_INFO_STREAM("Callback 1 triggered with period " << e.profile.last_duration);
-}
-
 int main(int argc, char** argv)
 {
   ROS_INFO_STREAM_NAMED("hardware_interface","Starting hardware interface...");
@@ -120,28 +112,6 @@ int main(int argc, char** argv)
   baxter_control::BaxterHardwareInterface baxter;
 
   ros::spin();
-
-  /*
-
-  // Update controllers
-  ros::Rate rate(100); // 50 hz
-  while (ros::ok())
-  {
-  baxter.read();
-  controller_manager.update(ros::Time::now(), rate.cycleTime()*10 ); // get the actual run time of a cycle from start to ros::Duration(5.0).sleep();
-  //controller_manager.update(ros::Time::now(), ros::Duration(0.01) );
-  baxter.write();
-
-  /*
-  total_sec += rate.cycleTime().toSec();
-  total_samples++;
-  if( total_samples % 100 == 0 )
-  ROS_INFO_STREAM_NAMED("hardware_interface", "Avg Rate:" << 1/(total_sec/total_samples)/100 << " hz");
-  * /
-
-  rate.sleep();
-  }
-  */
 
   ROS_INFO_STREAM_NAMED("hardware_interface","Shutting down.");
 
