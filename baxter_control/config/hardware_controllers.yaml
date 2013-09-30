@@ -17,31 +17,31 @@
       - left_w2
 
     constraints:
-      goal_time: 1.0                   # Defaults to zero
+      goal_time: 3.0                   # Defaults to zero
       stopped_velocity_tolerance: 0.03 # Defaults to 0.01
       left_s0:
-        trajectory: 0.05 
+        trajectory: 0 
         goal: 0.02       
       left_s1:
-        trajectory: 0.05 
+        trajectory: 0 
         goal: 0.02       
       left_e0:
-        trajectory: 0.05 
+        trajectory: 0 
         goal: 0.02       
       left_e1:
-        trajectory: 0.05 
+        trajectory: 0 
         goal: 0.02       
       left_w0:
-        trajectory: 0.05 
+        trajectory: 0 
         goal: 0.02       
       left_w1:
-        trajectory: 0.05 
+        trajectory: 0 
         goal: 0.02       
       left_w2:
-        trajectory: 0.05 
+        trajectory: 0 
         goal: 0.02       
 
-    state_publish_rate:  100 # Defaults to 50
+    state_publish_rate:  50 # Defaults to 50
     action_monitor_rate: 20 # Defaults to 20
     #hold_trajectory_duration: 0 # Defaults to 0.5
 
@@ -57,33 +57,29 @@
       - right_w2
 
     constraints:
-      goal_time: 1.0                   
+      goal_time: 3.0                   
       stopped_velocity_tolerance: 0.03 
       right_s0:
-        trajectory: 0.05 
+        trajectory: 0 
         goal: 0.02       
       right_s1:
-        trajectory: 0.05 
+        trajectory: 0 
         goal: 0.02       
       right_e0:
-        trajectory: 0.05 
+        trajectory: 0 
         goal: 0.02       
       right_e1:
-        trajectory: 0.05 
+        trajectory: 0 
         goal: 0.02       
       right_w0:
-        trajectory: 0.05 
+        trajectory: 0 
         goal: 0.02       
       right_w1:
-        trajectory: 0.05 
+        trajectory: 0 
         goal: 0.02       
       right_w2:
-        trajectory: 0.05 
+        trajectory: 0 
         goal: 0.02       
-
-    constraints:
-      goal_time: 3.0                   # Defaults to zero
-      stopped_velocity_tolerance: 0.01 # Defaults to 0.01
 
     state_publish_rate:  50 # Defaults to 50
     action_monitor_rate: 20 # Defaults to 20
