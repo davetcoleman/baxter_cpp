@@ -323,6 +323,11 @@ public:
 
     // End effector parent link
     const std::string &ik_link = visual_tools_->getEEParentLink();
+    const moveit::core::LinkModel *ik_link_model = approach_state.getLinkModel(ik_link);    
+
+    // Joint model group
+    const moveit::core::JointModelGroup *joint_model_group 
+      = approach_state.getJointModelGroup(planning_group_name_);
 
     // Resolution of trajectory
     double max_step = 0.001; // The maximum distance in Cartesian space between consecutive points on the resulting path
@@ -332,7 +337,7 @@ public:
 
     // ---------------------------------------------------------------------------------------------
     // Check for kinematic solver
-    if( !approach_state.getJointModelGroup(planning_group_name_)->canSetStateFromIK( ik_link ) )
+    if( !joint_model_group->canSetStateFromIK( ik_link ) )
     {
       // Set kinematic solver
       const std::pair<robot_model::JointModelGroup::KinematicsSolver, 
@@ -348,36 +353,13 @@ public:
     // Compute Cartesian Path
     ROS_INFO_STREAM_NAMED("verticle_test","Preparing to computer cartesian path");
 
-    /** \brief Compute the sequence of joint values that correspond to a Cartesian path.
-
-        The Cartesian path to be followed is specified as a direction of motion (\e direction, unit vector) for the origin of a robot
-        link (\e link_name). The direction is assumed to be either in a global reference frame or in the local reference frame of the
-        link. In the latter case (\e global_reference_frame is true) the \e direction is rotated accordingly. The link needs to move in a
-        straight line, following the specified direction, for the desired \e distance. The resulting joint values are stored in
-        the vector \e states, one by one. The maximum distance in Cartesian space between consecutive points on the resulting path
-        is specified by \e max_step.  If a \e validCallback is specified, this is passed to the internal call to|
-        setFromIK(). In case of IK failure, the computation of the path stops and the value returned corresponds to the distance that
-        was computed and for which corresponding states were added to the path.  At the end of the function call, the state of the
-        group corresponds to the last attempted Cartesian pose.  During the computation of the trajectory, it is sometimes prefered if
-        consecutive joint values do not 'jump' by a large amount in joint space, even if the Cartesian distance between the
-        corresponding points is as expected. To account for this, the \e jump_threshold parameter is provided.  As the joint values
-        corresponding to the Cartesian path are computed, distances in joint space between consecutive points are also computed. Once
-        the sequence of joint values is computed, the average distance between consecutive points (in joint space) is also computed. It
-        is then verified that none of the computed distances is above the average distance by a factor larger than \e jump_threshold. If
-        a point in joint is found such that it is further away than the previous one by more than average_consecutive_distance * \e jump_threshold,
-        that is considered a failure and the returned path is truncated up to just before the jump. The jump detection can be disabled
-        by settin \e jump_threshold to 0.0
-        double computeCartesianPath(std::vector<boost::shared_ptr<RobotState> > &traj, const std::string &link_name, const Eigen::Vector3d &direction, bool global_reference_frame,
-        ............................double distance, double max_step, double jump_threshold, const StateValidityCallbackFn &validCallback = StateValidityCallbackFn());
-    */
-
     std::vector<robot_state::RobotStatePtr> robot_state_trajectory; // create resulting generated trajectory (result)
 
     double d_approach =
       approach_state.computeCartesianPath(
-        planning_group_name_,
+        joint_model_group,
         robot_state_trajectory,
-        ik_link,                   // link name
+        ik_link_model,
         approach_direction,
         true,                      // direction is in global reference frame
         desired_approach_distance,
@@ -399,11 +381,7 @@ public:
 
     // -----------------------------------------------------------------------------------------------
     // Smooth the path and add velocities/accelerations
-
-    // Get the joint limits of planning group
-    const robot_model::JointModelGroup *joint_model_group =
-      planning_scene->getRobotModel()->getJointModelGroup(planning_group_name_);
-    const std::vector<moveit_msgs::JointLimits> &joint_limits = joint_model_group->getVariableLimits();
+    //const std::vector<moveit_msgs::JointLimits> &joint_limits = joint_model_group->getVariableLimits();
 
     // Copy the vector of RobotStates to a RobotTrajectory
     robot_trajectory::RobotTrajectoryPtr robot_trajectory(new robot_trajectory::RobotTrajectory(

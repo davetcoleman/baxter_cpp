@@ -299,7 +299,7 @@ public:
   {
     ROS_WARN_STREAM_NAMED("pick","Picking '"<< block_name << "'");
 
-    std::vector<manipulation_msgs::Grasp> grasps;
+    std::vector<moveit_msgs::Grasp> grasps;
 
     // Pick grasp
     block_grasp_generator_->generateGrasps( block_pose, grasp_data_, grasps );
@@ -332,8 +332,8 @@ public:
   {
     ROS_WARN_STREAM_NAMED("place","Placing '"<< block_name << "'");
 
-    std::vector<manipulation_msgs::PlaceLocation> place_locations;
-    std::vector<manipulation_msgs::Grasp> grasps;
+    std::vector<moveit_msgs::PlaceLocation> place_locations;
+    std::vector<moveit_msgs::Grasp> grasps;
 
     // Re-usable datastruct
     geometry_msgs::PoseStamped pose_stamped;
@@ -353,33 +353,33 @@ public:
       pose_stamped.pose.orientation.w = quat.w();
 
       // Create new place location
-      manipulation_msgs::PlaceLocation place_loc;
+      moveit_msgs::PlaceLocation place_loc;
 
       place_loc.place_pose = pose_stamped;
 
       visual_tools_->publishBlock( place_loc.place_pose.pose, BLOCK_SIZE, true );
 
       // Approach
-      manipulation_msgs::GripperTranslation gripper_approach;
-      gripper_approach.direction.header.stamp = ros::Time::now();
-      gripper_approach.desired_distance = grasp_data_.approach_retreat_desired_dist_; // The distance the origin of a robot link needs to travel
-      gripper_approach.min_distance = grasp_data_.approach_retreat_min_dist_; // half of the desired? Untested.
-      gripper_approach.direction.header.frame_id = grasp_data_.base_link_;
-      gripper_approach.direction.vector.x = 0;
-      gripper_approach.direction.vector.y = 0;
-      gripper_approach.direction.vector.z = -1; // Approach direction (negative z axis)  // TODO: document this assumption
-      place_loc.approach = gripper_approach;
+      moveit_msgs::GripperTranslation pre_place_approach;
+      pre_place_approach.direction.header.stamp = ros::Time::now();
+      pre_place_approach.desired_distance = grasp_data_.approach_retreat_desired_dist_; // The distance the origin of a robot link needs to travel
+      pre_place_approach.min_distance = grasp_data_.approach_retreat_min_dist_; // half of the desired? Untested.
+      pre_place_approach.direction.header.frame_id = grasp_data_.base_link_;
+      pre_place_approach.direction.vector.x = 0;
+      pre_place_approach.direction.vector.y = 0;
+      pre_place_approach.direction.vector.z = -1; // Approach direction (negative z axis)  // TODO: document this assumption
+      place_loc.pre_place_approach = pre_place_approach;
 
       // Retreat
-      manipulation_msgs::GripperTranslation gripper_retreat;
-      gripper_retreat.direction.header.stamp = ros::Time::now();
-      gripper_retreat.desired_distance = grasp_data_.approach_retreat_desired_dist_; // The distance the origin of a robot link needs to travel
-      gripper_retreat.min_distance = grasp_data_.approach_retreat_min_dist_; // half of the desired? Untested.
-      gripper_retreat.direction.header.frame_id = grasp_data_.base_link_;
-      gripper_retreat.direction.vector.x = 0;
-      gripper_retreat.direction.vector.y = 0;
-      gripper_retreat.direction.vector.z = 1; // Retreat direction (pos z axis)
-      place_loc.retreat = gripper_retreat;
+      moveit_msgs::GripperTranslation post_place_retreat;
+      post_place_retreat.direction.header.stamp = ros::Time::now();
+      post_place_retreat.desired_distance = grasp_data_.approach_retreat_desired_dist_; // The distance the origin of a robot link needs to travel
+      post_place_retreat.min_distance = grasp_data_.approach_retreat_min_dist_; // half of the desired? Untested.
+      post_place_retreat.direction.header.frame_id = grasp_data_.base_link_;
+      post_place_retreat.direction.vector.x = 0;
+      post_place_retreat.direction.vector.y = 0;
+      post_place_retreat.direction.vector.z = 1; // Retreat direction (pos z axis)
+      place_loc.post_place_retreat = post_place_retreat;
 
       // Post place posture - use same as pre-grasp posture (the OPEN command)
       place_loc.post_place_posture = grasp_data_.pre_grasp_posture_;

@@ -98,7 +98,7 @@ public:
     // ---------------------------------------------------------------------------------------------
     // Generate grasps for a bunch of random blocks
     geometry_msgs::Pose block_pose;
-    std::vector<manipulation_msgs::Grasp> possible_grasps;
+    std::vector<moveit_msgs::Grasp> possible_grasps;
 
     // Allow ROS to catchup
     ros::Duration(2.0).sleep();

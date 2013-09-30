@@ -78,22 +78,20 @@ block_grasp_generator::RobotGraspData loadRobotGraspData(const std::string& arm,
   grasp_data.pre_grasp_posture_.header.frame_id = BASE_LINK;
   grasp_data.pre_grasp_posture_.header.stamp = ros::Time::now();
   // Name of joints:
-  grasp_data.pre_grasp_posture_.name.resize(1);
-  grasp_data.pre_grasp_posture_.name[0] = arm + "_gripper_l_finger_joint";
+  grasp_data.pre_grasp_posture_.joint_names.push_back(arm + "_gripper_l_finger_joint");
   // Position of joints
-  grasp_data.pre_grasp_posture_.position.resize(1);
-  grasp_data.pre_grasp_posture_.position[0] = FINGER_JOINT_UPPER;
+  grasp_data.pre_grasp_posture_.points.resize(1);
+  grasp_data.pre_grasp_posture_.points[0].positions.push_back(FINGER_JOINT_UPPER);
 
   // -------------------------------
   // Create grasp posture (Gripper closed)
   grasp_data.grasp_posture_.header.frame_id = BASE_LINK;
   grasp_data.grasp_posture_.header.stamp = ros::Time::now();
   // Name of joints:
-  grasp_data.grasp_posture_.name.resize(1);
-  grasp_data.grasp_posture_.name[0] = arm + "_gripper_l_finger_joint";
+  grasp_data.grasp_posture_.joint_names.push_back(arm + "_gripper_l_finger_joint");
   // Position of joints
-  grasp_data.grasp_posture_.position.resize(1);
-  grasp_data.grasp_posture_.position[0] = FINGER_JOINT_LOWER;
+  grasp_data.grasp_posture_.points.resize(1);
+  grasp_data.grasp_posture_.points[0].positions.push_back(FINGER_JOINT_LOWER);
 
   // -------------------------------
   // SRDF Info
