@@ -2,8 +2,8 @@
 Changelog for package baxter_gripper_server
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Forthcoming
------------
+0.2.0 (2013-09-30)
+------------------
 * Tweaked trajectory controllers
 * Cleaned up Gazebo simulation stuff
 

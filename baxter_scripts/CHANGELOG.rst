@@ -2,8 +2,8 @@
 Changelog for package baxter_scripts
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Forthcoming
------------
+0.2.0 (2013-09-30)
+------------------
 * Changed debug info
 * Created scripts package
 

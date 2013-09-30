@@ -2,8 +2,8 @@
 Changelog for package baxter_gazebo
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Forthcoming
------------
+0.2.0 (2013-09-30)
+------------------
 * Cleaned up Gazebo simulation stuff
 * Cleaning up development branch
 * Refactored launch files

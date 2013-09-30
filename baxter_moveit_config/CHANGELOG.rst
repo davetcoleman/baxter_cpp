@@ -2,8 +2,8 @@
 Changelog for package baxter_moveit_config
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Forthcoming
------------
+0.2.0 (2013-09-30)
+------------------
 * Tweaked trajectory controllers
 * Fixed hardware performance
 * Tweaked collision geometries

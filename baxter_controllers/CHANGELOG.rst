@@ -2,8 +2,8 @@
 Changelog for package baxter_controllers
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Forthcoming
------------
+0.2.0 (2013-09-30)
+------------------
 * Joint trajectory controller initially working on hardware
 
 0.1.0 (2013-09-19)

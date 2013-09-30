@@ -2,8 +2,8 @@
 Changelog for package baxter_pick_place
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Forthcoming
------------
+0.2.0 (2013-09-30)
+------------------
 * Fixed hardware performance
 * Finished migrating to latest MoveIt API changes
 * Cleaning up development branch
