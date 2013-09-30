@@ -24,7 +24,7 @@
     <arg name="moveit_manage_controllers" value="true" />
   </include>
 
-  <include ns="move_group" file="$(find baxter_moveit_config)/launch/sensor_manager.launch" if="$(arg allow_trajectory_execution)">
+  <include ns="move_group" file="$(find baxter_moveit_config)/launch/sensor_manager.launch">
     <arg name="moveit_sensor_manager" value="baxter" /> 
   </include>
 
