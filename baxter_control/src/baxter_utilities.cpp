@@ -67,9 +67,9 @@ bool BaxterUtilities::communicationActive()
   int count = 0;
   while( ros::ok() && baxter_state_timestamp_.toSec() == 0 )
   {
-    if( count > 20 ) // 20 is an arbitrary number for when to assume no state is being published
+    if( count > 40 ) // 40 is an arbitrary number for when to assume no state is being published
     {
-      ROS_ERROR_STREAM_NAMED("utilities","No state message has been recieved on topic "
+      ROS_WARN_STREAM_NAMED("utilities","No state message has been recieved on topic "
         << BAXTER_STATE_TOPIC);
       return false;
     }

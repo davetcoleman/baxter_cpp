@@ -67,10 +67,19 @@ BaxterHardwareInterface::BaxterHardwareInterface(bool in_simulation)
   registerInterface(&pj_interface_);
 
   // Enable baxter
-  if( !baxter_util_.enableBaxter() )
+  bool enabled = false;
+  while(!enabled)
   {
-    ROS_ERROR_STREAM_NAMED("hardware_interface","Unable to enable Baxter");
-    exit(0);
+    if( !baxter_util_.enableBaxter() )
+    {
+      ROS_WARN_STREAM_NAMED("hardware_interface","Unable to enable Baxter, retrying...");
+      ros::Duration(0.5).sleep();
+      ros::spinOnce();
+    }
+    else
+    {
+      enabled = true;
+    }
   }
 
   // Create the controller manager
