@@ -309,7 +309,7 @@ Visualization Manager:
         Interactive Marker Size: 0.3
         Joint Violation Color: 255; 0; 255
         Planning Group: left_arm
-        Query Goal State: true
+        Query Goal State: false
         Query Start State: false
         Show Workspace: false
         Start State Alpha: 1
@@ -588,7 +588,8 @@ Visualization Manager:
       Marker Topic: /end_effector_marker
       Name: block_grasp_generator
       Namespaces:
-        {}
+        Arrow: true
+        Block: true
       Queue Size: 100
       Value: true
     - Class: rviz/MarkerArray

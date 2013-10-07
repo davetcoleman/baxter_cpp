@@ -196,7 +196,8 @@ bool ArmHardwareInterface::stateExpired()
   // \todo lower the expiration duration
   if( ros::Time::now() > state_msg_timestamp_ + ros::Duration(STATE_EXPIRED_TIMEOUT)) // check that the message timestamp is no older than 1 second
   {
-    ROS_WARN_STREAM_NAMED(arm_name_,"State expired. \n" << ros::Time::now() << "\n" <<
+
+    ROS_WARN_STREAM_THROTTLE_NAMED(1,arm_name_,"State expired. \n" << ros::Time::now() << "\n" <<
       state_msg_timestamp_ + ros::Duration(STATE_EXPIRED_TIMEOUT) << "\n" << " State: \n" << *state_msg_ );
     return true;
   }
