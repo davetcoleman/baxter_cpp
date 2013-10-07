@@ -565,7 +565,8 @@ Visualization Manager:
             Show Trail: false
             Value: true
         Robot Alpha: 1
-        Show Scene Robot: true
+        Show Robot Collision: true
+        Show Robot Visual: false
       Value: true
     - Alpha: 1
       Class: rviz/RobotModel

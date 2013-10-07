@@ -17,7 +17,7 @@
       - left_w2
 
     constraints:
-      goal_time: 0.0                   # Defaults to zero
+      goal_time: 2.0                   # Defaults to zero
       stopped_velocity_tolerance: 0.1 # Defaults to 0.01
       left_s0:
         trajectory: 0 

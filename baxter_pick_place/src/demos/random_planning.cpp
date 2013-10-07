@@ -45,6 +45,7 @@
 
 // Baxter Utilities
 #include <baxter_control/baxter_utilities.h>
+#include <baxter_pick_place/custom_environment2.h>
 
 // Visualization
 #include <block_grasp_generator/visualization_tools.h> // simple tool for showing graspsp
@@ -62,7 +63,7 @@
 namespace baxter_pick_place
 {
 
-static const std::string PLANNING_GROUP_NAME = "both_arms";
+static const std::string PLANNING_GROUP_NAME = "left_arm";
 
 class RandomPlanning
 {
@@ -85,7 +86,11 @@ public:
   // robot-specific data for generating grasps
   block_grasp_generator::RobotGraspData grasp_data_;
 
+  // allow head to move?
+  bool allow_head_movements_;
+
   RandomPlanning()
+    : allow_head_movements_(false)
   {
     ros::NodeHandle nh;
 
@@ -98,7 +103,7 @@ public:
     visual_tools_.reset(new block_grasp_generator::VisualizationTools( BASE_LINK));
     visual_tools_->setFloorToBaseHeight(FLOOR_TO_BASE_HEIGHT);
     visual_tools_->setEEGroupName(grasp_data_.ee_group_);
-    visual_tools_->setPlanningGroupName(PLANNING_GROUP_NAME);    
+    visual_tools_->setPlanningGroupName(PLANNING_GROUP_NAME);
 
     // ---------------------------------------------------------------------------------------------
     // Create MoveGroup
@@ -117,11 +122,20 @@ public:
     ROS_DEBUG_STREAM_NAMED("random_planning","Starting open publisher");
     gripper_release_topic_ = nh.advertise<std_msgs::Empty>("/robot/limb/right/accessory/gripper/command_release",10);
 
-    ROS_DEBUG_STREAM_NAMED("random_planning","Starting head nod publisher");
-    head_nod_topic_ = nh.advertise<std_msgs::Bool>("/robot/head/command_head_nod",10);
+    if ( allow_head_movements_ )
+    {
+      ROS_DEBUG_STREAM_NAMED("random_planning","Starting head nod publisher");
+      head_nod_topic_ = nh.advertise<std_msgs::Bool>("/robot/head/command_head_nod",10);
+    }
 
-    ROS_DEBUG_STREAM_NAMED("random_planning","Starting turn head publisher");
-    head_turn_topic_ = nh.advertise<baxter_msgs::HeadPanCommand>("/sdk/robot/head/command_head_pan",10);
+    if ( allow_head_movements_ )
+    {
+      ROS_DEBUG_STREAM_NAMED("random_planning","Starting turn head publisher");
+      head_turn_topic_ = nh.advertise<baxter_msgs::HeadPanCommand>("/sdk/robot/head/command_head_pan",10);
+    }
+
+    // Create the walls and tables
+    createEnvironment(visual_tools_);
 
     // Wait for everything to be ready
     ros::Duration(1.0).sleep();
@@ -159,22 +173,28 @@ public:
     while(ros::ok())
     {
       // First look around
-      head_command.target = fRand(-1,-0.1);
-      head_turn_topic_.publish(head_command);
+      if ( allow_head_movements_ )
+      {
+        head_command.target = fRand(-1,-0.1);
+        head_turn_topic_.publish(head_command);
 
-      ros::Duration(0.5).sleep();
-      head_command.target = fRand(0.1,1.0);
-      head_turn_topic_.publish(head_command);
+        ros::Duration(0.5).sleep();
+        head_command.target = fRand(0.1,1.0);
+        head_turn_topic_.publish(head_command);
 
-      ros::Duration(0.5).sleep();
-      head_command.target = 0.0;
-      head_turn_topic_.publish(head_command);
+        ros::Duration(0.5).sleep();
+        head_command.target = 0.0;
+        head_turn_topic_.publish(head_command);
+      }
 
       do
       {
-        ROS_INFO_STREAM_NAMED("random_planning","Random target...");
+        ROS_INFO_STREAM_NAMED("random_planning","Planning to random target...");
         group_->setRandomTarget();
-        head_nod_topic_.publish(true_command);
+        if ( allow_head_movements_ )
+        {
+          head_nod_topic_.publish(true_command);
+        }
       } while(!group_->move() && ros::ok());
 
       /*
