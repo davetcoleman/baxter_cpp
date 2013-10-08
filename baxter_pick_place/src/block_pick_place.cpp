@@ -142,13 +142,14 @@ public:
 
     // Create start block positions (hard coded)
     std::vector<MetaBlock> blocks;
-    double block_y = 0.4;
+    double block_y = 0.2;
+    double block_x = 0.54;
     // Flip the side of the table the blocks are on depending on which arm we are using
     if( arm_.compare("right") == 0 )
       block_y *= -1;
-    blocks.push_back( createStartBlock(0.65, block_y, "Block1") );
-    blocks.push_back( createStartBlock(0.75, block_y, "Block2") );
-    blocks.push_back( createStartBlock(0.85, block_y, "Block3") );
+    blocks.push_back( createStartBlock(block_x,       block_y, "Block1") );
+    blocks.push_back( createStartBlock(block_x+0.1,   block_y, "Block2") );
+    blocks.push_back( createStartBlock(block_x+0.2,   block_y, "Block3") );
 
     // The goal for each block is simply translating them on the y axis
     for (std::size_t i = 0; i < blocks.size(); ++i)

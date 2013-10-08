@@ -4,7 +4,8 @@
 
   <arg name="debug" default="false" />
   <arg unless="$(arg debug)" name="launch_prefix" value="" />
-  <arg     if="$(arg debug)" name="launch_prefix" value="gdb --ex run --args" />
+  <arg     if="$(arg debug)" name="launch_prefix"
+	   value="gdb -x $(find baxter_moveit_config)/launch/debug_settings.gdb --ex run --args" />
 
   <arg name="info" default="$(arg debug)" />  
   <arg unless="$(arg info)" name="command_args" value="" />

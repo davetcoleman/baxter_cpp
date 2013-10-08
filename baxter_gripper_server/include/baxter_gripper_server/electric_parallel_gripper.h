@@ -550,7 +550,7 @@ public:
     }
     else
     {
-      ROS_ERROR_STREAM_NAMED(arm_name_,"Failed to complete end effector command");
+      ROS_WARN_STREAM_NAMED(arm_name_,"Failed to complete end effector command");
       action_result_.reached_goal = false;
       action_result_.stalled = true; // \todo is this always true?
       action_server_.setSucceeded(action_result_,"Failure"); // \todo is this succeeded?

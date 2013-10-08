@@ -33,7 +33,7 @@
  *********************************************************************/
 
 /* Author: Dave Coleman
-   Desc:   Custom environments for running MoveIt!
+   Desc:   My office with Baxter having some right arm workspace and almost left arm workspace
 */
 
 #include <block_grasp_generator/visualization_tools.h> // simple tool for showing grasps
@@ -56,9 +56,16 @@ static const std::string WALL3_NAME = "left_wall";
 static const double TABLE_HEIGHT = 0.818;
 
 static const double TABLE_WIDTH  = 0.87;
+static const double TABLE_DEPTH  = 0.508;
+static const double TABLE_X = 0.75;
+static const double TABLE_Y = 0.155;
+
+/*
+static const double TABLE_WIDTH  = 0.87;
 static const double TABLE_DEPTH  = 0.44;
 static const double TABLE_X = 0.83;
 static const double TABLE_Y = 0.15;
+*/
 
 // block dimensions
 static const double BLOCK_SIZE = 0.04;
