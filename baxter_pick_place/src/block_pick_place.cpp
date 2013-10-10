@@ -89,12 +89,14 @@ public:
   // settings
   bool auto_reset_;
   int auto_reset_sec_;
+  int pick_place_count_; // tracks how many pick_places have run 
 
   SimplePickPlace()
     : auto_reset_(false),
       auto_reset_sec_(4),
       arm_("left"),
-      planning_group_name_(arm_+"_arm")
+      planning_group_name_(arm_+"_arm"),
+      pick_place_count_(0)
   {
     ros::NodeHandle nh;
 
@@ -231,11 +233,6 @@ public:
                 if( !move_group_->hasAttachedObject(blocks[block_id].name) )
                 {
                 ROS_WARN_STREAM_NAMED("pick_place","Collision object already detached, so auto resuming pick place.");
-                ROS_WARN_STREAM_NAMED("pick_place","Collision object already detached, so auto resuming pick place.");
-                ROS_WARN_STREAM_NAMED("pick_place","Collision object already detached, so auto resuming pick place.");
-                ROS_WARN_STREAM_NAMED("pick_place","Collision object already detached, so auto resuming pick place.");
-                ROS_WARN_STREAM_NAMED("pick_place","Collision object already detached, so auto resuming pick place.");
-                ROS_WARN_STREAM_NAMED("pick_place","Collision object already detached, so auto resuming pick place.");
 
                 // Ask user if we should try again
                 if( !promptUser() )
@@ -259,11 +256,14 @@ public:
           blocks[block_id].start_pose = blocks[block_id].goal_pose;
           blocks[block_id].goal_pose = temp;
 
+          pick_place_count_++;
+
         } // loop through 3 blocks
 
-      } // place on both sides of table
+        ROS_INFO_STREAM_NAMED("pick_place","Finished picking and placing " << blocks.size() 
+          << " blocks. Total pick_places: " << pick_place_count_);
 
-      ROS_INFO_STREAM_NAMED("pick_place","Finished picking and placing " << blocks.size() << " blocks!");
+      } // place on both sides of table
 
       // Ask user if we should repeat
       //if( !promptUser() )
