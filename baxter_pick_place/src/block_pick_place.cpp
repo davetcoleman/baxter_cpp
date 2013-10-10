@@ -180,83 +180,96 @@ public:
         resetBlock(blocks[i]);
       }
 
-      // Do for all blocks
-      for (std::size_t block_id = 0; block_id < blocks.size(); ++block_id)
+      // Place on left side, then back on right side
+      for (std::size_t side = 0; side < 2; ++side)
       {
-        // Pick -------------------------------------------------------------------------------------
-        while(ros::ok())
+
+        // Do for all blocks
+        for (std::size_t block_id = 0; block_id < blocks.size(); ++block_id)
         {
-          ROS_INFO_STREAM_NAMED("pick_place","Picking '" << blocks[block_id].name << "'");
-
-          // Visualize the block we are about to pick
-          visual_tools_->publishBlock( blocks[block_id].start_pose, BLOCK_SIZE, false );
-
-          if( !pick(blocks[block_id].start_pose, blocks[block_id].name) )
+          // Pick -------------------------------------------------------------------------------------
+          while(ros::ok())
           {
-            ROS_ERROR_STREAM_NAMED("pick_place","Pick failed.");
+            ROS_INFO_STREAM_NAMED("pick_place","Picking '" << blocks[block_id].name << "'");
 
-            // Ask user if we should try again
-            if( !promptUser() )
-              exit(0);
+            // Visualize the block we are about to pick
+            visual_tools_->publishBlock( blocks[block_id].start_pose, BLOCK_SIZE, false );
 
-            // Retry
-            resetBlock(blocks[block_id]);
-          }
-          else
-          {
-            ROS_INFO_STREAM_NAMED("pick_place","Done with pick ---------------------------");
-            break;
-          }
-        }
-
-        // Place -------------------------------------------------------------------------------------
-        while(ros::ok())
-        {
-          ROS_INFO_STREAM_NAMED("pick_place","Placing '" << blocks[block_id].name << "'");
-
-          // Publish goal block location
-          visual_tools_->publishBlock( blocks[block_id].goal_pose, BLOCK_SIZE, true );
-
-          if( !place(blocks[block_id].goal_pose, blocks[block_id].name) )
-          {
-            ROS_ERROR_STREAM_NAMED("pick_place","Place failed.");
-
-            // Determine if the attached collision body as already been removed, in which case
-            // we can ignore the failure and just resume picking
-            /*
-            if( !move_group_->hasAttachedObject(blocks[block_id].name) )
+            if( !pick(blocks[block_id].start_pose, blocks[block_id].name) )
             {
-              ROS_WARN_STREAM_NAMED("pick_place","Collision object already detached, so auto resuming pick place.");
-              ROS_WARN_STREAM_NAMED("pick_place","Collision object already detached, so auto resuming pick place.");
-              ROS_WARN_STREAM_NAMED("pick_place","Collision object already detached, so auto resuming pick place.");
-              ROS_WARN_STREAM_NAMED("pick_place","Collision object already detached, so auto resuming pick place.");
-              ROS_WARN_STREAM_NAMED("pick_place","Collision object already detached, so auto resuming pick place.");
-              ROS_WARN_STREAM_NAMED("pick_place","Collision object already detached, so auto resuming pick place.");
+              ROS_ERROR_STREAM_NAMED("pick_place","Pick failed.");
 
               // Ask user if we should try again
               if( !promptUser() )
+                exit(0);
+
+              // Retry
+              resetBlock(blocks[block_id]);
+            }
+            else
+            {
+              ROS_INFO_STREAM_NAMED("pick_place","Done with pick ---------------------------");
+              break;
+            }
+          }
+          
+          // Place -------------------------------------------------------------------------------------
+          while(ros::ok())
+          {
+            ROS_INFO_STREAM_NAMED("pick_place","Placing '" << blocks[block_id].name << "'");
+
+            // Publish goal block location
+            visual_tools_->publishBlock( blocks[block_id].goal_pose, BLOCK_SIZE, true );
+
+            if( !place(blocks[block_id].goal_pose, blocks[block_id].name) )
+            {
+              ROS_ERROR_STREAM_NAMED("pick_place","Place failed.");
+
+              // Determine if the attached collision body as already been removed, in which case
+              // we can ignore the failure and just resume picking
+              /*
+                if( !move_group_->hasAttachedObject(blocks[block_id].name) )
+                {
+                ROS_WARN_STREAM_NAMED("pick_place","Collision object already detached, so auto resuming pick place.");
+                ROS_WARN_STREAM_NAMED("pick_place","Collision object already detached, so auto resuming pick place.");
+                ROS_WARN_STREAM_NAMED("pick_place","Collision object already detached, so auto resuming pick place.");
+                ROS_WARN_STREAM_NAMED("pick_place","Collision object already detached, so auto resuming pick place.");
+                ROS_WARN_STREAM_NAMED("pick_place","Collision object already detached, so auto resuming pick place.");
+                ROS_WARN_STREAM_NAMED("pick_place","Collision object already detached, so auto resuming pick place.");
+
+                // Ask user if we should try again
+                if( !promptUser() )
                 break; // resume picking
                 }
-            */
-  
-            // Ask user if we should try again
-            if( !promptUser() )
-              exit(0);
-          }
-          else
-          {
-            ROS_INFO_STREAM_NAMED("pick_place","Done with place ----------------------------");
-            break;
-          }
-        }
+              */
 
-      }
+              // Ask user if we should try again
+              if( !promptUser() )
+                exit(0);
+            }
+            else
+            {
+              ROS_INFO_STREAM_NAMED("pick_place","Done with place ----------------------------");
+              break;
+            }
+          } // place retry loop
+
+          // Swap this block's start and end pose so that we can then move them back to position
+          geometry_msgs::Pose temp = blocks[block_id].start_pose;
+          blocks[block_id].start_pose = blocks[block_id].goal_pose;
+          blocks[block_id].goal_pose = temp;
+
+        } // loop through 3 blocks
+
+      } // place on both sides of table
 
       ROS_INFO_STREAM_NAMED("pick_place","Finished picking and placing " << blocks.size() << " blocks!");
 
       // Ask user if we should repeat
-      if( !promptUser() )
-        break;
+      //if( !promptUser() )
+      //  break;
+      ros::Duration(1.0).sleep();
+
     }
 
     // Move to gravity neutral position

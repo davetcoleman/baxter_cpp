@@ -15,6 +15,7 @@ find_package(catkin REQUIRED
     sensor_msgs
     trajectory_msgs
     joint_limits_interface
+    trajectory_msgs
 )
 
 ## System dependencies are found with CMake's conventions
@@ -44,6 +45,7 @@ catkin_package(
     sensor_msgs
     trajectory_msgs
     joint_limits_interface
+    trajectory_msgs
 #  DEPENDS system_lib
 )
 

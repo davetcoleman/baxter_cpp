@@ -43,7 +43,8 @@ namespace baxter_control
 
 ArmHardwareInterface::ArmHardwareInterface(const std::string &arm_name)
   : ArmInterface(arm_name),
-    state_msg_(new sensor_msgs::JointState())
+    state_msg_(new sensor_msgs::JointState()),
+    cuff_squeezed_previous(false)
 {
   // Populate joints in this arm
   joint_names_.push_back(arm_name_+"_e0");
@@ -64,6 +65,7 @@ ArmHardwareInterface::ArmHardwareInterface(const std::string &arm_name)
   joint_velocity_command_.resize(n_dof_);
   output_command_msg_.angles.resize(n_dof_);
   output_command_msg_.names.resize(n_dof_);
+  trajectory_command_msg_.joint_names.resize(n_dof_);
 
   for (std::size_t i = 0; i < n_dof_; ++i)
   {
@@ -73,7 +75,19 @@ ArmHardwareInterface::ArmHardwareInterface(const std::string &arm_name)
     joint_position_command_[i] = 0.0;
     joint_effort_command_[i] = 0.0;
     joint_velocity_command_[i] = 0.0;
+    trajectory_command_msg_.joint_names[i] = joint_names_[i];
   }
+
+  // Set trajectory to have one point
+  trajectory_msgs::JointTrajectoryPoint single_pt;
+  single_pt.positions.resize(n_dof_);
+  single_pt.time_from_start = ros::Duration(0);
+  trajectory_command_msg_.points.push_back(single_pt);
+
+  trajectory_msgs::JointTrajectoryPoint single_pt2;
+  single_pt2.positions.resize(n_dof_);
+  single_pt2.time_from_start = ros::Duration(0.5);
+  trajectory_command_msg_.points.push_back(single_pt2);
 }
 
 ArmHardwareInterface::~ArmHardwareInterface()
@@ -97,12 +111,20 @@ bool ArmHardwareInterface::init(
         js_interface.getHandle(joint_names_[i]),&joint_position_command_[i]));
   }
 
-  // Start publishers and subscribers
+  // Start publishers
   pub_position_command_ = nh_.advertise<baxter_msgs::JointPositions>("/robot/limb/"+arm_name_+
                           "/command_joint_angles",10);
 
+  pub_trajectory_command_ = nh_.advertise<trajectory_msgs::JointTrajectory>("/robot/"+arm_name_+
+                            "_joint_trajectory_controller/command",10);
+
+  // Start subscribers
   sub_joint_state_ = nh_.subscribe<sensor_msgs::JointState>("/robot/limb/" + arm_name_ +
                      "/joint_states", 1, &ArmHardwareInterface::stateCallback, this);
+
+  cuff_squeezed_sub_ = nh_.subscribe<baxter_msgs::DigitalIOState>("/sdk/robot/digital_io/" +
+                       arm_name_ + "_lower_cuff/state",
+                       1, &ArmHardwareInterface::cuffSqueezedCallback, this);
 
   // Wait for first state message to be recieved
   while(ros::ok() && state_msg_timestamp_.toSec() == 0)
@@ -240,5 +262,35 @@ void ArmHardwareInterface::write()
 
   pub_position_command_.publish(output_command_msg_);
 }
+
+void ArmHardwareInterface::cuffSqueezedCallback(const baxter_msgs::DigitalIOStateConstPtr& msg)
+{
+  // Check if button is pressed
+  if( msg->state == 1 )
+  {
+    cuff_squeezed_previous = true;
+  }
+  else  // button not pressed
+  {
+    if ( cuff_squeezed_previous )
+    {
+      // Publish this new trajectory just once, on cuff release
+      //trajectory_command_msg_.header.stamp = ros::Time::now() + ros::Duration(1.0);
+
+      // Update the trajectory message with the current positions
+      for (std::size_t i = 0; i < n_dof_; ++i)
+      {
+        trajectory_command_msg_.points[0].positions[i] = joint_position_[i];
+        trajectory_command_msg_.points[1].positions[i] = joint_position_[i];
+      }
+
+      // Send a trajectory
+      pub_trajectory_command_.publish(trajectory_command_msg_);
+    }
+
+    cuff_squeezed_previous = false;
+  }
+}
+
 
 } // namespace

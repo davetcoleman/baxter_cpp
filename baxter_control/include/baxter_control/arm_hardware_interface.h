@@ -45,6 +45,7 @@
 // ROS
 #include <ros/ros.h>
 #include <sensor_msgs/JointState.h>
+#include <trajectory_msgs/JointTrajectory.h>
 
 // ros_control
 #include <hardware_interface/joint_command_interface.h>
@@ -52,6 +53,7 @@
 
 // Baxter
 #include <baxter_msgs/JointPositions.h>
+#include <baxter_msgs/DigitalIOState.h>
 
 // Parent class
 #include <baxter_control/arm_interface.h>
@@ -67,14 +69,22 @@ private:
 
   // Publishers
   ros::Publisher pub_position_command_;
-  baxter_msgs::JointPositions output_command_msg_;
+  ros::Publisher pub_trajectory_command_;
 
   // Subscriber
   ros::Subscriber sub_joint_state_;
+  ros::Subscriber cuff_squeezed_sub_; // this is used to update the controllers when manual mode is started
 
   // Buffer of joint states
   sensor_msgs::JointStateConstPtr state_msg_;
   ros::Time state_msg_timestamp_;
+
+  // Messages to send
+  baxter_msgs::JointPositions output_command_msg_;
+  trajectory_msgs::JointTrajectory trajectory_command_msg_;
+
+  // Track button status
+  bool cuff_squeezed_previous;
 
 public:
 
@@ -116,6 +126,13 @@ public:
    * \brief Publish our hardware interface datastructures commands to Baxter hardware
    */
   void write();
+
+  /**
+   * \brief Check if the cuff manual control button is squeezed. If so, inform the trajectory controller to update
+            its setpoint
+   * \param msg - the state of the end effector cuff
+   */
+  void cuffSqueezedCallback(const baxter_msgs::DigitalIOStateConstPtr& msg);
 
 };
 

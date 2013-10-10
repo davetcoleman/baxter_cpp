@@ -21,25 +21,25 @@
       stopped_velocity_tolerance: 0.1 # Defaults to 0.01
       left_s0:
         trajectory: 0 
-        goal: 0.1       
+        goal: 0.2       
       left_s1:
         trajectory: 0 
-        goal: 0.1       
+        goal: 0.2       
       left_e0:
         trajectory: 0 
-        goal: 0.1       
+        goal: 0.2       
       left_e1:
         trajectory: 0 
-        goal: 0.1       
+        goal: 0.2       
       left_w0:
         trajectory: 0 
-        goal: 0.1       
+        goal: 0.2       
       left_w1:
         trajectory: 0 
-        goal: 0.1       
+        goal: 0.2       
       left_w2:
         trajectory: 0 
-        goal: 0.1       
+        goal: 0.2       
 
     state_publish_rate:  50 # Defaults to 50
     action_monitor_rate: 20 # Defaults to 20
