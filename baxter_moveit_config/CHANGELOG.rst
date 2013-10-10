@@ -2,6 +2,17 @@
 Changelog for package baxter_moveit_config
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+0.2.1 (2013-10-09)
+------------------
+* Added ability for cuff squeeze to update trajectory controller
+* Increased controller wait time
+* New debug options, reduced error msgs, tweaked environment
+* Updated random planner
+* Tweaks and updates
+* Removed anon because failes if computer has no name
+* Created new simulation method with ros_control
+* Updated trajectory tolerances
+
 0.2.0 (2013-09-30)
 ------------------
 * Tweaked trajectory controllers

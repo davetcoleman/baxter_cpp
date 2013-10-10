@@ -2,6 +2,10 @@
 Changelog for package baxter_gripper_server
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+0.2.1 (2013-10-09)
+------------------
+* New debug options, reduced error msgs, tweaked environment
+
 0.2.0 (2013-09-30)
 ------------------
 * Tweaked trajectory controllers

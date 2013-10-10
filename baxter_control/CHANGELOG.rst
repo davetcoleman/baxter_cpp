@@ -2,6 +2,19 @@
 Changelog for package baxter_control
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+0.2.1 (2013-10-09)
+------------------
+* Added ability for cuff squeeze to update trajectory controller
+* New debug options, reduced error msgs, tweaked environment
+* Updated random planner
+* Tweaks and updates
+* Incresed waiting time for Baxter visualization
+* Created new simulation method with ros_control
+* Merge branch 'hydro-devel' into development
+* Adding better visualization method
+* Created new assembly state publisher for visualizer
+* Updated trajectory tolerances
+
 0.2.0 (2013-09-30)
 ------------------
 * Tweaked trajectory controllers
