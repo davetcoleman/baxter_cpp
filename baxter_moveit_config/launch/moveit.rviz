@@ -4,14 +4,15 @@ Panels:
     Name: Displays
     Property Tree Widget:
       Expanded:
+        - /Global Options1
         - /Grid1/Offset1
-        - /MotionPlanning1
         - /MotionPlanning1/Scene Geometry1
         - /MotionPlanning1/Scene Robot1
         - /MotionPlanning1/Planning Request1
         - /MotionPlanning1/Planned Path1
-      Splitter Ratio: 0.711462
-    Tree Height: 548
+        - /DepthCloud1/Auto Size1
+      Splitter Ratio: 0.474359
+    Tree Height: 1012
   - Class: rviz/Help
     Name: Help
   - Class: rviz/Views
@@ -589,8 +590,7 @@ Visualization Manager:
       Marker Topic: /end_effector_marker
       Name: block_grasp_generator
       Namespaces:
-        Arrow: true
-        Block: true
+        {}
       Queue Size: 100
       Value: true
     - Class: rviz/MarkerArray
@@ -609,6 +609,44 @@ Visualization Manager:
         {}
       Queue Size: 100
       Value: false
+    - Alpha: 1
+      Auto Size:
+        Auto Size Factor: 1
+        Value: true
+      Autocompute Intensity Bounds: true
+      Autocompute Value Bounds:
+        Max Value: 10
+        Min Value: -10
+        Value: true
+      Axis: Z
+      Channel Name: intensity
+      Class: rviz/DepthCloud
+      Color: 255; 255; 255
+      Color Image Topic: /camera/rgb/image_color
+      Color Transformer: RGB8
+      Color Transport Hint: raw
+      Decay Time: 0
+      Depth Map Topic: /camera/depth/image_raw
+      Depth Map Transport Hint: raw
+      Enabled: false
+      Invert Rainbow: false
+      Max Color: 255; 255; 255
+      Max Intensity: 4096
+      Min Color: 0; 0; 0
+      Min Intensity: 0
+      Name: DepthCloud
+      Occlusion Compensation:
+        Occlusion Time-Out: 30
+        Value: false
+      Position Transformer: XYZ
+      Queue Size: 5
+      Selectable: true
+      Size (Pixels): 3
+      Style: Flat Squares
+      Topic Filter: true
+      Use Fixed Frame: true
+      Use rainbow: true
+      Value: false
   Enabled: true
   Global Options:
     Background Color: 48; 48; 48
@@ -624,17 +662,17 @@ Visualization Manager:
   Views:
     Current:
       Class: rviz/XYOrbit
-      Distance: 2.29447
+      Distance: 2.18282
       Focal Point:
-        X: 1.78678
-        Y: -0.397217
-        Z: -2.18774e-06
+        X: 0.948249
+        Y: -0.0415866
+        Z: -3.25306e-06
       Name: Current View
       Near Clip Distance: 0.01
-      Pitch: 0.6698
+      Pitch: 0.430203
       Target Frame: base_link
       Value: XYOrbit (rviz)
-      Yaw: 0.110365
+      Yaw: 0.0703605
     Saved: ~
 Window Geometry:
   Displays:
@@ -646,9 +684,9 @@ Window Geometry:
   Hide Right Dock: true
   Motion Planning:
     collapsed: false
-  QMainWindow State: 000000ff00000000fd0000000100000000000002a200000435fc0200000005fb000000100044006900730070006c006100790073010000004100000265000000dd00fffffffb0000000800480065006c00700000000342000000bb0000007600fffffffb0000000a005600690065007700730000000145000000cb000000b000fffffffb0000000c00430061006d00650072006100000002ff000001610000000000000000fb0000001e004d006f00740069006f006e00200050006c0061006e006e0069006e006701000002ac000001ca0000017400ffffff000003980000043500000001000000020000000100000002fc0000000100000002000000010000000a0054006f006f006c00730100000000ffffffff0000000000000000
+  QMainWindow State: 000000ff00000000fd00000001000000000000030e00000435fc0200000005fb000000100044006900730070006c006100790073010000004100000435000000dd00fffffffb0000000800480065006c00700000000342000000bb0000007600fffffffb0000000a005600690065007700730000000145000000cb000000b000fffffffb0000000c00430061006d00650072006100000002ff000001610000000000000000fb0000001e004d006f00740069006f006e00200050006c0061006e006e0069006e0067000000045f000000160000017400ffffff0000032c0000043500000001000000020000000100000002fc0000000100000002000000010000000a0054006f006f006c00730100000000ffffffff0000000000000000
   Views:
     collapsed: false
   Width: 1600
-  X: 3839
+  X: 3840
   Y: 0
