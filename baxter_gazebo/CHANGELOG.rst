@@ -2,6 +2,9 @@
 Changelog for package baxter_gazebo
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+0.2.1 (2013-10-09)
+------------------
+
 0.2.0 (2013-09-30)
 ------------------
 * Cleaned up Gazebo simulation stuff

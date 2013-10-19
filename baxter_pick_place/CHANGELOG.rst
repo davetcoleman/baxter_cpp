@@ -2,6 +2,13 @@
 Changelog for package baxter_pick_place
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+0.2.1 (2013-10-09)
+------------------
+* Added counter
+* Added ability for cuff squeeze to update trajectory controller
+* New debug options, reduced error msgs, tweaked environment
+* Updated random planner
+
 0.2.0 (2013-09-30)
 ------------------
 * Fixed hardware performance

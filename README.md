@@ -1,7 +1,7 @@
 baxter
 ======
 
-Unofficial Baxter packages that add-on to the Rethink SDK. It is entirely written in C++ and currently contains Gazebo simulation and pick and place MoveIt code for Baxter. On going development continues in the hydro-devel branch by [Dave Coleman](http://davetcoleman.com). 
+Unofficial Baxter packages that work along side the Rethink SDK, or optionally without it. It is entirely written in C++ and currently contains Gazebo simulation and pick and place MoveIt code for Baxter. On going development continues in the hydro-devel branch by [Dave Coleman](http://davetcoleman.com). 
 
 <img align="right" src="https://raw.github.com/davetcoleman/baxter/hydro-devel/baxter_pick_place/resource/BaxterPickPlace.png" />
 
@@ -13,12 +13,11 @@ Unofficial Baxter packages that add-on to the Rethink SDK. It is entirely writte
    * Not implemented yet: simulated cameras, sonars, or other sensors. Feel free to add!
  * Baxter pick and place with MoveIt
    * Generate grasps for simple blocks on a table
-   * Execute a pick and place routine (not robust yet)
+   * Execute a pick and place routine
    * Works on hardware, Gazebo and in an Rviz visualization
    * Other tools for testing trajectories
  * Baxter position trajectory controller
    * Uses the ros_control [joint_trajectory_controller](https://github.com/ros-controls/ros_controllers/tree/hydro-devel/joint_trajectory_controller) instead of the python trajectory controller that comes with the SDK
-   * This repository no longer requires access to RethinkRobotics/sdk-examples
 
 **Note:** This is the ROS Hydro version. See groovy-devel branch for ROS Groovy instructions, although that branch is no longer being actively developed.
 
@@ -28,7 +27,7 @@ Unofficial Baxter packages that add-on to the Rethink SDK. It is entirely writte
 
 ## Prerequisites
 
- * A Baxter with dual parallel grippers, or the desire to see one visualized or simulated
+ * A Baxter with dual parallel electric grippers, or the desire to see one visualized/simulated
  * [ROS Hydro](http://wiki.ros.org/ROS/Installation) on (suggested) Ubuntu 12.04
  * Install wstool package
     ```
@@ -39,7 +38,7 @@ Unofficial Baxter packages that add-on to the Rethink SDK. It is entirely writte
 
 You should install MoveIt from source if:
 
- * The current public moveit_core debian release is not 0.5.2 (check [here](http://ros.org/debbuild/hydro.html) and search for moveit_core, then hover your mouse over the third column under HbinP64. Or check [here](https://github.com/ros-planning/moveit_core/releases))
+ * You want to be guaranteed compatibility and the current public moveit_core debian release is not 0.5.4 (check [here](http://ros.org/debbuild/hydro.html) and search for moveit_core, then hover your mouse over the third column under HbinP64. Or check [here](https://github.com/ros-planning/moveit_core/releases))
  * You want to install MoveIt from source for development reasons but also want to ensure your source checkout is compatible with this repo
 
 Otherwise you can just skip this section and install the Baxter code and it will automatically pull the necessary debians for MoveIt
@@ -210,7 +209,7 @@ The rectangular and circular buttons on the end effector cuff have been programm
 
 ## Helpful Aliases
 
-When using Baxter, it is very productive to have command shortcuts for diagnosing baxter. These are the ones I use:
+When using Baxter, it is productive to have command shortcuts for diagnosing baxter. These are the ones I use:
 
 ### Turn on and off
 
@@ -226,7 +225,6 @@ When using Baxter, it is very productive to have command shortcuts for diagnosin
     alias bbu="roslaunch baxter_control baxter_bringup.launch"
     alias bm="roslaunch baxter_moveit_config baxter_moveit.launch"
     alias bpp="roslaunch baxter_pick_place block_pick_place.launch"
-    alias bw="rosrun joint_velocity wobbler.py"
 
 ### Calibrate/Tare
 
@@ -247,6 +245,11 @@ When using Baxter, it is very productive to have command shortcuts for diagnosin
     alias blgripperres="rostopic pub -1 /robot/limb/left/accessory/gripper/command_reset std_msgs/Bool true"
     alias blgripperopen="rostopic pub -1 /robot/limb/left/accessory/gripper/command_release std_msgs/Empty"
     alias blgripperclose="rostopic pub -1 /robot/limb/left/accessory/gripper/command_grip std_msgs/Float32 0"
+
+### View Cameras
+
+    alias brcamera="rosrun image_view image_view image:=/cameras/right_hand_camera/image"
+    alias blcamera="rosrun image_view image_view image:=/cameras/left_hand_camera/image"
 
 ### Misc
 
