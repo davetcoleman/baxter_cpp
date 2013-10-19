@@ -24,7 +24,6 @@
   <build_depend>transmission_interface</build_depend>
   <build_depend>hardware_interface</build_depend>
   <build_depend>sensor_msgs</build_depend>
-  <build_depend>trajectory_msgs</build_depend>
   <build_depend>joint_limits_interface</build_depend>
   <build_depend>trajectory_msgs</build_depend>
 
@@ -37,7 +36,6 @@
   <run_depend>transmission_interface</run_depend>
   <run_depend>hardware_interface</run_depend>
   <run_depend>sensor_msgs</run_depend>
-  <run_depend>trajectory_msgs</run_depend>
   <run_depend>joint_limits_interface</run_depend>
   <run_depend>baxter_description</run_depend>
   <run_depend>trajectory_msgs</run_depend>

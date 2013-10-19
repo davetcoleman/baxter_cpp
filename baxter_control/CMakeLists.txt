@@ -13,7 +13,6 @@ find_package(catkin REQUIRED
     transmission_interface
     hardware_interface
     sensor_msgs
-    trajectory_msgs
     joint_limits_interface
     trajectory_msgs
 )
@@ -43,7 +42,6 @@ catkin_package(
     transmission_interface
     hardware_interface
     sensor_msgs
-    trajectory_msgs
     joint_limits_interface
     trajectory_msgs
 #  DEPENDS system_lib

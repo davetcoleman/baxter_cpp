@@ -78,7 +78,7 @@ ArmHardwareInterface::ArmHardwareInterface(const std::string &arm_name)
     trajectory_command_msg_.joint_names[i] = joint_names_[i];
   }
 
-  // Set trajectory to have one point
+  // Set trajectory to have two point
   trajectory_msgs::JointTrajectoryPoint single_pt;
   single_pt.positions.resize(n_dof_);
   single_pt.time_from_start = ros::Duration(0);
@@ -167,50 +167,6 @@ void ArmHardwareInterface::stateCallback(const sensor_msgs::JointStateConstPtr& 
   state_msg_ = msg;
   state_msg_timestamp_ = ros::Time::now();
 }
-
-/*
-  void ArmHardwareInterface::loadJointStateNameMap()
-  {
-  ROS_DEBUG_STREAM_NAMED(arm_name_,"Loading joint state map using state msg:\n"
-  << *state_msg_);
-
-  int controlled_joints_count = 0;
-  for (std::size_t i = 0; i < joint_names_.size(); ++i)
-  {
-  // Find the name in the state message that corresponds to the transmission index
-  std::vector<std::string>::const_iterator name_it;
-  name_it = std::find(state_msg_->name.begin(), state_msg_->name.end(), joint_names_[i]);
-
-  // Error check
-  if( name_it == state_msg_->name.end() )
-  {
-  ROS_DEBUG_STREAM_NAMED(arm_name_,"No mapping for '" <<
-  joint_names_[i] << "' in Baxter state message");
-  }ppp
-  else
-  {
-  // We will use this in our published command message - keep track of size of vector
-  controlled_joints_count++;
-  }
-
-  // Copy index of found joint name
-  joint_interface_to_joint_state_[i] = name_it - state_msg_->name.begin() - 1;
-  }
-
-  std::copy(joint_interface_to_joint_state_.begin(), joint_interface_to_joint_state_.end(),
-  std::ostream_iterator<double>(std::cout, "\n"));
-
-  // Resize the output publisher message to match input message
-  output_command_msg_.angles.resize(controlled_joints_count);
-  output_command_msg_.names.resize(controlled_joints_count);
-
-  ROS_DEBUG_STREAM_NAMED(arm_name_,"Matched " << controlled_joints_count <<
-  " joints from state message and URDF transmissions");
-
-  // \temp
-  sleep(2);
-  }
-*/
 
 bool ArmHardwareInterface::stateExpired()
 {
