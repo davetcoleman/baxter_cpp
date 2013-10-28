@@ -94,7 +94,7 @@ public:
   SimplePickPlace()
     : auto_reset_(false),
       auto_reset_sec_(4),
-      arm_("left"),
+      arm_("right"),
       planning_group_name_(arm_+"_arm"),
       pick_place_count_(0)
   {

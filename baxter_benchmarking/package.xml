@@ -1,0 +1,27 @@
+<?xml version="1.0"?>
+<package>
+  <name>baxter_benchmarking</name>
+  <version>0.0.1</version>
+  <description>The baxter_benchmarking package</description>
+
+  <maintainer email="davetcoleman@gmail.com">Dave Coleman</maintainer>
+
+  <license>BSD</license>
+
+  <url type="website">https://github.com/davetcoleman/baxter</url>
+  <url type="butracker">https://github.com/davetcoleman/baxter/issues</url>
+  <url type="repository">https://github.com/davetcoleman/baxter/</url>
+
+  <author email="davetcoleman@gmail.com">Dave Coleman</author>
+
+  <buildtool_depend>catkin</buildtool_depend>
+
+  <build_depend>roscpp</build_depend>
+
+  <run_depend>roscpp</run_depend>
+  <run_depend>moveit_ros_benchmarking</run_depend>
+  <run_depend>moveit_ros_warehouse</run_depend>
+
+  <export>
+  </export>
+</package>
