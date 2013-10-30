@@ -6,13 +6,14 @@ Panels:
       Expanded:
         - /Global Options1
         - /Grid1/Offset1
+        - /MotionPlanning1
         - /MotionPlanning1/Scene Geometry1
         - /MotionPlanning1/Scene Robot1
         - /MotionPlanning1/Planning Request1
         - /MotionPlanning1/Planned Path1
         - /DepthCloud1/Auto Size1
       Splitter Ratio: 0.474359
-    Tree Height: 633
+    Tree Height: 455
   - Class: rviz/Help
     Name: Help
   - Class: rviz/Views
@@ -41,10 +42,26 @@ Visualization Manager:
       Plane Cell Count: 10
       Reference Frame: <Fixed Frame>
       Value: true
+    - Alpha: 1
+      Class: rviz/RobotModel
+      Collision Enabled: true
+      Enabled: false
+      Links:
+        All Links Enabled: true
+        Expand Joint Details: false
+        Expand Link Details: false
+        Expand Tree: false
+        Link Tree Style: Links in Alphabetic Order
+      Name: RobotModel
+      Robot Description: robot_description
+      TF Prefix: ""
+      Update Interval: 0
+      Value: false
+      Visual Enabled: true
     - Class: moveit_rviz_plugin/MotionPlanning
       Enabled: true
-      MoveIt_Goal_Tolerance: 0
-      MoveIt_Planning_Time: 5
+      MoveIt_Goal_Tolerance: 2
+      MoveIt_Planning_Time: 20
       MoveIt_Use_Constraint_Aware_IK: true
       MoveIt_Warehouse_Host: 127.0.0.1
       MoveIt_Warehouse_Port: 33829
@@ -289,7 +306,7 @@ Visualization Manager:
             Show Axes: false
             Show Trail: false
             Value: true
-        Loop Animation: false
+        Loop Animation: true
         Robot Alpha: 0.45
         Show Robot Collision: false
         Show Robot Visual: true
@@ -310,8 +327,8 @@ Visualization Manager:
         Interactive Marker Size: 0.3
         Joint Violation Color: 255; 0; 255
         Planning Group: left_arm
-        Query Goal State: false
-        Query Start State: false
+        Query Goal State: true
+        Query Start State: true
         Show Workspace: false
         Start State Alpha: 1
         Start State Color: 0; 255; 0
@@ -567,24 +584,8 @@ Visualization Manager:
             Value: true
         Robot Alpha: 1
         Show Robot Collision: false
-        Show Robot Visual: true
+        Show Robot Visual: false
       Value: true
-    - Alpha: 1
-      Class: rviz/RobotModel
-      Collision Enabled: true
-      Enabled: false
-      Links:
-        All Links Enabled: true
-        Expand Joint Details: false
-        Expand Link Details: false
-        Expand Tree: false
-        Link Tree Style: Links in Alphabetic Order
-      Name: RobotModel
-      Robot Description: robot_description
-      TF Prefix: ""
-      Update Interval: 0
-      Value: false
-      Visual Enabled: true
     - Class: rviz/Marker
       Enabled: true
       Marker Topic: /end_effector_marker
@@ -594,13 +595,31 @@ Visualization Manager:
       Queue Size: 100
       Value: true
     - Class: rviz/MarkerArray
-      Enabled: false
+      Enabled: true
       Marker Topic: /move_group/display_contacts
       Name: MoveIt Contacts
       Namespaces:
-        {}
+        "   front_table=left_gripper": true
+        "   front_table=left_hand": true
+        "   front_table=left_hand_camera": true
+        "   front_table=left_hand_range": true
+        "   front_table=left_wrist": true
+        "   oven_left=left_gripper": true
+        "   oven_left=left_hand": true
+        "   oven_left=left_hand_camera": true
+        "   oven_left=left_hand_range": true
+        "   oven_left=left_wrist": true
+        "   oven_right=left_gripper": true
+        "   oven_right=left_hand_camera": true
+        left_gripper_l_finger=   front_table: true
+        left_gripper_l_finger=   oven_left: true
+        left_gripper_l_finger=   oven_right: true
+        left_gripper_r_finger=   front_table: true
+        left_gripper_r_finger=   oven_left: true
+        left_gripper_r_finger=   oven_right: true
+        left_gripper_r_finger=   oven_top: true
       Queue Size: 100
-      Value: false
+      Value: true
     - Class: rviz/MarkerArray
       Enabled: false
       Marker Topic: /move_group/display_grasp_markers
@@ -662,31 +681,31 @@ Visualization Manager:
   Views:
     Current:
       Class: rviz/XYOrbit
-      Distance: 2.18282
+      Distance: 1.81709
       Focal Point:
-        X: 0.948249
-        Y: -0.0415866
-        Z: -3.25306e-06
+        X: 0.768818
+        Y: 0.195412
+        Z: 0
       Name: Current View
       Near Clip Distance: 0.01
-      Pitch: 0.430203
+      Pitch: 0.0297979
       Target Frame: base_link
       Value: XYOrbit (rviz)
-      Yaw: 0.0703605
+      Yaw: 0.0104331
     Saved: ~
 Window Geometry:
   Displays:
     collapsed: false
-  Height: 1171
+  Height: 1004
   Help:
     collapsed: false
   Hide Left Dock: false
   Hide Right Dock: true
   Motion Planning:
     collapsed: false
-  QMainWindow State: 000000ff00000000fd0000000100000000000002a200000434fc0200000005fb000000100044006900730070006c0061007900730100000041000002ba000000dd00fffffffb0000000800480065006c00700000000342000000bb0000007600fffffffb0000000a005600690065007700730000000145000000cb000000b000fffffffb0000000c00430061006d00650072006100000002ff000001610000000000000000fb0000001e004d006f00740069006f006e00200050006c0061006e006e0069006e00670100000301000001740000017400ffffff000003960000043400000001000000020000000100000002fc0000000100000002000000010000000a0054006f006f006c00730100000000ffffffff0000000000000000
+  QMainWindow State: 000000ff00000000fd0000000100000000000002a20000038dfc0200000005fb000000100044006900730070006c006100790073010000004100000208000000dd00fffffffb0000000800480065006c00700000000342000000bb0000007600fffffffb0000000a005600690065007700730000000145000000cb000000b000fffffffb0000000c00430061006d00650072006100000002ff000001610000000000000000fb0000001e004d006f00740069006f006e00200050006c0061006e006e0069006e0067010000024f0000017f0000017400ffffff000004d80000038d00000001000000020000000100000002fc0000000100000002000000010000000a0054006f006f006c00730100000000ffffffff0000000000000000
   Views:
     collapsed: false
-  Width: 1598
-  X: 3840
-  Y: 0
+  Width: 1920
+  X: 1919
+  Y: 144

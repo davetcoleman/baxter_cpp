@@ -8,6 +8,7 @@ find_package(catkin REQUIRED COMPONENTS
   moveit_core
   pluginlib
   roscpp
+  tf_conversions
 )
 
 include_directories(${catkin_INCLUDE_DIRS})
@@ -19,6 +20,7 @@ catkin_package(
   moveit_core
   pluginlib
   roscpp
+  tf_conversions
 )
 
 include_directories(include)
@@ -35,22 +37,7 @@ install(DIRECTORY include/ DESTINATION include)
 
 install(
   FILES
-  baxter_moveit_ikfast_plugin_description.xml
+  baxter_left_arm_moveit_ikfast_plugin_description.xml
   DESTINATION
   ${CATKIN_PACKAGE_SHARE_DESTINATION}
-  )
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+)
