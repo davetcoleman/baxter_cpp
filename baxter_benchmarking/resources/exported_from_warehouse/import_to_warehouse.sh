@@ -1,0 +1,1 @@
+rosrun moveit_ros_warehouse moveit_save_to_warehouse industrial.queries
