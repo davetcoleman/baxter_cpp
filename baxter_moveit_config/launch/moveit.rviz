@@ -13,7 +13,7 @@ Panels:
         - /MotionPlanning1/Planned Path1
         - /DepthCloud1/Auto Size1
       Splitter Ratio: 0.474359
-    Tree Height: 455
+    Tree Height: 454
   - Class: rviz/Help
     Name: Help
   - Class: rviz/Views
@@ -60,7 +60,7 @@ Visualization Manager:
       Visual Enabled: true
     - Class: moveit_rviz_plugin/MotionPlanning
       Enabled: true
-      MoveIt_Goal_Tolerance: 2
+      MoveIt_Goal_Tolerance: 0
       MoveIt_Planning_Time: 20
       MoveIt_Use_Constraint_Aware_IK: true
       MoveIt_Warehouse_Host: 127.0.0.1
@@ -599,25 +599,8 @@ Visualization Manager:
       Marker Topic: /move_group/display_contacts
       Name: MoveIt Contacts
       Namespaces:
-        "   front_table=left_gripper": true
-        "   front_table=left_hand": true
-        "   front_table=left_hand_camera": true
-        "   front_table=left_hand_range": true
-        "   front_table=left_wrist": true
-        "   oven_left=left_gripper": true
-        "   oven_left=left_hand": true
-        "   oven_left=left_hand_camera": true
-        "   oven_left=left_hand_range": true
-        "   oven_left=left_wrist": true
-        "   oven_right=left_gripper": true
-        "   oven_right=left_hand_camera": true
-        left_gripper_l_finger=   front_table: true
-        left_gripper_l_finger=   oven_left: true
-        left_gripper_l_finger=   oven_right: true
-        left_gripper_r_finger=   front_table: true
-        left_gripper_r_finger=   oven_left: true
-        left_gripper_r_finger=   oven_right: true
-        left_gripper_r_finger=   oven_top: true
+        left_gripper_r_finger=right_upper_forearm: true
+        torso=left_lower_forearm: true
       Queue Size: 100
       Value: true
     - Class: rviz/MarkerArray
@@ -681,31 +664,31 @@ Visualization Manager:
   Views:
     Current:
       Class: rviz/XYOrbit
-      Distance: 1.81709
+      Distance: 2.03514
       Focal Point:
         X: 0.768818
         Y: 0.195412
         Z: 0
       Name: Current View
       Near Clip Distance: 0.01
-      Pitch: 0.0297979
+      Pitch: 0.824798
       Target Frame: base_link
       Value: XYOrbit (rviz)
-      Yaw: 0.0104331
+      Yaw: 6.09861
     Saved: ~
 Window Geometry:
   Displays:
     collapsed: false
-  Height: 1004
+  Height: 1003
   Help:
     collapsed: false
   Hide Left Dock: false
   Hide Right Dock: true
   Motion Planning:
     collapsed: false
-  QMainWindow State: 000000ff00000000fd0000000100000000000002a20000038dfc0200000005fb000000100044006900730070006c006100790073010000004100000208000000dd00fffffffb0000000800480065006c00700000000342000000bb0000007600fffffffb0000000a005600690065007700730000000145000000cb000000b000fffffffb0000000c00430061006d00650072006100000002ff000001610000000000000000fb0000001e004d006f00740069006f006e00200050006c0061006e006e0069006e0067010000024f0000017f0000017400ffffff000004d80000038d00000001000000020000000100000002fc0000000100000002000000010000000a0054006f006f006c00730100000000ffffffff0000000000000000
+  QMainWindow State: 000000ff00000000fd0000000100000000000002a20000038cfc0200000005fb000000100044006900730070006c006100790073010000004100000207000000dd00fffffffb0000000800480065006c00700000000342000000bb0000007600fffffffb0000000a005600690065007700730000000145000000cb000000b000fffffffb0000000c00430061006d00650072006100000002ff000001610000000000000000fb0000001e004d006f00740069006f006e00200050006c0061006e006e0069006e0067010000024e0000017f0000017400ffffff000004d60000038c00000001000000020000000100000002fc0000000100000002000000010000000a0054006f006f006c00730100000000ffffffff0000000000000000
   Views:
     collapsed: false
-  Width: 1920
-  X: 1919
+  Width: 1918
+  X: 1920
   Y: 144
