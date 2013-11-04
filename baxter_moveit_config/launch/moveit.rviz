@@ -11,9 +11,10 @@ Panels:
         - /MotionPlanning1/Scene Robot1
         - /MotionPlanning1/Planning Request1
         - /MotionPlanning1/Planned Path1
+        - /block_grasp_generator1
         - /DepthCloud1/Auto Size1
-      Splitter Ratio: 0.474359
-    Tree Height: 454
+      Splitter Ratio: 0.544529
+    Tree Height: 1011
   - Class: rviz/Help
     Name: Help
   - Class: rviz/Views
@@ -306,11 +307,11 @@ Visualization Manager:
             Show Axes: false
             Show Trail: false
             Value: true
-        Loop Animation: true
+        Loop Animation: false
         Robot Alpha: 0.45
         Show Robot Collision: false
         Show Robot Visual: true
-        Show Trail: false
+        Show Trail: true
         State Display Time: 0.05 s
         Trajectory Topic: /move_group/display_planned_path
       Planning Metrics:
@@ -584,7 +585,7 @@ Visualization Manager:
             Value: true
         Robot Alpha: 1
         Show Robot Collision: false
-        Show Robot Visual: false
+        Show Robot Visual: true
       Value: true
     - Class: rviz/Marker
       Enabled: true
@@ -599,8 +600,7 @@ Visualization Manager:
       Marker Topic: /move_group/display_contacts
       Name: MoveIt Contacts
       Namespaces:
-        left_gripper_r_finger=right_upper_forearm: true
-        torso=left_lower_forearm: true
+        {}
       Queue Size: 100
       Value: true
     - Class: rviz/MarkerArray
@@ -649,6 +649,17 @@ Visualization Manager:
       Use Fixed Frame: true
       Use rainbow: true
       Value: false
+    - Class: rviz/Image
+      Enabled: false
+      Image Topic: /camera/image_raw
+      Max Value: 1
+      Median window: 5
+      Min Value: 0
+      Name: Image
+      Normalize Range: true
+      Queue Size: 2
+      Transport Hint: raw
+      Value: false
   Enabled: true
   Global Options:
     Background Color: 48; 48; 48
@@ -664,31 +675,33 @@ Visualization Manager:
   Views:
     Current:
       Class: rviz/XYOrbit
-      Distance: 2.03514
+      Distance: 1.76513
       Focal Point:
-        X: 0.768818
-        Y: 0.195412
-        Z: 0
+        X: 0.779216
+        Y: 0.00830515
+        Z: 2.38419e-07
       Name: Current View
       Near Clip Distance: 0.01
-      Pitch: 0.824798
+      Pitch: 0.714798
       Target Frame: base_link
       Value: XYOrbit (rviz)
-      Yaw: 6.09861
+      Yaw: 5.57361
     Saved: ~
 Window Geometry:
   Displays:
     collapsed: false
-  Height: 1003
+  Height: 1171
   Help:
     collapsed: false
   Hide Left Dock: false
   Hide Right Dock: true
+  Image:
+    collapsed: false
   Motion Planning:
     collapsed: false
-  QMainWindow State: 000000ff00000000fd0000000100000000000002a20000038cfc0200000005fb000000100044006900730070006c006100790073010000004100000207000000dd00fffffffb0000000800480065006c00700000000342000000bb0000007600fffffffb0000000a005600690065007700730000000145000000cb000000b000fffffffb0000000c00430061006d00650072006100000002ff000001610000000000000000fb0000001e004d006f00740069006f006e00200050006c0061006e006e0069006e0067010000024e0000017f0000017400ffffff000004d60000038c00000001000000020000000100000002fc0000000100000002000000010000000a0054006f006f006c00730100000000ffffffff0000000000000000
+  QMainWindow State: 000000ff00000000fd00000002000000000000019b00000434fc0200000006fb000000100044006900730070006c006100790073010000004100000434000000dd00fffffffb0000000800480065006c00700000000342000000bb0000007600fffffffb0000000a005600690065007700730000000145000000cb000000b000fffffffb0000000c00430061006d00650072006100000002ff000001610000000000000000fb0000000c00430061006d006500720061000000038f000000160000000000000000fb0000000a0049006d00610067006500000002a9000001cc0000001600ffffff000000030000049d0000017ffc0100000001fb0000001e004d006f00740069006f006e00200050006c0061006e006e0069006e006701000001a10000049d000002a200ffffff0000049d000002af00000001000000020000000100000002fc0000000100000002000000010000000a0054006f006f006c00730100000000ffffffff0000000000000000
   Views:
     collapsed: false
-  Width: 1918
-  X: 1920
-  Y: 144
+  Width: 1598
+  X: 3840
+  Y: 0

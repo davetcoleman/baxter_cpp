@@ -11,6 +11,8 @@ find_package(catkin REQUIRED COMPONENTS
   sensor_msgs
   std_msgs
   trajectory_msgs
+  cv_bridge
+  image_transport
 )
 
 ## System dependencies are found with CMake's conventions
@@ -50,15 +52,13 @@ include_directories(
 
 ## Declare a cpp executable
 add_executable(baxter_to_csv src/baxter_to_csv.cpp)
-
-## Add cmake target dependencies of the executable/library
-## as an example, message headers may need to be generated before nodes
 add_dependencies(baxter_to_csv baxter_experimental_generate_messages_cpp)
+target_link_libraries(baxter_to_csv ${catkin_LIBRARIES})
 
-## Specify libraries to link a library or executable target against
-target_link_libraries(baxter_to_csv
-   ${catkin_LIBRARIES}
-)
+## Declare a cpp executable
+add_executable(percieve_dynamics src/percieve_dynamics.cpp)
+add_dependencies(percieve_dynamics baxter_experimental_generate_messages_cpp)
+target_link_libraries(percieve_dynamics ${catkin_LIBRARIES})
 
 #############
 ## Install ##

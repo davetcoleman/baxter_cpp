@@ -255,10 +255,10 @@ public:
     // -------------------------------------------------------------------------------------------
     // Create goal state
     goal_pose.header.frame_id = baxter_pick_place::BASE_LINK;
-    double tolerance_pose = 1e-4; // default: 1e-3... meters
+    double tolerance_position = 1e-3; // default: 1e-3... meters
     double tolerance_angle = 1e-2; // default 1e-2... radians
     moveit_msgs::Constraints goal_constraint0 = kinematic_constraints::constructGoalConstraints(
-      visual_tools_->getEEParentLink(), goal_pose, tolerance_pose, tolerance_angle);
+      visual_tools_->getEEParentLink(), goal_pose, tolerance_position, tolerance_angle);
 
     //ROS_INFO_STREAM_NAMED("verticle_test","Goal pose " << goal_pose);
 
