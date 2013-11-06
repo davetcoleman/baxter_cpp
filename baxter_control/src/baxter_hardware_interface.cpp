@@ -71,7 +71,6 @@ BaxterHardwareInterface::BaxterHardwareInterface(bool in_simulation)
   registerInterface(&vj_interface_);
   registerInterface(&pj_interface_);
 
-  /*
   // Enable baxter
   bool enabled = false;
   while(!enabled)
@@ -87,7 +86,6 @@ BaxterHardwareInterface::BaxterHardwareInterface(bool in_simulation)
       enabled = true;
     }
   }
-  */
 
   // Create the controller manager
   ROS_DEBUG_STREAM_NAMED("hardware_interface","Loading controller_manager");
