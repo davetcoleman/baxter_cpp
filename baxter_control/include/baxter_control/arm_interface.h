@@ -56,7 +56,7 @@
 namespace baxter_control
 {
 
-//const std::string& HARDWARE_INTERFACE = "PositionJointInterface";
+enum BaxterControlMode { POSITION, VELOCITY, TORQUE };
 
 class ArmInterface
 {
@@ -113,6 +113,13 @@ public:
    * \brief Publish our hardware interface datastructures commands to Baxter hardware
    */
   virtual void write()
+  {};
+
+  /**
+   * \brief Call to switch the hardware between different interfaces - position or velocity
+   * \param mode - which mode to call
+   */
+  virtual void modeSwitch(BaxterControlMode mode)
   {};
 
 };

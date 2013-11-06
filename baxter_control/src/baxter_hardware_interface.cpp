@@ -60,12 +60,18 @@ BaxterHardwareInterface::BaxterHardwareInterface(bool in_simulation)
   right_arm_hw_->init(js_interface_, ej_interface_, vj_interface_, pj_interface_);
   left_arm_hw_->init(js_interface_, ej_interface_, vj_interface_, pj_interface_);
 
+  ROS_ERROR_STREAM_NAMED("temp","done loading right and left arm_hw_");
+  right_arm_hw_->modeSwitch(VELOCITY);  
+  left_arm_hw_->modeSwitch(VELOCITY);  
+  ROS_ERROR_STREAM_NAMED("temp","done mode switch");
+
   // Register interfaces
   registerInterface(&js_interface_);
   registerInterface(&ej_interface_);
   registerInterface(&vj_interface_);
   registerInterface(&pj_interface_);
 
+  /*
   // Enable baxter
   bool enabled = false;
   while(!enabled)
@@ -81,6 +87,7 @@ BaxterHardwareInterface::BaxterHardwareInterface(bool in_simulation)
       enabled = true;
     }
   }
+  */
 
   // Create the controller manager
   ROS_DEBUG_STREAM_NAMED("hardware_interface","Loading controller_manager");
@@ -100,8 +107,6 @@ BaxterHardwareInterface::~BaxterHardwareInterface()
 
 void BaxterHardwareInterface::update(const ros::TimerEvent& e)
 {
-  //ROS_INFO_STREAM_THROTTLE_NAMED(10, "temp","Updating with period: " << (e.current_real - e.last_real)*100 << "hz" );
-
    // Input
   right_arm_hw_->read();
   left_arm_hw_->read();
@@ -114,6 +119,13 @@ void BaxterHardwareInterface::update(const ros::TimerEvent& e)
   left_arm_hw_->write();
  }
 
+void BaxterHardwareInterface::armModeSwitch(BaxterControlMode mode)
+{
+  ROS_ERROR_STREAM_NAMED("temp","here armmodeswitch " << mode);
+  // Pass command down to arm hardware interfaces
+  //right_arm_hw_->modeSwitch(mode);
+  //left_arm_hw_->modeSwitch(mode);
+}
 
 } // namespace
 

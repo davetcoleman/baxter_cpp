@@ -4,6 +4,9 @@
     type: joint_state_controller/JointStateController
     publish_rate: 50  
 
+  baxter_velocity_mode_controller:
+    type: baxter_controllers/BaxterVelocityModeController
+
   # Hardware - Right and Left Joint Position Trajectory Controller -------------------
   left_joint_trajectory_controller:
     type: "position_controllers/JointTrajectoryController"
@@ -85,3 +88,7 @@
     action_monitor_rate: 20 # Defaults to 20
     #hold_trajectory_duration: 0 # Defaults to 0.5
 
+  left_w1_velocity_controller:
+    type: velocity_controllers/JointPositionController
+    joint: left_w1
+    pid: {p: 10.0, i: 0.01, d: 0.1}

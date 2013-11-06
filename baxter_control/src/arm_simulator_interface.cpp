@@ -140,4 +140,9 @@ void ArmSimulatorInterface::write()
   }
 }
 
+void ArmSimulatorInterface::modeSwitch(BaxterControlMode mode)
+{
+  ROS_FATAL_STREAM_NAMED(arm_name_,"Changing interface modes is not supported in simulation yet");
+}
+
 } // namespace

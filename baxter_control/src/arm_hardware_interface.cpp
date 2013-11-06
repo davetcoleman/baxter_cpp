@@ -65,6 +65,8 @@ ArmHardwareInterface::ArmHardwareInterface(const std::string &arm_name)
   joint_velocity_command_.resize(n_dof_);
   output_command_msg_.angles.resize(n_dof_);
   output_command_msg_.names.resize(n_dof_);
+  output_velocity_msg_.velocities.resize(n_dof_);
+  output_velocity_msg_.names.resize(n_dof_);
   trajectory_command_msg_.joint_names.resize(n_dof_);
 
   for (std::size_t i = 0; i < n_dof_; ++i)
@@ -109,11 +111,21 @@ bool ArmHardwareInterface::init(
     // Create position joint interface
     pj_interface.registerHandle(hardware_interface::JointHandle(
         js_interface.getHandle(joint_names_[i]),&joint_position_command_[i]));
+
+    // Create velocity joint interface
+    vj_interface.registerHandle(hardware_interface::JointHandle(
+        js_interface.getHandle(joint_names_[i]),&joint_velocity_command_[i]));
   }
 
   // Start publishers
   pub_position_command_ = nh_.advertise<baxter_msgs::JointPositions>("/robot/limb/"+arm_name_+
                           "/command_joint_angles",10);
+
+  pub_velocity_command_ = nh_.advertise<baxter_msgs::JointVelocities>("/robot/limb/"+arm_name_+
+                          "/command_joint_velocities",10);
+
+  pub_command_mode_ = nh_.advertise<baxter_msgs::JointCommandMode>("/robot/limb/"+arm_name_+
+                      "/joint_command_mode",10); // used for switching between velocity and position control
 
   pub_trajectory_command_ = nh_.advertise<trajectory_msgs::JointTrajectory>("/robot/"+arm_name_+
                             "_joint_trajectory_controller/command",10);
@@ -155,6 +167,7 @@ bool ArmHardwareInterface::init(
 
     // Pre-load the joint names into the output messages just once
     output_command_msg_.names[i] = joint_names_[i];
+    output_velocity_msg_.names[i] = joint_names_[i];
   }
 
   ROS_INFO_NAMED(arm_name_, "Loaded baxter_hardware_interface.");
@@ -206,17 +219,41 @@ void ArmHardwareInterface::write()
   if( stateExpired() )
     return;
 
-
   for (std::size_t i = 0; i < n_dof_; ++i)
   {
     //ROS_INFO_STREAM_NAMED("write","id = "<<i);
     //ROS_INFO_STREAM_NAMED("write","name = " << joint_names_[i]);
     //ROS_INFO_STREAM_NAMED("write","mapping = " << i);
 
-    output_command_msg_.angles[i] = joint_position_command_[i];
+    switch (mode_)
+    {
+      case POSITION:
+        output_command_msg_.angles[i] = joint_position_command_[i];
+        break;
+      case VELOCITY:
+        output_velocity_msg_.velocities[i] = joint_velocity_command_[i];
+        break;
+      case TORQUE:
+        // Not implemented
+        //output_torque_msg_.torques[i] = joint_effort_command_[i];
+        break;
+    }
   }
 
-  pub_position_command_.publish(output_command_msg_);
+  switch (mode_)
+  {
+    case POSITION:
+      pub_position_command_.publish(output_command_msg_);
+      break;
+    case VELOCITY:
+      pub_velocity_command_.publish(output_velocity_msg_);
+      // An additional msg must be published to baxter to let it know we're in velocity mode
+      pub_command_mode_.publish(output_command_mode_msg_);
+      break;
+    case TORQUE:
+      // Not implemented
+      break;
+  }
 }
 
 void ArmHardwareInterface::cuffSqueezedCallback(const baxter_msgs::DigitalIOStateConstPtr& msg)
@@ -248,5 +285,26 @@ void ArmHardwareInterface::cuffSqueezedCallback(const baxter_msgs::DigitalIOStat
   }
 }
 
+void ArmHardwareInterface::modeSwitch(BaxterControlMode mode)
+{
+  ROS_DEBUG_STREAM_NAMED("temp","modeSwitch");
+
+  switch(mode)
+  {
+    case POSITION:
+      output_command_mode_msg_.mode = baxter_msgs::JointCommandMode::POSITION;
+      break;
+    case VELOCITY:
+      output_command_mode_msg_.mode = baxter_msgs::JointCommandMode::VELOCITY;
+      break;
+    case TORQUE:
+      ROS_FATAL_STREAM_NAMED(arm_name_,"Torque control mode not implemented.");
+      throw;
+      output_command_mode_msg_.mode = baxter_msgs::JointCommandMode::TORQUE;
+      break;
+  }
+
+  mode_ = mode;  
+}
 
 } // namespace

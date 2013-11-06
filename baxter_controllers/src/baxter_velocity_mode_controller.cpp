@@ -33,85 +33,63 @@
  *********************************************************************/
 
 /* Author: Dave Coleman
-   Desc:   ros_control hardware interface layer for Baxter in simulation
+   Desc:   a custom interface for switching mode (this would simply be a function call in your robot class like: void switch(int mode)
 */
 
-#ifndef BAXTER_CONTROL__ARM_SIMULATOR_INTERFACE_
-#define BAXTER_CONTROL__ARM_SIMULATOR_INTERFACE_
-
-// Boost
-#include <boost/shared_ptr.hpp>
-
-// ROS
-#include <ros/ros.h>
-#include <sensor_msgs/JointState.h>
-
-// ros_control
+#include <pluginlib/class_list_macros.h>
+#include <controller_interface/controller.h>
 #include <hardware_interface/joint_command_interface.h>
-#include <hardware_interface/joint_state_interface.h>
+#include <baxter_control/baxter_hardware_interface.h>
 
-// Baxter
-#include <baxter_msgs/JointPositions.h>
+namespace baxter_controllers {
 
-// Parent class
-#include <baxter_control/arm_interface.h>
-
-namespace baxter_control
+class BaxterVelocityModeController: public controller_interface::Controller<hardware_interface::VelocityJointInterface>
 {
 
-class ArmSimulatorInterface : public ArmInterface
-{
 private:
 
+
 public:
+  BaxterVelocityModeController()
+  {}
 
-  /**
-   * \brief Constructor/Descructor
-   */
-  ArmSimulatorInterface(const std::string &arm_name);
-  ~ArmSimulatorInterface();
+  ~BaxterVelocityModeController()
+  {
+  }
 
-  /**
-   * \brief Initialice hardware interface
-   * \return false if an error occurred during initialization
-   */
   bool init(
-    hardware_interface::JointStateInterface&    js_interface,
-    hardware_interface::EffortJointInterface&   ej_interface,
-    hardware_interface::VelocityJointInterface& vj_interface,
-    hardware_interface::PositionJointInterface& pj_interface
-  );
+    hardware_interface::VelocityJointInterface *robot, ros::NodeHandle &nh)
+  {
+    // This is the only purpose of this controller
+    baxter_control::BaxterHardwareInterface *bhi;
+    bhi = (baxter_control::BaxterHardwareInterface*) robot;
+    bhi->armModeSwitch(baxter_control::VELOCITY);
+    ROS_ERROR_STREAM_NAMED("temp","done");
 
-  /**
-   * \brief Buffers joint state info from Baxter ROS topic
-   * \param
-   */
-  void stateCallback(const sensor_msgs::JointStateConstPtr& msg);
+    return true;
+  }
 
-  /**
-   * \brief Checks if the state message from Baxter is out of date
-   * \return true if expired
-   */
-  bool stateExpired();
+  /*
+  void starting(const ros::Time& time)
+  {
 
-  /**
-   * \brief Copy the joint state message into our hardware interface datastructures
-   */
-  void read();
+  }
 
-  /**
-   * \brief Publish our hardware interface datastructures commands to Baxter hardware
-   */
-  void write();
+  void stopping(const ros::Time& time)
+  {
 
-  /**
-   * \brief Call to switch the hardware between different interfaces - position or velocity
-   * \param mode - which mode to call
-   */
-  void modeSwitch(BaxterControlMode mode);
+  }
+  */
+
+  void update(const ros::Time& time, const ros::Duration& period)
+  {
+
+  }
 
 };
 
 } // namespace
 
-#endif
+PLUGINLIB_EXPORT_CLASS(
+  baxter_controllers::BaxterVelocityModeController,
+  controller_interface::ControllerBase)

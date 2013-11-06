@@ -99,6 +99,12 @@ public:
 
   void update(const ros::TimerEvent& e);
 
+  /**
+   * \brief Call to switch the arm hardware between different interfaces - position or velocity
+   * \param mode - which mode to call
+   */
+  void armModeSwitch(BaxterControlMode mode);
+
 };
 
 } // namespace

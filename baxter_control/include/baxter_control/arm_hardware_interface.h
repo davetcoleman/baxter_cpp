@@ -53,6 +53,8 @@
 
 // Baxter
 #include <baxter_msgs/JointPositions.h>
+#include <baxter_msgs/JointVelocities.h>
+#include <baxter_msgs/JointCommandMode.h>
 #include <baxter_msgs/DigitalIOState.h>
 
 // Parent class
@@ -69,6 +71,8 @@ private:
 
   // Publishers
   ros::Publisher pub_position_command_;
+  ros::Publisher pub_velocity_command_;
+  ros::Publisher pub_command_mode_;
   ros::Publisher pub_trajectory_command_;
 
   // Subscriber
@@ -81,10 +85,15 @@ private:
 
   // Messages to send
   baxter_msgs::JointPositions output_command_msg_;
+  baxter_msgs::JointVelocities output_velocity_msg_;
+  baxter_msgs::JointCommandMode output_command_mode_msg_;
   trajectory_msgs::JointTrajectory trajectory_command_msg_;
 
   // Track button status
   bool cuff_squeezed_previous;
+
+  // Track current hardware interface mode we are in
+  BaxterControlMode mode_;
 
 public:
 
@@ -129,10 +138,16 @@ public:
 
   /**
    * \brief Check if the cuff manual control button is squeezed. If so, inform the trajectory controller to update
-            its setpoint
+   its setpoint
    * \param msg - the state of the end effector cuff
    */
   void cuffSqueezedCallback(const baxter_msgs::DigitalIOStateConstPtr& msg);
+
+  /**
+   * \brief Call to switch the hardware between different interfaces - position or velocity
+   * \param mode - which mode to call
+   */
+  void modeSwitch(BaxterControlMode mode);
 
 };
 
