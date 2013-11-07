@@ -46,19 +46,23 @@ BaxterHardwareInterface::BaxterHardwareInterface(bool in_simulation)
 {
   if( in_simulation_ )
   {
-    ROS_ERROR_STREAM_NAMED("hardware_interface","Running in simulation mode");
+    ROS_INFO_STREAM_NAMED("hardware_interface","Running in simulation mode");
     right_arm_hw_.reset(new baxter_control::ArmSimulatorInterface("right"));
     left_arm_hw_.reset(new baxter_control::ArmSimulatorInterface("left"));
   }
   else
   {
-    ROS_ERROR_STREAM_NAMED("hardware_interface","Running in hardware mode");
+    ROS_INFO_STREAM_NAMED("hardware_interface","Running in hardware mode");
     right_arm_hw_.reset(new baxter_control::ArmHardwareInterface("right"));
     left_arm_hw_.reset(new baxter_control::ArmHardwareInterface("left"));
   }
+
+  // Set the joint mode interface data
+  jm_interface_.registerHandle(hardware_interface::JointModeHandle("joint_mode", &joint_mode_));
+
   // Initialize right arm
-  right_arm_hw_->init(js_interface_, jm_interface_, ej_interface_, vj_interface_, pj_interface_);
-  left_arm_hw_->init(js_interface_, jm_interface_, ej_interface_, vj_interface_, pj_interface_);
+  right_arm_hw_->init(js_interface_, ej_interface_, vj_interface_, pj_interface_, &joint_mode_);
+  left_arm_hw_->init(js_interface_, ej_interface_, vj_interface_, pj_interface_, &joint_mode_);
 
   // Register interfaces
   registerInterface(&js_interface_);

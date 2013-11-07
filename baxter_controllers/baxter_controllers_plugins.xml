@@ -16,12 +16,4 @@
     </description>
   </class>
 
-  <class name="baxter_controllers/BaxterVelocityModeController" 
-	 type="baxter_controllers::BaxterVelocityModeController" 
-	 base_class_type="controller_interface::ControllerBase">
-    <description>
-      The BaxterVelocityModeController switched Baxter's hardware interface into velocity-control mode
-    </description>
-  </class>
-
 </library>

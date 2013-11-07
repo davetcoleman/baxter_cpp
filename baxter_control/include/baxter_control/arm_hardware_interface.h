@@ -95,10 +95,10 @@ public:
    */
   bool init(
     hardware_interface::JointStateInterface&    js_interface,
-    hardware_interface::JointModeInterface&     jm_interface,
     hardware_interface::EffortJointInterface&   ej_interface,
     hardware_interface::VelocityJointInterface& vj_interface,
-    hardware_interface::PositionJointInterface& pj_interface
+    hardware_interface::PositionJointInterface& pj_interface,
+    int* joint_mode
   );
 
   /**

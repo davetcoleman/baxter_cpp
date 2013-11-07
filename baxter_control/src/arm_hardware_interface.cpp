@@ -98,11 +98,13 @@ ArmHardwareInterface::~ArmHardwareInterface()
 
 bool ArmHardwareInterface::init(
   hardware_interface::JointStateInterface&    js_interface,
-  hardware_interface::JointModeInterface&     jm_interface,
   hardware_interface::EffortJointInterface&   ej_interface,
   hardware_interface::VelocityJointInterface& vj_interface,
-  hardware_interface::PositionJointInterface& pj_interface)
+  hardware_interface::PositionJointInterface& pj_interface,
+  int* joint_mode)
 {
+  joint_mode_ = joint_mode;
+
   for (std::size_t i = 0; i < n_dof_; ++i)
   {
     // Create joint state interface for all joints
@@ -118,8 +120,8 @@ bool ArmHardwareInterface::init(
         js_interface.getHandle(joint_names_[i]),&joint_velocity_command_[i]));
   }
 
-  // Set the joint mode interface data
-  jm_interface.registerHandle(hardware_interface::JointModeHandle(arm_name_+"_arm_command_mode", &mode_));
+  // An additional msg must be published to baxter to let it know we're in velocity mode
+  output_command_mode_msg_.mode = baxter_msgs::JointCommandMode::VELOCITY;
 
   // Start publishers
   pub_position_command_ = nh_.advertise<baxter_msgs::JointPositions>("/robot/limb/"+arm_name_+
@@ -206,12 +208,6 @@ void ArmHardwareInterface::read()
   // Copy state message to our datastructures
   for (std::size_t i = 0; i < n_dof_; ++i)
   {
-    //ROS_INFO_STREAM_NAMED("read","on index " << i << " which maps to " << i);
-    //ROS_INFO_STREAM_NAMED("read","and the max message is " << state_msg_->position.size() );
-    //ROS_INFO_STREAM_NAMED("read","joint_position size is " << joint_position_.size());
-    //ROS_INFO_STREAM_NAMED("read","state_msg position size is " << state_msg_->position.size());
-    //ROS_INFO_STREAM_NAMED("read","position is " << state_msg_->position[i]);
-
     joint_position_[i] = state_msg_->position[i];
     joint_velocity_[i] = state_msg_->velocity[i];
     joint_effort_[i] = state_msg_->effort[i];
@@ -225,36 +221,32 @@ void ArmHardwareInterface::write()
 
   for (std::size_t i = 0; i < n_dof_; ++i)
   {
-    //ROS_INFO_STREAM_NAMED("write","id = "<<i);
-    //ROS_INFO_STREAM_NAMED("write","name = " << joint_names_[i]);
-    //ROS_INFO_STREAM_NAMED("write","mapping = " << i);
-
-    switch (mode_)
+    switch (*joint_mode_)
     {
-      case POSITION:
+      case hardware_interface::MODE_POSITION:
         output_command_msg_.angles[i] = joint_position_command_[i];
         break;
-      case VELOCITY:
+      case hardware_interface::MODE_VELOCITY:
         output_velocity_msg_.velocities[i] = joint_velocity_command_[i];
         break;
-      case TORQUE:
+      case hardware_interface::MODE_EFFORT:
         // Not implemented
         //output_torque_msg_.torques[i] = joint_effort_command_[i];
         break;
     }
   }
 
-  switch (mode_)
+  switch (*joint_mode_)
   {
-    case POSITION:
+    case hardware_interface::MODE_POSITION:
       pub_position_command_.publish(output_command_msg_);
       break;
-    case VELOCITY:
+    case hardware_interface::MODE_VELOCITY:
       pub_velocity_command_.publish(output_velocity_msg_);
-      // An additional msg must be published to baxter to let it know we're in velocity mode
+
       pub_command_mode_.publish(output_command_mode_msg_);
       break;
-    case TORQUE:
+    case hardware_interface::MODE_EFFORT:
       // Not implemented
       break;
   }

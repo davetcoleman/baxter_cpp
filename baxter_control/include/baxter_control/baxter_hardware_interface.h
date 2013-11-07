@@ -91,6 +91,9 @@ private:
 
   bool in_simulation_;
 
+  // Which joint mode are we in
+  int joint_mode_;
+
 public:
 
   /**

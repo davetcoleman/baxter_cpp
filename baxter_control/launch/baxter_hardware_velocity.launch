@@ -21,7 +21,7 @@
 
     <!-- Load the default controllers -->
     <node name="controller_spawner" pkg="controller_manager" type="spawner" respawn="false"
-	  output="screen" ns="/robot" args="baxter_velocity_mode_controller
+	  output="screen" ns="/robot" args="velocity_joint_mode_controller
 					    left_w1_velocity_controller
 					    " />
 

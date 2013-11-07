@@ -79,7 +79,7 @@ protected:
   std::vector<double> joint_velocity_command_;
   
   // Track current hardware interface mode we are in
-  int mode_;
+  int* joint_mode_;
 
   // Name of this arm
   std::string arm_name_;
@@ -102,10 +102,10 @@ public:
    */
   virtual bool init(
     hardware_interface::JointStateInterface&    js_interface,
-    hardware_interface::JointModeInterface&     jm_interface,
     hardware_interface::EffortJointInterface&   ej_interface,
     hardware_interface::VelocityJointInterface& vj_interface,
-    hardware_interface::PositionJointInterface& pj_interface
+    hardware_interface::PositionJointInterface& pj_interface,
+    int* joint_mode
   ) 
   { return true; };
 
