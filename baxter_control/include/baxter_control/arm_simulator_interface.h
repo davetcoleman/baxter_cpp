@@ -77,6 +77,7 @@ public:
    */
   bool init(
     hardware_interface::JointStateInterface&    js_interface,
+    hardware_interface::JointModeInterface&     jm_interface,
     hardware_interface::EffortJointInterface&   ej_interface,
     hardware_interface::VelocityJointInterface& vj_interface,
     hardware_interface::PositionJointInterface& pj_interface
@@ -103,12 +104,6 @@ public:
    * \brief Publish our hardware interface datastructures commands to Baxter hardware
    */
   void write();
-
-  /**
-   * \brief Call to switch the hardware between different interfaces - position or velocity
-   * \param mode - which mode to call
-   */
-  void modeSwitch(BaxterControlMode mode);
 
 };
 

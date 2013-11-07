@@ -49,6 +49,7 @@
 #include <controller_manager/controller_manager.h>
 #include <hardware_interface/joint_command_interface.h>
 #include <hardware_interface/joint_state_interface.h>
+#include <hardware_interface/joint_mode_interface.h>
 #include <hardware_interface/robot_hw.h>
 
 // Baxter
@@ -72,6 +73,7 @@ private:
   ros::Time last_sim_time_ros_;
 
   hardware_interface::JointStateInterface    js_interface_;
+  hardware_interface::JointModeInterface     jm_interface_;
   hardware_interface::EffortJointInterface   ej_interface_;
   hardware_interface::VelocityJointInterface vj_interface_;
   hardware_interface::PositionJointInterface pj_interface_;
@@ -98,12 +100,6 @@ public:
   ~BaxterHardwareInterface();
 
   void update(const ros::TimerEvent& e);
-
-  /**
-   * \brief Call to switch the arm hardware between different interfaces - position or velocity
-   * \param mode - which mode to call
-   */
-  void armModeSwitch(BaxterControlMode mode);
 
 };
 

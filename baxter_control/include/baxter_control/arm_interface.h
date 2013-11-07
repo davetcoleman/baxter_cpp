@@ -49,9 +49,11 @@
 // ros_control
 #include <hardware_interface/joint_command_interface.h>
 #include <hardware_interface/joint_state_interface.h>
+#include <hardware_interface/joint_mode_interface.h>
 
 // Baxter
 #include <baxter_msgs/JointPositions.h>
+#include <baxter_msgs/JointVelocities.h>
 
 namespace baxter_control
 {
@@ -75,6 +77,9 @@ protected:
   std::vector<double> joint_position_command_;
   std::vector<double> joint_effort_command_;
   std::vector<double> joint_velocity_command_;
+  
+  // Track current hardware interface mode we are in
+  int mode_;
 
   // Name of this arm
   std::string arm_name_;
@@ -97,6 +102,7 @@ public:
    */
   virtual bool init(
     hardware_interface::JointStateInterface&    js_interface,
+    hardware_interface::JointModeInterface&     jm_interface,
     hardware_interface::EffortJointInterface&   ej_interface,
     hardware_interface::VelocityJointInterface& vj_interface,
     hardware_interface::PositionJointInterface& pj_interface
@@ -113,13 +119,6 @@ public:
    * \brief Publish our hardware interface datastructures commands to Baxter hardware
    */
   virtual void write()
-  {};
-
-  /**
-   * \brief Call to switch the hardware between different interfaces - position or velocity
-   * \param mode - which mode to call
-   */
-  virtual void modeSwitch(BaxterControlMode mode)
   {};
 
 };

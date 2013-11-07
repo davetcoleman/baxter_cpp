@@ -91,4 +91,4 @@
   left_w1_velocity_controller:
     type: velocity_controllers/JointPositionController
     joint: left_w1
-    pid: {p: 10.0, i: 0.01, d: 0.1}
+    pid: {p: 20.0, i: 0.01, d: 0.1}

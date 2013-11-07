@@ -46,27 +46,23 @@ BaxterHardwareInterface::BaxterHardwareInterface(bool in_simulation)
 {
   if( in_simulation_ )
   {
-    ROS_INFO_STREAM_NAMED("hardware_interface","Running in simulation mode");
+    ROS_ERROR_STREAM_NAMED("hardware_interface","Running in simulation mode");
     right_arm_hw_.reset(new baxter_control::ArmSimulatorInterface("right"));
     left_arm_hw_.reset(new baxter_control::ArmSimulatorInterface("left"));
   }
   else
   {
-    ROS_INFO_STREAM_NAMED("hardware_interface","Running in hardware mode");
+    ROS_ERROR_STREAM_NAMED("hardware_interface","Running in hardware mode");
     right_arm_hw_.reset(new baxter_control::ArmHardwareInterface("right"));
     left_arm_hw_.reset(new baxter_control::ArmHardwareInterface("left"));
   }
   // Initialize right arm
-  right_arm_hw_->init(js_interface_, ej_interface_, vj_interface_, pj_interface_);
-  left_arm_hw_->init(js_interface_, ej_interface_, vj_interface_, pj_interface_);
-
-  ROS_ERROR_STREAM_NAMED("temp","done loading right and left arm_hw_");
-  right_arm_hw_->modeSwitch(VELOCITY);  
-  left_arm_hw_->modeSwitch(VELOCITY);  
-  ROS_ERROR_STREAM_NAMED("temp","done mode switch");
+  right_arm_hw_->init(js_interface_, jm_interface_, ej_interface_, vj_interface_, pj_interface_);
+  left_arm_hw_->init(js_interface_, jm_interface_, ej_interface_, vj_interface_, pj_interface_);
 
   // Register interfaces
   registerInterface(&js_interface_);
+  registerInterface(&jm_interface_);
   registerInterface(&ej_interface_);
   registerInterface(&vj_interface_);
   registerInterface(&pj_interface_);
@@ -117,14 +113,6 @@ void BaxterHardwareInterface::update(const ros::TimerEvent& e)
   left_arm_hw_->write();
  }
 
-void BaxterHardwareInterface::armModeSwitch(BaxterControlMode mode)
-{
-  ROS_ERROR_STREAM_NAMED("temp","here armmodeswitch " << mode);
-  // Pass command down to arm hardware interfaces
-  //right_arm_hw_->modeSwitch(mode);
-  //left_arm_hw_->modeSwitch(mode);
-}
-
 } // namespace
 
 int main(int argc, char** argv)
@@ -146,7 +134,7 @@ int main(int argc, char** argv)
   {
     if( std::string(argv[i]).compare("--simulation") == 0 )
     {
-      ROS_INFO_STREAM_NAMED("main","Gripper action server in simulation mode");
+      ROS_INFO_STREAM_NAMED("main","Baxter Hardware Interface in simulation mode");
       in_simulation = true;
     }
   }  

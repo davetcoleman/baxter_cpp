@@ -39,21 +39,10 @@
 #ifndef BAXTER_CONTROL__ARM_HARDWARE_INTERFACE_
 #define BAXTER_CONTROL__ARM_HARDWARE_INTERFACE_
 
-// Boost
-#include <boost/shared_ptr.hpp>
-
 // ROS
-#include <ros/ros.h>
-#include <sensor_msgs/JointState.h>
 #include <trajectory_msgs/JointTrajectory.h>
 
-// ros_control
-#include <hardware_interface/joint_command_interface.h>
-#include <hardware_interface/joint_state_interface.h>
-
 // Baxter
-#include <baxter_msgs/JointPositions.h>
-#include <baxter_msgs/JointVelocities.h>
 #include <baxter_msgs/JointCommandMode.h>
 #include <baxter_msgs/DigitalIOState.h>
 
@@ -92,9 +81,6 @@ private:
   // Track button status
   bool cuff_squeezed_previous;
 
-  // Track current hardware interface mode we are in
-  BaxterControlMode mode_;
-
 public:
 
   /**
@@ -109,6 +95,7 @@ public:
    */
   bool init(
     hardware_interface::JointStateInterface&    js_interface,
+    hardware_interface::JointModeInterface&     jm_interface,
     hardware_interface::EffortJointInterface&   ej_interface,
     hardware_interface::VelocityJointInterface& vj_interface,
     hardware_interface::PositionJointInterface& pj_interface
@@ -142,12 +129,6 @@ public:
    * \param msg - the state of the end effector cuff
    */
   void cuffSqueezedCallback(const baxter_msgs::DigitalIOStateConstPtr& msg);
-
-  /**
-   * \brief Call to switch the hardware between different interfaces - position or velocity
-   * \param mode - which mode to call
-   */
-  void modeSwitch(BaxterControlMode mode);
 
 };
 

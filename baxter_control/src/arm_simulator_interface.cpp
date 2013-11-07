@@ -85,6 +85,7 @@ ArmSimulatorInterface::~ArmSimulatorInterface()
 
 bool ArmSimulatorInterface::init(
   hardware_interface::JointStateInterface&    js_interface,
+  hardware_interface::JointModeInterface&     jm_interface,
   hardware_interface::EffortJointInterface&   ej_interface,
   hardware_interface::VelocityJointInterface& vj_interface,
   hardware_interface::PositionJointInterface& pj_interface)
@@ -138,11 +139,6 @@ void ArmSimulatorInterface::write()
     //  << " joint position=" <<  joint_position_[i]);
     joint_position_[i] += error * 0.1;
   }
-}
-
-void ArmSimulatorInterface::modeSwitch(BaxterControlMode mode)
-{
-  ROS_FATAL_STREAM_NAMED(arm_name_,"Changing interface modes is not supported in simulation yet");
 }
 
 } // namespace

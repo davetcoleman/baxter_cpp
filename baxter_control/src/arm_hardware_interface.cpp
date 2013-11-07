@@ -98,6 +98,7 @@ ArmHardwareInterface::~ArmHardwareInterface()
 
 bool ArmHardwareInterface::init(
   hardware_interface::JointStateInterface&    js_interface,
+  hardware_interface::JointModeInterface&     jm_interface,
   hardware_interface::EffortJointInterface&   ej_interface,
   hardware_interface::VelocityJointInterface& vj_interface,
   hardware_interface::PositionJointInterface& pj_interface)
@@ -116,6 +117,9 @@ bool ArmHardwareInterface::init(
     vj_interface.registerHandle(hardware_interface::JointHandle(
         js_interface.getHandle(joint_names_[i]),&joint_velocity_command_[i]));
   }
+
+  // Set the joint mode interface data
+  jm_interface.registerHandle(hardware_interface::JointModeHandle(arm_name_+"_arm_command_mode", &mode_));
 
   // Start publishers
   pub_position_command_ = nh_.advertise<baxter_msgs::JointPositions>("/robot/limb/"+arm_name_+
@@ -283,28 +287,6 @@ void ArmHardwareInterface::cuffSqueezedCallback(const baxter_msgs::DigitalIOStat
 
     cuff_squeezed_previous = false;
   }
-}
-
-void ArmHardwareInterface::modeSwitch(BaxterControlMode mode)
-{
-  ROS_DEBUG_STREAM_NAMED("temp","modeSwitch");
-
-  switch(mode)
-  {
-    case POSITION:
-      output_command_mode_msg_.mode = baxter_msgs::JointCommandMode::POSITION;
-      break;
-    case VELOCITY:
-      output_command_mode_msg_.mode = baxter_msgs::JointCommandMode::VELOCITY;
-      break;
-    case TORQUE:
-      ROS_FATAL_STREAM_NAMED(arm_name_,"Torque control mode not implemented.");
-      throw;
-      output_command_mode_msg_.mode = baxter_msgs::JointCommandMode::TORQUE;
-      break;
-  }
-
-  mode_ = mode;  
 }
 
 } // namespace

@@ -38,12 +38,11 @@
 
 #include <pluginlib/class_list_macros.h>
 #include <controller_interface/controller.h>
-#include <hardware_interface/joint_command_interface.h>
-#include <baxter_control/baxter_hardware_interface.h>
+#include <hardware_interface/joint_mode_interface.h>
 
 namespace baxter_controllers {
 
-class BaxterVelocityModeController: public controller_interface::Controller<hardware_interface::VelocityJointInterface>
+class BaxterVelocityModeController: public controller_interface::Controller<hardware_interface::JointModeInterface>
 {
 
 private:
@@ -58,12 +57,11 @@ public:
   }
 
   bool init(
-    hardware_interface::VelocityJointInterface *robot, ros::NodeHandle &nh)
+    hardware_interface::JointModeInterface *robot, ros::NodeHandle &nh)
   {
-    // This is the only purpose of this controller
-    baxter_control::BaxterHardwareInterface *bhi;
-    bhi = (baxter_control::BaxterHardwareInterface*) robot;
-    bhi->armModeSwitch(baxter_control::VELOCITY);
+    ROS_ERROR_STREAM_NAMED("temp","before");
+    robot->getHandle("left_arm_command_mode").setMode(1);
+    //baxter_control::VELOCITY);
     ROS_ERROR_STREAM_NAMED("temp","done");
 
     return true;
