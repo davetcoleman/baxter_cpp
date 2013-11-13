@@ -98,6 +98,7 @@ Otherwise you can just skip this section and install the Baxter code and it will
 * Install dependencies and build
 
     ```
+    cd ..
     rosdep install --from-paths . --ignore-src --rosdistro hydro -y
     catkin_make
     ```
