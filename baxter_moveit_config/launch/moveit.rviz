@@ -327,8 +327,8 @@ Visualization Manager:
         Goal State Color: 250; 128; 0
         Interactive Marker Size: 0.3
         Joint Violation Color: 255; 0; 255
-        Planning Group: left_arm
-        Query Goal State: false
+        Planning Group: right_arm
+        Query Goal State: true
         Query Start State: false
         Show Workspace: false
         Start State Alpha: 1
@@ -676,17 +676,17 @@ Visualization Manager:
   Views:
     Current:
       Class: rviz/XYOrbit
-      Distance: 1.71003
+      Distance: 2.40247
       Focal Point:
         X: 0.721078
         Y: -0.148052
         Z: 8.94074e-08
       Name: Current View
       Near Clip Distance: 0.01
-      Pitch: 0.554798
+      Pitch: 0.684798
       Target Frame: base_link
       Value: XYOrbit (rviz)
-      Yaw: 5.75861
+      Yaw: 5.85861
     Saved: ~
 Window Geometry:
   Displays:
