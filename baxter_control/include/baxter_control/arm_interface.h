@@ -121,6 +121,12 @@ public:
   virtual void write()
   {};
 
+  /**
+   * \brief This is called when Baxter is disabled, so that we can update the desired positions
+   */
+  virtual void robotDisabledCallback()
+  {};
+
 };
 
 typedef boost::shared_ptr<baxter_control::ArmInterface> ArmInterfacePtr;

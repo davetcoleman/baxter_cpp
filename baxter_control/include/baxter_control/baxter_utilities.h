@@ -88,8 +88,22 @@ public:
   std_msgs::Bool enable_msg_;
   std_msgs::Bool disable_msg_;
   std_msgs::Empty empty_msg_;
+
+  std::size_t state_counter_;
+  bool disabled_callback_called_;
+
+  // Optional function callback for when baxter is disabled
+  typedef boost::function<void ()> DisabledCallback;
+  DisabledCallback disabled_callback_; //   f1( boost::bind( &myclass::fun1, this ) );
+
   
   BaxterUtilities();
+  
+  /**
+   * \brief Allow classes that uses BaxterUtilities to add a hook for when Baxter is disabled
+   * \param callback - the function to call when baxter is disabled
+   */
+  void setDisabledCallback(DisabledCallback callback);
 
   /**
    * \brief Wait for initial state to be recieved from Baxter

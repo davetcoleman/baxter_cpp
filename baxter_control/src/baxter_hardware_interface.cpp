@@ -42,7 +42,8 @@ namespace baxter_control
 {
 
 BaxterHardwareInterface::BaxterHardwareInterface(bool in_simulation)
-  : in_simulation_(in_simulation)
+  : in_simulation_(in_simulation),
+    joint_mode_(1)
 {
   if( in_simulation_ )
   {
@@ -86,6 +87,10 @@ BaxterHardwareInterface::BaxterHardwareInterface(bool in_simulation)
       enabled = true;
     }
   }
+
+  // Set callback for Baxter being disabled
+  baxter_util_.setDisabledCallback(boost::bind( &ArmInterface::robotDisabledCallback, right_arm_hw_ ));
+  baxter_util_.setDisabledCallback(boost::bind( &ArmInterface::robotDisabledCallback,  left_arm_hw_ ));
 
   // Create the controller manager
   ROS_DEBUG_STREAM_NAMED("hardware_interface","Loading controller_manager");

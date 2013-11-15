@@ -263,22 +263,32 @@ void ArmHardwareInterface::cuffSqueezedCallback(const baxter_msgs::DigitalIOStat
   {
     if ( cuff_squeezed_previous )
     {
-      // Publish this new trajectory just once, on cuff release
-      //trajectory_command_msg_.header.stamp = ros::Time::now() + ros::Duration(1.0);
 
-      // Update the trajectory message with the current positions
-      for (std::size_t i = 0; i < n_dof_; ++i)
-      {
-        trajectory_command_msg_.points[0].positions[i] = joint_position_[i];
-        trajectory_command_msg_.points[1].positions[i] = joint_position_[i];
-      }
-
-      // Send a trajectory
-      pub_trajectory_command_.publish(trajectory_command_msg_);
+      publishCurrentLocation();
     }
-
     cuff_squeezed_previous = false;
   }
+}
+
+void ArmHardwareInterface::publishCurrentLocation()
+{
+  // Publish this new trajectory just once, on cuff release
+  ROS_INFO_STREAM_NAMED(arm_name_, "Sent updated trajectory to trajectory controller");
+
+  // Update the trajectory message with the current positions
+  for (std::size_t i = 0; i < n_dof_; ++i)
+  {
+    trajectory_command_msg_.points[0].positions[i] = joint_position_[i];
+    trajectory_command_msg_.points[1].positions[i] = joint_position_[i];
+  }
+
+  // Send a trajectory
+  pub_trajectory_command_.publish(trajectory_command_msg_);
+}
+
+void ArmHardwareInterface::robotDisabledCallback()
+{
+  publishCurrentLocation();
 }
 
 } // namespace

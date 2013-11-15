@@ -105,6 +105,11 @@ public:
    */
   void write();
 
+  /**
+   * \brief This is called when Baxter is disabled, so that we can update the desired positions
+   */
+  void robotDisabledCallback();
+
 };
 
 } // namespace

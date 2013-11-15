@@ -124,12 +124,20 @@ public:
   void write();
 
   /**
-   * \brief Check if the cuff manual control button is squeezed. If so, inform the trajectory controller to update
-   its setpoint
+   * \brief Check if the cuff manual control button is squeezed. 
    * \param msg - the state of the end effector cuff
    */
   void cuffSqueezedCallback(const baxter_msgs::DigitalIOStateConstPtr& msg);
 
+  /**
+   * \brief This is called when Baxter is disabled, so that we can update the desired positions
+   */
+  void robotDisabledCallback();
+
+  /**
+   * \brief inform the trajectory controller to update its setpoint
+   */
+  void publishCurrentLocation();
 };
 
 } // namespace

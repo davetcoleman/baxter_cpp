@@ -43,6 +43,8 @@ namespace baxter_control
 {
 
 BaxterUtilities::BaxterUtilities()
+  : disabled_callback_called_(false),
+    state_counter_(1)
 {
   ros::NodeHandle nh;
 
@@ -59,7 +61,11 @@ BaxterUtilities::BaxterUtilities()
   // Start the state subscriber
   sub_baxter_state_ = nh.subscribe<baxter_msgs::AssemblyState>(BAXTER_STATE_TOPIC,
                       1, &BaxterUtilities::stateCallback, this);
+}
 
+void BaxterUtilities::setDisabledCallback(DisabledCallback callback)
+{
+  disabled_callback_ = callback;
 }
 
 bool BaxterUtilities::communicationActive()
@@ -107,42 +113,42 @@ bool BaxterUtilities::isEnabled(bool verbose)
     std::string estop_button;
     switch( baxter_state_->estop_button )
     {
-    case baxter_msgs::AssemblyState::ESTOP_BUTTON_UNPRESSED:
-      estop_button = "Robot is not stopped and button is not pressed";
-      break;
-    case baxter_msgs::AssemblyState::ESTOP_BUTTON_PRESSED:
-      estop_button = "Pressed";
-      break;
-    case baxter_msgs::AssemblyState::ESTOP_BUTTON_UNKNOWN:
-      estop_button = "STATE_UNKNOWN when estop was asserted by a non-user source";
-      break;
-    case baxter_msgs::AssemblyState::ESTOP_BUTTON_RELEASED:
-      estop_button = "Was pressed, is now known to be released, but robot is still stopped.";
-      break;
-    default:
-      estop_button = "Unkown button state code";
+      case baxter_msgs::AssemblyState::ESTOP_BUTTON_UNPRESSED:
+        estop_button = "Robot is not stopped and button is not pressed";
+        break;
+      case baxter_msgs::AssemblyState::ESTOP_BUTTON_PRESSED:
+        estop_button = "Pressed";
+        break;
+      case baxter_msgs::AssemblyState::ESTOP_BUTTON_UNKNOWN:
+        estop_button = "STATE_UNKNOWN when estop was asserted by a non-user source";
+        break;
+      case baxter_msgs::AssemblyState::ESTOP_BUTTON_RELEASED:
+        estop_button = "Was pressed, is now known to be released, but robot is still stopped.";
+        break;
+      default:
+        estop_button = "Unkown button state code";
     }
 
     std::string estop_source;
     switch( baxter_state_->estop_source )
     {
-    case baxter_msgs::AssemblyState::ESTOP_SOURCE_NONE:
-      estop_source = "e-stop is not asserted";
-      break;
-    case baxter_msgs::AssemblyState::ESTOP_SOURCE_USER:
-      estop_source = "e-stop source is user input (the red button)";
-      break;
-    case baxter_msgs::AssemblyState::ESTOP_SOURCE_UNKNOWN:
-      estop_source = "e-stop source is unknown";
-      break;
-    case baxter_msgs::AssemblyState::ESTOP_SOURCE_FAULT:
-      estop_source = "MotorController asserted e-stop in response to a joint fault";
-      break;
-    case baxter_msgs::AssemblyState::ESTOP_SOURCE_BRAIN:
-      estop_source = "MotorController asserted e-stop in response to a lapse of the brain heartbeat";
-      break;
-    default:
-      estop_source = "Unkown button source code";
+      case baxter_msgs::AssemblyState::ESTOP_SOURCE_NONE:
+        estop_source = "e-stop is not asserted";
+        break;
+      case baxter_msgs::AssemblyState::ESTOP_SOURCE_USER:
+        estop_source = "e-stop source is user input (the red button)";
+        break;
+      case baxter_msgs::AssemblyState::ESTOP_SOURCE_UNKNOWN:
+        estop_source = "e-stop source is unknown";
+        break;
+      case baxter_msgs::AssemblyState::ESTOP_SOURCE_FAULT:
+        estop_source = "MotorController asserted e-stop in response to a joint fault";
+        break;
+      case baxter_msgs::AssemblyState::ESTOP_SOURCE_BRAIN:
+        estop_source = "MotorController asserted e-stop in response to a lapse of the brain heartbeat";
+        break;
+      default:
+        estop_source = "Unkown button source code";
 
     }
 
@@ -174,21 +180,31 @@ void BaxterUtilities::stateCallback(const baxter_msgs::AssemblyStateConstPtr& ms
   baxter_state_ = msg;
   baxter_state_timestamp_ = ros::Time::now();
 
-  /*
-  // Check for errors every 50 refreshes
-  static std::size_t counter = 0;
-  counter++;
-  if( counter % 50 == 0 )
+  // Check for errors every CHECK_FREQ refreshes to save computation
+  static const int CHECK_FREQ = 50;
+  if( state_counter_ % CHECK_FREQ == 0 )
   {
-  if( !isEnabled() )
-  {
-  ROS_ERROR_STREAM_THROTTLE_NAMED(2,"utility","Baxter in error state.");
+    if( isEnabled() ) // baxter is disabled
+    {
+      if (disabled_callback_called_ == false)
+      {
+        // Call the parent classes' callback if they've provided one
+        if (disabled_callback_)
+          disabled_callback_();
+
+        disabled_callback_called_ = true;
+      }
+    }
+    else // baxter is not disabled
+    {
+      disabled_callback_called_ = false;
+    }
+
+    // Reset the counter so it doesn't overflow
+    state_counter_ = 0;
   }
-  }
-  // Reset counter when it reaches max value
-  if( counter >= (size_t)-1 )
-  counter = 0;
-  */
+
+  state_counter_++;
 }
 
 bool BaxterUtilities::enableBaxter()
@@ -284,7 +300,7 @@ bool BaxterUtilities::positionBaxterNeutral()
 bool BaxterUtilities::sendToPose(const std::string &pose_name)
 {
   // Check if move group has been loaded yet
-  // We only load it here so that applications that don't need this aspect of baxter_utilities 
+  // We only load it here so that applications that don't need this aspect of baxter_utilities
   // don't have to load it every time.
   if( !move_group_ )
   {

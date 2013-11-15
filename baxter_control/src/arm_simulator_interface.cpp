@@ -143,4 +143,10 @@ void ArmSimulatorInterface::write()
   }
 }
 
+void ArmSimulatorInterface::robotDisabledCallback()
+{
+  ROS_ERROR_STREAM_NAMED("temp","baxter interface callback");
+}
+
+
 } // namespace
