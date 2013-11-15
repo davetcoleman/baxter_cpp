@@ -23,7 +23,7 @@ controller_list:
       - left_w0
       - left_w1
       - left_w2
-  - name: /robot/baxter_left_gripper_action
+  - name: /robot/baxter_right_gripper_action
     action_ns: gripper_action
     type: GripperCommand
     default: true
