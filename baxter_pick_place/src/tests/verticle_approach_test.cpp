@@ -38,7 +38,6 @@
 
 // ROS
 #include <ros/ros.h>
-//#include <tf/tf.h>
 #include <tf/transform_broadcaster.h>
 #include <tf/transform_listener.h>
 #include <actionlib/client/simple_action_client.h>
@@ -53,7 +52,6 @@
 #include <moveit/planning_scene_monitor/planning_scene_monitor.h>
 #include <moveit/robot_state/robot_state.h>
 #include <moveit/robot_state/conversions.h>
-//#include <moveit/robot_state/joint_state_group.h>
 #include <moveit/robot_model_loader/robot_model_loader.h>
 #include <moveit/plan_execution/plan_execution.h>
 #include <moveit/plan_execution/plan_with_sensing.h>
@@ -69,6 +67,7 @@
 
 // Baxter Utilities
 #include <baxter_control/baxter_utilities.h>
+#include <baxter_control/baxter_to_csv.h>
 
 namespace baxter_pick_place
 {
@@ -99,16 +98,26 @@ private:
   // baxter helper
   baxter_control::BaxterUtilities baxter_util_;
 
+  // baxter data recorder
+  baxter_control::BaxterToCSV baxter_record_;
+
   // which baxter arm are we using
   std::string arm_;
   std::string planning_group_name_;
+
+  // where to save trajectory files
+  std::string file_path_;
+  int file_id_; // incremental file naming
 
 public:
 
   // Constructor
   VerticleApproachTest()
     : arm_("left"),
-      planning_group_name_(arm_+"_arm")
+      planning_group_name_(arm_+"_arm"),
+      baxter_record_(true), // true means we are recording position commands
+      file_path_("/home/dave/ros/ws_baxter/src/baxter/baxter_pick_place/src/tests/verticle_approach_matlab/"),
+      file_id_(0)
   {
 
     // -----------------------------------------------------------------------------------------------
@@ -131,6 +140,16 @@ public:
     }
 
     // ---------------------------------------------------------------------------------------------
+    // Create trajectory execution manager
+    if( !trajectory_execution_manager_ )
+    {
+      // Create a trajectory execution manager
+      trajectory_execution_manager_.reset(new trajectory_execution_manager::TrajectoryExecutionManager
+        (planning_scene_monitor_->getRobotModel()));
+      plan_execution_.reset(new plan_execution::PlanExecution(planning_scene_monitor_, trajectory_execution_manager_));
+    }
+
+    // ---------------------------------------------------------------------------------------------
     // Load the Robot Viz Tools for publishing to Rviz
     visual_tools_.reset(new block_grasp_generator::VisualizationTools(baxter_pick_place::BASE_LINK));
     visual_tools_->setLifetime(120.0);
@@ -145,8 +164,21 @@ public:
       return;
 
     // ---------------------------------------------------------------------------------------------
-    // Do it
+    // Create start pose
     geometry_msgs::Pose start_pose = createStartPose();
+
+    // ---------------------------------------------------------------------------------------------
+    // Move into start position
+    ROS_INFO_STREAM_NAMED("verticle_test","Sending arm to start position ----------------------------------");
+
+    if(!sendPoseCommand(start_pose))
+    {
+      ROS_ERROR_STREAM_NAMED("verticle_test","Failed to go to start position");
+      return;
+    }
+
+    // ---------------------------------------------------------------------------------------------
+    // Create the trajectory
     createVerticleTrajectory(start_pose);
 
     ROS_INFO_STREAM_NAMED("verticle_test","Success! Waiting 5 sec before shutting down.");
@@ -169,18 +201,7 @@ public:
   bool createVerticleTrajectory(const geometry_msgs::Pose& start_pose)
   {
     // ---------------------------------------------------------------------------------------------
-    // Start Position
-    ROS_INFO_STREAM_NAMED("verticle_test","Sending arm to start position ----------------------------------");
-
-    if(!sendPoseCommand(start_pose))
-    {
-      ROS_ERROR_STREAM_NAMED("verticle_test","Failed to go to start position");
-      return false;
-    }
-
-    // ---------------------------------------------------------------------------------------------
     // Compute the trajectory once
-
     double desired_approach_distance = 0.4; // The distance the origin of a robot link needs to travel
     Eigen::Vector3d approach_direction; // Approach direction (negative z axis)
     approach_direction << 0, 0, -1;
@@ -206,6 +227,11 @@ public:
       if( !visual_tools_->publishTrajectoryPath(trajectory_msg, !runTrajectory ) )
         return false;
 
+      // Record the path
+      std::string file_name = file_path_ + "test" + boost::to_string(file_id_) + ".csv";
+      file_id_++;
+      baxter_record_.startRecording(file_name);
+
       // Execute the path
       if(runTrajectory)
       {
@@ -226,6 +252,9 @@ public:
       {
         executeTrajectoryMsg(reverse_trajectory_msg);
       }
+
+      // Save the recorded path to file
+      baxter_record_.stopRecording();
 
       ros::Duration(1).sleep();
     }
@@ -274,7 +303,6 @@ public:
     // -------------------------------------------------------------------------------------------
     // Visualize goals in rviz
     visual_tools_->publishArrow(goal_pose.pose, block_grasp_generator::GREEN);
-
     visual_tools_->publishEEMarkers(goal_pose.pose, block_grasp_generator::GREEN);
 
     // -------------------------------------------------------------------------------------------
@@ -300,7 +328,7 @@ public:
   }
 
   /**
-   *  \brief Function for testing multiple directions
+   * \brief Function for testing multiple directions
    * \param approach_direction - direction to move end effector straight
    * \param desired_approach_distance - distance the origin of a robot link needs to travel
    * \param trajectory_msg - resulting path
@@ -432,15 +460,6 @@ public:
   {
     ROS_INFO_STREAM_NAMED("verticle_test","Executing trajectory");
 
-    // Make sure the objects have been loaded
-    if( !trajectory_execution_manager_ )
-    {
-      // Create a trajectory execution manager
-      trajectory_execution_manager_.reset(new trajectory_execution_manager::TrajectoryExecutionManager
-        (planning_scene_monitor_->getRobotModel()));
-      plan_execution_.reset(new plan_execution::PlanExecution(planning_scene_monitor_, trajectory_execution_manager_));
-    }
-
     plan_execution_->getTrajectoryExecutionManager()->clear();
     if(plan_execution_->getTrajectoryExecutionManager()->push(trajectory_msg))
     {
@@ -494,7 +513,6 @@ public:
     start_pose.orientation.y = quat.y();
     start_pose.orientation.z = quat.z();
     start_pose.orientation.w = quat.w();
-
 
     return start_pose;
   }

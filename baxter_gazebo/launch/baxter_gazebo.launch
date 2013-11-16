@@ -25,20 +25,20 @@
   <!-- Run a python script to the send a service call to gazebo_ros to spawn a URDF robot -->
   <node name="urdf_spawner" pkg="gazebo_ros" type="spawn_model" respawn="false" output="screen"
 	args="-file $(find baxter_description)/urdf/baxter.urdf -urdf -z 0.93 -model baxter
-	      -J baxter::right_s0 -0.272659
-	      -J baxter::right_s1 1.04701
-	      -J baxter::right_e0 -0.00123203
-	      -J baxter::right_e1 0.49262
-	      -J baxter::right_w0 -0.0806423
-	      -J baxter::right_w1 -0.0620532
-	      -J baxter::right_w2 0.0265941
-	      -J baxter::left_s0 0.192483
-	      -J baxter::left_s1 1.047
-	      -J baxter::left_e0 0.000806359
-	      -J baxter::left_e1 0.491094
-	      -J baxter::left_w0 -0.178079
-	      -J baxter::left_w1 -0.0610333
-	      -J baxter::left_w2 -0.0124707
+	      -J right_s0 -0.272659
+	      -J right_s1 1.04701
+	      -J right_e0 -0.00123203
+	      -J right_e1 0.49262
+	      -J right_w0 -0.0806423
+	      -J right_w1 -0.0620532
+	      -J right_w2 0.0265941
+	      -J left_s0 0.192483
+	      -J left_s1 1.047
+	      -J left_e0 0.000806359
+	      -J left_e1 0.491094
+	      -J left_w0 -0.178079
+	      -J left_w1 -0.0610333
+	      -J left_w2 -0.0124707
 	      " />
 
   <!-- publish to Baxter's face -->

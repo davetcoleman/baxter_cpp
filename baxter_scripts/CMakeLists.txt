@@ -7,41 +7,19 @@ project(baxter_scripts)
 find_package(catkin REQUIRED COMPONENTS
   cv_bridge
   rospy
+  roscpp
   std_msgs
+  sensor_msgs
 )
 
 ## System dependencies are found with CMake's conventions
-# find_package(Boost REQUIRED COMPONENTS system)
+find_package(Boost REQUIRED COMPONENTS system)
 
 
 ## Uncomment this if the package has a setup.py. This macro ensures
 ## modules and global scripts declared therein get installed
 ## See http://ros.org/doc/api/catkin/html/user_guide/setup_dot_py.html
 # catkin_python_setup()
-
-#######################################
-## Declare ROS messages and services ##
-#######################################
-
-## Generate messages in the 'msg' folder
-# add_message_files(
-#   FILES
-#   Message1.msg
-#   Message2.msg
-# )
-
-## Generate services in the 'srv' folder
-# add_service_files(
-#   FILES
-#   Service1.srv
-#   Service2.srv
-# )
-
-## Generate added messages and services with any dependencies listed here
-# generate_messages(
-#   DEPENDENCIES
-#   std_msgs
-# )
 
 ###################################
 ## catkin specific configuration ##
@@ -55,7 +33,11 @@ find_package(catkin REQUIRED COMPONENTS
 catkin_package(
 #  INCLUDE_DIRS include
 #  LIBRARIES baxter_scripts
-#  CATKIN_DEPENDS cv_bridge rospy std_msgs
+  CATKIN_DEPENDS 
+    cv_bridge 
+    rospy 
+    std_msgs
+    sensor_msgs
 #  DEPENDS system_lib
 )
 
@@ -75,17 +57,10 @@ include_directories(
 #   src/${PROJECT_NAME}/baxter_scripts.cpp
 # )
 
-## Declare a cpp executable
-# add_executable(baxter_scripts_node src/baxter_scripts_node.cpp)
 
-## Add cmake target dependencies of the executable/library
-## as an example, message headers may need to be generated before nodes
-# add_dependencies(baxter_scripts_node baxter_scripts_generate_messages_cpp)
-
-## Specify libraries to link a library or executable target against
-# target_link_libraries(baxter_scripts_node
-#   ${catkin_LIBRARIES}
-# )
+add_executable(baxter_head_follow src/baxter_head_follow.cpp)
+add_dependencies(baxter_head_follow baxter_scripts_generate_messages_cpp)
+target_link_libraries(baxter_head_follow ${catkin_LIBRARIES})
 
 #############
 ## Install ##

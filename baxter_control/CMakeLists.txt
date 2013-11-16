@@ -32,6 +32,7 @@ catkin_package(
    INCLUDE_DIRS include
    LIBRARIES 
     baxter_utilities
+    baxter_to_csv
     arm_interface
    CATKIN_DEPENDS 
     moveit_ros_planning_interface 
@@ -58,6 +59,10 @@ include_directories(include ${catkin_INCLUDE_DIRS} ${Boost_INCLUDE_DIRS})
 add_library(baxter_utilities src/baxter_utilities.cpp)
 target_link_libraries(baxter_utilities ${catkin_LIBRARIES} ${Boost_LIBRARIES})
 add_dependencies(baxter_utilities ${catkin_EXPORTED_TARGETS}) # don't build until necessary msgs are finished
+
+add_library(baxter_to_csv src/baxter_to_csv.cpp)
+target_link_libraries(baxter_to_csv ${catkin_LIBRARIES} ${Boost_LIBRARIES})
+add_dependencies(baxter_to_csv ${catkin_EXPORTED_TARGETS}) # don't build until necessary msgs are finished
 
 add_library(arm_interface src/arm_hardware_interface.cpp src/arm_simulator_interface.cpp)
 target_link_libraries(arm_interface ${catkin_LIBRARIES} ${Boost_LIBRARIES})

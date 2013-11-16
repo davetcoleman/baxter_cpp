@@ -10,9 +10,10 @@
   <node name="face" pkg="baxter_scripts" type="xdisplay_image.py" 
 	args="--file=$(find baxter_moveit_config)/media/hal.jpg" />
 
-  <!-- Mute Baxter's sonars -->
+  <!-- Mute Baxter's sonars 
   <node name="baxter_mute_sonar" pkg="baxter_scripts" type="sonar_enable.py"
-	respawn="false" output="screen" args="--enable=0"/>
+	respawn="false" output="screen" args="-REMOVE-enable=0"/>
+  -->
 
   <!-- Load gripper controller -->
   <node name="baxter_gripper_server" pkg="baxter_gripper_server" type="gripper_action_server" 
