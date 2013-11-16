@@ -84,13 +84,13 @@ public:
    */
   BaxterHeadFollow()
     : SONAR_COUNT_(12),
-      FREQ_INCREMENT_SCALE_(0.1),
-      FREQ_DECREMENT_(-1.0),
-      SONAR_TRIGGER_THRESHOLD_(0.2)
+      FREQ_INCREMENT_SCALE_(0.01),
+      FREQ_DECREMENT_(-0.7),
+      SONAR_TRIGGER_THRESHOLD_(0.4)
   {
     // Start publishers
     pub_head_turn_ = nh_.advertise<baxter_msgs::HeadPanCommand>("/sdk/robot/head/command_head_pan",10);
-    head_command_.speed = 25;
+    head_command_.speed = 10;
 
     // Start subscribers
     sub_sonars_ = nh_.subscribe<sensor_msgs::PointCloud>("/robot/sonar/head_sonar/state", 1, &BaxterHeadFollow::sonarCallback, this);
@@ -104,7 +104,7 @@ public:
     }
 
     // Create head control loop
-    double hz = 5; // times per second
+    double hz = 1; // times per second
     ros::Duration update_freq = ros::Duration(1.0/hz);
     non_realtime_loop_ = nh_.createTimer(update_freq, &BaxterHeadFollow::update, this);
   }
@@ -131,7 +131,7 @@ public:
       int sonar_id = msg->channels[0].values[i];
 
       // Ignore the back sonars
-      if (sonar_id == 5 || sonar_id == 6)
+      if (sonar_id == 5 || sonar_id == 6 || sonar_id == 7)
         continue;
 
       // Increment the probability based on distance
@@ -166,12 +166,12 @@ public:
     // add sonars into groups of two
     double largest_value = 0;
     int largest_index = -1;
-    for (std::size_t i = 0; i < occupancy_freq_.size() - 1; ++i)
+    for (std::size_t i = 0; i < occupancy_freq_.size(); ++i)
     {
       // Check for max grouping
-      if (occupancy_freq_[i] + occupancy_freq_[i+1] > largest_value)
+      if (occupancy_freq_[i] > largest_value)
       {
-        largest_value = occupancy_freq_[i] + occupancy_freq_[i+1];
+        largest_value = occupancy_freq_[i];
         largest_index = i;
       }
     }
@@ -190,21 +190,31 @@ public:
     }
     else
     {
-      if ( largest_index < 5 )
+      if ( largest_index == 4 )
+      {
+        // Move all the way to the left
+        command = -1.0;
+      }
+      else if ( largest_index < 4 )
       {
         // Move to left        
-        // Map 1-4 to 0 to -1
-        command = -1 * double(largest_index) / 4;
+        // Map 1-3 to 0 to -1
+        command = std::max(-1.0, -1 * double(largest_index) / 3);
       }
-      else // (greater than 6)
+      else if ( largest_index == 8 )
+      {
+        // Move all the way to the right
+        command = 1.0;
+      }
+      else // (greater than 8)
       {
         // Move to right
-        // Map 10-7 to 0 to 1
-        command = 1.25 - double(largest_index - 6) / 4;
+        // Map 11-9 to 0 to 1
+        command = std::min(1.0, 1.33 - double(largest_index - 8) / 3);
       }
+      head_command_.target = command;
+      pub_head_turn_.publish(head_command_);
     }
-    head_command_.target = command;
-    pub_head_turn_.publish(head_command_);
     std::cout << "== " << command << " from " << largest_value << " at " << largest_index << std::endl;
 
     // Decrement all channels to allow baxter to "forget"
