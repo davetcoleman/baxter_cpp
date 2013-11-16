@@ -66,6 +66,7 @@ private:
   const int SONAR_COUNT_; // Total number of sonars on baxter
   const double FREQ_INCREMENT_SCALE_;  // Amount to increment the occupancy frequency
   const double FREQ_DECREMENT_;  // AMount to decreate the occupancy frenquency
+  const double SONAR_TRIGGER_THRESHOLD_; // ignore sonars with values less than this
 
   // Track frequency of occupancy
   std::vector<double> occupancy_freq_;
@@ -84,7 +85,8 @@ public:
   BaxterHeadFollow()
     : SONAR_COUNT_(12),
       FREQ_INCREMENT_SCALE_(0.1),
-      FREQ_DECREMENT_(-0.025)
+      FREQ_DECREMENT_(-1.0),
+      SONAR_TRIGGER_THRESHOLD_(0.2)
   {
     // Start publishers
     pub_head_turn_ = nh_.advertise<baxter_msgs::HeadPanCommand>("/sdk/robot/head/command_head_pan",10);
@@ -121,12 +123,6 @@ public:
    */
   void sonarCallback(const sensor_msgs::PointCloudConstPtr& msg)
   {
-    /*static int delayer = 0;
-      delayer++;
-      if (delayer % 10 != 0)
-      return;
-    */
-
     //ROS_INFO_STREAM_NAMED("temp","recieved " << msg->channels[0].values.size());
 
     // Increment the channels that are detected this round
@@ -139,32 +135,31 @@ public:
         continue;
 
       // Increment the probability based on distance
-      occupancy_freq_[sonar_id] =
+      occupancy_freq_[sonar_id] = 
         std::min(1.0, occupancy_freq_[sonar_id] +
-          1 / 
-          occupancy_freq_[msg->channels[1].values[i]]
+          1.0 / 
+          msg->channels[1].values[i]
           * FREQ_INCREMENT_SCALE_);
-        
-      //ROS_INFO_STREAM_NAMED("temp","activated channels: " << sonar_id);
+      
+      /*ROS_INFO_STREAM_NAMED("temp","increased " << sonar_id << " with " << 
+        msg->channels[1].values[i]
+        <<" by " <<
+        1.0 / 
+        msg->channels[1].values[i]
+        * FREQ_INCREMENT_SCALE_);
+        */
     }
   }
-
 
   /**
    * \brief Called at increments to move head
    */
   void update(const ros::TimerEvent& e)
   {
-    // Decrement all channels to allow baxter to "forget"
-    for (std::size_t i = 0; i < occupancy_freq_.size(); ++i)
-    {
-      occupancy_freq_[i] = std::max(0.0, occupancy_freq_[i] + FREQ_DECREMENT_);
-    }
-
     // Debug array
     for (std::size_t i = 0; i < occupancy_freq_.size(); ++i)
     {
-      std::cout << std::fixed << std::setprecision(2) << occupancy_freq_[i] << " | ";
+      std::cout << std::fixed << std::setprecision(1) << occupancy_freq_[i] << " | ";
     }
 
     // Choose where to move head
@@ -181,6 +176,12 @@ public:
       }
     }
 
+    // Don't move if no sonars are very strongly triggered
+    if (largest_value < SONAR_TRIGGER_THRESHOLD_)
+    {
+      largest_index = -1;
+    }
+
     // Use the largest index to move head
     double command;
     if (largest_index == -1 ) // they area all blanks
@@ -189,36 +190,28 @@ public:
     }
     else
     {
-      // Map 0-10 to -1 to 1
-      command = double(largest_index) / double(SONAR_COUNT_) * 2 - 1;
+      if ( largest_index < 5 )
+      {
+        // Move to left        
+        // Map 1-4 to 0 to -1
+        command = -1 * double(largest_index) / 4;
+      }
+      else // (greater than 6)
+      {
+        // Move to right
+        // Map 10-7 to 0 to 1
+        command = 1.25 - double(largest_index - 6) / 4;
+      }
     }
     head_command_.target = command;
     pub_head_turn_.publish(head_command_);
-    std::cout << "== " << command << std::endl;
+    std::cout << "== " << command << " from " << largest_value << " at " << largest_index << std::endl;
 
-    /*
-    // Move to side with largest value
-    double left = std::accumulate(
-    occupancy_freq_.begin(),
-    occupancy_freq_.begin()+double(occupancy_freq_.size()/2), 0);
-    double right = std::accumulate(
-    occupancy_freq_.begin()+double(occupancy_freq_.size()/2+1),
-    occupancy_freq_.end(), 0);
-
-    if (left > right)
+    // Decrement all channels to allow baxter to "forget"
+    for (std::size_t i = 0; i < occupancy_freq_.size(); ++i)
     {
-    // move left
-    head_command_.target = 1.0;
-    pub_head_turn_.publish(head_command_);
+      occupancy_freq_[i] = std::max(0.0, occupancy_freq_[i] + FREQ_DECREMENT_);
     }
-    else
-    {
-    // move right
-    head_command_.target = -1.0;
-    pub_head_turn_.publish(head_command_);
-    }
-    //ROS_DEBUG_STREAM_NAMED("temp","commanded: \n" << head_command_);
-    */
   }
 
 
