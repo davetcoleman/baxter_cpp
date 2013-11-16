@@ -39,20 +39,11 @@
 #ifndef BAXTER_CONTROL__ARM_HARDWARE_INTERFACE_
 #define BAXTER_CONTROL__ARM_HARDWARE_INTERFACE_
 
-// Boost
-#include <boost/shared_ptr.hpp>
-
 // ROS
-#include <ros/ros.h>
-#include <sensor_msgs/JointState.h>
 #include <trajectory_msgs/JointTrajectory.h>
 
-// ros_control
-#include <hardware_interface/joint_command_interface.h>
-#include <hardware_interface/joint_state_interface.h>
-
 // Baxter
-#include <baxter_msgs/JointPositions.h>
+#include <baxter_msgs/JointCommandMode.h>
 #include <baxter_msgs/DigitalIOState.h>
 
 // Parent class
@@ -69,6 +60,8 @@ private:
 
   // Publishers
   ros::Publisher pub_position_command_;
+  ros::Publisher pub_velocity_command_;
+  ros::Publisher pub_command_mode_;
   ros::Publisher pub_trajectory_command_;
 
   // Subscriber
@@ -81,6 +74,8 @@ private:
 
   // Messages to send
   baxter_msgs::JointPositions output_command_msg_;
+  baxter_msgs::JointVelocities output_velocity_msg_;
+  baxter_msgs::JointCommandMode output_command_mode_msg_;
   trajectory_msgs::JointTrajectory trajectory_command_msg_;
 
   // Track button status
@@ -102,7 +97,8 @@ public:
     hardware_interface::JointStateInterface&    js_interface,
     hardware_interface::EffortJointInterface&   ej_interface,
     hardware_interface::VelocityJointInterface& vj_interface,
-    hardware_interface::PositionJointInterface& pj_interface
+    hardware_interface::PositionJointInterface& pj_interface,
+    int* joint_mode
   );
 
   /**
@@ -128,12 +124,20 @@ public:
   void write();
 
   /**
-   * \brief Check if the cuff manual control button is squeezed. If so, inform the trajectory controller to update
-            its setpoint
+   * \brief Check if the cuff manual control button is squeezed. 
    * \param msg - the state of the end effector cuff
    */
   void cuffSqueezedCallback(const baxter_msgs::DigitalIOStateConstPtr& msg);
 
+  /**
+   * \brief This is called when Baxter is disabled, so that we can update the desired positions
+   */
+  void robotDisabledCallback();
+
+  /**
+   * \brief inform the trajectory controller to update its setpoint
+   */
+  void publishCurrentLocation();
 };
 
 } // namespace

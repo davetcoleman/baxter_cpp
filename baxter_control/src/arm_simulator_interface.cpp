@@ -87,8 +87,11 @@ bool ArmSimulatorInterface::init(
   hardware_interface::JointStateInterface&    js_interface,
   hardware_interface::EffortJointInterface&   ej_interface,
   hardware_interface::VelocityJointInterface& vj_interface,
-  hardware_interface::PositionJointInterface& pj_interface)
+  hardware_interface::PositionJointInterface& pj_interface,
+  int* joint_mode)
 {
+  joint_mode_ = joint_mode;
+
   for (std::size_t i = 0; i < n_dof_; ++i)
   {
 
@@ -139,5 +142,11 @@ void ArmSimulatorInterface::write()
     joint_position_[i] += error * 0.1;
   }
 }
+
+void ArmSimulatorInterface::robotDisabledCallback()
+{
+  ROS_ERROR_STREAM_NAMED("temp","baxter interface callback");
+}
+
 
 } // namespace

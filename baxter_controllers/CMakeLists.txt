@@ -8,7 +8,8 @@ find_package(catkin REQUIRED COMPONENTS
   control_toolbox
   effort_controllers
   baxter_msgs
-  )
+  baxter_control
+)
 
 ## System dependencies are found with CMake's conventions
 find_package(Boost REQUIRED COMPONENTS system)
@@ -22,7 +23,7 @@ catkin_package(
   baxter_msgs
   INCLUDE_DIRS include
   LIBRARIES ${PROJECT_NAME}
-  )
+)
 
 include_directories(include ${catkin_INCLUDE_DIRS} ${Boost_INCLUDE_DIR} )
 

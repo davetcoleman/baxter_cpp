@@ -79,7 +79,8 @@ public:
     hardware_interface::JointStateInterface&    js_interface,
     hardware_interface::EffortJointInterface&   ej_interface,
     hardware_interface::VelocityJointInterface& vj_interface,
-    hardware_interface::PositionJointInterface& pj_interface
+    hardware_interface::PositionJointInterface& pj_interface,
+    int* joint_mode
   );
 
   /**
@@ -103,6 +104,11 @@ public:
    * \brief Publish our hardware interface datastructures commands to Baxter hardware
    */
   void write();
+
+  /**
+   * \brief This is called when Baxter is disabled, so that we can update the desired positions
+   */
+  void robotDisabledCallback();
 
 };
 

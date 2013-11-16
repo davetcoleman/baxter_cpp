@@ -42,7 +42,8 @@ namespace baxter_control
 {
 
 BaxterHardwareInterface::BaxterHardwareInterface(bool in_simulation)
-  : in_simulation_(in_simulation)
+  : in_simulation_(in_simulation),
+    joint_mode_(1)
 {
   if( in_simulation_ )
   {
@@ -56,12 +57,17 @@ BaxterHardwareInterface::BaxterHardwareInterface(bool in_simulation)
     right_arm_hw_.reset(new baxter_control::ArmHardwareInterface("right"));
     left_arm_hw_.reset(new baxter_control::ArmHardwareInterface("left"));
   }
+
+  // Set the joint mode interface data
+  jm_interface_.registerHandle(hardware_interface::JointModeHandle("joint_mode", &joint_mode_));
+
   // Initialize right arm
-  right_arm_hw_->init(js_interface_, ej_interface_, vj_interface_, pj_interface_);
-  left_arm_hw_->init(js_interface_, ej_interface_, vj_interface_, pj_interface_);
+  right_arm_hw_->init(js_interface_, ej_interface_, vj_interface_, pj_interface_, &joint_mode_);
+  left_arm_hw_->init(js_interface_, ej_interface_, vj_interface_, pj_interface_, &joint_mode_);
 
   // Register interfaces
   registerInterface(&js_interface_);
+  registerInterface(&jm_interface_);
   registerInterface(&ej_interface_);
   registerInterface(&vj_interface_);
   registerInterface(&pj_interface_);
@@ -82,6 +88,10 @@ BaxterHardwareInterface::BaxterHardwareInterface(bool in_simulation)
     }
   }
 
+  // Set callback for Baxter being disabled
+  baxter_util_.setDisabledCallback(boost::bind( &ArmInterface::robotDisabledCallback, right_arm_hw_ ));
+  baxter_util_.setDisabledCallback(boost::bind( &ArmInterface::robotDisabledCallback,  left_arm_hw_ ));
+
   // Create the controller manager
   ROS_DEBUG_STREAM_NAMED("hardware_interface","Loading controller_manager");
   controller_manager_.reset(new controller_manager::ControllerManager(this, nh_));
@@ -100,8 +110,6 @@ BaxterHardwareInterface::~BaxterHardwareInterface()
 
 void BaxterHardwareInterface::update(const ros::TimerEvent& e)
 {
-  //ROS_INFO_STREAM_THROTTLE_NAMED(10, "temp","Updating with period: " << (e.current_real - e.last_real)*100 << "hz" );
-
    // Input
   right_arm_hw_->read();
   left_arm_hw_->read();
@@ -113,7 +121,6 @@ void BaxterHardwareInterface::update(const ros::TimerEvent& e)
   right_arm_hw_->write();
   left_arm_hw_->write();
  }
-
 
 } // namespace
 
@@ -136,7 +143,7 @@ int main(int argc, char** argv)
   {
     if( std::string(argv[i]).compare("--simulation") == 0 )
     {
-      ROS_INFO_STREAM_NAMED("main","Gripper action server in simulation mode");
+      ROS_INFO_STREAM_NAMED("main","Baxter Hardware Interface in simulation mode");
       in_simulation = true;
     }
   }  

@@ -49,14 +49,16 @@
 // ros_control
 #include <hardware_interface/joint_command_interface.h>
 #include <hardware_interface/joint_state_interface.h>
+#include <hardware_interface/joint_mode_interface.h>
 
 // Baxter
 #include <baxter_msgs/JointPositions.h>
+#include <baxter_msgs/JointVelocities.h>
 
 namespace baxter_control
 {
 
-//const std::string& HARDWARE_INTERFACE = "PositionJointInterface";
+enum BaxterControlMode { POSITION, VELOCITY, TORQUE };
 
 class ArmInterface
 {
@@ -75,6 +77,9 @@ protected:
   std::vector<double> joint_position_command_;
   std::vector<double> joint_effort_command_;
   std::vector<double> joint_velocity_command_;
+  
+  // Track current hardware interface mode we are in
+  int* joint_mode_;
 
   // Name of this arm
   std::string arm_name_;
@@ -99,7 +104,8 @@ public:
     hardware_interface::JointStateInterface&    js_interface,
     hardware_interface::EffortJointInterface&   ej_interface,
     hardware_interface::VelocityJointInterface& vj_interface,
-    hardware_interface::PositionJointInterface& pj_interface
+    hardware_interface::PositionJointInterface& pj_interface,
+    int* joint_mode
   ) 
   { return true; };
 
@@ -113,6 +119,12 @@ public:
    * \brief Publish our hardware interface datastructures commands to Baxter hardware
    */
   virtual void write()
+  {};
+
+  /**
+   * \brief This is called when Baxter is disabled, so that we can update the desired positions
+   */
+  virtual void robotDisabledCallback()
   {};
 
 };
