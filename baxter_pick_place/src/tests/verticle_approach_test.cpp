@@ -115,7 +115,7 @@ public:
   VerticleApproachTest()
     : arm_("left"),
       planning_group_name_(arm_+"_arm"),
-      baxter_record_(true), // true means we are recording position commands
+      baxter_record_(false, 650), // true means we are recording position commands, 650 is number of data pts to reserve in vectors
       file_path_("/home/dave/ros/ws_baxter/src/baxter/baxter_pick_place/src/tests/verticle_approach_matlab/"),
       file_id_(0)
   {

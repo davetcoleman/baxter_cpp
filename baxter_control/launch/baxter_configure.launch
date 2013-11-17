@@ -1,22 +1,28 @@
 <?xml version="1.0" encoding="utf-8"?>
 <launch>
 
-  <!-- GDB functionality -->
-  <arg name="debug" default="false" />
-  <arg unless="$(arg debug)" name="launch_prefix" value="" />
-  <arg     if="$(arg debug)" name="launch_prefix" value="gdb --ex run --args" />
+  <group ns="robot">
+    <!-- GDB functionality -->
+    <arg name="debug" default="false" />
+    <arg unless="$(arg debug)" name="launch_prefix" value="" />
+    <arg     if="$(arg debug)" name="launch_prefix" value="gdb --ex run --args" />
 
-  <!-- Display image on Baxter face -->
-  <node name="face" pkg="baxter_scripts" type="xdisplay_image.py" 
-	args="--file=$(find baxter_moveit_config)/media/hal.jpg" />
+    <!-- Display image on Baxter face -->
+    <node name="face" pkg="baxter_scripts" type="xdisplay_image.py"
+	  args="--file=$(find baxter_moveit_config)/media/hal.jpg" />
 
-  <!-- Mute Baxter's sonars 
-  <node name="baxter_mute_sonar" pkg="baxter_scripts" type="sonar_enable.py"
-	respawn="false" output="screen" args="-REMOVE-enable=0"/>
-  -->
+    <!-- Mute Baxter's sonars
+	 <node name="baxter_mute_sonar" pkg="baxter_scripts" type="sonar_enable.py"
+	 respawn="false" output="screen" args="-REMOVE-enable=0"/>
+    -->
 
-  <!-- Load gripper controller -->
-  <node name="baxter_gripper_server" pkg="baxter_gripper_server" type="gripper_action_server" 
-	respawn="false" output="screen" launch-prefix="$(arg launch_prefix)" />
-  
+    <!-- Face tracking using sonars -->
+    <node name="baxter_head_follow" pkg="baxter_scripts" type="baxter_head_follow"
+	  respawn="false" output="screen" args=""/>
+
+    <!-- Load gripper controller -->
+    <node name="baxter_gripper_server" pkg="baxter_gripper_server" type="gripper_action_server"
+	  respawn="false" output="screen" launch-prefix="$(arg launch_prefix)" />
+  </group>
+
 </launch>

@@ -18,6 +18,8 @@ Unofficial Baxter packages that work along side the Rethink SDK, or optionally w
    * Other tools for testing trajectories
  * Baxter position trajectory controller
    * Uses the ros_control [joint_trajectory_controller](https://github.com/ros-controls/ros_controllers/tree/hydro-devel/joint_trajectory_controller) instead of the python trajectory controller that comes with the SDK
+ * Other goodies
+   * Baxter's face follows obstacles using the sonars
 
 **Note:** This is the ROS Hydro version. See groovy-devel branch for ROS Groovy instructions, although that branch is no longer being actively developed.
 

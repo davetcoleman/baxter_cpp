@@ -41,7 +41,7 @@
 namespace baxter_control
 {
 
-BaxterToCSV::BaxterToCSV(bool position_cmd_mode)
+BaxterToCSV::BaxterToCSV(bool position_cmd_mode, int estimated_num_data_pts)
   : arm_name_("left"),
     joint_name_("w1"),
     current_state_count_(0),
@@ -63,13 +63,17 @@ BaxterToCSV::BaxterToCSV(bool position_cmd_mode)
                    "/command_joint_velocities", 1, &BaxterToCSV::cmdVelocityCallback, this);
   }
 
+  // Pre-allocate memory for vectors
+  joint_states_.reserve(estimated_num_data_pts);
+  timestamps_.reserve(estimated_num_data_pts);
+  cmd_position_msgs_.reserve(estimated_num_data_pts);
+  cmd_velocity_msgs_.reserve(estimated_num_data_pts);
+
   // Wait for first state message to be recieved
-  while(ros::ok() && state_msg_timestamp_.toSec() == 0)
-  {
-    ROS_INFO_STREAM_NAMED(arm_name_,"Waiting for first state message to be recieved");
-    ros::spinOnce();
-    ros::Duration(0.25).sleep();
-  }
+  ROS_INFO_STREAM_NAMED(arm_name_,"Waiting for first state message to be recieved");
+  ros::spinOnce();
+  ros::Duration(1.0).sleep();
+
 }
 
 // Start the data collection
@@ -79,7 +83,7 @@ void BaxterToCSV::startRecording(const std::string& file_name)
 
   // Reset data collections
   joint_states_.clear();
-  joint_commands_.clear();
+  timestamps_.clear();
   cmd_position_msgs_.clear();
   cmd_velocity_msgs_.clear();
 
@@ -106,27 +110,20 @@ void BaxterToCSV::update(const ros::TimerEvent& e)
     ROS_INFO_STREAM_THROTTLE_NAMED(2, "update","Updating with period: "
       << ((e.current_real - e.last_real)*100) << " hz" );
 
-  // Check if we are still connected to Baxter
-  if ( stateExpired() )
-  {
-    ROS_ERROR_STREAM_NAMED("update","Aborting early");
-    stopRecording();
-  }
-
   joint_states_.push_back(state_msg_);
-  //TODO joint_commands_.push_back(output_command_msg_.data); // record current command
   if (position_cmd_mode_)
     cmd_position_msgs_.push_back(cmd_position_msg_);
   else
     cmd_velocity_msgs_.push_back(cmd_velocity_msg_);
 
+  // Record current time
+  timestamps_.push_back(ros::Time::now());
 }
 
 void BaxterToCSV::stateCallback(const sensor_msgs::JointStateConstPtr& msg)
 {
   // Copy the latest message into a buffer
   state_msg_ = *msg;
-  state_msg_timestamp_ = ros::Time::now();
 }
 
 void BaxterToCSV::cmdPositionCallback(const baxter_msgs::JointPositionsConstPtr& msg)
@@ -139,18 +136,6 @@ void BaxterToCSV::cmdVelocityCallback(const baxter_msgs::JointVelocitiesConstPtr
 {
   // Copy the latest message into a buffer
   cmd_velocity_msg_ = *msg;
-}
-
-bool BaxterToCSV::stateExpired()
-{
-  // Check that we have a non-expired state message
-  // \todo lower the expiration duration
-  if( ros::Time::now() > state_msg_timestamp_ + ros::Duration(STATE_EXPIRED_TIMEOUT)) // check that the message timestamp is no older than 1 second
-  {
-    ROS_WARN_STREAM_THROTTLE_NAMED(1,arm_name_,"State expired. Last recieved state " << (ros::Time::now() - state_msg_timestamp_).toSec() << " seconds ago." );
-    return true;
-  }
-  return false;
 }
 
 bool BaxterToCSV::writeToFile(const std::string& file_name)
@@ -181,12 +166,13 @@ bool BaxterToCSV::writeToFile(const std::string& file_name)
   // Output data ------------------------------------------------------
 
   // Subtract starting time
-  double start_time = joint_states_[0].header.stamp.toSec();
+  //double start_time = joint_states_[0].header.stamp.toSec();
+  double start_time = timestamps_[0].toSec();
 
   for (std::size_t i = 0; i < joint_states_.size(); ++i)
   {
     // Timestamp
-    output_file << joint_states_[i].header.stamp.toSec() - start_time << ",";
+    output_file << timestamps_[i].toSec() - start_time << ",";
 
     // Output entire state of robot to single line
     for (std::size_t j = 0; j < joint_states_[i].position.size(); ++j)

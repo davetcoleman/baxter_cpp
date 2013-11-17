@@ -35,3 +35,7 @@ baxter_interface/cfg/cpp
 
 # Catkin Workspace
 /CMakeLists.txt
+
+# Images
+*.png
+*.jpg

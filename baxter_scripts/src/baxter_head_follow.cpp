@@ -76,6 +76,8 @@ private:
   ros::Timer non_realtime_loop_;
 
   baxter_msgs::HeadPanCommand head_command_;
+  
+  bool verbose_; // show debug info
 
 public:
 
@@ -86,7 +88,8 @@ public:
     : SONAR_COUNT_(12),
       FREQ_INCREMENT_SCALE_(0.01),
       FREQ_DECREMENT_(-0.7),
-      SONAR_TRIGGER_THRESHOLD_(0.4)
+      SONAR_TRIGGER_THRESHOLD_(0.4),
+      verbose_(false)
   {
     // Start publishers
     pub_head_turn_ = nh_.advertise<baxter_msgs::HeadPanCommand>("/sdk/robot/head/command_head_pan",10);
@@ -135,16 +138,16 @@ public:
         continue;
 
       // Increment the probability based on distance
-      occupancy_freq_[sonar_id] = 
+      occupancy_freq_[sonar_id] =
         std::min(1.0, occupancy_freq_[sonar_id] +
-          1.0 / 
+          1.0 /
           msg->channels[1].values[i]
           * FREQ_INCREMENT_SCALE_);
-      
-      /*ROS_INFO_STREAM_NAMED("temp","increased " << sonar_id << " with " << 
+
+      /*ROS_INFO_STREAM_NAMED("temp","increased " << sonar_id << " with " <<
         msg->channels[1].values[i]
         <<" by " <<
-        1.0 / 
+        1.0 /
         msg->channels[1].values[i]
         * FREQ_INCREMENT_SCALE_);
         */
@@ -157,9 +160,12 @@ public:
   void update(const ros::TimerEvent& e)
   {
     // Debug array
-    for (std::size_t i = 0; i < occupancy_freq_.size(); ++i)
+    if (verbose_)
     {
-      std::cout << std::fixed << std::setprecision(1) << occupancy_freq_[i] << " | ";
+      for (std::size_t i = 0; i < occupancy_freq_.size(); ++i)
+      {
+        std::cout << std::fixed << std::setprecision(1) << occupancy_freq_[i] << " | ";
+      }
     }
 
     // Choose where to move head
@@ -197,7 +203,7 @@ public:
       }
       else if ( largest_index < 4 )
       {
-        // Move to left        
+        // Move to left
         // Map 1-3 to 0 to -1
         command = std::max(-1.0, -1 * double(largest_index) / 3);
       }
@@ -215,7 +221,8 @@ public:
       head_command_.target = command;
       pub_head_turn_.publish(head_command_);
     }
-    std::cout << "== " << command << " from " << largest_value << " at " << largest_index << std::endl;
+    if (verbose_)
+      std::cout << "== " << command << " from " << largest_value << " at " << largest_index << std::endl;
 
     // Decrement all channels to allow baxter to "forget"
     for (std::size_t i = 0; i < occupancy_freq_.size(); ++i)

@@ -94,7 +94,6 @@ private:
 
   // Buffer of joint states and commands
   sensor_msgs::JointState state_msg_;
-  ros::Time state_msg_timestamp_;
   baxter_msgs::JointVelocities cmd_velocity_msg_;
   baxter_msgs::JointPositions cmd_position_msg_;
 
@@ -109,7 +108,7 @@ private:
 
   // Buffer of joint state data
   std::vector<sensor_msgs::JointState> joint_states_;
-  std::vector<double> joint_commands_;
+  std::vector<ros::Time> timestamps_;
   std::vector<baxter_msgs::JointPositions> cmd_position_msgs_;
   std::vector<baxter_msgs::JointVelocities> cmd_velocity_msgs_;
   std::size_t current_state_count_;
@@ -125,7 +124,7 @@ public:
    * \brief Constructor
    * \param record_time how long to record state data and output commands
    */
-  BaxterToCSV(bool position_cmd_mode);
+  BaxterToCSV(bool position_cmd_mode, int estimated_num_data_pts);
   ~BaxterToCSV();
 
   void startRecording(const std::string& file_name);
