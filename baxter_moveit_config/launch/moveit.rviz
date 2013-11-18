@@ -328,7 +328,7 @@ Visualization Manager:
         Interactive Marker Size: 0.3
         Joint Violation Color: 255; 0; 255
         Planning Group: right_arm
-        Query Goal State: true
+        Query Goal State: false
         Query Start State: false
         Show Workspace: false
         Start State Alpha: 1
@@ -593,7 +593,7 @@ Visualization Manager:
       Name: block_grasp_generator
       Namespaces:
         Arrow: true
-        Block: true
+        end_effector: true
       Queue Size: 100
       Value: true
     - Class: rviz/MarkerArray
@@ -678,15 +678,15 @@ Visualization Manager:
       Class: rviz/XYOrbit
       Distance: 2.40247
       Focal Point:
-        X: 0.720185
-        Y: 0.346115
-        Z: 2.38419e-07
+        X: 0.881923
+        Y: 0.298401
+        Z: -5.96046e-07
       Name: Current View
       Near Clip Distance: 0.01
-      Pitch: 0.584797
+      Pitch: 0.519797
       Target Frame: base_link
       Value: XYOrbit (rviz)
-      Yaw: 5.86862
+      Yaw: 6.00362
     Saved: ~
 Window Geometry:
   Displays:
