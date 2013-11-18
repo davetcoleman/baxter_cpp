@@ -61,6 +61,7 @@ include_directories(
 
 add_executable(baxter_head_follow src/baxter_head_follow.cpp)
 add_dependencies(baxter_head_follow baxter_scripts_generate_messages_cpp)
+add_dependencies(baxter_head_follow ${catkin_EXPORTED_TARGETS}) # don't build until all msgs are done
 target_link_libraries(baxter_head_follow ${catkin_LIBRARIES})
 
 #############

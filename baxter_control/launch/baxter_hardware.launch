@@ -21,8 +21,9 @@
 
     <!-- Load the default controllers -->
     <node name="controller_spawner" pkg="controller_manager" type="spawner" respawn="false"
-	  output="screen" ns="/robot" args="right_joint_trajectory_controller
-					    left_joint_trajectory_controller
+	  output="screen" ns="/robot" args="velocity_joint_mode_controller
+					    right_velocity_trajectory_controller
+					    left_velocity_trajectory_controller
 					    " />
   </group>
 

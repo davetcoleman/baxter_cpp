@@ -20,7 +20,7 @@ find_package(Eigen REQUIRED)
 find_package(Boost REQUIRED system thread)
 
 catkin_package(
-#  INCLUDE_DIRS include
+  INCLUDE_DIRS include
 #  CATKIN_DEPENDS 
 )
 
@@ -37,10 +37,6 @@ include_directories(include ${catkin_INCLUDE_DIRS} ${Boost_INCLUDE_DIRS})
 # Main executable
 add_executable(block_pick_place src/block_pick_place.cpp)
 target_link_libraries(block_pick_place ${catkin_LIBRARIES} ${Boost_LIBRARIES})
-
-# Test executable
-add_executable(verticle_approach_test src/tests/verticle_approach_test.cpp)
-target_link_libraries(verticle_approach_test ${catkin_LIBRARIES} ${Boost_LIBRARIES})
 
 # Demos
 add_executable(random_planning src/demos/random_planning.cpp)

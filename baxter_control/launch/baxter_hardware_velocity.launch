@@ -24,9 +24,9 @@
 	  output="screen" ns="/robot" args="velocity_joint_mode_controller
 					    left_w1_velocity_controller
 					    " />
-
-    <!-- Load other configurations shared between all three Baxter run modes-->
-    <include file="$(find baxter_control)/launch/baxter_configure.launch"/>    
-
   </group>
+
+  <!-- Load other configurations shared between all three Baxter run modes-->
+  <include file="$(find baxter_control)/launch/baxter_configure.launch"/>    
+
 </launch>
