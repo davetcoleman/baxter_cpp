@@ -25,6 +25,14 @@
 					    right_velocity_trajectory_controller
 					    left_velocity_trajectory_controller
 					    " />
+
+    <!-- Load the secondary controllers -->
+    <node name="controller_spawner_secondary" pkg="controller_manager" type="spawner" respawn="false"
+	  output="screen" ns="/robot" args="--stopped
+					    position_joint_mode_controller
+					    right_position_trajectory_controller
+					    left_position_trajectory_controller
+					    " />
   </group>
 
   <!-- Load other configurations shared between all three Baxter run modes-->
