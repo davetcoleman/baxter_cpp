@@ -207,7 +207,15 @@ roslaunch baxter_control joint_position_right_trajectory_controller.launch
 
 ## Programmed Buttons
 
-The rectangular and circular buttons on the end effector cuff have been programmed to close and open the end effector, respectively. 
+### End Effector Cuff
+
+ * Rectangular button: close end effector
+ * Circular button: open end effector
+
+### Back of Robot Shoulders
+
+ * Left shoulder button: enable Baxter
+ * Right shoulder button: disable Baxter
 
 ## Helpful Aliases
 

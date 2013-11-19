@@ -53,6 +53,7 @@
 #include <std_msgs/Bool.h>
 #include <std_msgs/Empty.h>
 #include <baxter_msgs/AssemblyState.h>
+#include <baxter_msgs/DigitalIOState.h>
 
 namespace baxter_control
 {
@@ -76,6 +77,8 @@ public:
   ros::Publisher pub_baxter_enable_;
   ros::Publisher pub_baxter_reset_;
   ros::Subscriber sub_baxter_state_;
+  ros::Subscriber sub_shoulder_left_;
+  ros::Subscriber sub_shoulder_right_;
 
   // Interface with MoveIt
   boost::scoped_ptr<move_group_interface::MoveGroup> move_group_;
@@ -118,6 +121,9 @@ public:
   bool isEnabled(bool verbose = false);
 
   void stateCallback(const baxter_msgs::AssemblyStateConstPtr& msg);
+
+  void leftShoulderCallback(const baxter_msgs::DigitalIOStateConstPtr& msg);
+  void rightShoulderCallback(const baxter_msgs::DigitalIOStateConstPtr& msg);
 
   bool enableBaxter();
 

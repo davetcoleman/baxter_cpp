@@ -61,6 +61,14 @@ BaxterUtilities::BaxterUtilities()
   // Start the state subscriber
   sub_baxter_state_ = nh.subscribe<baxter_msgs::AssemblyState>(BAXTER_STATE_TOPIC,
                       1, &BaxterUtilities::stateCallback, this);
+
+  // ---------------------------------------------------------------------------------------------
+  // Shoulder enable disable buttons
+  sub_shoulder_left_ = nh.subscribe<baxter_msgs::DigitalIOState>("/sdk/robot/digital_io/left_shoulder_button/state",
+                       1, &BaxterUtilities::leftShoulderCallback, this);
+  sub_shoulder_right_ = nh.subscribe<baxter_msgs::DigitalIOState>("/sdk/robot/digital_io/right_shoulder_button/state",
+                       1, &BaxterUtilities::rightShoulderCallback, this);
+
 }
 
 void BaxterUtilities::setDisabledCallback(DisabledCallback callback)
@@ -205,6 +213,22 @@ void BaxterUtilities::stateCallback(const baxter_msgs::AssemblyStateConstPtr& ms
   }
 
   state_counter_++;
+}
+
+void BaxterUtilities::leftShoulderCallback(const baxter_msgs::DigitalIOStateConstPtr& msg)
+{
+  if (msg->state == 0)
+  {
+    enableBaxter();
+  }
+}
+
+void BaxterUtilities::rightShoulderCallback(const baxter_msgs::DigitalIOStateConstPtr& msg)
+{
+  if (msg->state == 0)
+  {
+    disableBaxter();
+  }
 }
 
 bool BaxterUtilities::enableBaxter()
