@@ -89,17 +89,11 @@ Otherwise you can just skip this section and install the Baxter code and it will
     ```
     git clone git@github.com:correlllab/sdk-examples -b gazebo_dev
     ```
-    
-    There is currently a duplication of packages in sdk-examples and baxter_common that must be fixed manually. This issue should be fixed in Rethink's next release of their SDK:
-
-    ```
-    touch sdk-examples/baxter_description/CATKIN_IGNORE
-    touch sdk-examples/baxter_msgs/CATKIN_IGNORE
-    ```
 
 * Install dependencies and build
 
     ```
+    cd ..
     rosdep install --from-paths . --ignore-src --rosdistro hydro -y
     catkin_make
     ```
@@ -121,6 +115,11 @@ You may need to run this command multiple times if there is a message dependency
  * Ensure you have the correct ROS_MASTER_URI exported, this depends on your robot serial number:
    ```
    export ROS_MASTER_URI=http://011305P0009.local:11311
+   ```
+
+   You might also need to set the ROS hostname environment variable if you have not already done so and you have communication issues:
+   ```
+   export ROS_HOSTNAME=128.138.244.72  # REPLACE WITH YOUR COMPUTER'S IP ADDRESS
    ```
 
  * Bringup ros_control controllers - starts a position-based trajectory controller
@@ -232,7 +231,7 @@ When using Baxter, it is productive to have command shortcuts for diagnosing bax
 
 ### Launch scripts
 
-    alias bbu="roslaunch baxter_control baxter_bringup.launch"
+    alias bhardware="roslaunch baxter_control baxter_hardware.launch"
     alias bm="roslaunch baxter_moveit_config baxter_moveit.launch"
     alias bpp="roslaunch baxter_pick_place block_pick_place.launch"
 
@@ -263,7 +262,6 @@ When using Baxter, it is productive to have command shortcuts for diagnosing bax
 
 ### Misc
 
-    alias bssh="ssh osrf@011305P0009.local"
     alias blog="ftp 011305P0009.local"
 
 
