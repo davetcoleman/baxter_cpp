@@ -42,7 +42,7 @@ before_script: # Use this to prepare your build for testing e.g. copy database c
 script: # All commands must exit with code 0 on success. Anything else is considered failure.
   # TEST 1 -------------------------------------------
   - echo "Test 1 ========================================"
-  - catkin_make DCMAKE_BUILD_TYPE=Debug
+  - catkin_make DCMAKE_BUILD_TYPE=Debug -j2
   # TEST 2 -------------------------------------------
   - echo "Test 2 ========================================"
   # Now re-test with Rethink SDK included
@@ -56,4 +56,4 @@ script: # All commands must exit with code 0 on success. Anything else is consid
   - cd ../
   - rm -rf build/ devel/
   - rosdep install --from-paths src --ignore-src --rosdistro $ROS_DISTRO -y
-  - catkin_make DCMAKE_BUILD_TYPE=Debug -j1
+  - catkin_make DCMAKE_BUILD_TYPE=Debug -j2
