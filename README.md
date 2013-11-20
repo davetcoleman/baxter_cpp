@@ -127,6 +127,30 @@ You may need to run this command multiple times if there is a message dependency
    roslaunch baxter_control baxter_hardware.launch
    ```
 
+#### Control Modes
+
+This Baxter repository uses [ros_control](http://wiki.ros.org/ros_control) to send trajectories to Baxter via the joint_trajectory_controller. Trajectories can be executed on Baxter in either position mode or velocity mode. You can easily switch between the two - both are loaded at startup but position is started by default:
+
+ * Position Control
+   ```
+   rosservice call /robot/controller_manager/switch_controller "{start_controllers: ['position_joint_mode_controller','left_position_trajectory_controller','right_position_trajectory_controller'], stop_controllers: ['velocity_joint_mode_controller','left_velocity_trajectory_controller','right_velocity_trajectory_controller'], strictness: 2}"
+   ```
+   Plot position error of position-based trajectory controller 
+   ```
+   roslaunch baxter_control joint_position_left_trajectory_controller.launch
+   roslaunch baxter_control joint_position_right_trajectory_controller.launch
+   ```
+
+ * Velocity Control
+   ```
+   rosservice call /robot/controller_manager/switch_controller "{start_controllers: ['velocity_joint_mode_controller','left_velocity_trajectory_controller','right_velocity_trajectory_controller'], stop_controllers: ['position_joint_mode_controller','left_position_trajectory_controller','right_position_trajectory_controller'], strictness: 2}"
+   ```
+   Plot *position* error of velocity-based trajectory controller 
+   ```
+   roslaunch baxter_control joint_velocity_left_trajectory_controller.launch
+   roslaunch baxter_control joint_velocity_right_trajectory_controller.launch
+   ```
+
 ### Gazebo Simulation 
 
 This uses an actual physics engine from the [Gazebo Simulator](http://gazebosim.org/).
