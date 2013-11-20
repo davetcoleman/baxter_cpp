@@ -1,3 +1,5 @@
 - git: {local-name: baxter, uri: 'https://github.com/davetcoleman/baxter.git', version: hydro-devel}
 - git: {local-name: baxter_common, uri: 'https://github.com/davetcoleman/baxter_common.git', version: dual_parallel_grippers}
 - git: {local-name: block_grasp_generator, uri: 'https://github.com/davetcoleman/block_grasp_generator.git', version: hydro-devel}
+- git: {local-name: ros_controllers, uri: 'https://github.com/ros-controls/ros_controllers.git', version: velocity_position_controller}
+- git: {local-name: ros_control, uri: 'https://github.com/ros-controls/ros_control.git', version: joint_mode_interface}
