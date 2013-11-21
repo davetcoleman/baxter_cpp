@@ -14,7 +14,13 @@
 
     <!-- Load hardware interface -->
     <node name="baxter_hardware_interface" pkg="baxter_control" type="baxter_hardware_interface"
-	  respawn="false" output="screen" launch-prefix="$(arg launch_prefix)" />
+	  respawn="false" output="screen" launch-prefix="$(arg launch_prefix)">
+      <!-- Create mappings so that the cuff button can publish to either trajectory controller mode - position or velocity -->
+      <remap from="/robot/left_position_trajectory_controller/command" to="/robot/left_trajectory_controller/command" /> <!-- creates a new topic on the 'from' attribute -->
+      <remap from="/robot/left_velocity_trajectory_controller/command" to="/robot/left_trajectory_controller/command" /> <!-- creates a new topic on the 'from' attribute -->
+      <remap from="/robot/right_position_trajectory_controller/command" to="/robot/right_trajectory_controller/command" /> <!-- creates a new topic on the 'from' attribute -->
+      <remap from="/robot/right_velocity_trajectory_controller/command" to="/robot/right_trajectory_controller/command" /> <!-- creates a new topic on the 'from' attribute -->
+    </node>
 
     <!-- Load joint controller configurations from YAML file to parameter server -->
     <rosparam file="$(find baxter_control)/config/hardware_controllers.yaml" command="load"/>
@@ -27,12 +33,12 @@
 					    " />
 
     <!-- Load the secondary controllers -->
-    <node name="controller_spawner_secondary" pkg="controller_manager" type="spawner" respawn="false"
-	  output="screen" ns="/robot" args="--stopped
+    <!--node name="controller_spawner_secondary" pkg="controller_manager" type="spawner" respawn="false"
+	  output="screen" ns="/robot" args="- -stopped
 					    position_joint_mode_controller
 					    right_position_trajectory_controller
 					    left_position_trajectory_controller
-					    " />
+					    " /-->
   </group>
 
   <!-- Load other configurations shared between all three Baxter run modes-->

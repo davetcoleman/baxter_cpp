@@ -122,7 +122,7 @@ You may need to run this command multiple times if there is a message dependency
    export ROS_HOSTNAME=128.138.244.72  # REPLACE WITH YOUR COMPUTER'S IP ADDRESS
    ```
 
- * Bringup ros_control controllers - starts a position-based trajectory controller
+ * Bringup ros_control controllers - starts a position-based trajectory controller. See *Hardware Control Modes* for velocity control
    ```
    roslaunch baxter_control baxter_hardware.launch
    ```
@@ -175,7 +175,7 @@ Picks small blocks located on a table in front of Baxter and places them to Baxt
 roslaunch baxter_pick_place block_pick_place.launch
 ```
 
-#### Hardware Control Modes
+## Hardware Control Modes
 
 This Baxter repository uses [ros_control](http://wiki.ros.org/ros_control) to send trajectories to Baxter via the joint_trajectory_controller. Trajectories can be executed on Baxter in either position mode or velocity mode. You can easily switch between the two - both are loaded at startup but position is started by default:
 

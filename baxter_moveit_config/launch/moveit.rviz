@@ -11,10 +11,11 @@ Panels:
         - /MotionPlanning1/Scene Robot1
         - /MotionPlanning1/Planning Request1
         - /MotionPlanning1/Planned Path1
-        - /block_grasp_generator1
-        - /DepthCloud1/Auto Size1
+        - /Image1
+        - /Image2
+        - /Image3
       Splitter Ratio: 0.544529
-    Tree Height: 545
+    Tree Height: 376
   - Class: rviz/Help
     Name: Help
   - Class: rviz/Views
@@ -43,22 +44,6 @@ Visualization Manager:
       Plane Cell Count: 10
       Reference Frame: <Fixed Frame>
       Value: true
-    - Alpha: 1
-      Class: rviz/RobotModel
-      Collision Enabled: true
-      Enabled: false
-      Links:
-        All Links Enabled: true
-        Expand Joint Details: false
-        Expand Link Details: false
-        Expand Tree: false
-        Link Tree Style: Links in Alphabetic Order
-      Name: RobotModel
-      Robot Description: robot_description
-      TF Prefix: ""
-      Update Interval: 0
-      Value: false
-      Visual Enabled: true
     - Class: moveit_rviz_plugin/MotionPlanning
       Enabled: true
       MoveIt_Goal_Tolerance: 0
@@ -592,8 +577,7 @@ Visualization Manager:
       Marker Topic: /end_effector_marker
       Name: block_grasp_generator
       Namespaces:
-        Arrow: true
-        end_effector: true
+        {}
       Queue Size: 100
       Value: true
     - Class: rviz/MarkerArray
@@ -605,54 +589,38 @@ Visualization Manager:
       Queue Size: 100
       Value: true
     - Class: rviz/MarkerArray
-      Enabled: false
+      Enabled: true
       Marker Topic: /move_group/display_grasp_markers
       Name: MoveItGrasps
       Namespaces:
         {}
       Queue Size: 100
-      Value: false
-    - Alpha: 1
-      Auto Size:
-        Auto Size Factor: 1
-        Value: true
-      Autocompute Intensity Bounds: true
-      Autocompute Value Bounds:
-        Max Value: 10
-        Min Value: -10
-        Value: true
-      Axis: Z
-      Channel Name: intensity
-      Class: rviz/DepthCloud
-      Color: 255; 255; 255
-      Color Image Topic: /camera/rgb/image_color
-      Color Transformer: RGB8
-      Color Transport Hint: raw
-      Decay Time: 0
-      Depth Map Topic: /camera/depth/image_raw
-      Depth Map Transport Hint: raw
-      Enabled: false
-      Invert Rainbow: false
-      Max Color: 255; 255; 255
-      Max Intensity: 4096
-      Min Color: 0; 0; 0
-      Min Intensity: 0
-      Name: DepthCloud
-      Occlusion Compensation:
-        Occlusion Time-Out: 30
-        Value: false
-      Position Transformer: XYZ
-      Queue Size: 5
-      Selectable: true
-      Size (Pixels): 3
-      Style: Flat Squares
-      Topic Filter: true
-      Use Fixed Frame: true
-      Use rainbow: true
-      Value: false
+      Value: true
+    - Class: rviz/Image
+      Enabled: true
+      Image Topic: /cameras/right_hand_camera/image
+      Max Value: 1
+      Median window: 5
+      Min Value: 0
+      Name: Image
+      Normalize Range: true
+      Queue Size: 2
+      Transport Hint: raw
+      Value: true
     - Class: rviz/Image
       Enabled: true
       Image Topic: /camera/image_raw
+      Max Value: 1
+      Median window: 5
+      Min Value: 0
+      Name: Image
+      Normalize Range: true
+      Queue Size: 2
+      Transport Hint: raw
+      Value: true
+    - Class: rviz/Image
+      Enabled: true
+      Image Topic: /cameras/left_hand_camera/image
       Max Value: 1
       Median window: 5
       Min Value: 0
@@ -676,17 +644,17 @@ Visualization Manager:
   Views:
     Current:
       Class: rviz/XYOrbit
-      Distance: 2.40247
+      Distance: 1.45824
       Focal Point:
-        X: 0.881923
-        Y: 0.298401
-        Z: -5.96046e-07
+        X: 0.753258
+        Y: 0.115337
+        Z: -1.55082e-06
       Name: Current View
       Near Clip Distance: 0.01
-      Pitch: 0.519797
+      Pitch: 0.669797
       Target Frame: base_link
       Value: XYOrbit (rviz)
-      Yaw: 6.00362
+      Yaw: 6.19316
     Saved: ~
 Window Geometry:
   Displays:
@@ -700,9 +668,9 @@ Window Geometry:
     collapsed: false
   Motion Planning:
     collapsed: false
-  QMainWindow State: 000000ff00000000fd00000002000000000000024400000434fc0200000006fb000000100044006900730070006c006100790073010000004100000262000000dd00fffffffb0000000800480065006c00700000000342000000bb0000007600fffffffb0000000a005600690065007700730000000145000000cb000000b000fffffffb0000000c00430061006d00650072006100000002ff000001610000000000000000fb0000000c00430061006d006500720061000000038f000000160000000000000000fb0000000a0049006d00610067006501000002a9000001cc0000001600ffffff00000003000003f40000017ffc0100000001fb0000001e004d006f00740069006f006e00200050006c0061006e006e0069006e0067010000024a000003f4000002a200ffffff000003f4000002af00000001000000020000000100000002fc0000000100000002000000010000000a0054006f006f006c00730100000000ffffffff0000000000000000
+  QMainWindow State: 000000ff00000000fd0000000200000000000001b600000434fc0200000007fb0000000a0049006d0061006700650100000041000001290000001600fffffffb0000000a0049006d0061006700650100000170000001280000001600fffffffc0000029e000001d7000000fb0100001dfa000000000100000002fb0000000a0049006d0061006700650100000000ffffffff0000005c00fffffffb000000100044006900730070006c00610079007301000000000000013e0000010f00fffffffb0000000800480065006c00700000000342000000bb0000007600fffffffb0000000a005600690065007700730000000145000000cb000000b000fffffffb0000000c00430061006d00650072006100000002ff000001610000000000000000fb0000000c00430061006d006500720061000000038f00000016000000000000000000000003000004410000017ffc0100000001fb0000001e004d006f00740069006f006e00200050006c0061006e006e0069006e006701000001bc00000441000002a200ffffff00000441000002af00000001000000020000000100000002fc0000000100000002000000010000000a0054006f006f006c00730100000000ffffffff0000000000000000
   Views:
     collapsed: false
-  Width: 1598
+  Width: 1533
   X: 3840
   Y: 0

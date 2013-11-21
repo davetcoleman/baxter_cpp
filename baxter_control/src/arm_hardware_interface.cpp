@@ -134,7 +134,7 @@ bool ArmHardwareInterface::init(
                       "/joint_command_mode",10); // used for switching between velocity and position control
 
   pub_trajectory_command_ = nh_.advertise<trajectory_msgs::JointTrajectory>("/robot/"+arm_name_+
-                            "_joint_trajectory_controller/command",10);
+                            "_trajectory_controller/command",10);
 
   // Start subscribers
   sub_joint_state_ = nh_.subscribe<sensor_msgs::JointState>("/robot/limb/" + arm_name_ +

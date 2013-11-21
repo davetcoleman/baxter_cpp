@@ -17,8 +17,8 @@
     -->
 
     <!-- Face tracking using sonars -->
-    <node name="baxter_head_follow" pkg="baxter_scripts" type="baxter_head_follow"
-	  respawn="false" output="screen" args=""/>
+    <!--node name="baxter_head_follow" pkg="baxter_scripts" type="baxter_head_follow"
+	  respawn="false" output="screen" args=""/-->
 
     <!-- Load gripper controller -->
     <node name="baxter_gripper_server" pkg="baxter_gripper_server" type="gripper_action_server"

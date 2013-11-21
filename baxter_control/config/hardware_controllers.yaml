@@ -107,7 +107,7 @@
 
     constraints:
       goal_time: 2.0                   # Defaults to zero
-      stopped_velocity_tolerance: 0.1 # Defaults to 0.01
+      stopped_velocity_tolerance: 0.4 # Defaults to 0.01
       left_s0:
         trajectory: 0 
         goal: 0.2       
@@ -132,7 +132,7 @@
 
     gains:
       left_s0: {p: 2, d: 0.01, i: 0.1, i_clamp: 1}
-      left_s1: {p: 2, d: 0.01, i: 0.1, i_clamp: 1}
+      left_s1: {p: 3, d: 0.01, i: 0.1, i_clamp: 1}
       left_e0: {p: 2, d: 0.01, i: 0.1, i_clamp: 1}
       left_e1: {p: 2, d: 0.01, i: 0.1, i_clamp: 1}
       left_w0: {p: 2, d: 0.01, i: 0.1, i_clamp: 1}
@@ -156,32 +156,32 @@
 
     constraints:
       goal_time: 3.0                   
-      stopped_velocity_tolerance: 0.03 
+      stopped_velocity_tolerance: 0.04
       right_s0:
         trajectory: 0 
-        goal: 0.1       
+        goal: 0.2       
       right_s1:
         trajectory: 0 
-        goal: 0.1       
+        goal: 0.2       
       right_e0:
         trajectory: 0 
-        goal: 0.1       
+        goal: 0.2       
       right_e1:
         trajectory: 0 
-        goal: 0.1       
+        goal: 0.2       
       right_w0:
         trajectory: 0 
-        goal: 0.1       
+        goal: 0.2       
       right_w1:
         trajectory: 0 
-        goal: 0.1       
+        goal: 0.2       
       right_w2:
         trajectory: 0 
-        goal: 0.1       
+        goal: 0.2       
 
     gains:
       right_s0: {p: 2, d: 0.01, i: 0.1, i_clamp: 1}
-      right_s1: {p: 2, d: 0.01, i: 0.1, i_clamp: 1}
+      right_s1: {p: 3, d: 0.01, i: 0.1, i_clamp: 1}
       right_e0: {p: 2, d: 0.01, i: 0.1, i_clamp: 1}
       right_e1: {p: 2, d: 0.01, i: 0.1, i_clamp: 1}
       right_w0: {p: 2, d: 0.01, i: 0.1, i_clamp: 1}
