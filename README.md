@@ -258,7 +258,7 @@ When using Baxter, it is productive to have command shortcuts for diagnosing bax
     alias be="rostopic pub -1 /robot/set_super_enable std_msgs/Bool True"
     alias bd="rostopic pub -1 /robot/set_super_enable std_msgs/Bool False"
     alias br="rostopic pub -1 /robot/set_super_reset std_msgs/Empty"
-    alias bs="rostopic echo -c /sdk/robot/state"
+    alias bs="rostopic echo -c /robot/state"
     alias bsu="rosrun baxter_control sonar_enable.py --enable=0"
     alias bsd="rosrun baxter_control sonar_enable.py --enable=1"
 
@@ -277,12 +277,12 @@ When using Baxter, it is productive to have command shortcuts for diagnosing bax
 
 ### Gripper Control
 
-    alias brgripperstate="rostopic echo -c /sdk/robot/limb/right/accessory/gripper/state"
+    alias brgripperstate="rostopic echo -c /robot/limb/right/accessory/gripper/state"
     alias brgrippercal="rostopic pub -1 /robot/limb/right/accessory/gripper/command_calibrate std_msgs/Empty"
     alias brgripperres="rostopic pub -1 /robot/limb/right/accessory/gripper/command_reset std_msgs/Bool true"
     alias brgripperopen="rostopic pub -1 /robot/limb/right/accessory/gripper/command_release std_msgs/Empty"
     alias brgripperclose="rostopic pub -1 /robot/limb/right/accessory/gripper/command_grip std_msgs/Float32 0"
-    alias blgripperstate="rostopic echo -c /sdk/robot/limb/left/accessory/gripper/state"
+    alias blgripperstate="rostopic echo -c /robot/limb/left/accessory/gripper/state"
     alias blgrippercal="rostopic pub -1 /robot/limb/left/accessory/gripper/command_calibrate std_msgs/Empty"
     alias blgripperres="rostopic pub -1 /robot/limb/left/accessory/gripper/command_reset std_msgs/Bool true"
     alias blgripperopen="rostopic pub -1 /robot/limb/left/accessory/gripper/command_release std_msgs/Empty"

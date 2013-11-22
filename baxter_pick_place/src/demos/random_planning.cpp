@@ -131,7 +131,7 @@ public:
     if ( allow_head_movements_ )
     {
       ROS_DEBUG_STREAM_NAMED("random_planning","Starting turn head publisher");
-      head_turn_topic_ = nh.advertise<baxter_core_msgs::HeadPanCommand>("/sdk/robot/head/command_head_pan",10);
+      head_turn_topic_ = nh.advertise<baxter_core_msgs::HeadPanCommand>("/robot/head/command_head_pan",10);
     }
 
     // Create the walls and tables

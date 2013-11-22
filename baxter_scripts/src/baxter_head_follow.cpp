@@ -92,7 +92,7 @@ public:
       verbose_(false)
   {
     // Start publishers
-    pub_head_turn_ = nh_.advertise<baxter_core_msgs::HeadPanCommand>("/sdk/robot/head/command_head_pan",10);
+    pub_head_turn_ = nh_.advertise<baxter_core_msgs::HeadPanCommand>("/robot/head/command_head_pan",10);
     head_command_.speed = 10;
 
     // Start subscribers

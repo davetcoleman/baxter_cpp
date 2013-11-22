@@ -77,6 +77,9 @@ private:
   // Track button status
   bool cuff_squeezed_previous;
 
+  // Convert a joint states message to our ids
+  std::vector<int> joint_id_to_joint_states_id_;
+
 public:
 
   /**

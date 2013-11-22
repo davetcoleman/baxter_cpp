@@ -66,6 +66,7 @@ ArmHardwareInterface::ArmHardwareInterface(const std::string &arm_name)
   output_msg_.command.resize(n_dof_);
   output_msg_.names.resize(n_dof_);
   trajectory_command_msg_.joint_names.resize(n_dof_);
+  joint_id_to_joint_states_id_.resize(n_dof_);
 
   for (std::size_t i = 0; i < n_dof_; ++i)
   {
@@ -116,20 +117,24 @@ bool ArmHardwareInterface::init(
     // Create velocity joint interface
     vj_interface.registerHandle(hardware_interface::JointHandle(
         js_interface.getHandle(joint_names_[i]),&joint_velocity_command_[i]));
+
+    // Create effort joint interface
+    ej_interface.registerHandle(hardware_interface::JointHandle(
+        js_interface.getHandle(joint_names_[i]),&joint_effort_command_[i]));
   }
 
   // Start publishers
   pub_joint_command_ = nh_.advertise<baxter_core_msgs::JointCommand>("/robot/limb/"+arm_name_+
-                          "/joint_command",10);
+                       "/joint_command",10);
 
   pub_trajectory_command_ = nh_.advertise<trajectory_msgs::JointTrajectory>("/robot/"+arm_name_+
                             "_trajectory_controller/command",10);
 
   // Start subscribers
-  sub_joint_state_ = nh_.subscribe<sensor_msgs::JointState>("/robot/limb/" + arm_name_ +
-                     "/joint_states", 1, &ArmHardwareInterface::stateCallback, this);
+  sub_joint_state_ = nh_.subscribe<sensor_msgs::JointState>("/robot/joint_states", 1,
+                     &ArmHardwareInterface::stateCallback, this);
 
-  cuff_squeezed_sub_ = nh_.subscribe<baxter_core_msgs::DigitalIOState>("/sdk/robot/digital_io/" +
+  cuff_squeezed_sub_ = nh_.subscribe<baxter_core_msgs::DigitalIOState>("/robot/digital_io/" +
                        arm_name_ + "_lower_cuff/state",
                        1, &ArmHardwareInterface::cuffSqueezedCallback, this);
 
@@ -141,24 +146,25 @@ bool ArmHardwareInterface::init(
     ros::Duration(0.25).sleep();
   }
 
-  // Make sure Rethink hasn't changed anything with the ordering in which joints are published in
-  // joint state message
-  if( state_msg_->name[0].compare("e0") != 0 || state_msg_->name[1].compare("e1") != 0 ||
-    state_msg_->name[2].compare("s0") != 0 || state_msg_->name[3].compare("s1") != 0 ||
-    state_msg_->name[4].compare("w0") != 0 || state_msg_->name[5].compare("w1") != 0 ||
-    state_msg_->name[6].compare("w2") != 0)
+  // Make a mapping of joint names to indexes in the joint_states message
+  for (std::size_t i = 0; i < n_dof_; ++i)
   {
-    ROS_ERROR_STREAM_NAMED(arm_name_,"It seems the joint state message for arm " << arm_name_ <<
-      " has changed its ordering. The order has been hard coded into the arm_hardware_interface and "
-      << "now it needs to be fixed");
-    return false;
+    std::vector<std::string>::const_iterator iter = std::find(state_msg_->name.begin(), state_msg_->name.end(), joint_names_[i]);
+    size_t joint_states_id = std::distance(state_msg_->name.begin(), iter);
+    if(joint_states_id == state_msg_->name.size())
+    {
+      ROS_ERROR_STREAM_NAMED(arm_name_,"Unable to find joint " << i << " named " << joint_names_[i] << " in joint state message");
+    }
+
+    joint_id_to_joint_states_id_[i] = joint_states_id;
+
+    ROS_DEBUG_STREAM_NAMED("arm_hardware_interface","Found joint " << i << " at " << joint_states_id << " named " << joint_names_[i]);
   }
 
   // Set the initial command values based on current state
   for (std::size_t i = 0; i < n_dof_; ++i)
   {
-    joint_position_command_[i] = state_msg_->position[i];
-    //ROS_DEBUG_STREAM_NAMED("temp","set joint " << joint_names_[i] << " to position " << joint_position_command_[i]);
+    joint_position_command_[i] = state_msg_->position[joint_id_to_joint_states_id_[i]];
 
     // Pre-load the joint names into the output messages just once
     output_msg_.names[i] = joint_names_[i];
@@ -196,9 +202,9 @@ void ArmHardwareInterface::read()
   // Copy state message to our datastructures
   for (std::size_t i = 0; i < n_dof_; ++i)
   {
-    joint_position_[i] = state_msg_->position[i];
-    joint_velocity_[i] = state_msg_->velocity[i];
-    joint_effort_[i] = state_msg_->effort[i];
+    joint_position_[i] = state_msg_->position[joint_id_to_joint_states_id_[i]];
+    joint_velocity_[i] = state_msg_->velocity[joint_id_to_joint_states_id_[i]];
+    joint_effort_[i] = state_msg_->effort[joint_id_to_joint_states_id_[i]];
   }
 }
 
@@ -209,7 +215,7 @@ void ArmHardwareInterface::write()
 
   // Send commands to baxter in different modes
   switch (*joint_mode_)
-  {    
+  {
     case hardware_interface::MODE_POSITION:
       for (std::size_t i = 0; i < n_dof_; ++i)
       {

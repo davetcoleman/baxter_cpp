@@ -45,7 +45,7 @@
 namespace baxter_control
 {
 
-static const std::string BAXTER_STATE_TOPIC = "/sdk/robot/state";
+static const std::string BAXTER_STATE_TOPIC = "/robot/state";
 
 class BaxterAssemblyState
 {

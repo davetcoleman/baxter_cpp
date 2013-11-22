@@ -50,7 +50,7 @@
 namespace baxter_gazebo_plugin
 {
 
-static const std::string BAXTER_STATE_TOPIC = "/sdk/robot/state";
+static const std::string BAXTER_STATE_TOPIC = "/robot/state";
 
 class BaxterGazeboRosControlPlugin : public gazebo_ros_control::GazeboRosControlPlugin
 {

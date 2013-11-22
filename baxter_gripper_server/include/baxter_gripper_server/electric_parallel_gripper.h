@@ -41,10 +41,11 @@
 #include <actionlib/server/simple_action_server.h>
 
 // Messages
-#include <std_msgs/Float32.h>
-#include <std_msgs/Empty.h>
-#include <std_msgs/Bool.h>
+//#include <std_msgs/Float32.h>
+//#include <std_msgs/Empty.h>
+//#include <std_msgs/Bool.h>
 #include <baxter_core_msgs/EndEffectorState.h>
+#include <baxter_core_msgs/EndEffectorCommand.h>
 #include <baxter_core_msgs/DigitalIOState.h>
 #include <sensor_msgs/JointState.h>
 #include <control_msgs/GripperCommandAction.h>
@@ -76,10 +77,7 @@ protected:
   actionlib::SimpleActionServer<control_msgs::GripperCommandAction> action_server_;
 
   // Publishers
-  ros::Publisher calibrate_topic_;
-  ros::Publisher position_topic_;
-  ros::Publisher release_topic_;
-  ros::Publisher reset_topic_;
+  ros::Publisher command_topic_;
   ros::Publisher joint_state_topic_;
 
   // Subscribers
@@ -91,9 +89,10 @@ protected:
   control_msgs::GripperCommandResult action_result_;
 
   // Cache an empty message
-  std_msgs::Empty empty_msg_;
-  std_msgs::Bool bool_msg_;
-  std_msgs::Float32 zero_msg_;
+  //std_msgs::Empty empty_msg_;
+  //std_msgs::Bool bool_msg_;
+  //std_msgs::Float32 zero_msg_;
+  baxter_core_msgs::EndEffectorCommand command_msg_;
 
   // Remember the last gripper state and time
   baxter_core_msgs::EndEffectorStateConstPtr gripper_state_;
@@ -123,28 +122,22 @@ public:
     ROS_DEBUG_STREAM_NAMED(arm_name_, "Baxter Electric Parallel Gripper starting " << arm_name_);
 
     // Start the publishers
-    calibrate_topic_ = nh_.advertise<std_msgs::Empty>("/robot/limb/" + arm_name_
-                       + "/accessory/gripper/command_calibrate",10);
+    command_topic_ = nh_.advertise<baxter_core_msgs::EndEffectorCommand>("/robot/end_effector/" + arm_name_
+                       + "_gripper/command",10);
 
-    position_topic_ = nh_.advertise<std_msgs::Float32>("/robot/limb/" + arm_name_
-                      + "/accessory/gripper/command_grip",10);
-
-    release_topic_ = nh_.advertise<std_msgs::Empty>("/robot/limb/" + arm_name_
-                     + "/accessory/gripper/command_release",10);
-
-    reset_topic_ = nh_.advertise<std_msgs::Bool>("/robot/limb/" + arm_name_
-                   + "/accessory/gripper/command_reset",10);
+    command_msg_.id = 65664;
+    command_msg_.sender = "baxter_gripper_server";
 
     // Start the subscribers
-    gripper_state_sub_ = nh_.subscribe<baxter_core_msgs::EndEffectorState>("/sdk/robot/limb/" + arm_name_
-                         + "/accessory/gripper/state",
+    gripper_state_sub_ = nh_.subscribe<baxter_core_msgs::EndEffectorState>("/robot/end_effector/" + arm_name_
+                         + "_gripper/state",
                          1, &ElectricParallelGripper::stateCallback, this);
 
-    cuff_grasp_sub_ = nh_.subscribe<baxter_core_msgs::DigitalIOState>("/sdk/robot/digital_io/" +
+    cuff_grasp_sub_ = nh_.subscribe<baxter_core_msgs::DigitalIOState>("/robot/digital_io/" +
                       arm_name_ + "_upper_button/state",
                       1, &ElectricParallelGripper::cuffGraspCallback, this);
 
-    cuff_ok_sub_ = nh_.subscribe<baxter_core_msgs::DigitalIOState>("/sdk/robot/digital_io/" +
+    cuff_ok_sub_ = nh_.subscribe<baxter_core_msgs::DigitalIOState>("/robot/digital_io/" +
                    arm_name_ + "_lower_button/state",
                    1, &ElectricParallelGripper::cuffOKCallback, this);
 
@@ -189,9 +182,6 @@ public:
     {
       joint_state_topic_ = nh_.advertise<sensor_msgs::JointState>("/robot/joint_states",10);
     }
-
-    // Cache zero command
-    zero_msg_.data = 0;
 
     // Calculate joint stroke and midpoint
     finger_joint_stroke_ = FINGER_JOINT_UPPER - FINGER_JOINT_LOWER;
@@ -326,13 +316,11 @@ public:
     {
       ROS_INFO_STREAM_NAMED(arm_name_,"Calibrating gripper");
 
-      calibrate_topic_.publish(empty_msg_);
+      command_msg_.command = baxter_core_msgs::EndEffectorCommand::CMD_CALIBRATE;
+      command_topic_.publish(command_msg_);
+
       ros::spinOnce();
       ros::Duration(0.05).sleep();
-
-      calibrate_topic_.publish(empty_msg_);
-      ros::spinOnce();
-      ros::Duration(2.0).sleep();
     }
   }
 
@@ -505,10 +493,9 @@ public:
   {
     ROS_INFO_STREAM_NAMED(arm_name_,"Resetting gripper");
 
-    bool_msg_.data = true;
-    reset_topic_.publish(bool_msg_);
-    ros::Duration(0.05).sleep();
-    reset_topic_.publish(bool_msg_);
+    command_msg_.command = baxter_core_msgs::EndEffectorCommand::CMD_RESET;
+    command_topic_.publish(command_msg_);
+
     ros::Duration(0.05).sleep();
   }
 
@@ -564,7 +551,10 @@ public:
     // Send command several times to be safe
     for (std::size_t i = 0; i < GRIPPER_MSG_RESEND; ++i)
     {
-      release_topic_.publish(empty_msg_);
+
+      command_msg_.command = baxter_core_msgs::EndEffectorCommand::CMD_RELEASE;
+      command_topic_.publish(command_msg_);
+
       ros::Duration(MSG_PULSE_SEC).sleep();
       ros::spinOnce();
     }
@@ -583,7 +573,10 @@ public:
     // Send command several times to be safe
     for (std::size_t i = 0; i < GRIPPER_MSG_RESEND; ++i)
     {
-      position_topic_.publish(zero_msg_);
+
+      command_msg_.command = baxter_core_msgs::EndEffectorCommand::CMD_GRIP;
+      command_topic_.publish(command_msg_);
+
       ros::Duration(MSG_PULSE_SEC).sleep();
       ros::spinOnce();
     }

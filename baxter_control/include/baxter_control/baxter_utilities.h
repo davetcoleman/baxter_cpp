@@ -58,15 +58,12 @@
 namespace baxter_control
 {
 
-static const std::string BAXTER_STATE_TOPIC = "/sdk/robot/state";
+static const std::string BAXTER_STATE_TOPIC = "/robot/state";
 
 // Needed?
 static const std::string ROBOT_DESCRIPTION="robot_description";
 static const std::string PLANNING_GROUP_NAME = "both_arms";
 static const std::string BASE_LINK = "base"; //"/base";
-//static const std::string EE_GROUP = "right_hand";
-//static const std::string EE_JOINT = "right_gripper_l_finger_joint";
-//static const std::string EE_PARENT_LINK = "right_wrist";
 static const std::string NEUTRAL_POSE_NAME = "both_neutral";
 
 

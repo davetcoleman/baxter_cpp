@@ -64,9 +64,9 @@ BaxterUtilities::BaxterUtilities()
 
   // ---------------------------------------------------------------------------------------------
   // Shoulder enable disable buttons
-  sub_shoulder_left_ = nh.subscribe<baxter_core_msgs::DigitalIOState>("/sdk/robot/digital_io/left_shoulder_button/state",
+  sub_shoulder_left_ = nh.subscribe<baxter_core_msgs::DigitalIOState>("/robot/digital_io/left_shoulder_button/state",
                        1, &BaxterUtilities::leftShoulderCallback, this);
-  sub_shoulder_right_ = nh.subscribe<baxter_core_msgs::DigitalIOState>("/sdk/robot/digital_io/right_shoulder_button/state",
+  sub_shoulder_right_ = nh.subscribe<baxter_core_msgs::DigitalIOState>("/robot/digital_io/right_shoulder_button/state",
                        1, &BaxterUtilities::rightShoulderCallback, this);
 
 }
