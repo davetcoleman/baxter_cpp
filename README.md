@@ -3,7 +3,7 @@ baxter_cpp
 
 **Note:** this repository was renamed from "baxter" to "baxter_cpp" with SDK release v0.7.0 so as to not conflict with Rethink's new "baxter" repository
 
-A C++ version of the Baxter SDK that works along side the Rethink SDK. Currently contains a ros_control implementation of the Baxter controlles, Gazebo simulation, and pick and place MoveIt code for Baxter. 
+A C++ version of the Baxter SDK that works along side the Rethink SDK. Currently contains a ros_control implementation of the Baxter controllers, Gazebo simulation, and pick and place MoveIt code for Baxter. 
 
 On going development continues in the development branch by [Dave Coleman](http://davetcoleman.com) and contributors are strongly encouraged to send pull requests and use this code. The master branch of this repository is kept as stable as posible and is continuously integrated using Travis.
 
