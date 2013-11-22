@@ -5,9 +5,9 @@ geometry_msgs/Pose commandPose
 geometry_msgs/Twist commandTwist
 float64[] stateJointAngles
 float64[] commandJointAngles
-float64[] commandJointVelocities
-float64[] nullspaceCommandJointVelocities
-float64[] fkCommandJointVelocities
+float64[] commandJointCommand
+float64[] nullspaceCommandJointCommand
+float64[] fkCommandJointCommand
 int32 ikVelValid
 float64 deltaTime
 float64 ikVelTime

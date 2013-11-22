@@ -8,7 +8,7 @@ find_package(catkin REQUIRED
     moveit_ros_planning_interface 
     std_msgs
     roscpp
-    baxter_msgs
+    baxter_core_msgs
     controller_manager
     transmission_interface
     hardware_interface
@@ -38,7 +38,7 @@ catkin_package(
     moveit_ros_planning_interface 
     std_msgs
     roscpp
-    baxter_msgs
+    baxter_core_msgs
     controller_manager
     transmission_interface
     hardware_interface

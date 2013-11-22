@@ -52,8 +52,8 @@
 #include <hardware_interface/joint_mode_interface.h>
 
 // Baxter
-#include <baxter_msgs/JointPositions.h>
-#include <baxter_msgs/JointVelocities.h>
+#include <baxter_core_msgs/JointCommand.h>
+#include <baxter_core_msgs/JointCommand.h>
 
 namespace baxter_control
 {

@@ -52,8 +52,8 @@
 // Msgs
 #include <std_msgs/Bool.h>
 #include <std_msgs/Empty.h>
-#include <baxter_msgs/AssemblyState.h>
-#include <baxter_msgs/DigitalIOState.h>
+#include <baxter_core_msgs/AssemblyState.h>
+#include <baxter_core_msgs/DigitalIOState.h>
 
 namespace baxter_control
 {
@@ -84,7 +84,7 @@ public:
   boost::scoped_ptr<move_group_interface::MoveGroup> move_group_;
 
   // Remember the last baxter state and time
-  baxter_msgs::AssemblyStateConstPtr baxter_state_;
+  baxter_core_msgs::AssemblyStateConstPtr baxter_state_;
   ros::Time baxter_state_timestamp_;
 
   // Cache messages
@@ -120,10 +120,10 @@ public:
    */
   bool isEnabled(bool verbose = false);
 
-  void stateCallback(const baxter_msgs::AssemblyStateConstPtr& msg);
+  void stateCallback(const baxter_core_msgs::AssemblyStateConstPtr& msg);
 
-  void leftShoulderCallback(const baxter_msgs::DigitalIOStateConstPtr& msg);
-  void rightShoulderCallback(const baxter_msgs::DigitalIOStateConstPtr& msg);
+  void leftShoulderCallback(const baxter_core_msgs::DigitalIOStateConstPtr& msg);
+  void rightShoulderCallback(const baxter_core_msgs::DigitalIOStateConstPtr& msg);
 
   bool enableBaxter();
 

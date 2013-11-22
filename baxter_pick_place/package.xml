@@ -7,8 +7,8 @@
 
   <license>BSD</license>
 
-  <url type="website">https://github.com/davetcoleman/baxter/</url>
-  <url type="bugtracker">https://github.com/davetcoleman/baxter/issues</url>
+  <url type="website">https://github.com/davetcoleman/baxter_cpp/</url>
+  <url type="bugtracker">https://github.com/davetcoleman/baxter_cpp/issues</url>
   <url type="repository">https://github.com/davetcoleman/baxter</url>
 
   <author>Dave Coleman</author>
@@ -19,7 +19,7 @@
   <build_depend>moveit_ros_planning</build_depend>
   <build_depend>moveit_ros_planning_interface</build_depend>
   <build_depend>block_grasp_generator</build_depend>
-  <build_depend>baxter_msgs</build_depend>
+  <build_depend>baxter_core_msgs</build_depend>
   <build_depend>geometry_msgs</build_depend>
   <build_depend>baxter_control</build_depend>
   <build_depend>roscpp</build_depend>

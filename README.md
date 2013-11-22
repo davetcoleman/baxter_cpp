@@ -1,35 +1,43 @@
-baxter
+baxter_cpp
 ======
 
-Unofficial Baxter packages that work along side the Rethink SDK, or optionally without it. It is entirely written in C++ and currently contains Gazebo simulation and pick and place MoveIt code for Baxter. On going development continues in the hydro-devel branch by [Dave Coleman](http://davetcoleman.com). 
+**Note:** this repository was renamed from "baxter" to "baxter_cpp" with SDK release v0.7.0 so as to not conflict with Rethink's new "baxter" repository
 
-<img align="right" src="https://raw.github.com/davetcoleman/baxter/hydro-devel/baxter_pick_place/resource/BaxterPickPlace.png" />
+A C++ version of the Baxter SDK that works along side the Rethink SDK, or optionally without it. Currently contains a ros_control implementation of the Baxter controlles, Gazebo simulation, and pick and place MoveIt code for Baxter. 
+
+On going development continues in the development branch by [Dave Coleman](http://davetcoleman.com) and contributors are strongly encouraged to send pull requests and use this code. The master branch of this repository is kept as stable as posible and is continuously integrated using Travis.
+
+<img align="right" src="https://raw.github.com/davetcoleman/baxter_cpp/hydro-devel/baxter_pick_place/resource/BaxterPickPlace.png" />
 
 ### Features
 
- * Baxter simulated in Gazebo
-   * Simulated controllers using [ros_control](http://wiki.ros.org/ros_control)
-   * Simulated head display
-   * Not implemented yet: simulated cameras, sonars, or other sensors. Feel free to add!
  * Baxter pick and place with MoveIt
    * Generate grasps for simple blocks on a table
    * Execute a pick and place routine
    * Works on hardware, Gazebo and in an Rviz visualization
    * Other tools for testing trajectories
- * Baxter position trajectory controller
+ * Baxter ros_control position, velocity, or torque trajectory controllers
    * Uses the ros_control [joint_trajectory_controller](https://github.com/ros-controls/ros_controllers/tree/hydro-devel/joint_trajectory_controller) instead of the python trajectory controller that comes with the SDK
+ * Baxter simulated in Gazebo
+   * NOTE: since SDK 0.7.0 release this has not been maintained. There is now an official release with Rethink that might work better
+   * Simulated controllers using [ros_control](http://wiki.ros.org/ros_control)
+   * Simulated head display
+   * Simulated cameras
+   * Not implemented yet: sonars or other sensors. Feel free to add!
  * Other goodies
    * Baxter's face follows obstacles using the sonars
 
 **Note:** This is the ROS Hydro version. See groovy-devel branch for ROS Groovy instructions, although that branch is no longer being actively developed.
 
+Additional experimental features are provided in [baxter_experimental](https://github.com/davetcoleman/baxter_experimental)
+
 ### Build Status
 
-[![Build Status](https://travis-ci.org/davetcoleman/baxter.png?branch=hydro-devel)](https://travis-ci.org/davetcoleman/baxter)
+[![Build Status](https://travis-ci.org/davetcoleman/baxter_cpp.png?branch=hydro-devel)](https://travis-ci.org/davetcoleman/baxter_cpp)
 
 ## Prerequisites
 
- * A Baxter with dual parallel electric grippers, or the desire to see one visualized/simulated
+ * A Baxter with dual parallel electric grippers with SDK v0.7.0 installed, or the desire to see one in simulation
  * [ROS Hydro](http://wiki.ros.org/ROS/Installation) on (suggested) Ubuntu 12.04
  * Install wstool package
     ```
@@ -53,7 +61,7 @@ Otherwise you can just skip this section and install the Baxter code and it will
     mkdir -p ~/ros/ws_moveit/src
     cd ~/ros/ws_moveit/src
     wstool init .
-    wstool merge https://raw.github.com/davetcoleman/baxter/hydro-devel/moveit.rosinstall
+    wstool merge https://raw.github.com/davetcoleman/baxter_cpp/hydro-devel/moveit.rosinstall
     wstool update
     cd ..
     rosdep install --from-paths src --ignore-src --rosdistro hydro -y
@@ -68,26 +76,31 @@ Otherwise you can just skip this section and install the Baxter code and it will
 
 ## Baxter Installation
 
-* Create a catkin workspace (we recommend a separate one for Baxter) and use wstool to install the individual repositories
+* Create a catkin workspace if you don't already have one (we recommend a separate one for Baxter) 
 
     ```
     mkdir -p ~/ros/ws_baxter/src
     cd ~/ros/ws_baxter/src
     wstool init .
-    wstool merge https://raw.github.com/davetcoleman/baxter/hydro-devel/baxter.rosinstall
+    ```
+
+* Install Rethink's Baxter SDK as documented below, if you have not already. These instructions can also be found at [Installing the Research SDK](https://github.com/RethinkRobotics/sdk-docs/wiki/Installing-the-Research-SDK)
+
+    ```
+    wstool merge https://raw.github.com/RethinkRobotics/baxter/master/baxter_sdk.rosinstall
+    ```
+
+* Install these baxter_cpp packages and update:
+
+    ```
+    wstool merge https://raw.github.com/davetcoleman/baxter_cpp/hydro-devel/baxter.rosinstall
     wstool update
     ```
 
-* **Optional:** install from source the private Rethink [sdk-examples](https://github.com/RethinkRobotics/sdk-examples) repository if you have access.
+* Source ROS setup if you haven't already (its recommended you just put this in your .bashrc)
 
-    ```
-    git clone git@github.com:RethinkRobotics/sdk-examples.git -b gazebo_dev
-    ```
-
-    Note: CU Boulder users can gain access to the SDK Examples by cloning this repository. Contact [Dave](davetcoleman@gmail.com) with your Github user name if you should have access to this.
-
-    ```
-    git clone git@github.com:correlllab/sdk-examples -b gazebo_dev
+    ```	    
+    source /opt/ros/hydro/setup.bash
     ```
 
 * Install dependencies and build
@@ -98,7 +111,7 @@ Otherwise you can just skip this section and install the Baxter code and it will
     catkin_make
     ```
 
-You may need to run this command multiple times if there is a message dependency issue.
+Note: You may need to run this command multiple times if there is a message dependency issue. Please report these bugs in the issue tracker.
 
 * Add Baxter setup.bash to your .bashrc (recommended)
 
@@ -286,5 +299,5 @@ BSD (New BSD License)
 
 ## Develop and Contribute
 
-Please do! See [Contribute](https://github.com/osrf/baxter/blob/master/CONTRIBUTING.md) page.
+Please do! See [Contribute](https://github.com/davetcoleman/baxter_cpp/blob/master/CONTRIBUTING.md) page.
 

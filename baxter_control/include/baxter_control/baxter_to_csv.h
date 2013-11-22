@@ -53,9 +53,9 @@
 #include <fstream>
 
 // Baxter
-#include <baxter_msgs/JointPositions.h>
-#include <baxter_msgs/DigitalIOState.h>
-#include <baxter_msgs/JointVelocities.h>
+#include <baxter_core_msgs/JointCommand.h>
+#include <baxter_core_msgs/DigitalIOState.h>
+#include <baxter_core_msgs/JointCommand.h>
 
 namespace baxter_control
 {
@@ -94,8 +94,8 @@ private:
 
   // Buffer of joint states and commands
   sensor_msgs::JointState state_msg_;
-  baxter_msgs::JointVelocities cmd_velocity_msg_;
-  baxter_msgs::JointPositions cmd_position_msg_;
+  baxter_core_msgs::JointCommand cmd_velocity_msg_;
+  baxter_core_msgs::JointCommand cmd_position_msg_;
 
 
   // Which arm and joint are we testing
@@ -109,8 +109,8 @@ private:
   // Buffer of joint state data
   std::vector<sensor_msgs::JointState> joint_states_;
   std::vector<ros::Time> timestamps_;
-  std::vector<baxter_msgs::JointPositions> cmd_position_msgs_;
-  std::vector<baxter_msgs::JointVelocities> cmd_velocity_msgs_;
+  std::vector<baxter_core_msgs::JointCommand> cmd_position_msgs_;
+  std::vector<baxter_core_msgs::JointCommand> cmd_velocity_msgs_;
   std::size_t current_state_count_;
   std::size_t total_state_count_;
   std::size_t command_index_;
@@ -150,8 +150,8 @@ public:
    * \brief Buffers joint command info from velocity controllers
    * \param
    */
-  void cmdPositionCallback(const baxter_msgs::JointPositionsConstPtr& msg);
-  void cmdVelocityCallback(const baxter_msgs::JointVelocitiesConstPtr& msg);
+  void cmdPositionCallback(const baxter_core_msgs::JointCommandConstPtr& msg);
+  void cmdVelocityCallback(const baxter_core_msgs::JointCommandConstPtr& msg);
 
   /**
    * \brief Checks if the state message from Baxter is out of date

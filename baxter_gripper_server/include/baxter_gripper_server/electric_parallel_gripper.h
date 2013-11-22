@@ -44,8 +44,8 @@
 #include <std_msgs/Float32.h>
 #include <std_msgs/Empty.h>
 #include <std_msgs/Bool.h>
-#include <baxter_msgs/GripperState.h>
-#include <baxter_msgs/DigitalIOState.h>
+#include <baxter_core_msgs/EndEffectorState.h>
+#include <baxter_core_msgs/DigitalIOState.h>
 #include <sensor_msgs/JointState.h>
 #include <control_msgs/GripperCommandAction.h>
 
@@ -96,7 +96,7 @@ protected:
   std_msgs::Float32 zero_msg_;
 
   // Remember the last gripper state and time
-  baxter_msgs::GripperStateConstPtr gripper_state_;
+  baxter_core_msgs::EndEffectorStateConstPtr gripper_state_;
   ros::Time gripper_state_timestamp_;
 
   enum gripper_error_msgs {NO_ERROR, EXPIRED, CALIBRATED, ENABLED, ERROR, READY};
@@ -136,15 +136,15 @@ public:
                    + "/accessory/gripper/command_reset",10);
 
     // Start the subscribers
-    gripper_state_sub_ = nh_.subscribe<baxter_msgs::GripperState>("/sdk/robot/limb/" + arm_name_
+    gripper_state_sub_ = nh_.subscribe<baxter_core_msgs::EndEffectorState>("/sdk/robot/limb/" + arm_name_
                          + "/accessory/gripper/state",
                          1, &ElectricParallelGripper::stateCallback, this);
 
-    cuff_grasp_sub_ = nh_.subscribe<baxter_msgs::DigitalIOState>("/sdk/robot/digital_io/" +
+    cuff_grasp_sub_ = nh_.subscribe<baxter_core_msgs::DigitalIOState>("/sdk/robot/digital_io/" +
                       arm_name_ + "_upper_button/state",
                       1, &ElectricParallelGripper::cuffGraspCallback, this);
 
-    cuff_ok_sub_ = nh_.subscribe<baxter_msgs::DigitalIOState>("/sdk/robot/digital_io/" +
+    cuff_ok_sub_ = nh_.subscribe<baxter_core_msgs::DigitalIOState>("/sdk/robot/digital_io/" +
                    arm_name_ + "_lower_button/state",
                    1, &ElectricParallelGripper::cuffOKCallback, this);
 
@@ -169,8 +169,8 @@ public:
     // If in simulation, fill in dummy state values
     if( in_simulation_ )
     {
-      baxter_msgs::GripperStatePtr simulation_state;
-      simulation_state.reset(new baxter_msgs::GripperState());
+      baxter_core_msgs::EndEffectorStatePtr simulation_state;
+      simulation_state.reset(new baxter_core_msgs::EndEffectorState());
       simulation_state->enabled = 1;
       simulation_state->calibrated = 1;
       simulation_state->ready = 1;
@@ -178,7 +178,7 @@ public:
       simulation_state->gripping = 0;
       simulation_state->missed = 0;
       simulation_state->error = 0;
-      simulation_state->command = 0; // \todo
+      //simulation_state->command = 0; // \todo
       simulation_state->position = 0; // \todo
       simulation_state->force = 7; // base line value unloaded
       gripper_state_ = simulation_state;
@@ -336,7 +336,7 @@ public:
     }
   }
 
-  void stateCallback(const baxter_msgs::GripperStateConstPtr& msg)
+  void stateCallback(const baxter_core_msgs::EndEffectorStateConstPtr& msg)
   {
     gripper_state_ = msg;
     gripper_state_timestamp_ = ros::Time::now();
@@ -354,7 +354,7 @@ public:
     }
   }
 
-  void cuffGraspCallback(const baxter_msgs::DigitalIOStateConstPtr& msg)
+  void cuffGraspCallback(const baxter_core_msgs::DigitalIOStateConstPtr& msg)
   {
     // Check if button is pressed
     if( msg->state == 1 )
@@ -373,7 +373,7 @@ public:
     }
   }
 
-  void cuffOKCallback(const baxter_msgs::DigitalIOStateConstPtr& msg)
+  void cuffOKCallback(const baxter_core_msgs::DigitalIOStateConstPtr& msg)
   {
     // Check if button is pressed
     if( msg->state == 1 )

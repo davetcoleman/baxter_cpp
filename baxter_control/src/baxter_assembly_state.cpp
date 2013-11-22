@@ -40,7 +40,7 @@
 #include <ros/ros.h>
 
 // Baxter
-#include <baxter_msgs/AssemblyState.h>
+#include <baxter_core_msgs/AssemblyState.h>
 
 namespace baxter_control
 {
@@ -56,7 +56,7 @@ private:
   ros::Timer timer_;
   
   // Cache the message
-  baxter_msgs::AssemblyState assembly_state_;
+  baxter_core_msgs::AssemblyState assembly_state_;
 
   ros::NodeHandle nh_;
 
@@ -65,14 +65,14 @@ public:
   BaxterAssemblyState()
   {
     // Start a publisher that publishes fake AssemblyState.msg data about Baxter
-    assembly_state_pub_ = nh_.advertise<baxter_msgs::AssemblyState>(BAXTER_STATE_TOPIC,10);
+    assembly_state_pub_ = nh_.advertise<baxter_core_msgs::AssemblyState>(BAXTER_STATE_TOPIC,10);
 
     // Create assembly state message 
     assembly_state_.enabled = 1;             // true if enabled
     assembly_state_.stopped = 0;            // true if stopped -- e-stop asserted
     assembly_state_.error = 0;              // true if a component of the assembly has an error
-    assembly_state_.estop_button = baxter_msgs::AssemblyState::ESTOP_BUTTON_UNPRESSED;      // button status
-    assembly_state_.estop_source = baxter_msgs::AssemblyState::ESTOP_SOURCE_NONE;     // If stopped is true, the source of the e-stop.  
+    assembly_state_.estop_button = baxter_core_msgs::AssemblyState::ESTOP_BUTTON_UNPRESSED;      // button status
+    assembly_state_.estop_source = baxter_core_msgs::AssemblyState::ESTOP_SOURCE_NONE;     // If stopped is true, the source of the e-stop.  
 
     // Set publish frequency
     ros::NodeHandle nh_tilde("~");

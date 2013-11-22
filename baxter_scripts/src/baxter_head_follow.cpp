@@ -41,7 +41,7 @@
 #include <sensor_msgs/PointCloud.h>
 
 // Baxter
-#include <baxter_msgs/HeadPanCommand.h>
+#include <baxter_core_msgs/HeadPanCommand.h>
 
 // C++
 #include <numeric>      // std::accumulate
@@ -75,7 +75,7 @@ private:
   // Update loop
   ros::Timer non_realtime_loop_;
 
-  baxter_msgs::HeadPanCommand head_command_;
+  baxter_core_msgs::HeadPanCommand head_command_;
   
   bool verbose_; // show debug info
 
@@ -92,7 +92,7 @@ public:
       verbose_(false)
   {
     // Start publishers
-    pub_head_turn_ = nh_.advertise<baxter_msgs::HeadPanCommand>("/sdk/robot/head/command_head_pan",10);
+    pub_head_turn_ = nh_.advertise<baxter_core_msgs::HeadPanCommand>("/sdk/robot/head/command_head_pan",10);
     head_command_.speed = 10;
 
     // Start subscribers

@@ -43,8 +43,8 @@
 #include <trajectory_msgs/JointTrajectory.h>
 
 // Baxter
-#include <baxter_msgs/JointCommandMode.h>
-#include <baxter_msgs/DigitalIOState.h>
+#include <baxter_core_msgs/JointCommand.h>
+#include <baxter_core_msgs/DigitalIOState.h>
 
 // Parent class
 #include <baxter_control/arm_interface.h>
@@ -59,9 +59,7 @@ class ArmHardwareInterface : public ArmInterface
 private:
 
   // Publishers
-  ros::Publisher pub_position_command_;
-  ros::Publisher pub_velocity_command_;
-  ros::Publisher pub_command_mode_;
+  ros::Publisher pub_joint_command_;
   ros::Publisher pub_trajectory_command_;
 
   // Subscriber
@@ -73,9 +71,7 @@ private:
   ros::Time state_msg_timestamp_;
 
   // Messages to send
-  baxter_msgs::JointPositions output_command_msg_;
-  baxter_msgs::JointVelocities output_velocity_msg_;
-  baxter_msgs::JointCommandMode output_command_mode_msg_;
+  baxter_core_msgs::JointCommand output_msg_;
   trajectory_msgs::JointTrajectory trajectory_command_msg_;
 
   // Track button status
@@ -127,7 +123,7 @@ public:
    * \brief Check if the cuff manual control button is squeezed. 
    * \param msg - the state of the end effector cuff
    */
-  void cuffSqueezedCallback(const baxter_msgs::DigitalIOStateConstPtr& msg);
+  void cuffSqueezedCallback(const baxter_core_msgs::DigitalIOStateConstPtr& msg);
 
   /**
    * \brief This is called when Baxter is disabled, so that we can update the desired positions

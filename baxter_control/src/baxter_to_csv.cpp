@@ -54,12 +54,12 @@ BaxterToCSV::BaxterToCSV(bool position_cmd_mode, int estimated_num_data_pts)
                      "/joint_states", 1, &BaxterToCSV::stateCallback, this);
   if (position_cmd_mode_)
   {
-    sub_command_ = nh_.subscribe<baxter_msgs::JointPositions>("/robot/limb/" + arm_name_ +
+    sub_command_ = nh_.subscribe<baxter_core_msgs::JointCommand>("/robot/limb/" + arm_name_ +
                    "/command_joint_angles", 1, &BaxterToCSV::cmdPositionCallback, this);
   }
   else
   {
-    sub_command_ = nh_.subscribe<baxter_msgs::JointVelocities>("/robot/limb/" + arm_name_ +
+    sub_command_ = nh_.subscribe<baxter_core_msgs::JointCommand>("/robot/limb/" + arm_name_ +
                    "/command_joint_velocities", 1, &BaxterToCSV::cmdVelocityCallback, this);
   }
 
@@ -126,13 +126,13 @@ void BaxterToCSV::stateCallback(const sensor_msgs::JointStateConstPtr& msg)
   state_msg_ = *msg;
 }
 
-void BaxterToCSV::cmdPositionCallback(const baxter_msgs::JointPositionsConstPtr& msg)
+void BaxterToCSV::cmdPositionCallback(const baxter_core_msgs::JointCommandConstPtr& msg)
 {
   // Copy the latest message into a buffer
   cmd_position_msg_ = *msg;
 }
 
-void BaxterToCSV::cmdVelocityCallback(const baxter_msgs::JointVelocitiesConstPtr& msg)
+void BaxterToCSV::cmdVelocityCallback(const baxter_core_msgs::JointCommandConstPtr& msg)
 {
   // Copy the latest message into a buffer
   cmd_velocity_msg_ = *msg;
@@ -184,9 +184,9 @@ bool BaxterToCSV::writeToFile(const std::string& file_name)
 
       // Output Command
       if (position_cmd_mode_)
-        output_file << cmd_position_msgs_[i].angles[j] << ",";
+        output_file << cmd_position_msgs_[i].command[j] << ",";
       else
-        output_file << cmd_velocity_msgs_[i].velocities[j] << ",";
+        output_file << cmd_velocity_msgs_[i].command[j] << ",";
     }
 
     output_file << std::endl;

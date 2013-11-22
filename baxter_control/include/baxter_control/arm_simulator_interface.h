@@ -51,7 +51,7 @@
 #include <hardware_interface/joint_state_interface.h>
 
 // Baxter
-#include <baxter_msgs/JointPositions.h>
+#include <baxter_core_msgs/JointCommand.h>
 
 // Parent class
 #include <baxter_control/arm_interface.h>

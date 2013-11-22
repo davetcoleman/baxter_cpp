@@ -54,7 +54,7 @@
 #include <std_msgs/Float32.h>
 #include <std_msgs/Empty.h>
 #include <std_msgs/Bool.h>
-#include <baxter_msgs/HeadPanCommand.h>
+#include <baxter_core_msgs/HeadPanCommand.h>
 
 // Baxter specific properties
 #include <baxter_pick_place/baxter_data.h>
@@ -131,7 +131,7 @@ public:
     if ( allow_head_movements_ )
     {
       ROS_DEBUG_STREAM_NAMED("random_planning","Starting turn head publisher");
-      head_turn_topic_ = nh.advertise<baxter_msgs::HeadPanCommand>("/sdk/robot/head/command_head_pan",10);
+      head_turn_topic_ = nh.advertise<baxter_core_msgs::HeadPanCommand>("/sdk/robot/head/command_head_pan",10);
     }
 
     // Create the walls and tables
@@ -165,7 +165,7 @@ public:
     gripper_command.data = 0;
     std_msgs::Bool true_command;
     true_command.data = true;
-    baxter_msgs::HeadPanCommand head_command;
+    baxter_core_msgs::HeadPanCommand head_command;
     head_command.speed = 60;
 
     // ---------------------------------------------------------------------------------------------

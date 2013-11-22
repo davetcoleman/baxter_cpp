@@ -59,14 +59,14 @@ BaxterUtilities::BaxterUtilities()
 
   // ---------------------------------------------------------------------------------------------
   // Start the state subscriber
-  sub_baxter_state_ = nh.subscribe<baxter_msgs::AssemblyState>(BAXTER_STATE_TOPIC,
+  sub_baxter_state_ = nh.subscribe<baxter_core_msgs::AssemblyState>(BAXTER_STATE_TOPIC,
                       1, &BaxterUtilities::stateCallback, this);
 
   // ---------------------------------------------------------------------------------------------
   // Shoulder enable disable buttons
-  sub_shoulder_left_ = nh.subscribe<baxter_msgs::DigitalIOState>("/sdk/robot/digital_io/left_shoulder_button/state",
+  sub_shoulder_left_ = nh.subscribe<baxter_core_msgs::DigitalIOState>("/sdk/robot/digital_io/left_shoulder_button/state",
                        1, &BaxterUtilities::leftShoulderCallback, this);
-  sub_shoulder_right_ = nh.subscribe<baxter_msgs::DigitalIOState>("/sdk/robot/digital_io/right_shoulder_button/state",
+  sub_shoulder_right_ = nh.subscribe<baxter_core_msgs::DigitalIOState>("/sdk/robot/digital_io/right_shoulder_button/state",
                        1, &BaxterUtilities::rightShoulderCallback, this);
 
 }
@@ -121,16 +121,16 @@ bool BaxterUtilities::isEnabled(bool verbose)
     std::string estop_button;
     switch( baxter_state_->estop_button )
     {
-      case baxter_msgs::AssemblyState::ESTOP_BUTTON_UNPRESSED:
+      case baxter_core_msgs::AssemblyState::ESTOP_BUTTON_UNPRESSED:
         estop_button = "Robot is not stopped and button is not pressed";
         break;
-      case baxter_msgs::AssemblyState::ESTOP_BUTTON_PRESSED:
+      case baxter_core_msgs::AssemblyState::ESTOP_BUTTON_PRESSED:
         estop_button = "Pressed";
         break;
-      case baxter_msgs::AssemblyState::ESTOP_BUTTON_UNKNOWN:
+      case baxter_core_msgs::AssemblyState::ESTOP_BUTTON_UNKNOWN:
         estop_button = "STATE_UNKNOWN when estop was asserted by a non-user source";
         break;
-      case baxter_msgs::AssemblyState::ESTOP_BUTTON_RELEASED:
+      case baxter_core_msgs::AssemblyState::ESTOP_BUTTON_RELEASED:
         estop_button = "Was pressed, is now known to be released, but robot is still stopped.";
         break;
       default:
@@ -140,19 +140,19 @@ bool BaxterUtilities::isEnabled(bool verbose)
     std::string estop_source;
     switch( baxter_state_->estop_source )
     {
-      case baxter_msgs::AssemblyState::ESTOP_SOURCE_NONE:
+      case baxter_core_msgs::AssemblyState::ESTOP_SOURCE_NONE:
         estop_source = "e-stop is not asserted";
         break;
-      case baxter_msgs::AssemblyState::ESTOP_SOURCE_USER:
+      case baxter_core_msgs::AssemblyState::ESTOP_SOURCE_USER:
         estop_source = "e-stop source is user input (the red button)";
         break;
-      case baxter_msgs::AssemblyState::ESTOP_SOURCE_UNKNOWN:
+      case baxter_core_msgs::AssemblyState::ESTOP_SOURCE_UNKNOWN:
         estop_source = "e-stop source is unknown";
         break;
-      case baxter_msgs::AssemblyState::ESTOP_SOURCE_FAULT:
+      case baxter_core_msgs::AssemblyState::ESTOP_SOURCE_FAULT:
         estop_source = "MotorController asserted e-stop in response to a joint fault";
         break;
-      case baxter_msgs::AssemblyState::ESTOP_SOURCE_BRAIN:
+      case baxter_core_msgs::AssemblyState::ESTOP_SOURCE_BRAIN:
         estop_source = "MotorController asserted e-stop in response to a lapse of the brain heartbeat";
         break;
       default:
@@ -183,7 +183,7 @@ bool BaxterUtilities::isEnabled(bool verbose)
   return true;
 }
 
-void BaxterUtilities::stateCallback(const baxter_msgs::AssemblyStateConstPtr& msg)
+void BaxterUtilities::stateCallback(const baxter_core_msgs::AssemblyStateConstPtr& msg)
 {
   baxter_state_ = msg;
   baxter_state_timestamp_ = ros::Time::now();
@@ -215,7 +215,7 @@ void BaxterUtilities::stateCallback(const baxter_msgs::AssemblyStateConstPtr& ms
   state_counter_++;
 }
 
-void BaxterUtilities::leftShoulderCallback(const baxter_msgs::DigitalIOStateConstPtr& msg)
+void BaxterUtilities::leftShoulderCallback(const baxter_core_msgs::DigitalIOStateConstPtr& msg)
 {
   if (msg->state == 0)
   {
@@ -223,7 +223,7 @@ void BaxterUtilities::leftShoulderCallback(const baxter_msgs::DigitalIOStateCons
   }
 }
 
-void BaxterUtilities::rightShoulderCallback(const baxter_msgs::DigitalIOStateConstPtr& msg)
+void BaxterUtilities::rightShoulderCallback(const baxter_core_msgs::DigitalIOStateConstPtr& msg)
 {
   if (msg->state == 0)
   {

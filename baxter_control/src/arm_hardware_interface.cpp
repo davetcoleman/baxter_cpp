@@ -63,10 +63,8 @@ ArmHardwareInterface::ArmHardwareInterface(const std::string &arm_name)
   joint_position_command_.resize(n_dof_);
   joint_effort_command_.resize(n_dof_);
   joint_velocity_command_.resize(n_dof_);
-  output_command_msg_.angles.resize(n_dof_);
-  output_command_msg_.names.resize(n_dof_);
-  output_velocity_msg_.velocities.resize(n_dof_);
-  output_velocity_msg_.names.resize(n_dof_);
+  output_msg_.command.resize(n_dof_);
+  output_msg_.names.resize(n_dof_);
   trajectory_command_msg_.joint_names.resize(n_dof_);
 
   for (std::size_t i = 0; i < n_dof_; ++i)
@@ -120,18 +118,9 @@ bool ArmHardwareInterface::init(
         js_interface.getHandle(joint_names_[i]),&joint_velocity_command_[i]));
   }
 
-  // An additional msg must be published to baxter to let it know we're in velocity mode
-  output_command_mode_msg_.mode = baxter_msgs::JointCommandMode::VELOCITY;
-
   // Start publishers
-  pub_position_command_ = nh_.advertise<baxter_msgs::JointPositions>("/robot/limb/"+arm_name_+
-                          "/command_joint_angles",10);
-
-  pub_velocity_command_ = nh_.advertise<baxter_msgs::JointVelocities>("/robot/limb/"+arm_name_+
-                          "/command_joint_velocities",10);
-
-  pub_command_mode_ = nh_.advertise<baxter_msgs::JointCommandMode>("/robot/limb/"+arm_name_+
-                      "/joint_command_mode",10); // used for switching between velocity and position control
+  pub_joint_command_ = nh_.advertise<baxter_core_msgs::JointCommand>("/robot/limb/"+arm_name_+
+                          "/joint_command",10);
 
   pub_trajectory_command_ = nh_.advertise<trajectory_msgs::JointTrajectory>("/robot/"+arm_name_+
                             "_trajectory_controller/command",10);
@@ -140,7 +129,7 @@ bool ArmHardwareInterface::init(
   sub_joint_state_ = nh_.subscribe<sensor_msgs::JointState>("/robot/limb/" + arm_name_ +
                      "/joint_states", 1, &ArmHardwareInterface::stateCallback, this);
 
-  cuff_squeezed_sub_ = nh_.subscribe<baxter_msgs::DigitalIOState>("/sdk/robot/digital_io/" +
+  cuff_squeezed_sub_ = nh_.subscribe<baxter_core_msgs::DigitalIOState>("/sdk/robot/digital_io/" +
                        arm_name_ + "_lower_cuff/state",
                        1, &ArmHardwareInterface::cuffSqueezedCallback, this);
 
@@ -172,8 +161,7 @@ bool ArmHardwareInterface::init(
     //ROS_DEBUG_STREAM_NAMED("temp","set joint " << joint_names_[i] << " to position " << joint_position_command_[i]);
 
     // Pre-load the joint names into the output messages just once
-    output_command_msg_.names[i] = joint_names_[i];
-    output_velocity_msg_.names[i] = joint_names_[i];
+    output_msg_.names[i] = joint_names_[i];
   }
 
   ROS_INFO_NAMED(arm_name_, "Loaded baxter_hardware_interface.");
@@ -219,40 +207,37 @@ void ArmHardwareInterface::write()
   if( stateExpired() )
     return;
 
-  for (std::size_t i = 0; i < n_dof_; ++i)
-  {
-    switch (*joint_mode_)
-    {
-      case hardware_interface::MODE_POSITION:
-        output_command_msg_.angles[i] = joint_position_command_[i];
-        break;
-      case hardware_interface::MODE_VELOCITY:
-        output_velocity_msg_.velocities[i] = joint_velocity_command_[i];
-        break;
-      case hardware_interface::MODE_EFFORT:
-        // Not implemented
-        //output_torque_msg_.torques[i] = joint_effort_command_[i];
-        break;
-    }
-  }
-
+  // Send commands to baxter in different modes
   switch (*joint_mode_)
-  {
+  {    
     case hardware_interface::MODE_POSITION:
-      pub_position_command_.publish(output_command_msg_);
+      for (std::size_t i = 0; i < n_dof_; ++i)
+      {
+        output_msg_.command[i] = joint_position_command_[i];
+      }
+      output_msg_.mode = baxter_core_msgs::JointCommand::POSITION_MODE;
       break;
     case hardware_interface::MODE_VELOCITY:
-      pub_velocity_command_.publish(output_velocity_msg_);
-
-      pub_command_mode_.publish(output_command_mode_msg_);
+      for (std::size_t i = 0; i < n_dof_; ++i)
+      {
+        output_msg_.command[i] = joint_velocity_command_[i];
+      }
+      output_msg_.mode = baxter_core_msgs::JointCommand::VELOCITY_MODE;
       break;
     case hardware_interface::MODE_EFFORT:
-      // Not implemented
+      for (std::size_t i = 0; i < n_dof_; ++i)
+      {
+        output_msg_.command[i] = joint_effort_command_[i];
+      }
+      output_msg_.mode = baxter_core_msgs::JointCommand::TORQUE_MODE;
       break;
   }
+
+  // Publish
+  pub_joint_command_.publish(output_msg_);
 }
 
-void ArmHardwareInterface::cuffSqueezedCallback(const baxter_msgs::DigitalIOStateConstPtr& msg)
+void ArmHardwareInterface::cuffSqueezedCallback(const baxter_core_msgs::DigitalIOStateConstPtr& msg)
 {
   // Check if button is pressed
   if( msg->state == 1 )

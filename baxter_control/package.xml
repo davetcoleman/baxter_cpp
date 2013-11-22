@@ -11,7 +11,7 @@
   <license>BSD</license>
 
   <url type="website">https://github.com/davetcoleman/baxter</url>
-  <url type="bugtracker">https://github.com/davetcoleman/baxter/issues</url>
+  <url type="bugtracker">https://github.com/davetcoleman/baxter_cpp/issues</url>
   <url type="repository">https://github.com/davetcoleman/baxter</url>
 
   <buildtool_depend>catkin</buildtool_depend>
@@ -19,7 +19,7 @@
   <build_depend>moveit_ros_planning_interface</build_depend>
   <build_depend>std_msgs</build_depend>
   <build_depend>roscpp</build_depend>
-  <build_depend>baxter_msgs</build_depend>
+  <build_depend>baxter_core_msgs</build_depend>
   <build_depend>controller_manager</build_depend>
   <build_depend>transmission_interface</build_depend>
   <build_depend>hardware_interface</build_depend>
@@ -31,7 +31,7 @@
   <run_depend>std_msgs</run_depend>
   <run_depend>roscpp</run_depend>
   <run_depend>gazebo_ros_control</run_depend>
-  <run_depend>baxter_msgs</run_depend>
+  <run_depend>baxter_core_msgs</run_depend>
   <run_depend>controller_manager</run_depend>
   <run_depend>transmission_interface</run_depend>
   <run_depend>hardware_interface</run_depend>
