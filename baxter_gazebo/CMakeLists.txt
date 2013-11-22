@@ -42,10 +42,8 @@ include_directories(include
 
 # Library
 add_library(baxter_gazebo_ros_control src/baxter_gazebo_ros_control_plugin.cpp)
-#message(status "${catkin_LIBRARIES} \n\n\n\n\n\n\n\n ")
-target_link_libraries(baxter_gazebo_ros_control ${catkin_LIBRARIES} ${GAZEBO_LIBRARIES} gazebo_ros_control) # \todo remove gazebo_ros_control here
-add_dependencies(baxter_gazebo_ros_control ${catkin_EXPORTED_TARGETS}) # don't build until baxter_core_msgs is done
-
+target_link_libraries(baxter_gazebo_ros_control ${catkin_LIBRARIES} ${GAZEBO_LIBRARIES} gazebo_ros_control)
+add_dependencies(baxter_gazebo_ros_control ${catkin_EXPORTED_TARGETS}) # don't build until necessary msgs are finished
 
 
 #############
