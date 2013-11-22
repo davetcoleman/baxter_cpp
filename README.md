@@ -95,17 +95,18 @@ Otherwise you can just skip this section and install the Baxter code and it will
     wstool merge https://raw.github.com/RethinkRobotics/baxter/master/baxter_sdk.rosinstall
     ```
 
-* Install these baxter_cpp packages and update:
+* Install these baxter_cpp packages and update: (note, replaces Rethink's baxter_common with a version that has parallel electric end effectors modeled)
 
     ```
-    wstool merge https://raw.github.com/davetcoleman/baxter_cpp/hydro-devel/baxter.rosinstall
+    wstool merge --merge-replace -y https://raw.github.com/davetcoleman/baxter_cpp/hydro-devel/baxter.rosinstall
     wstool update
     ```
 
-* Source ROS setup if you haven't already (its recommended you just put this in your .bashrc)
+* Source ROS setup and update rosdep if you haven't already
 
     ```	    
     source /opt/ros/hydro/setup.bash
+    rosdep update
     ```
 
 * Install dependencies and build
