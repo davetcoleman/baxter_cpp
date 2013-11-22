@@ -78,7 +78,8 @@ public:
     ROS_INFO_STREAM_NAMED("baxter_gazebo_ros_control_plugin","Loading Baxter specific simulation components");
 
     // Start a publisher that publishes fake AssemblyState.msg data about Baxter
-    assembly_state_pub_ = nh_.advertise<baxter_core_msgs::AssemblyState>(BAXTER_STATE_TOPIC,10);
+    // TODO enable this again
+    //assembly_state_pub_ = nh_.advertise<baxter_core_msgs::AssemblyState>(BAXTER_STATE_TOPIC,10);
 
     // Create assembly state message
     assembly_state_.enabled = 1;             // true if enabled
@@ -100,7 +101,7 @@ public:
 
   void update(const ros::TimerEvent& e)
   {
-    assembly_state_pub_.publish(assembly_state_);
+    //assembly_state_pub_.publish(assembly_state_);
   }
 
   /*
