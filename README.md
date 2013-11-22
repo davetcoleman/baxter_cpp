@@ -27,13 +27,18 @@ On going development continues in the development branch by [Dave Coleman](http:
  * Other goodies
    * Baxter's face follows obstacles using the sonars
 
-**Note:** This is the ROS Hydro version. See groovy-devel branch for ROS Groovy instructions, although that branch is no longer being actively developed.
-
 Additional experimental features are provided in [baxter_experimental](https://github.com/davetcoleman/baxter_experimental)
 
 ### Build Status
 
 [![Build Status](https://travis-ci.org/davetcoleman/baxter_cpp.png?branch=hydro-devel)](https://travis-ci.org/davetcoleman/baxter_cpp)
+
+## Branches
+   
+ * [groovy-devel-sdk0.6.2](https://github.com/davetcoleman/baxter_cpp/tree/groovy-devel-sdk0.6.2) - works with the old Baxter 0.6.2 SDK software on ROS Groovy. **Not Maintained**
+ * [hydro-devel-sdk0.6.2](https://github.com/davetcoleman/baxter_cpp/tree/hydro-devel-sdk0.6.2) - works with the old Baxter 0.6.2 SDK software on ROS Hydro. Stable. **Not Maintained**
+ * [hydro-devel](https://github.com/davetcoleman/baxter_cpp/tree/hydro-devel) - works with current Baxter 0.7.0 SDK software on ROS Hydro. Currently unstable.
+ * [developement](https://github.com/davetcoleman/baxter_cpp/tree/development) - latest hydro-devel work is commited here. Unstable.
 
 ## Prerequisites
 
