@@ -1,0 +1,20 @@
+- git:
+    local-name: baxter
+    uri: http://github.com/RethinkRobotics/baxter.git
+    version: master
+- git:
+    local-name: baxter_interface
+    uri: http://github.com/RethinkRobotics/baxter_interface.git
+    version: master
+- git:
+    local-name: baxter_tools
+    uri: http://github.com/RethinkRobotics/baxter_tools.git
+    version: master
+- git:
+    local-name: baxter_common
+    uri: http://github.com/RethinkRobotics/baxter_common.git
+    version: master
+- git:
+    local-name: baxter_examples
+    uri: http://github.com/RethinkRobotics/baxter_examples.git
+    version: master
