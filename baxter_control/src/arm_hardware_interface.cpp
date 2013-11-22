@@ -41,8 +41,8 @@
 namespace baxter_control
 {
 
-ArmHardwareInterface::ArmHardwareInterface(const std::string &arm_name)
-  : ArmInterface(arm_name),
+ArmHardwareInterface::ArmHardwareInterface(const std::string &arm_name, double loop_hz)
+  : ArmInterface(arm_name, loop_hz),
     cuff_squeezed_previous(false)
 {
   // Populate joints in this arm
@@ -175,7 +175,7 @@ void ArmHardwareInterface::read( sensor_msgs::JointStateConstPtr &state_msg )
   }
 }
 
-void ArmHardwareInterface::write()
+void ArmHardwareInterface::write(ros::Duration elapsed_time)
 {
   // Send commands to baxter in different modes
   switch (*joint_mode_)

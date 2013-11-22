@@ -6,7 +6,7 @@
 
   # Gazebo Sim - Right and Left Joint Effort Trajectory Controller -------------------
 
-  left_joint_trajectory_controller:
+  left_position_trajectory_controller:
     type: "effort_controllers/JointTrajectoryController"
     joints:
       - left_s0
@@ -55,7 +55,7 @@
     action_monitor_rate: 10 # Defaults to 20
     hold_trajectory_duration: 0 # Defaults to 0.5
 
-  right_joint_trajectory_controller:
+  right_position_trajectory_controller:
     type: "effort_controllers/JointTrajectoryController"
     joints:
       - right_s0

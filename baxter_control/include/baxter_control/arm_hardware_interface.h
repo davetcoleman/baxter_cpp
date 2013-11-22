@@ -80,7 +80,7 @@ public:
   /**
    * \brief Constructor/Descructor
    */
-  ArmHardwareInterface(const std::string &arm_name);
+  ArmHardwareInterface(const std::string &arm_name, double loop_hz);
   ~ArmHardwareInterface();
 
   /**
@@ -110,7 +110,7 @@ public:
   /**
    * \brief Publish our hardware interface datastructures commands to Baxter hardware
    */
-  void write();
+  void write(ros::Duration elapsed_time);
 
   /**
    * \brief Check if the cuff manual control button is squeezed. 

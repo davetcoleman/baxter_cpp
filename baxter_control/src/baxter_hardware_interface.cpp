@@ -43,19 +43,20 @@ namespace baxter_control
 
 BaxterHardwareInterface::BaxterHardwareInterface(bool in_simulation)
   : in_simulation_(in_simulation),
-    joint_mode_(1)
+    joint_mode_(1),
+    loop_hz_(100)
 {
   if( in_simulation_ )
   {
     ROS_INFO_STREAM_NAMED("hardware_interface","Running in simulation mode");
-    right_arm_hw_.reset(new baxter_control::ArmSimulatorInterface("right"));
-    left_arm_hw_.reset(new baxter_control::ArmSimulatorInterface("left"));
+    right_arm_hw_.reset(new baxter_control::ArmSimulatorInterface("right",loop_hz_));
+    left_arm_hw_.reset(new baxter_control::ArmSimulatorInterface("left",loop_hz_));
   }
   else
   {
     ROS_INFO_STREAM_NAMED("hardware_interface","Running in hardware mode");
-    right_arm_hw_.reset(new baxter_control::ArmHardwareInterface("right"));
-    left_arm_hw_.reset(new baxter_control::ArmHardwareInterface("left"));
+    right_arm_hw_.reset(new baxter_control::ArmHardwareInterface("right",loop_hz_));
+    left_arm_hw_.reset(new baxter_control::ArmHardwareInterface("left",loop_hz_));
   }
 
   // Set the joint mode interface data
@@ -116,8 +117,7 @@ BaxterHardwareInterface::BaxterHardwareInterface(bool in_simulation)
   ROS_DEBUG_STREAM_NAMED("hardware_interface","Loading controller_manager");
   controller_manager_.reset(new controller_manager::ControllerManager(this, nh_));
 
-  double hz = 100;
-  ros::Duration update_freq = ros::Duration(1.0/hz);
+  ros::Duration update_freq = ros::Duration(1.0/loop_hz_);
   non_realtime_loop_ = nh_.createTimer(update_freq, &BaxterHardwareInterface::update, this);
 
   ROS_INFO_NAMED("hardware_interface", "Loaded baxter_hardware_interface.");
@@ -146,7 +146,6 @@ void BaxterHardwareInterface::stateCallback(const sensor_msgs::JointStateConstPt
   // Check if this message has the correct number of joints
   if( msg->name.size() != NUM_BAXTER_JOINTS )
   {
-    //ROS_WARN_STREAM_NAMED("temp","unrecognized joint state message: " << *msg);
     return;
   }
 
@@ -158,19 +157,21 @@ void BaxterHardwareInterface::stateCallback(const sensor_msgs::JointStateConstPt
 void BaxterHardwareInterface::update(const ros::TimerEvent& e)
 {
   // Check if state msg from Baxter is expired
-  if( stateExpired() )
+  if( !in_simulation_ && stateExpired() )
     return;
+
+  elapsed_time_ = ros::Duration(e.current_real - e.last_real);
 
   // Input
   right_arm_hw_->read(state_msg_);
   left_arm_hw_->read(state_msg_);
 
   // Control
-  controller_manager_->update(ros::Time::now(), ros::Duration(e.current_real - e.last_real) );
+  controller_manager_->update(ros::Time::now(), elapsed_time_);
 
   // Output
-  right_arm_hw_->write();
-  left_arm_hw_->write();
+  right_arm_hw_->write(elapsed_time_);
+  left_arm_hw_->write(elapsed_time_);
 }
 
 } // namespace

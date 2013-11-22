@@ -5,7 +5,7 @@ baxter_cpp
 
 A C++ version of the Baxter SDK that works along side the Rethink SDK. Currently contains a ros_control implementation of the Baxter controlles, Gazebo simulation, and pick and place MoveIt code for Baxter. 
 
-On going development continues in the development branch by [Dave Coleman](http://davetcoleman.com) and contributors are strongly encouraged to send pull requests and use this code. The master branch of this repository is kept as stable as posible and is continuously integrated using Travis.
+On going development continues in the development branch and contributors are strongly encouraged to send pull requests and use this code. The master branch of this repository is kept as stable as posible and is continuously integrated using Travis.
 
 <img align="right" src="https://raw.github.com/davetcoleman/baxter_cpp/hydro-devel/baxter_pick_place/resource/BaxterPickPlace.png" />
 
@@ -147,6 +147,8 @@ Note: You may need to run this command multiple times if there is a message depe
    ```
 
 ### Gazebo Simulation 
+
+**Note:** since Baxter SDK 0.7.0 this has not been maintained
 
 This uses an actual physics engine from the [Gazebo Simulator](http://gazebosim.org/).
 

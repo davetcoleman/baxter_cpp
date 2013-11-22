@@ -73,7 +73,10 @@ private:
   // Timing
   ros::Duration control_period_;
   ros::Time last_sim_time_ros_;
+  ros::Duration elapsed_time_;
+  double loop_hz_;
 
+  // Interfaces
   hardware_interface::JointStateInterface    js_interface_;
   hardware_interface::JointModeInterface     jm_interface_;
   hardware_interface::EffortJointInterface   ej_interface_;

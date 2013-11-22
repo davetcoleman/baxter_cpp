@@ -59,16 +59,22 @@
 namespace baxter_control
 {
 
+static const double POSITION_STEP_FACTOR = 10;
+static const double VELOCITY_STEP_FACTOR = 10;
+
 class ArmSimulatorInterface : public ArmInterface
 {
 private:
+
+  double p_error_, v_error_, e_error_;
+  double elapsed_time_sec;
 
 public:
 
   /**
    * \brief Constructor/Descructor
    */
-  ArmSimulatorInterface(const std::string &arm_name);
+  ArmSimulatorInterface(const std::string &arm_name, double loop_hz);
   ~ArmSimulatorInterface();
 
   /**
@@ -104,7 +110,7 @@ public:
   /**
    * \brief Publish our hardware interface datastructures commands to Baxter hardware
    */
-  void write();
+  void write(ros::Duration elapsed_time);
 
   /**
    * \brief This is called when Baxter is disabled, so that we can update the desired positions

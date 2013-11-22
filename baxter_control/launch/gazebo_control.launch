@@ -8,8 +8,8 @@
     <!-- load the default controllers -->
     <node name="controller_spawner" pkg="controller_manager" type="spawner" respawn="false"
 	  output="screen" ns="/robot" args="joint_state_controller
-					    right_joint_trajectory_controller
-					    left_joint_trajectory_controller
+					    right_position_trajectory_controller
+					    left_position_trajectory_controller
 					    " />
 
     <!-- convert joint states to TF transforms -->

@@ -77,9 +77,12 @@ protected:
   std::vector<double> joint_position_command_;
   std::vector<double> joint_effort_command_;
   std::vector<double> joint_velocity_command_;
-  
+
   // Track current hardware interface mode we are in
   int* joint_mode_;
+
+  // Speed of hardware loop
+  double loop_hz_;
 
   // Name of this arm
   std::string arm_name_;
@@ -89,8 +92,9 @@ public:
   /**
    * \brief Constructor/Descructor
    */
-  ArmInterface(const std::string &arm_name)
-    : arm_name_(arm_name)
+  ArmInterface(const std::string &arm_name, double loop_hz)
+    : arm_name_(arm_name),
+      loop_hz_(loop_hz)
   {};
 
   ~ArmInterface()
@@ -107,7 +111,7 @@ public:
     hardware_interface::PositionJointInterface& pj_interface,
     int* joint_mode,
     sensor_msgs::JointStateConstPtr state_msg
-  ) 
+  )
   { return true; };
 
   /**
@@ -119,7 +123,7 @@ public:
   /**
    * \brief Publish our hardware interface datastructures commands to Baxter hardware
    */
-  virtual void write()
+  virtual void write(ros::Duration elapsed_time)
   {};
 
   /**
