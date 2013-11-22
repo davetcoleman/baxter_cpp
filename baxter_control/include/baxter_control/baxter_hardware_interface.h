@@ -61,6 +61,8 @@
 namespace baxter_control
 {
 
+static const double NUM_BAXTER_JOINTS = 17;
+
 class BaxterHardwareInterface : public hardware_interface::RobotHW
 {
 private:
@@ -94,6 +96,13 @@ private:
   // Which joint mode are we in
   int joint_mode_;
 
+  // Buffer of joint states to share between arms
+  sensor_msgs::JointStateConstPtr state_msg_;
+  ros::Time state_msg_timestamp_;
+
+  // Subscriber
+  ros::Subscriber sub_joint_state_;
+
 public:
 
   /**
@@ -101,6 +110,14 @@ public:
    */
   BaxterHardwareInterface(bool in_simulation);
   ~BaxterHardwareInterface();
+
+  /**
+   * \brief Checks if the state message from Baxter is out of date
+   * \return true if expired
+   */
+  bool stateExpired();
+
+  void stateCallback(const sensor_msgs::JointStateConstPtr& msg);
 
   void update(const ros::TimerEvent& e);
 

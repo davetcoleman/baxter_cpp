@@ -43,7 +43,6 @@ namespace baxter_control
 
 ArmHardwareInterface::ArmHardwareInterface(const std::string &arm_name)
   : ArmInterface(arm_name),
-    state_msg_(new sensor_msgs::JointState()),
     cuff_squeezed_previous(false)
 {
   // Populate joints in this arm
@@ -100,7 +99,8 @@ bool ArmHardwareInterface::init(
   hardware_interface::EffortJointInterface&   ej_interface,
   hardware_interface::VelocityJointInterface& vj_interface,
   hardware_interface::PositionJointInterface& pj_interface,
-  int* joint_mode)
+  int* joint_mode,
+  sensor_msgs::JointStateConstPtr state_msg)
 {
   joint_mode_ = joint_mode;
 
@@ -131,27 +131,16 @@ bool ArmHardwareInterface::init(
                             "_trajectory_controller/command",10);
 
   // Start subscribers
-  sub_joint_state_ = nh_.subscribe<sensor_msgs::JointState>("/robot/joint_states", 1,
-                     &ArmHardwareInterface::stateCallback, this);
-
   cuff_squeezed_sub_ = nh_.subscribe<baxter_core_msgs::DigitalIOState>("/robot/digital_io/" +
                        arm_name_ + "_lower_cuff/state",
                        1, &ArmHardwareInterface::cuffSqueezedCallback, this);
 
-  // Wait for first state message to be recieved
-  while(ros::ok() && state_msg_timestamp_.toSec() == 0)
-  {
-    ROS_INFO_STREAM_NAMED(arm_name_,"Waiting for first state message to be recieved");
-    ros::spinOnce();
-    ros::Duration(0.25).sleep();
-  }
-
   // Make a mapping of joint names to indexes in the joint_states message
   for (std::size_t i = 0; i < n_dof_; ++i)
   {
-    std::vector<std::string>::const_iterator iter = std::find(state_msg_->name.begin(), state_msg_->name.end(), joint_names_[i]);
-    size_t joint_states_id = std::distance(state_msg_->name.begin(), iter);
-    if(joint_states_id == state_msg_->name.size())
+    std::vector<std::string>::const_iterator iter = std::find(state_msg->name.begin(), state_msg->name.end(), joint_names_[i]);
+    size_t joint_states_id = std::distance(state_msg->name.begin(), iter);
+    if(joint_states_id == state_msg->name.size())
     {
       ROS_ERROR_STREAM_NAMED(arm_name_,"Unable to find joint " << i << " named " << joint_names_[i] << " in joint state message");
     }
@@ -164,7 +153,7 @@ bool ArmHardwareInterface::init(
   // Set the initial command values based on current state
   for (std::size_t i = 0; i < n_dof_; ++i)
   {
-    joint_position_command_[i] = state_msg_->position[joint_id_to_joint_states_id_[i]];
+    joint_position_command_[i] = state_msg->position[joint_id_to_joint_states_id_[i]];
 
     // Pre-load the joint names into the output messages just once
     output_msg_.names[i] = joint_names_[i];
@@ -174,67 +163,33 @@ bool ArmHardwareInterface::init(
   return true;
 }
 
-void ArmHardwareInterface::stateCallback(const sensor_msgs::JointStateConstPtr& msg)
+void ArmHardwareInterface::read( sensor_msgs::JointStateConstPtr &state_msg )
 {
-  // Copy the latest message into a buffer
-  state_msg_ = msg;
-  state_msg_timestamp_ = ros::Time::now();
-}
-
-bool ArmHardwareInterface::stateExpired()
-{
-  // Check that we have a non-expired state message
-  // \todo lower the expiration duration
-  if( ros::Time::now() > state_msg_timestamp_ + ros::Duration(STATE_EXPIRED_TIMEOUT)) // check that the message timestamp is no older than 1 second
-  {
-
-    ROS_WARN_STREAM_THROTTLE_NAMED(1,arm_name_,"State expired. Last recieved state " << (ros::Time::now() - state_msg_timestamp_).toSec() << " seconds ago." );
-    return true;
-  }
-  return false;
-}
-
-void ArmHardwareInterface::read()
-{
-  if( stateExpired() )
-    return;
-
   // Copy state message to our datastructures
   for (std::size_t i = 0; i < n_dof_; ++i)
   {
-    joint_position_[i] = state_msg_->position[joint_id_to_joint_states_id_[i]];
-    joint_velocity_[i] = state_msg_->velocity[joint_id_to_joint_states_id_[i]];
-    joint_effort_[i] = state_msg_->effort[joint_id_to_joint_states_id_[i]];
+    //ROS_INFO_STREAM_NAMED("arm_hardware_interface","Joint " << i << "("<< joint_names_[i] << ") -> " << joint_id_to_joint_states_id_[i] << " position= " << state_msg->position[joint_id_to_joint_states_id_[i]]);
+    joint_position_[i] = state_msg->position[joint_id_to_joint_states_id_[i]];
+    joint_velocity_[i] = state_msg->velocity[joint_id_to_joint_states_id_[i]];
+    joint_effort_[i] = state_msg->effort[joint_id_to_joint_states_id_[i]];
   }
 }
 
 void ArmHardwareInterface::write()
 {
-  if( stateExpired() )
-    return;
-
   // Send commands to baxter in different modes
   switch (*joint_mode_)
   {
     case hardware_interface::MODE_POSITION:
-      for (std::size_t i = 0; i < n_dof_; ++i)
-      {
-        output_msg_.command[i] = joint_position_command_[i];
-      }
+      output_msg_.command = joint_position_command_;
       output_msg_.mode = baxter_core_msgs::JointCommand::POSITION_MODE;
       break;
     case hardware_interface::MODE_VELOCITY:
-      for (std::size_t i = 0; i < n_dof_; ++i)
-      {
-        output_msg_.command[i] = joint_velocity_command_[i];
-      }
+      output_msg_.command = joint_velocity_command_;
       output_msg_.mode = baxter_core_msgs::JointCommand::VELOCITY_MODE;
       break;
     case hardware_interface::MODE_EFFORT:
-      for (std::size_t i = 0; i < n_dof_; ++i)
-      {
-        output_msg_.command[i] = joint_effort_command_[i];
-      }
+      output_msg_.command = joint_effort_command_;
       output_msg_.mode = baxter_core_msgs::JointCommand::TORQUE_MODE;
       break;
   }

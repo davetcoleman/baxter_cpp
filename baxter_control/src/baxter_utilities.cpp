@@ -177,6 +177,7 @@ bool BaxterUtilities::isEnabled(bool verbose)
   {
     if(verbose)
       ROS_ERROR_STREAM_NAMED("utilities","Baxter is not enabled.  State: \n" << *baxter_state_ );
+
     return false;
   }
 

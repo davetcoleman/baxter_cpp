@@ -88,7 +88,8 @@ bool ArmSimulatorInterface::init(
   hardware_interface::EffortJointInterface&   ej_interface,
   hardware_interface::VelocityJointInterface& vj_interface,
   hardware_interface::PositionJointInterface& pj_interface,
-  int* joint_mode)
+  int* joint_mode,
+  sensor_msgs::JointStateConstPtr state_msg)
 {
   joint_mode_ = joint_mode;
 
@@ -118,7 +119,7 @@ bool ArmSimulatorInterface::init(
   return true;
 }
 
-void ArmSimulatorInterface::read()
+void ArmSimulatorInterface::read( sensor_msgs::JointStateConstPtr &state_msg )
 {
   /*
   for (std::size_t i = 0; i < n_dof_; ++i)

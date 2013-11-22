@@ -61,9 +61,29 @@ BaxterHardwareInterface::BaxterHardwareInterface(bool in_simulation)
   // Set the joint mode interface data
   jm_interface_.registerHandle(hardware_interface::JointModeHandle("joint_mode", &joint_mode_));
 
+  // Start the shared joint state subscriber
+  sub_joint_state_ = nh_.subscribe<sensor_msgs::JointState>("/robot/joint_states", 1,
+                     &BaxterHardwareInterface::stateCallback, this);
+
+  // Wait for first state message to be recieved if we are not in simulation
+  if (!in_simulation_)
+  {
+    // Loop until we find a joint_state message from Baxter
+    do
+    {
+      // Loop until we get our first joint_state message
+      while(ros::ok() && state_msg_timestamp_.toSec() == 0)
+      {
+        ROS_INFO_STREAM_NAMED("hardware_interface","Waiting for first state message to be recieved");
+        ros::spinOnce();
+        ros::Duration(0.25).sleep();
+      }
+    } while (state_msg_->name.size() != NUM_BAXTER_JOINTS);
+  }
+
   // Initialize right arm
-  right_arm_hw_->init(js_interface_, ej_interface_, vj_interface_, pj_interface_, &joint_mode_);
-  left_arm_hw_->init(js_interface_, ej_interface_, vj_interface_, pj_interface_, &joint_mode_);
+  right_arm_hw_->init(js_interface_, ej_interface_, vj_interface_, pj_interface_, &joint_mode_, state_msg_);
+  left_arm_hw_->init(js_interface_, ej_interface_, vj_interface_, pj_interface_, &joint_mode_, state_msg_);
 
   // Register interfaces
   registerInterface(&js_interface_);
@@ -105,14 +125,45 @@ BaxterHardwareInterface::BaxterHardwareInterface(bool in_simulation)
 
 BaxterHardwareInterface::~BaxterHardwareInterface()
 {
-  baxter_util_.disableBaxter();
+  //baxter_util_.disableBaxter();
+}
+
+bool BaxterHardwareInterface::stateExpired()
+{
+  // Check that we have a non-expired state message
+  // \todo lower the expiration duration
+  if( ros::Time::now() > state_msg_timestamp_ + ros::Duration(STATE_EXPIRED_TIMEOUT)) // check that the message timestamp is no older than 1 second
+  {
+
+    ROS_WARN_STREAM_THROTTLE_NAMED(1,"hardware_interface","State expired. Last recieved state " << (ros::Time::now() - state_msg_timestamp_).toSec() << " seconds ago." );
+    return true;
+  }
+  return false;
+}
+
+void BaxterHardwareInterface::stateCallback(const sensor_msgs::JointStateConstPtr& msg)
+{
+  // Check if this message has the correct number of joints
+  if( msg->name.size() != NUM_BAXTER_JOINTS )
+  {
+    //ROS_WARN_STREAM_NAMED("temp","unrecognized joint state message: " << *msg);
+    return;
+  }
+
+  // Copy the latest message into a buffer
+  state_msg_ = msg;
+  state_msg_timestamp_ = ros::Time::now();
 }
 
 void BaxterHardwareInterface::update(const ros::TimerEvent& e)
 {
-   // Input
-  right_arm_hw_->read();
-  left_arm_hw_->read();
+  // Check if state msg from Baxter is expired
+  if( stateExpired() )
+    return;
+
+  // Input
+  right_arm_hw_->read(state_msg_);
+  left_arm_hw_->read(state_msg_);
 
   // Control
   controller_manager_->update(ros::Time::now(), ros::Duration(e.current_real - e.last_real) );
@@ -120,7 +171,7 @@ void BaxterHardwareInterface::update(const ros::TimerEvent& e)
   // Output
   right_arm_hw_->write();
   left_arm_hw_->write();
- }
+}
 
 } // namespace
 
@@ -146,7 +197,7 @@ int main(int argc, char** argv)
       ROS_INFO_STREAM_NAMED("main","Baxter Hardware Interface in simulation mode");
       in_simulation = true;
     }
-  }  
+  }
 
   baxter_control::BaxterHardwareInterface baxter(in_simulation);
 

@@ -63,12 +63,7 @@ private:
   ros::Publisher pub_trajectory_command_;
 
   // Subscriber
-  ros::Subscriber sub_joint_state_;
   ros::Subscriber cuff_squeezed_sub_; // this is used to update the controllers when manual mode is started
-
-  // Buffer of joint states
-  sensor_msgs::JointStateConstPtr state_msg_;
-  ros::Time state_msg_timestamp_;
 
   // Messages to send
   baxter_core_msgs::JointCommand output_msg_;
@@ -97,7 +92,8 @@ public:
     hardware_interface::EffortJointInterface&   ej_interface,
     hardware_interface::VelocityJointInterface& vj_interface,
     hardware_interface::PositionJointInterface& pj_interface,
-    int* joint_mode
+    int* joint_mode,
+    sensor_msgs::JointStateConstPtr state_msg
   );
 
   /**
@@ -107,15 +103,9 @@ public:
   void stateCallback(const sensor_msgs::JointStateConstPtr& msg);
 
   /**
-   * \brief Checks if the state message from Baxter is out of date
-   * \return true if expired
-   */
-  bool stateExpired();
-
-  /**
    * \brief Copy the joint state message into our hardware interface datastructures
    */
-  void read();
+  void read( sensor_msgs::JointStateConstPtr &state_msg );
 
   /**
    * \brief Publish our hardware interface datastructures commands to Baxter hardware

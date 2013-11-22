@@ -105,14 +105,15 @@ public:
     hardware_interface::EffortJointInterface&   ej_interface,
     hardware_interface::VelocityJointInterface& vj_interface,
     hardware_interface::PositionJointInterface& pj_interface,
-    int* joint_mode
+    int* joint_mode,
+    sensor_msgs::JointStateConstPtr state_msg
   ) 
   { return true; };
 
   /**
    * \brief Copy the joint state message into our hardware interface datastructures
    */
-  virtual void read()
+  virtual void read( sensor_msgs::JointStateConstPtr &state_msg )
   {};
 
   /**

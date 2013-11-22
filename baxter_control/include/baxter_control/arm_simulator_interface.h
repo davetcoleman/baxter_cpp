@@ -80,7 +80,8 @@ public:
     hardware_interface::EffortJointInterface&   ej_interface,
     hardware_interface::VelocityJointInterface& vj_interface,
     hardware_interface::PositionJointInterface& pj_interface,
-    int* joint_mode
+    int* joint_mode,
+    sensor_msgs::JointStateConstPtr state_msg
   );
 
   /**
@@ -98,7 +99,7 @@ public:
   /**
    * \brief Copy the joint state message into our hardware interface datastructures
    */
-  void read();
+  void read( sensor_msgs::JointStateConstPtr &state_msg );
 
   /**
    * \brief Publish our hardware interface datastructures commands to Baxter hardware
