@@ -180,13 +180,13 @@
         goal: 0.2       
 
     gains:
-      right_s0: {p: 2,  i: 0.01, d: 1.0, i_clamp: 1}
-      right_s1: {p: 2,  i: 0.01, d: 1.0, i_clamp: 1}
-      right_e0: {p: 2,  i: 0.01, d: 1.0, i_clamp: 1}
-      right_e1: {p: 2,  i: 0.01, d: 1.0, i_clamp: 1}
-      right_w0: {p: 2,  i: 0.01, d: 1.0, i_clamp: 1}
-      right_w1: {p: 2,  i: 0.01, d: 1.0, i_clamp: 1}
-      right_w2: {p: 2,  i: 0.01, d: 1.0, i_clamp: 1}
+      left_s0: {p: 2.0,  i: 0.01, d: 1.0, i_clamp: 1}
+      left_s1: {p: 3.0,  i: 0.01, d: 1.0, i_clamp: 1}
+      left_e0: {p: 3.0,  i: 0.01, d: 1.0, i_clamp: 1}
+      left_e1: {p: 3.0,  i: 0.01, d: 1.0, i_clamp: 1}
+      left_w0: {p: 3.0,  i: 0.01, d: 1.0, i_clamp: 1}
+      left_w1: {p: 3.0,  i: 0.01, d: 1.0, i_clamp: 1}
+      left_w2: {p: 3.0,  i: 0.01, d: 1.0, i_clamp: 1}
 
     state_publish_rate:  50 # Defaults to 50
     action_monitor_rate: 20 # Defaults to 20
