@@ -15,7 +15,7 @@ Panels:
         - /Image2
         - /Image3
       Splitter Ratio: 0.544529
-    Tree Height: 1011
+    Tree Height: 341
   - Class: rviz/Help
     Name: Help
   - Class: rviz/Views
@@ -577,7 +577,8 @@ Visualization Manager:
       Marker Topic: /end_effector_marker
       Name: block_grasp_generator
       Namespaces:
-        {}
+        Arrow: true
+        Block: true
       Queue Size: 100
       Value: true
     - Class: rviz/MarkerArray
@@ -593,31 +594,11 @@ Visualization Manager:
       Marker Topic: /move_group/display_grasp_markers
       Name: MoveItGrasps
       Namespaces:
-        {}
+        moveit_grasps:stage_1: true
+        moveit_grasps:stage_3: true
+        moveit_grasps:stage_4: true
       Queue Size: 100
       Value: true
-    - Class: rviz/Image
-      Enabled: false
-      Image Topic: /cameras/right_hand_camera/image
-      Max Value: 1
-      Median window: 5
-      Min Value: 0
-      Name: Image
-      Normalize Range: true
-      Queue Size: 2
-      Transport Hint: raw
-      Value: false
-    - Class: rviz/Image
-      Enabled: false
-      Image Topic: /camera/image_raw
-      Max Value: 1
-      Median window: 5
-      Min Value: 0
-      Name: Image
-      Normalize Range: true
-      Queue Size: 2
-      Transport Hint: raw
-      Value: false
     - Class: rviz/Image
       Enabled: false
       Image Topic: /cameras/left_hand_camera/image
@@ -629,6 +610,28 @@ Visualization Manager:
       Queue Size: 2
       Transport Hint: raw
       Value: false
+    - Class: rviz/Image
+      Enabled: true
+      Image Topic: /camera/image_raw
+      Max Value: 1
+      Median window: 5
+      Min Value: 0
+      Name: Image
+      Normalize Range: true
+      Queue Size: 2
+      Transport Hint: raw
+      Value: true
+    - Class: rviz/Image
+      Enabled: true
+      Image Topic: /cameras/right_hand_camera/image
+      Max Value: 1
+      Median window: 5
+      Min Value: 0
+      Name: Image
+      Normalize Range: true
+      Queue Size: 2
+      Transport Hint: raw
+      Value: true
   Enabled: true
   Global Options:
     Background Color: 48; 48; 48
@@ -644,17 +647,17 @@ Visualization Manager:
   Views:
     Current:
       Class: rviz/XYOrbit
-      Distance: 1.45824
+      Distance: 1.77691
       Focal Point:
-        X: 0.753258
-        Y: 0.115337
-        Z: -1.55082e-06
+        X: 1.01633
+        Y: -0.256143
+        Z: -1.78924e-06
       Name: Current View
       Near Clip Distance: 0.01
-      Pitch: 0.669797
+      Pitch: 0.364797
       Target Frame: base_link
       Value: XYOrbit (rviz)
-      Yaw: 6.19316
+      Yaw: 5.81316
     Saved: ~
 Window Geometry:
   Displays:
@@ -668,9 +671,9 @@ Window Geometry:
     collapsed: false
   Motion Planning:
     collapsed: false
-  QMainWindow State: 000000ff00000000fd0000000200000000000001b600000434fc0200000007fb0000000a0049006d0061006700650000000041000001290000001600fffffffb0000000a0049006d00610067006500000000410000019d0000001600fffffffc0000004100000434000000dd00fffffffa000000010100000002fb0000000a0049006d0061006700650000000000ffffffff0000005c00fffffffb000000100044006900730070006c00610079007301000000000000013e0000010f00fffffffb0000000800480065006c00700000000342000000bb0000007600fffffffb0000000a005600690065007700730000000145000000cb000000b000fffffffb0000000c00430061006d00650072006100000002ff000001610000000000000000fb0000000c00430061006d006500720061000000038f00000016000000000000000000000003000004410000017ffc0100000001fb0000001e004d006f00740069006f006e00200050006c0061006e006e0069006e006701000001bc00000441000002a200ffffff00000441000002af00000001000000020000000100000002fc0000000100000002000000010000000a0054006f006f006c00730100000000ffffffff0000000000000000
+  QMainWindow State: 000000ff00000000fd0000000200000000000001b600000434fc0200000008fb0000000a0049006d00610067006501000000410000010e0000001600fffffffb0000000a0049006d0061006700650100000155000001840000001600fffffffb0000000a0049006d00610067006500000001700000015c0000001600fffffffb000000100044006900730070006c00610079007301000002df00000196000000dd00fffffffb0000000800480065006c00700000000342000000bb0000007600fffffffb0000000a005600690065007700730000000145000000cb000000b000fffffffb0000000c00430061006d00650072006100000002ff000001610000000000000000fb0000000c00430061006d006500720061000000038f00000016000000000000000000000003000004820000017ffc0100000001fb0000001e004d006f00740069006f006e00200050006c0061006e006e0069006e006701000001bc00000482000002a200ffffff00000482000002af00000001000000020000000100000002fc0000000100000002000000010000000a0054006f006f006c00730100000000ffffffff0000000000000000
   Views:
     collapsed: false
-  Width: 1533
+  Width: 1598
   X: 3840
   Y: 0
