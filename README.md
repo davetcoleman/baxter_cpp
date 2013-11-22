@@ -3,7 +3,7 @@ baxter_cpp
 
 **Note:** this repository was renamed from "baxter" to "baxter_cpp" with SDK release v0.7.0 so as to not conflict with Rethink's new "baxter" repository
 
-A C++ version of the Baxter SDK that works along side the Rethink SDK, or optionally without it. Currently contains a ros_control implementation of the Baxter controlles, Gazebo simulation, and pick and place MoveIt code for Baxter. 
+A C++ version of the Baxter SDK that works along side the Rethink SDK. Currently contains a ros_control implementation of the Baxter controlles, Gazebo simulation, and pick and place MoveIt code for Baxter. 
 
 On going development continues in the development branch by [Dave Coleman](http://davetcoleman.com) and contributors are strongly encouraged to send pull requests and use this code. The master branch of this repository is kept as stable as posible and is continuously integrated using Travis.
 
@@ -33,12 +33,12 @@ Additional experimental features are provided in [baxter_experimental](https://g
 
 [![Build Status](https://travis-ci.org/davetcoleman/baxter_cpp.png?branch=hydro-devel)](https://travis-ci.org/davetcoleman/baxter_cpp)
 
-## Branches
+# Branches
    
  * [groovy-devel-sdk0.6.2](https://github.com/davetcoleman/baxter_cpp/tree/groovy-devel-sdk0.6.2) - for Baxter 0.6.2 SDK software on ROS Groovy. *Not Maintained*
  * [hydro-devel-sdk0.6.2](https://github.com/davetcoleman/baxter_cpp/tree/hydro-devel-sdk0.6.2) - for Baxter 0.6.2 SDK software on ROS Hydro. Stable. *Not Maintained*
  * [hydro-devel](https://github.com/davetcoleman/baxter_cpp/tree/hydro-devel) - for current Baxter 0.7.0 SDK software on ROS Hydro. Currently unstable.
- * [developement](https://github.com/davetcoleman/baxter_cpp/tree/development) - latest hydro-devel work is commited here. Unstable.
+ * [development](https://github.com/davetcoleman/baxter_cpp/tree/development) - latest hydro-devel work is commited here. Unstable.
 
 ## Prerequisites
 

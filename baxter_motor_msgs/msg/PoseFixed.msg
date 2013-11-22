@@ -1,2 +1,0 @@
-Vector3Fixed position
-Vector3Fixed orientation
