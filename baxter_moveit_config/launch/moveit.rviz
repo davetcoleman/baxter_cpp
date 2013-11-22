@@ -313,7 +313,7 @@ Visualization Manager:
         Interactive Marker Size: 0.3
         Joint Violation Color: 255; 0; 255
         Planning Group: right_arm
-        Query Goal State: true
+        Query Goal State: false
         Query Start State: false
         Show Workspace: false
         Start State Alpha: 1
@@ -577,7 +577,8 @@ Visualization Manager:
       Marker Topic: /end_effector_marker
       Name: block_grasp_generator
       Namespaces:
-        {}
+        Arrow: true
+        Block: true
       Queue Size: 100
       Value: true
     - Class: rviz/MarkerArray
@@ -593,7 +594,8 @@ Visualization Manager:
       Marker Topic: /move_group/display_grasp_markers
       Name: MoveItGrasps
       Namespaces:
-        {}
+        moveit_grasps:stage_3: true
+        moveit_grasps:stage_4: true
       Queue Size: 100
       Value: true
     - Class: rviz/Image
@@ -651,10 +653,10 @@ Visualization Manager:
         Z: -1.78924e-06
       Name: Current View
       Near Clip Distance: 0.01
-      Pitch: 0.364797
+      Pitch: 0.559797
       Target Frame: base_link
       Value: XYOrbit (rviz)
-      Yaw: 5.81316
+      Yaw: 5.55316
     Saved: ~
 Window Geometry:
   Displays:
