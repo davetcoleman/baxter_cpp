@@ -46,9 +46,10 @@ target_link_libraries(random_planning ${catkin_LIBRARIES} ${Boost_LIBRARIES})
 add_executable(get_joint_values src/tools/get_joint_values.cpp)
 target_link_libraries(get_joint_values ${catkin_LIBRARIES} ${Boost_LIBRARIES})
 
+# Test
+#add_executable(block_grasp_generator_test src/tests/block_grasp_generator_test.cpp)
+#target_link_libraries(block_grasp_generator_test ${catkin_LIBRARIES} ${Boost_LIBRARIES})
+
+
 add_executable(end_effector_position src/tools/end_effector_position.cpp)
 target_link_libraries(end_effector_position ${catkin_LIBRARIES} ${Boost_LIBRARIES})
-
-# merge this with verticle_approach_test - too much duplicate code for maintanence
-#add_executable(verticle_approach_tune src/tools/verticle_approach_tune.cpp)
-#target_link_libraries(verticle_approach_tune ${catkin_LIBRARIES} ${Boost_LIBRARIES})

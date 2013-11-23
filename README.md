@@ -37,7 +37,7 @@ Additional experimental features are provided in [baxter_experimental](https://g
    
  * [groovy-devel-sdk0.6.2](https://github.com/davetcoleman/baxter_cpp/tree/groovy-devel-sdk0.6.2) - for Baxter 0.6.2 SDK software on ROS Groovy. *Not Maintained*
  * [hydro-devel-sdk0.6.2](https://github.com/davetcoleman/baxter_cpp/tree/hydro-devel-sdk0.6.2) - for Baxter 0.6.2 SDK software on ROS Hydro. Stable. *Not Maintained*
- * [hydro-devel](https://github.com/davetcoleman/baxter_cpp/tree/hydro-devel) - for current Baxter 0.7.0 SDK software on ROS Hydro. Currently unstable.
+ * [hydro-devel](https://github.com/davetcoleman/baxter_cpp/tree/hydro-devel) - for current Baxter 0.7.0 SDK software on ROS Hydro. Stable.
  * [development](https://github.com/davetcoleman/baxter_cpp/tree/development) - latest hydro-devel work is commited here. Unstable.
 
 ## Prerequisites
@@ -237,12 +237,6 @@ Send the end effector up and down with a horizontal cartesian path (requires [ba
 
 ```
 roslaunch baxter_experimental verticle_approach_test.launch
-```
-
-Test grasp poses of blocks
-
-```
-roslaunch baxter_pick_place block_grasp_generator_test.launch
 ```
 
 ## Programmed Buttons
