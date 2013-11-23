@@ -1,6 +1,6 @@
 <package>
   <name>baxter_gazebo</name>
-  <version>0.2.1</version>
+  <version>0.3.0</version>
   <description>baxter_gazebo</description>
   <maintainer email="davetcoleman@gmail.com">Dave Coleman</maintainer>
 
