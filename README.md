@@ -3,15 +3,15 @@ baxter_cpp
 
 **Note:** this repository was renamed from "baxter" to "baxter_cpp" with SDK release v0.7.0 so as to not conflict with Rethink's new "baxter" repository
 
-A C++ version of the Baxter SDK that works along side the Rethink SDK. Currently contains a ros_control implementation of the Baxter controllers, Gazebo simulation, and pick and place MoveIt code for Baxter. 
+A C++ version of the Baxter SDK that works along side the Rethink SDK. Currently contains a ros_control implementation of the Baxter controllers, Gazebo simulation, and pick and place MoveIt! code for Baxter. 
 
-On going development continues in the development branch and contributors are strongly encouraged to send pull requests and use this code. The master branch of this repository is kept as stable as posible and is continuously integrated using Travis.
+On going development continues in the development branch and contributors are strongly encouraged to send pull requests and use this code. The master branch of this repository is kept as stable as posible and is continuously integrated using [Travis](https://travis-ci.org/).
 
 <img align="right" src="https://raw.github.com/davetcoleman/baxter_cpp/hydro-devel/baxter_pick_place/resource/BaxterPickPlace.png" />
 
 ### Features
 
- * Baxter pick and place with MoveIt
+ * Baxter pick and place with MoveIt!
    * Generate grasps for simple blocks on a table
    * Execute a pick and place routine
    * Works on hardware, Gazebo and in an Rviz visualization
@@ -35,10 +35,11 @@ Additional experimental features are provided in [baxter_experimental](https://g
 
 # Branches
    
- * [groovy-devel-sdk0.6.2](https://github.com/davetcoleman/baxter_cpp/tree/groovy-devel-sdk0.6.2) - for Baxter 0.6.2 SDK software on ROS Groovy. *Not Maintained*
- * [hydro-devel-sdk0.6.2](https://github.com/davetcoleman/baxter_cpp/tree/hydro-devel-sdk0.6.2) - for Baxter 0.6.2 SDK software on ROS Hydro. Stable. *Not Maintained*
  * [hydro-devel](https://github.com/davetcoleman/baxter_cpp/tree/hydro-devel) - for current Baxter 0.7.0 SDK software on ROS Hydro. Stable.
  * [development](https://github.com/davetcoleman/baxter_cpp/tree/development) - latest hydro-devel work is commited here. Unstable.
+Other:
+ * [groovy-devel-sdk0.6.2](https://github.com/davetcoleman/baxter_cpp/tree/groovy-devel-sdk0.6.2) - for Baxter 0.6.2 SDK software on ROS Groovy. *Not Maintained or Supported.*
+ * [hydro-devel-sdk0.6.2](https://github.com/davetcoleman/baxter_cpp/tree/hydro-devel-sdk0.6.2) - for Baxter 0.6.2 SDK software on ROS Hydro. *Not Maintained or Supportd.*
 
 ## Prerequisites
 
@@ -49,16 +50,16 @@ Additional experimental features are provided in [baxter_experimental](https://g
     sudo apt-get install python-wstool
     ```
 
-## Install MoveIt From Source
+## Install MoveIt! From Source
 
-You should install MoveIt from source if:
+You should install MoveIt! from source if:
 
  * You want to be guaranteed compatibility and the current public moveit_core debian release is not 0.5.4 (check [here](http://ros.org/debbuild/hydro.html) and search for moveit_core, then hover your mouse over the third column under HbinP64. Or check [here](https://github.com/ros-planning/moveit_core/releases))
- * You want to install MoveIt from source for development reasons but also want to ensure your source checkout is compatible with this repo
+ * You want to install MoveIt! from source for development reasons but also want to ensure your source checkout is compatible with this repo
 
-Otherwise you can just skip this section and install the Baxter code and it will automatically pull the necessary debians for MoveIt
+Otherwise you can just skip this section and install the Baxter code and it will automatically pull the necessary debians for MoveIt!.
 
-* Setup workspace, download repositories and build
+* Setup workspace, download repositories and build:
 
     We recommend you install this in a seperate workspace (following the following insructions) to decrease built times.
 
@@ -73,7 +74,7 @@ Otherwise you can just skip this section and install the Baxter code and it will
     catkin_make
     ```
     
-* Add MoveIt setup.bash to your .bashrc (recommended)
+* Add MoveIt! setup.bash to your .bashrc (recommended)
 
     ```
     echo 'source ~/ros/ws_moveit/devel/setup.bash' >> ~/.bashrc
@@ -117,7 +118,7 @@ Otherwise you can just skip this section and install the Baxter code and it will
     catkin_make
     ```
 
-Note: You may need to run this command multiple times if there is a message dependency issue. Please report these bugs in the issue tracker.
+    Note: You may need to run this command multiple times if there is a message dependency issue. Please report these bugs in the issue tracker.
 
 * Add Baxter setup.bash to your .bashrc (recommended)
 
@@ -141,7 +142,7 @@ Note: You may need to run this command multiple times if there is a message depe
    export ROS_HOSTNAME=128.138.244.72  # REPLACE WITH YOUR COMPUTER'S IP ADDRESS
    ```
 
- * Bringup ros_control controllers - starts a position-based trajectory controller. See *Hardware Control Modes* for velocity control
+ * Bringup ros_control controllers - starts a position-based trajectory controller. See [Hardware Control Modes](https://github.com/davetcoleman/baxter_cpp#hardware-control-modes) for other control modes
    ```
    roslaunch baxter_control baxter_hardware.launch
    ```
@@ -165,7 +166,7 @@ This uses an actual physics engine from the [Gazebo Simulator](http://gazebosim.
 
 ### Rviz Visualization
 
-This only shows a virtual Baxter in [Rviz](http://www.ros.org/wiki/rviz) without any physics simulator. Instead it uses a ros_control hardware interface that simply loops back to itself. Good for testing MoveIt.
+This only shows a virtual Baxter in [Rviz](http://www.ros.org/wiki/rviz) without any physics simulator. Instead it uses a ros_control hardware interface that simply loops back to itself. Good for testing MoveIt!.
 
  * Ensure you have the correct ROS_MASTER_URI exported:
    ```
@@ -176,13 +177,13 @@ This only shows a virtual Baxter in [Rviz](http://www.ros.org/wiki/rviz) without
    ```
    roslaunch baxter_control baxter_visualization.launch
    ```
-   **Note:** you will not see anything when you launch this, only the ``/robot/joint_states`` topic starts being published. Proceed to the MoveIt section, below.
+   **Note:** you will not see anything when you launch this, only the ``/robot/joint_states`` topic starts being published. Proceed to the MoveIt! section, below.
 
-## Start MoveIt
+## Start MoveIt!
 
 Works with simulation, hardware or visualization:
 
- * Start MoveIt's move_group Server:
+ * Start MoveIt!'s move_group Server:
 
    ```
    roslaunch baxter_moveit_config baxter_moveit.launch
@@ -225,6 +226,9 @@ This Baxter repository uses [ros_control](http://wiki.ros.org/ros_control) to se
    roslaunch baxter_control joint_velocity_left_trajectory_controller.launch
    roslaunch baxter_control joint_velocity_right_trajectory_controller.launch
    ```
+
+ * Torque Control
+   TODO
 
 ## Test Programs
 

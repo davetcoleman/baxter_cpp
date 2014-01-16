@@ -84,8 +84,8 @@ public:
     srand (time(NULL));
 
     // Listen to joint positions
-    sub_joint_state_ = nh_.subscribe<sensor_msgs::JointState>("/robot/limb/" + arm_name_ +
-                       "/joint_states", 1, &TrajectoryMsgTest::stateCallback, this);
+    sub_joint_state_ = nh_.subscribe<sensor_msgs::JointState>("/robot/joint_states", 1, 
+                       &TrajectoryMsgTest::stateCallback, this);
 
     // Publish trajectories
     traj_pub_ = nh_.advertise<trajectory_msgs::JointTrajectory>(
@@ -158,6 +158,68 @@ public:
     sleep(5);
   }
 
+  void sendTrajectoryOfZeros()
+  {
+    msg_.header.stamp = ros::Time::now();
+
+    msg_.joint_names.push_back(arm_name_+"_e0");
+    msg_.joint_names.push_back(arm_name_+"_e1");
+    msg_.joint_names.push_back(arm_name_+"_s0");
+    msg_.joint_names.push_back(arm_name_+"_s1");
+    msg_.joint_names.push_back(arm_name_+"_w0");
+    msg_.joint_names.push_back(arm_name_+"_w1");
+    msg_.joint_names.push_back(arm_name_+"_w2");
+    n_dof_ = msg_.joint_names.size();
+
+    // Add initial point - our current state
+    trajectory_msgs::JointTrajectoryPoint current_state = getCurrentPosition();
+    msg_.points.push_back(current_state);
+
+    // Generate
+    bool hasNonZero = true; // flag for when to stop moving joints
+    while( hasNonZero )
+    {
+      hasNonZero = false;
+
+      // Copy last point to new point
+      trajectory_msgs::JointTrajectoryPoint point = msg_.points.back();
+
+      static const double STEP_SIZE = 0.1;
+
+      // Move every position in point closer to zero
+      for (std::size_t j = 0; j < point.positions.size(); ++j)
+      {
+        if (point.positions[j] > 0)
+        {
+          point.positions[j] -= STEP_SIZE;
+          if (point.positions[j] < 0)
+            point.positions[j] = 0;
+        }
+        else
+        {
+          point.positions[j] += STEP_SIZE;          
+          if (point.positions[j] > 0)
+            point.positions[j] = 0;
+        }
+
+        // Check if we need to stop generating points
+        if (point.positions[j] != 0)
+          hasNonZero = true;
+      }
+
+      point.time_from_start += ros::Duration(WAYPOINT_INTERVALS);
+      msg_.points.push_back(point);
+
+      ROS_DEBUG_STREAM_NAMED("temp","end of adding new point loop");
+    }
+
+    ROS_DEBUG_STREAM_NAMED("temp","sending traj message:\n" << msg_);
+
+    traj_pub_.publish(msg_);
+    ros::spinOnce();
+    sleep(5);
+  }
+
   trajectory_msgs::JointTrajectoryPoint createPoint(trajectory_msgs::JointTrajectoryPoint prev,
     double increment_a)
   {
@@ -175,7 +237,9 @@ public:
 
     for (std::size_t i = 0; i < n_dof_; ++i)
     {
-      point.positions.push_back(state_msg_->position[i]);
+      ROS_ERROR_STREAM_NAMED("temp","getCurrentPosition() function has not been updated!");
+      exit(99);
+      point.positions.push_back(state_msg_->position[i]); // TODO: this line is wrong, need to better filter the joints from the message
       point.velocities.push_back(0.0);
     }
 
