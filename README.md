@@ -37,7 +37,6 @@ Additional experimental features are provided in [baxter_experimental](https://g
    
  * [hydro-devel](https://github.com/davetcoleman/baxter_cpp/tree/hydro-devel) - for current Baxter 0.7.0 SDK software on ROS Hydro. Stable.
  * [development](https://github.com/davetcoleman/baxter_cpp/tree/development) - latest hydro-devel work is commited here. Unstable.
-Other:
  * [groovy-devel-sdk0.6.2](https://github.com/davetcoleman/baxter_cpp/tree/groovy-devel-sdk0.6.2) - for Baxter 0.6.2 SDK software on ROS Groovy. *Not Maintained or Supported.*
  * [hydro-devel-sdk0.6.2](https://github.com/davetcoleman/baxter_cpp/tree/hydro-devel-sdk0.6.2) - for Baxter 0.6.2 SDK software on ROS Hydro. *Not Maintained or Supportd.*
 
@@ -142,7 +141,7 @@ Otherwise you can just skip this section and install the Baxter code and it will
    export ROS_HOSTNAME=128.138.244.72  # REPLACE WITH YOUR COMPUTER'S IP ADDRESS
    ```
 
- * Bringup ros_control controllers - starts a position-based trajectory controller. See [Hardware Control Modes](https://github.com/davetcoleman/baxter_cpp#hardware-control-modes) for other control modes
+ * Bringup ros_control controllers - starts a position-based trajectory controller. See [Hardware Control Modes](#hardware-control-modes) for other control modes
    ```
    roslaunch baxter_control baxter_hardware.launch
    ```
@@ -228,6 +227,7 @@ This Baxter repository uses [ros_control](http://wiki.ros.org/ros_control) to se
    ```
 
  * Torque Control
+
    TODO
 
 ## Test Programs
