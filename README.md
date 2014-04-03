@@ -48,37 +48,7 @@ Additional experimental features are provided in [baxter_experimental](https://g
     ```
     sudo apt-get install python-wstool
     ```
-
-## Install MoveIt! From Source
-
-You should install MoveIt! from source if:
-
- * You want to be guaranteed compatibility and the current public moveit_core debian release is not 0.5.4 (check [here](http://ros.org/debbuild/hydro.html) and search for moveit_core, then hover your mouse over the third column under HbinP64. Or check [here](https://github.com/ros-planning/moveit_core/releases))
- * You want to install MoveIt! from source for development reasons but also want to ensure your source checkout is compatible with this repo
-
-Otherwise you can just skip this section and install the Baxter code and it will automatically pull the necessary debians for MoveIt!.
-
-* Setup workspace, download repositories and build:
-
-    We recommend you install this in a seperate workspace (following the following insructions) to decrease built times.
-
-    ```
-    mkdir -p ~/ros/ws_moveit/src
-    cd ~/ros/ws_moveit/src
-    wstool init .
-    wstool merge https://raw.github.com/davetcoleman/baxter_cpp/hydro-devel/moveit.rosinstall
-    wstool update
-    cd ..
-    rosdep install --from-paths src --ignore-src --rosdistro hydro -y
-    catkin_make
-    ```
     
-* Add MoveIt! setup.bash to your .bashrc (recommended)
-
-    ```
-    echo 'source ~/ros/ws_moveit/devel/setup.bash' >> ~/.bashrc
-    ```
-
 ## Baxter Installation
 
 * Create a catkin workspace if you don't already have one (we recommend a separate one for Baxter) 
