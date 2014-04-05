@@ -1,4 +1,4 @@
-- git: {local-name: moveit_commander, uri: 'https://github.com/ros-planning/moveit_commander.git', version: tags/0.5.2}
+- git: {local-name: moveit_commander, uri: 'https://github.com/ros-planning/moveit_commander.git', version: tags/0.5.8}
 - git: {local-name: moveit_core, uri: 'https://github.com/ros-planning/moveit_core.git', version: tags/0.5.3}
 - git: {local-name: moveit_ikfast, uri: 'https://github.com/ros-planning/moveit_ikfast.git', version: tags/3.0.5}
 - git: {local-name: moveit_msgs, uri: 'https://github.com/ros-planning/moveit_msgs.git', version: tags/0.5.2}

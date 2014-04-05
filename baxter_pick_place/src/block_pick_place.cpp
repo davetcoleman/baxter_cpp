@@ -48,7 +48,7 @@
 
 // Grasp generation
 #include <block_grasp_generator/block_grasp_generator.h>
-#include <block_grasp_generator/visualization_tools.h> // simple tool for showing graspsp
+#include <moveit_visual_tools/visualization_tools.h> // simple tool for showing graspsp
 
 // Baxter specific properties
 #include <baxter_pick_place/baxter_data.h>
@@ -71,7 +71,7 @@ public:
   // grasp generator
   block_grasp_generator::BlockGraspGeneratorPtr block_grasp_generator_;
 
-  block_grasp_generator::VisualizationToolsPtr visual_tools_;
+  moveit_visual_tools::VisualizationToolsPtr visual_tools_;
 
   // data for generating grasps
   block_grasp_generator::RobotGraspData grasp_data_;
@@ -108,7 +108,7 @@ public:
     grasp_data_ = loadRobotGraspData(arm_, BLOCK_SIZE); // Load robot specific data
 
     // Load the Robot Viz Tools for publishing to rviz
-    visual_tools_.reset(new block_grasp_generator::VisualizationTools( BASE_LINK));
+    visual_tools_.reset(new moveit_visual_tools::VisualizationTools( BASE_LINK));
     visual_tools_->setFloorToBaseHeight(FLOOR_TO_BASE_HEIGHT);
     visual_tools_->setEEGroupName(grasp_data_.ee_group_);
     visual_tools_->setPlanningGroupName(planning_group_name_);
