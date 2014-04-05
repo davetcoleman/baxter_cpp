@@ -36,8 +36,8 @@
    Desc:   Parameters specific to Baxter for performing pick-place
 */
 
-// Blocks
-#include <block_grasp_generator/block_grasp_generator.h> // has datastructure
+// Objects
+#include <moveit_simple_grasps/simple_grasps.h> // has datastructure
 
 namespace baxter_pick_place
 {
@@ -52,9 +52,9 @@ static const double FINGER_JOINT_LOWER = -0.0125; //close
 // robot dimensions
 static const double FLOOR_TO_BASE_HEIGHT = -0.9;
 
-block_grasp_generator::RobotGraspData loadRobotGraspData(const std::string& arm, double block_size)
+moveit_simple_grasps::RobotGraspData loadRobotGraspData(const std::string& arm)
 {
-  block_grasp_generator::RobotGraspData grasp_data;
+  moveit_simple_grasps::RobotGraspData grasp_data;
 
   // -------------------------------
   // Convert generic grasp pose to this end effector's frame of reference
@@ -108,13 +108,13 @@ block_grasp_generator::RobotGraspData loadRobotGraspData(const std::string& arm,
   // distance from center point of object to end effector
   grasp_data.grasp_depth_ = 0.12; // 0.06
 
-  grasp_data.block_size_ = block_size;
+  //grasp_data.object_size_ = object_size;
 
   // generate grasps at PI/angle_resolution increments
   grasp_data.angle_resolution_ = 16;
 
   // Debug
-  //block_grasp_generator::BlockGraspGenerator::printBlockGraspData(grasp_data);
+  //moveit_simple_grasps::SimpleGrasps::printObjectGraspData(grasp_data);
 
   return grasp_data;
 }

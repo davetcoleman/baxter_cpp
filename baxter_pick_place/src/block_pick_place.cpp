@@ -47,8 +47,8 @@
 #include <baxter_control/baxter_utilities.h>
 
 // Grasp generation
-#include <block_grasp_generator/block_grasp_generator.h>
-#include <moveit_visual_tools/visualization_tools.h> // simple tool for showing graspsp
+#include <moveit_simple_grasps/simple_grasps.h>
+#include <moveit_visual_tools/visual_tools.h> // simple tool for showing graspsp
 
 // Baxter specific properties
 #include <baxter_pick_place/baxter_data.h>
@@ -69,12 +69,12 @@ class SimplePickPlace
 public:
 
   // grasp generator
-  block_grasp_generator::BlockGraspGeneratorPtr block_grasp_generator_;
+  moveit_simple_grasps::SimpleGraspsPtr simple_grasps_;
 
-  moveit_visual_tools::VisualizationToolsPtr visual_tools_;
+  moveit_visual_tools::VisualToolsPtr visual_tools_;
 
   // data for generating grasps
-  block_grasp_generator::RobotGraspData grasp_data_;
+  moveit_simple_grasps::RobotGraspData grasp_data_;
 
   // our interface with MoveIt
   boost::scoped_ptr<move_group_interface::MoveGroup> move_group_;
@@ -105,16 +105,16 @@ public:
     move_group_->setPlanningTime(30.0);
 
     // Load grasp generator
-    grasp_data_ = loadRobotGraspData(arm_, BLOCK_SIZE); // Load robot specific data
+    grasp_data_ = loadRobotGraspData(arm_); // Load robot specific data
 
     // Load the Robot Viz Tools for publishing to rviz
-    visual_tools_.reset(new moveit_visual_tools::VisualizationTools( BASE_LINK));
+    visual_tools_.reset(new moveit_visual_tools::VisualTools( BASE_LINK));
     visual_tools_->setFloorToBaseHeight(FLOOR_TO_BASE_HEIGHT);
     visual_tools_->setEEGroupName(grasp_data_.ee_group_);
     visual_tools_->setPlanningGroupName(planning_group_name_);
 
-    block_grasp_generator_.reset(new block_grasp_generator::BlockGraspGenerator(visual_tools_));
-    block_grasp_generator_->setAnimateGrasps(false);
+    simple_grasps_.reset(new moveit_simple_grasps::SimpleGrasps(visual_tools_));
+    simple_grasps_->setAnimateGrasps(false);
 
     // Let everything load
     ros::Duration(1.0).sleep();
@@ -318,7 +318,7 @@ public:
     std::vector<moveit_msgs::Grasp> grasps;
 
     // Pick grasp
-    block_grasp_generator_->generateGrasps( block_pose, grasp_data_, grasps );
+    simple_grasps_->generateAllGrasps( block_pose, grasp_data_, grasps );
 
     // Prevent collision with table
     move_group_->setSupportSurfaceName(SUPPORT_SURFACE3_NAME);

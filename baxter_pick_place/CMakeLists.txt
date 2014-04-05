@@ -9,7 +9,8 @@ find_package(catkin REQUIRED COMPONENTS
   moveit_ros_planning 
   moveit_ros_planning_interface 
   moveit_visual_tools
-  block_grasp_generator
+  simple_grasps
+  simple_grasps
   baxter_core_msgs
   std_msgs
   geometry_msgs
@@ -23,7 +24,8 @@ find_package(Boost REQUIRED system thread)
 catkin_package(
   INCLUDE_DIRS include
   CATKIN_DEPENDS 
-    block_grasp_generator
+    simple_grasps
+    simple_grasps
 )
 
 # Enable gdb to show line numbers
@@ -49,8 +51,8 @@ add_executable(get_joint_values src/tools/get_joint_values.cpp)
 target_link_libraries(get_joint_values ${catkin_LIBRARIES} ${Boost_LIBRARIES})
 
 # Test
-#add_executable(block_grasp_generator_test src/tests/block_grasp_generator_test.cpp)
-#target_link_libraries(block_grasp_generator_test ${catkin_LIBRARIES} ${Boost_LIBRARIES})
+#add_executable(simple_grasps_test src/tests/simple_grasps_test.cpp)
+#target_link_libraries(simple_grasps_test ${catkin_LIBRARIES} ${Boost_LIBRARIES})
 
 
 add_executable(end_effector_position src/tools/end_effector_position.cpp)

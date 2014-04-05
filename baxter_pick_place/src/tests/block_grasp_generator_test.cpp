@@ -43,7 +43,7 @@
 #include <Eigen/Geometry>
 
 // Grasp generation
-#include <block_grasp_generator/block_grasp_generator.h>
+#include <moveit_simple_grasps/simple_grasps.h>
 
 // Baxter specific properties
 #include <baxter_pick_place/baxter_data.h>
@@ -59,13 +59,13 @@ private:
   ros::NodeHandle nh_;
 
   // Grasp generator
-  block_grasp_generator::BlockGraspGeneratorPtr block_grasp_generator_;
+  moveit_simple_grasps::VisualToolsPtr simple_grasps_;
 
   // class for publishing stuff to rviz
-  block_grasp_generator::VisualizationToolsPtr visual_tools_;
+  moveit_simple_grasps::VisualToolsPtr visual_tools_;
 
   // robot-specific data for generating grasps
-  block_grasp_generator::RobotGraspData grasp_data_;
+  moveit_simple_grasps::RobotGraspData grasp_data_;
 
   // which baxter arm are we using
   std::string arm_;
@@ -85,7 +85,7 @@ public:
 
     // ---------------------------------------------------------------------------------------------
     // Load the Robot Viz Tools for publishing to Rviz
-    visual_tools_.reset(new block_grasp_generator::VisualizationTools(baxter_pick_place::BASE_LINK));
+    visual_tools_.reset(new moveit_simple_grasps::VisualTools(baxter_pick_place::BASE_LINK));
     visual_tools_->setLifetime(120.0);
     visual_tools_->setMuted(false);
     visual_tools_->setEEGroupName(grasp_data_.ee_group_);
@@ -93,7 +93,7 @@ public:
 
     // ---------------------------------------------------------------------------------------------
     // Load grasp generator
-    block_grasp_generator_.reset( new block_grasp_generator::BlockGraspGenerator(visual_tools_) );
+    simple_grasps_.reset( new moveit_simple_grasps::VisualTools(visual_tools_) );
 
     // ---------------------------------------------------------------------------------------------
     // Generate grasps for a bunch of random blocks
@@ -113,7 +113,7 @@ public:
       generateTestBlock(block_pose);
 
       possible_grasps.clear();
-      block_grasp_generator_->generateGrasps( block_pose, grasp_data_, possible_grasps);
+      simple_grasps_->generateGrasps( block_pose, grasp_data_, possible_grasps);
 
       // Test if done
       ++i;

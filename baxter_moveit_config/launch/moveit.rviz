@@ -15,7 +15,7 @@ Panels:
         - /Image2
         - /Image3
       Splitter Ratio: 0.544529
-    Tree Height: 341
+    Tree Height: 1008
   - Class: rviz/Help
     Name: Help
   - Class: rviz/Views
@@ -575,10 +575,9 @@ Visualization Manager:
     - Class: rviz/Marker
       Enabled: true
       Marker Topic: /end_effector_marker
-      Name: block_grasp_generator
+      Name: simple_grasps
       Namespaces:
-        Arrow: true
-        Block: true
+        {}
       Queue Size: 100
       Value: true
     - Class: rviz/MarkerArray
@@ -594,8 +593,7 @@ Visualization Manager:
       Marker Topic: /move_group/display_grasp_markers
       Name: MoveItGrasps
       Namespaces:
-        moveit_grasps:stage_3: true
-        moveit_grasps:stage_4: true
+        {}
       Queue Size: 100
       Value: true
     - Class: rviz/Image
@@ -610,7 +608,7 @@ Visualization Manager:
       Transport Hint: raw
       Value: true
     - Class: rviz/Image
-      Enabled: true
+      Enabled: false
       Image Topic: /camera/image_raw
       Max Value: 1
       Median window: 5
@@ -619,9 +617,9 @@ Visualization Manager:
       Normalize Range: true
       Queue Size: 2
       Transport Hint: raw
-      Value: true
+      Value: false
     - Class: rviz/Image
-      Enabled: true
+      Enabled: false
       Image Topic: /cameras/right_hand_camera/image
       Max Value: 1
       Median window: 5
@@ -630,7 +628,7 @@ Visualization Manager:
       Normalize Range: true
       Queue Size: 2
       Transport Hint: raw
-      Value: true
+      Value: false
   Enabled: true
   Global Options:
     Background Color: 48; 48; 48
@@ -647,6 +645,11 @@ Visualization Manager:
     Current:
       Class: rviz/XYOrbit
       Distance: 1.77691
+      Enable Stereo Rendering:
+        Stereo Eye Separation: 0.06
+        Stereo Focal Distance: 1
+        Swap Stereo Eyes: false
+        Value: false
       Focal Point:
         X: 1.01633
         Y: -0.256143
@@ -661,7 +664,7 @@ Visualization Manager:
 Window Geometry:
   Displays:
     collapsed: false
-  Height: 1171
+  Height: 1168
   Help:
     collapsed: false
   Hide Left Dock: false
@@ -670,9 +673,9 @@ Window Geometry:
     collapsed: false
   Motion Planning:
     collapsed: false
-  QMainWindow State: 000000ff00000000fd0000000200000000000001b600000434fc0200000008fb0000000a0049006d00610067006501000000410000010e0000001600fffffffb0000000a0049006d0061006700650100000155000001840000001600fffffffb0000000a0049006d00610067006500000001700000015c0000001600fffffffb000000100044006900730070006c00610079007301000002df00000196000000dd00fffffffb0000000800480065006c00700000000342000000bb0000007600fffffffb0000000a005600690065007700730000000145000000cb000000b000fffffffb0000000c00430061006d00650072006100000002ff000001610000000000000000fb0000000c00430061006d006500720061000000038f00000016000000000000000000000003000004820000017ffc0100000001fb0000001e004d006f00740069006f006e00200050006c0061006e006e0069006e006701000001bc00000482000002a200ffffff00000482000002af00000001000000020000000100000002fc0000000100000002000000010000000a0054006f006f006c00730100000000ffffffff0000000000000000
+  QMainWindow State: 000000ff00000000fd0000000200000000000001b600000431fc0200000008fb0000000a0049006d00610067006500000000410000010d0000001600fffffffb0000000a0049006d0061006700650000000041000002090000001600fffffffb0000000a0049006d00610067006500000001700000015c0000001600fffffffb000000100044006900730070006c006100790073010000004100000431000000dd00fffffffb0000000800480065006c00700000000342000000bb0000007600fffffffb0000000a005600690065007700730000000145000000cb000000b000fffffffb0000000c00430061006d00650072006100000002ff000001610000000000000000fb0000000c00430061006d006500720061000000038f000000160000000000000000000000030000047c0000017ffc0100000001fb0000001e004d006f00740069006f006e00200050006c0061006e006e0069006e006701000001bc0000047c000002a200ffffff0000047c000002ac00000001000000020000000100000002fc0000000100000002000000010000000a0054006f006f006c00730100000000ffffffff0000000000000000
   Views:
     collapsed: false
-  Width: 1598
+  Width: 1592
   X: 3840
   Y: 0

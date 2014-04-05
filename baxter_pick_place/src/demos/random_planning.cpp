@@ -48,7 +48,7 @@
 #include <baxter_pick_place/custom_environment2.h>
 
 // Visualization
-#include <moveit_visual_tools/visualization_tools.h> // simple tool for showing graspsp
+#include <moveit_visual_tools/visual_tools.h> // simple tool for showing graspsp
 
 #include <std_msgs/Float64.h>
 #include <std_msgs/Float32.h>
@@ -70,7 +70,7 @@ class RandomPlanning
 public:
 
   // class for publishing stuff to rviz
-  moveit_visual_tools::VisualizationToolsPtr visual_tools_;
+  moveit_visual_tools::VisualToolsPtr visual_tools_;
 
   // our interface with MoveIt
   boost::scoped_ptr<move_group_interface::MoveGroup> group_;
@@ -84,7 +84,7 @@ public:
   ros::Publisher head_turn_topic_;
 
   // robot-specific data for generating grasps
-  block_grasp_generator::RobotGraspData grasp_data_;
+  moveit_simple_grasps::RobotGraspData grasp_data_;
 
   // allow head to move?
   bool allow_head_movements_;
@@ -96,11 +96,11 @@ public:
 
     // ---------------------------------------------------------------------------------------------
     // Load grasp generator
-    grasp_data_ = loadRobotGraspData("right", BLOCK_SIZE); // Load robot specific data
+    grasp_data_ = loadRobotGraspData("right"); // Load robot specific data
 
     // ---------------------------------------------------------------------------------------------
     // Load the Robot Viz Tools for publishing to rviz
-    visual_tools_.reset(new moveit_visual_tools::VisualizationTools( BASE_LINK));
+    visual_tools_.reset(new moveit_visual_tools::VisualTools( BASE_LINK));
     visual_tools_->setFloorToBaseHeight(FLOOR_TO_BASE_HEIGHT);
     visual_tools_->setEEGroupName(grasp_data_.ee_group_);
     visual_tools_->setPlanningGroupName(PLANNING_GROUP_NAME);
