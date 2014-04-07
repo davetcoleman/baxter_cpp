@@ -6,14 +6,10 @@ Panels:
       Expanded:
         - /Global Options1
         - /Grid1/Offset1
-        - /MotionPlanning1
         - /MotionPlanning1/Scene Geometry1
         - /MotionPlanning1/Scene Robot1
         - /MotionPlanning1/Planning Request1
         - /MotionPlanning1/Planned Path1
-        - /Image1
-        - /Image2
-        - /Image3
       Splitter Ratio: 0.544529
     Tree Height: 1008
   - Class: rviz/Help
@@ -585,7 +581,26 @@ Visualization Manager:
       Marker Topic: /move_group/display_contacts
       Name: MoveIt Contacts
       Namespaces:
-        {}
+        Segment_15_0=right_lower_forearm: true
+        Segment_15_0=right_upper_forearm_visual: true
+        Segment_16_0=right_lower_forearm: true
+        Segment_16_0=right_upper_forearm_visual: true
+        Segment_18_2=right_lower_forearm: true
+        Segment_18_2=right_upper_forearm_visual: true
+        Segment_1_1=right_upper_forearm_visual: true
+        Segment_1_2=right_upper_forearm: true
+        Segment_1_2=right_upper_forearm_visual: true
+        Segment_8_4=right_upper_forearm_visual: true
+        plant=right_gripper: true
+        plant=right_lower_elbow: true
+        plant=right_lower_forearm: true
+        plant=right_upper_elbow_visual: true
+        plant=right_upper_forearm: true
+        plant=right_upper_forearm_visual: true
+        plant=right_wrist: true
+        right_gripper_l_finger=plant: true
+        right_gripper_r_finger=pedestal: true
+        right_gripper_r_finger=plant: true
       Queue Size: 100
       Value: true
     - Class: rviz/MarkerArray
@@ -593,11 +608,14 @@ Visualization Manager:
       Marker Topic: /move_group/display_grasp_markers
       Name: MoveItGrasps
       Namespaces:
-        {}
+        moveit_grasps:stage_1: true
+        moveit_grasps:stage_2: true
+        moveit_grasps:stage_3: true
+        moveit_grasps:stage_4: true
       Queue Size: 100
       Value: true
     - Class: rviz/Image
-      Enabled: true
+      Enabled: false
       Image Topic: /cameras/left_hand_camera/image
       Max Value: 1
       Median window: 5
@@ -606,7 +624,7 @@ Visualization Manager:
       Normalize Range: true
       Queue Size: 2
       Transport Hint: raw
-      Value: true
+      Value: false
     - Class: rviz/Image
       Enabled: false
       Image Topic: /camera/image_raw
@@ -644,22 +662,22 @@ Visualization Manager:
   Views:
     Current:
       Class: rviz/XYOrbit
-      Distance: 1.77691
+      Distance: 2.15353
       Enable Stereo Rendering:
         Stereo Eye Separation: 0.06
         Stereo Focal Distance: 1
         Swap Stereo Eyes: false
         Value: false
       Focal Point:
-        X: 1.01633
-        Y: -0.256143
-        Z: -1.78924e-06
+        X: 0.647776
+        Y: 0.101795
+        Z: -2.20647e-06
       Name: Current View
       Near Clip Distance: 0.01
-      Pitch: 0.559797
+      Pitch: 0.439797
       Target Frame: base_link
       Value: XYOrbit (rviz)
-      Yaw: 5.55316
+      Yaw: 6.20816
     Saved: ~
 Window Geometry:
   Displays:

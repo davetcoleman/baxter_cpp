@@ -67,7 +67,7 @@ BaxterUtilities::BaxterUtilities()
   sub_shoulder_left_ = nh.subscribe<baxter_core_msgs::DigitalIOState>("/robot/digital_io/left_shoulder_button/state",
                        1, &BaxterUtilities::leftShoulderCallback, this);
   sub_shoulder_right_ = nh.subscribe<baxter_core_msgs::DigitalIOState>("/robot/digital_io/right_shoulder_button/state",
-                       1, &BaxterUtilities::rightShoulderCallback, this);
+                        1, &BaxterUtilities::rightShoulderCallback, this);
 
 }
 
@@ -327,20 +327,88 @@ bool BaxterUtilities::sendToPose(const std::string &pose_name)
   // Check if move group has been loaded yet
   // We only load it here so that applications that don't need this aspect of baxter_utilities
   // don't have to load it every time.
-  if( !move_group_ )
+  if( !move_group_both_ )
   {
-    move_group_.reset(new move_group_interface::MoveGroup(PLANNING_GROUP_NAME));
+    move_group_both_.reset(new move_group_interface::MoveGroup(PLANNING_GROUP_BOTH_NAME));
   }
 
   // Send to ready position
   ROS_INFO_STREAM_NAMED("pick_place","Sending to right and left arm ready positions...");
-  move_group_->setNamedTarget(pose_name);
-  bool result = move_group_->move();
+  move_group_both_->setNamedTarget(pose_name);
+  bool result = move_group_both_->move();
 
   if( !result )
     ROS_ERROR_STREAM_NAMED("utilities","Failed to send Baxter to pose '" << pose_name << "'");
 
   return result;
+}
+
+bool BaxterUtilities::sendToPose(const geometry_msgs::PoseStamped& pose, const std::string &group_name,
+  moveit_visual_tools::VisualToolsPtr visual_tools)
+{
+  geometry_msgs::PoseStamped goal_pose = pose; // make readable copy
+
+  // -----------------------------------------------------------------------------------------------
+  // Connect to move_group action server
+  if (!movegroup_action_)
+  {
+    movegroup_action_.reset(new actionlib::SimpleActionClient
+      <moveit_msgs::MoveGroupAction>("move_group", true));
+    while(!movegroup_action_->waitForServer(ros::Duration(2.0)))
+      ROS_INFO_STREAM_NAMED("sendToPose","Waiting for the move_group action server");
+  }
+
+  // -----------------------------------------------------------------------------------------------
+  // Create move_group goal
+  moveit_msgs::MoveGroupGoal goal;
+  goal.request.group_name = group_name;
+  goal.request.num_planning_attempts = 1;
+  goal.request.allowed_planning_time = 5.0;
+
+  // -------------------------------------------------------------------------------------------
+  // Create goal state
+  goal_pose.header.frame_id = visual_tools->getBaseLink();
+  double tolerance_position = 1e-3; // default: 1e-3... meters
+  double tolerance_angle = 1e-2; // default 1e-2... radians
+  moveit_msgs::Constraints goal_constraint0 = kinematic_constraints::constructGoalConstraints(
+    visual_tools->getEEParentLink(), goal_pose, tolerance_position, tolerance_angle);
+
+  //ROS_INFO_STREAM_NAMED("verticle_test","Goal pose " << goal_pose);
+
+  // Create offset constraint
+  goal_constraint0.position_constraints[0].target_point_offset.x = 0.0;
+  goal_constraint0.position_constraints[0].target_point_offset.y = 0.0;
+  goal_constraint0.position_constraints[0].target_point_offset.z = 0.0;
+
+  // Add offset constraint
+  goal.request.goal_constraints.resize(1);
+  goal.request.goal_constraints[0] = goal_constraint0;
+
+  // -------------------------------------------------------------------------------------------
+  // Visualize goals in rviz
+  visual_tools->publishArrow(goal_pose.pose, moveit_visual_tools::GREEN);
+  visual_tools->publishEEMarkers(goal_pose.pose, moveit_visual_tools::GREEN);
+
+  // -------------------------------------------------------------------------------------------
+  // Plan
+  movegroup_action_->sendGoal(goal);
+
+  if(!movegroup_action_->waitForResult(ros::Duration(20.0)))
+  {
+    ROS_INFO_STREAM_NAMED("utilities","Did not finish in time.");
+    return false;
+  }
+  if (movegroup_action_->getState() == actionlib::SimpleClientGoalState::SUCCEEDED)
+  {
+    ROS_INFO_STREAM_NAMED("utilities","Plan successful!");
+  }
+  else
+  {
+    ROS_ERROR_STREAM_NAMED("utilities","movegroup_action failed: " << movegroup_action_->getState().toString() << ": " << movegroup_action_->getState().getText());
+    return false;
+  }
+
+  return true;
 }
 
 

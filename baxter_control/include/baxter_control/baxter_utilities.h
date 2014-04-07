@@ -42,18 +42,25 @@
 
 // ROS
 #include <ros/ros.h>
+#include <actionlib/client/simple_action_client.h>
 
 // Boost
 #include <boost/scoped_ptr.hpp>
 
 // MoveIt!
 #include <moveit/move_group_interface/move_group.h>
+#include <moveit/kinematic_constraints/utils.h>
 
 // Msgs
 #include <std_msgs/Bool.h>
 #include <std_msgs/Empty.h>
 #include <baxter_core_msgs/AssemblyState.h>
 #include <baxter_core_msgs/DigitalIOState.h>
+#include <moveit_msgs/MoveGroupGoal.h>
+#include <moveit_msgs/MoveGroupAction.h>
+
+// Visualization
+#include <moveit_visual_tools/visual_tools.h>
 
 namespace baxter_control
 {
@@ -62,7 +69,7 @@ static const std::string BAXTER_STATE_TOPIC = "/robot/state";
 
 // Needed?
 static const std::string ROBOT_DESCRIPTION="robot_description";
-static const std::string PLANNING_GROUP_NAME = "both_arms";
+static const std::string PLANNING_GROUP_BOTH_NAME = "both_arms";
 static const std::string BASE_LINK = "base"; //"/base";
 static const std::string NEUTRAL_POSE_NAME = "both_neutral";
 
@@ -71,13 +78,18 @@ class BaxterUtilities
 {
 public:
 
+  // ROS Messages
   ros::Publisher pub_baxter_enable_;
   ros::Publisher pub_baxter_reset_;
   ros::Subscriber sub_baxter_state_;
   ros::Subscriber sub_shoulder_left_;
   ros::Subscriber sub_shoulder_right_;
 
+  // Action Servers and Clients
+  boost::shared_ptr<actionlib::SimpleActionClient<moveit_msgs::MoveGroupAction> > movegroup_action_;
+
   // Interface with MoveIt
+  boost::scoped_ptr<move_group_interface::MoveGroup> move_group_both_;
   boost::scoped_ptr<move_group_interface::MoveGroup> move_group_;
 
   // Remember the last baxter state and time
@@ -133,11 +145,21 @@ public:
   bool positionBaxterNeutral();
 
   /**
-   * \brief Send baxter to a pose defined in the SRDF
+   * \brief Send baxter to a named pose defined in the SRDF
    * \param pose_name - name of pose in SRDF
    * \return true if sucessful in planning and moving there
    */
   bool sendToPose(const std::string &pose_name);
+
+  /**
+   * \brief Moves the arm to a specified pose
+   * \param pose - desired goal
+   * \param group_name - which arm / planning group to use the pose with
+   * \return true if sucessful in planning and moving there
+   */
+  bool sendToPose(const geometry_msgs::PoseStamped& pose, const std::string &group_name,   
+    moveit_visual_tools::VisualToolsPtr visual_tools);
+
 
 };
 

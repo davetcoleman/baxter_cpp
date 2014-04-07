@@ -26,6 +26,8 @@
   <build_depend>sensor_msgs</build_depend>
   <build_depend>joint_limits_interface</build_depend>
   <build_depend>trajectory_msgs</build_depend>
+  <build_depend>moveit_msgs</build_depend>
+  <build_depend>moveit_visual_tools</build_depend>
 
   <run_depend>moveit_ros_planning_interface</run_depend>
   <run_depend>std_msgs</run_depend>
@@ -39,6 +41,8 @@
   <run_depend>joint_limits_interface</run_depend>
   <run_depend>baxter_description</run_depend>
   <run_depend>trajectory_msgs</run_depend>
+  <run_depend>moveit_msgs</run_depend>
+  <run_depend>moveit_visual_tools</run_depend>
 
 </package>
 
