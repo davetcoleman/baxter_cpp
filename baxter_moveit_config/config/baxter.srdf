@@ -397,15 +397,10 @@
     <disable_collisions link1="screen_visual" link2="sonar_ring" reason="Never" />
     <disable_collisions link1="screen_visual" link2="torso" reason="Never" />
     <disable_collisions link1="sonar_ring" link2="torso" reason="Adjacent" />
-
-    <!-- dave custom -->
     <disable_collisions link1="left_upper_forearm_visual" link2="left_wrist" reason="User" />
     <disable_collisions link1="right_upper_forearm_visual" link2="right_wrist" reason="User" />
     <disable_collisions link1="left_upper_elbow" link2="left_upper_shoulder" reason="User" />
     <disable_collisions link1="right_upper_elbow" link2="right_upper_shoulder" reason="User" />
     <disable_collisions link1="left_upper_elbow_visual" link2="left_upper_forearm" reason="User" />
     <disable_collisions link1="right_upper_elbow_visual" link2="right_upper_forearm" reason="User" />
-
-
-
 </robot>
