@@ -1,27 +1,33 @@
 <launch>
 
-  <!-- input arguments -->
+  <!-- By default, we do not start a database (it can be large) -->
+  <arg name="db" default="false" />
+
+  <!-- By default, we are not in debug mode -->
   <arg name="debug" default="false" />
+
   <arg name="allow_trajectory_execution" default="true"/>
 
-  <!-- load urdf, srdf -->
+  <!-- Load the URDF, SRDF and other .yaml configuration files on the param server -->
   <include file="$(find baxter_moveit_config)/launch/planning_context.launch">
     <arg name="load_robot_description" value="true"/>
   </include>
 
-  <!-- start move_group -->
+  <!-- Run the main MoveIt executable without trajectory execution (we do not have controllers configured by default) -->
   <include file="$(find baxter_moveit_config)/launch/move_group.launch">
     <arg name="allow_trajectory_execution" value="$(arg allow_trajectory_execution)"/>
-    <arg name="debug" value="$(arg debug)"/>
+    <arg name="fake_execution" value="false"/>
     <arg name="info" value="true"/>
+    <arg name="debug" value="$(arg debug)"/>
   </include>
 
-  <!-- start rviz -->
+  <!-- Run Rviz and load the default config to see the state of the move_group node -->
   <include file="$(find baxter_moveit_config)/launch/moveit_rviz.launch">
     <arg name="config" value="true"/>
+    <arg name="debug" value="$(arg debug)"/>
   </include>
 
-  <!-- start warehouse -->
-  <!--include file="$(find baxter_moveit_config)/launch/default_warehouse_db.launch" /-->
+  <!-- If database loading was enabled, start mongodb as well -->
+  <include file="$(find baxter_moveit_config)/launch/default_warehouse_db.launch" if="$(arg db)"/>
 
 </launch>
