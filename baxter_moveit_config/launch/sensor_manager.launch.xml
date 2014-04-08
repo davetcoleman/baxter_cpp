@@ -4,7 +4,7 @@
 
   <!-- Params for the octomap monitor -->
   <param name="octomap_frame" type="string" value="base" />
-  <param name="octomap_resolution" type="double" value="0.025" />
+  <param name="octomap_resolution" type="double" value="0.01" />
   <param name="max_range" type="double" value="5.0" />
 
   <!-- Load the robot specific sensor manager; this sets the moveit_sensor_manager ROS parameter -->

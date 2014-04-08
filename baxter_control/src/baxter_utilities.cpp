@@ -314,11 +314,17 @@ bool BaxterUtilities::resetBaxter()
 
 bool BaxterUtilities::positionBaxterReady()
 {
+  // Send to ready position
+  ROS_INFO_STREAM_NAMED("pick_place","Sending to right and left arm ready positions...");
+
   return sendToPose("both_ready");
 }
 
 bool BaxterUtilities::positionBaxterNeutral()
 {
+  // Send to neutral position
+  ROS_INFO_STREAM_NAMED("pick_place","Sending to right and left arm neutral positions...");
+
   return sendToPose(NEUTRAL_POSE_NAME);
 }
 
@@ -332,9 +338,8 @@ bool BaxterUtilities::sendToPose(const std::string &pose_name)
     move_group_both_.reset(new move_group_interface::MoveGroup(PLANNING_GROUP_BOTH_NAME));
   }
 
-  // Send to ready position
-  ROS_INFO_STREAM_NAMED("pick_place","Sending to right and left arm ready positions...");
   move_group_both_->setNamedTarget(pose_name);
+  move_group_both_->setPlanningTime(15);
   bool result = move_group_both_->move();
 
   if( !result )
