@@ -318,7 +318,7 @@ public:
     std::vector<moveit_msgs::Grasp> grasps;
 
     // Pick grasp
-    simple_grasps_->generateAllGrasps( block_pose, grasp_data_, grasps );
+    simple_grasps_->generateBlockGrasps( block_pose, grasp_data_, grasps );
 
     // Prevent collision with table
     move_group_->setSupportSurfaceName(SUPPORT_SURFACE3_NAME);
