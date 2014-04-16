@@ -22,10 +22,10 @@
   </include>
 
   <!-- Run Rviz and load the default config to see the state of the move_group node -->
-  <include file="$(find baxter_moveit_config)/launch/moveit_rviz.launch">
+  <!--include file="$(find baxter_moveit_config)/launch/moveit_rviz.launch">
     <arg name="config" value="true"/>
     <arg name="debug" value="$(arg debug)"/>
-  </include>
+  </include-->
 
   <!-- If database loading was enabled, start mongodb as well -->
   <include file="$(find baxter_moveit_config)/launch/default_warehouse_db.launch" if="$(arg db)"/>

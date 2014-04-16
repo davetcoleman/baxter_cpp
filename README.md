@@ -176,6 +176,12 @@ Works with simulation, hardware or visualization:
    roslaunch baxter_moveit_config baxter_moveit.launch
    ```
 
+ * Start Rviz with MoveIt! configured:
+
+   ```
+   roslaunch baxter_moveit_config moveit_rviz.launch
+   ```
+
 ## Block pick and place demo
 
 Picks small blocks located on a table in front of Baxter and places them to Baxter's left. Assumes perfect perception (doesn't have perception) as defined in custom_environment.h.
