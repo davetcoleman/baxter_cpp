@@ -18,13 +18,9 @@ On going development continues in the development branch and contributors are st
    * Other tools for testing trajectories
  * Baxter ros_control position, velocity, or torque trajectory controllers
    * Uses the ros_control [joint_trajectory_controller](https://github.com/ros-controls/ros_controllers/tree/hydro-devel/joint_trajectory_controller) instead of the python trajectory controller that comes with the SDK
- * Baxter simulated in Gazebo
-   * NOTE: since SDK 0.7.0 release this has not been maintained. There is now an official release with Rethink that might work better
-   * Simulated controllers using [ros_control](http://wiki.ros.org/ros_control)
-   * Simulated head display
-   * Simulated cameras
-   * Not implemented yet: sonars or other sensors. Feel free to add!
- * Other goodies
+ * Integrated Asus Xtion Pro depth sensor (Kinect sensor)
+   * Displays in MoveIt!
+ * Other stuff
    * Baxter's face follows obstacles using the sonars
 
 Additional experimental features are provided in [baxter_experimental](https://github.com/davetcoleman/baxter_experimental)
@@ -37,12 +33,13 @@ Additional experimental features are provided in [baxter_experimental](https://g
    
  * [hydro-devel](https://github.com/davetcoleman/baxter_cpp/tree/hydro-devel) - for current Baxter 0.7.0 SDK software on ROS Hydro. Stable.
  * [development](https://github.com/davetcoleman/baxter_cpp/tree/development) - latest hydro-devel work is commited here. Unstable.
- * [groovy-devel-sdk0.6.2](https://github.com/davetcoleman/baxter_cpp/tree/groovy-devel-sdk0.6.2) - for Baxter 0.6.2 SDK software on ROS Groovy. *Not Maintained or Supported.*
- * [hydro-devel-sdk0.6.2](https://github.com/davetcoleman/baxter_cpp/tree/hydro-devel-sdk0.6.2) - for Baxter 0.6.2 SDK software on ROS Hydro. *Not Maintained or Supportd.*
+ * [groovy-devel-sdk0.6.2](https://github.com/davetcoleman/baxter_cpp/tree/groovy-devel-sdk0.6.2) - for Baxter 0.6.2 SDK software on ROS Groovy. *NOT SUPPORTED*
+ * [hydro-devel-sdk0.6.2](https://github.com/davetcoleman/baxter_cpp/tree/hydro-devel-sdk0.6.2) - for Baxter 0.6.2 SDK software on ROS Hydro. *NOT SUPPORTED*
 
 ## Prerequisites
 
- * A Baxter with dual parallel electric grippers with SDK v0.7.0 installed, or the desire to see one in simulation
+ * A Baxter with dual parallel electric grippers with SDK v0.7.0 installed
+ * (Optional) Asus Xtion Pro Camera
  * [ROS Hydro](http://wiki.ros.org/ROS/Installation) on (suggested) Ubuntu 12.04
  * Install wstool package
     ```
@@ -94,6 +91,27 @@ Additional experimental features are provided in [baxter_experimental](https://g
     ```
     echo 'source ~/ros/ws_baxter/devel/setup.bash' >> ~/.bashrc
     ```
+
+## Customize for your robot
+
+Every Baxter is factory calibrated for the mouting points of the arms because they are welded on. Therefore, you might want to customize the ``baxter_description/urdf/baxter.urdf`` file to your robot's custom values. To do so:
+
+* Start up your Baxter without launching any ROS nodes on your dev machine
+* While connected to Baxter, run the command:
+    ```
+    rosparam dump my.baxter.urdf /robot_description
+    ```   
+* Within ``my.baxter.urdf`` find the lines that say:
+    ```   
+    <joint name="left_torso_arm_mount" type="fixed"> 
+    ```   
+    and 
+    ```   
+    <joint name="right_torso_arm_mount" type="fixed"> 
+    ```   
+* Copy the following ``<origin>`` line to the corresponding location in ``baxter.urdf`` located in ``baxter_description/urdf/baxter.urdf``
+
+* Done.
 
 ## Bringup Baxter
 
