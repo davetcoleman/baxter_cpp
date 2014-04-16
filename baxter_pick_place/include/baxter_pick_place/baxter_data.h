@@ -36,6 +36,9 @@
    Desc:   Parameters specific to Baxter for performing pick-place
 */
 
+#ifndef BAXTER_PICK_PLACE__BAXTER_DATA_H_
+#define BAXTER_PICK_PLACE__BAXTER_DATA_H_
+
 // Objects
 #include <moveit_simple_grasps/simple_grasps.h> // has datastructure
 
@@ -122,3 +125,5 @@ moveit_simple_grasps::RobotGraspData loadRobotGraspData(const std::string& arm)
 
 
 } // namespace
+
+#endif
