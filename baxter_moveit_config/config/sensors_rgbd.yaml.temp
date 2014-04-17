@@ -1,0 +1,13 @@
+    self_mask:
+        min_sensor_dist: 2
+        self_see_default_padding: 3.0
+        self_see_default_scale: 2.0
+        self_see_links:
+          - name: right_upper_elbow
+          - name: right_upper_forearm_visual
+          - name: right_upper_shoulder
+          - name: right_upper_elbow_visible
+          - name: right_upper_forearm
+          - name: right_lower_shouler
+          - name: right_lower_forearm
+          - name: right_lower_elbow     
