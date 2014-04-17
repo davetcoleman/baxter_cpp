@@ -2,11 +2,7 @@ sensors:
   - sensor_plugin: occupancy_map_monitor/PointCloudOctomapUpdater
     point_cloud_topic: /camera/depth_registered/points
     max_range: 4.0
-    frame_subsample: 1
-    point_subsample: 1
-    shape_padding: 1.0
-    shape_scale: 1.0
-    self_mask:
-        min_sensor_dist: .8
-        self_see_default_padding: .04
-        self_see_default_scale: 1.0
+    padding_offset: 0.15  #The padding offset to be considered for robot links and attached objects when self-filtering
+    padding_scale: 0.1 #The padding scale to be considered for robot links and attached objects when self-filtering
+    point_subsample: 2
+    filtered_cloud_topic: filtered_cloud

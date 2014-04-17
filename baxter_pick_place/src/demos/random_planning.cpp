@@ -57,7 +57,7 @@
 #include <baxter_core_msgs/HeadPanCommand.h>
 
 // Baxter specific properties
-#include <baxter_pick_place/baxter_data.h>
+#include <moveit_simple_grasps/grasp_data_loader.h>
 #include <baxter_pick_place/custom_environment2.h>
 
 namespace baxter_pick_place
@@ -96,12 +96,13 @@ public:
 
     // ---------------------------------------------------------------------------------------------
     // Load grasp generator
-    grasp_data_ = loadRobotGraspData("right"); // Load robot specific data
+    if (!grasp_data_loader::loadRobotGraspData(nh, "right", grasp_data_))
+      ros::shutdown();
 
     // ---------------------------------------------------------------------------------------------
     // Load the Robot Viz Tools for publishing to rviz
-    visual_tools_.reset(new moveit_visual_tools::VisualTools( BASE_LINK));
-    visual_tools_->setFloorToBaseHeight(FLOOR_TO_BASE_HEIGHT);
+    visual_tools_.reset(new moveit_visual_tools::VisualTools( grasp_data_loader::base_link_));
+    visual_tools_->setFloorToBaseHeight(-0.9);
     visual_tools_->setEEGroupName(grasp_data_.ee_group_);
     visual_tools_->setPlanningGroupName(PLANNING_GROUP_NAME);
 
