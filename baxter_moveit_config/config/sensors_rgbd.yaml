@@ -1,8 +1,8 @@
 sensors:
   - sensor_plugin: occupancy_map_monitor/PointCloudOctomapUpdater
     point_cloud_topic: /camera/depth_registered/points
-    max_range: 4.0
-    padding_offset: 0.15  #The padding offset to be considered for robot links and attached objects when self-filtering
-    padding_scale: 0.1 #The padding scale to be considered for robot links and attached objects when self-filtering
-    point_subsample: 2
-    filtered_cloud_topic: filtered_cloud
+    max_range: 3.0 # The max range (in m) of the sensor
+    padding_offset: 0 #0.15  #The padding offset to be considered for robot links and attached objects when self-filtering
+    padding_scale: 1 #The padding scale to be considered for robot links and attached objects when self-filtering
+    point_subsample: 1 # If the update process is too slow, points could be subsampled. Values above 1 make the updated skip points instead of processing them.
+    filtered_cloud_topic: filtered_cloud # If this parameter is specified, the filtered cloud (without robot parts) is also republished. This makes things a little less efficient but can be useful for debugging.
