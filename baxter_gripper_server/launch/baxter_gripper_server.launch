@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<launch>
+
+  <group ns="robot">
+    <!-- Load gripper controller -->
+    <node name="baxter_gripper_server" pkg="baxter_gripper_server" type="gripper_action_server"
+	  respawn="false" output="screen" />
+  </group>
+
+  <!-- Publish the gripper joint states to /tf -->
+  <include file="$(find baxter_state_publisher)/launch/baxter_state_publisher.launch"/>
+
+</launch>

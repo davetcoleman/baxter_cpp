@@ -21,8 +21,7 @@
 	  respawn="false" output="screen" args=""/-->
 
     <!-- Load gripper controller -->
-    <node name="baxter_gripper_server" pkg="baxter_gripper_server" type="gripper_action_server"
-	  respawn="false" output="screen" launch-prefix="$(arg launch_prefix)" />
+    <include file="$(find baxter_gripper_server)/launch/baxter_gripper_server.launch" />
   </group>
 
 </launch>
