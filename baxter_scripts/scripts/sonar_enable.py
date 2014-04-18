@@ -60,7 +60,7 @@ def send_command(enable):
         msg = 4095 # turn back on enable flags for all sonar channels
         rospy.loginfo("Enabling Baxter sonars")
 
-    pub = rospy.Publisher('/robot/sonar/set_sonars_enabled', std_msgs.msg.UInt16, latch=False)
+    pub = rospy.Publisher('/robot/sonar/head_sonar/set_sonars_enabled', std_msgs.msg.UInt16, latch=False)
     rospy.Rate(1).sleep()
 
     pub.publish(data=int(msg))
