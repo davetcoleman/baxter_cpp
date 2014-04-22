@@ -1,0 +1,7 @@
+<launch>
+  <include file="$(find baxter_perception)/launch/objectdetection_tf_publisher.launch" />
+  <include file="$(find baxter_perception)/launch/object_to_world_pub.launch" />
+  <include file="$(find openni_launch)/openni.launch" >
+    <arg name="depth_registration" value="true"/>
+  </include>
+</launch>

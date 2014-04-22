@@ -1,0 +1,8 @@
+<launch>
+  <group ns="/checkerdetector">
+    <node pkg="checkerboard_detector" type="objectdetection_tf_publisher.py" name="objectdetection_tf_publisher" output="screen"/>
+  </group>
+
+  <!--include file="$(find checkerboard_detector)/launch/object_to_world_pub.launch" /-->
+
+</launch>

@@ -1,0 +1,29 @@
+<?xml version="1.0"?>
+<package>
+  <name>baxter_perception</name>
+  <version>0.0.1</version>
+  <description>The baxter_perception package</description>
+
+  <maintainer email="davetcoleman@gmail.com">Dave Coleman</maintainer>
+
+  <license>BSD</license>
+
+  <url type="website">https://github.com/davetcoleman/baxter_cpp</url>
+  <url type="butracker">https://github.com/davetcoleman/baxter_cpp/issues</url>
+  <url type="repository">https://github.com/davetcoleman/baxter_cpp/</url>
+
+  <author email="davetcoleman@gmail.com">Dave Coleman</author>
+
+  <buildtool_depend>catkin</buildtool_depend>
+
+  <build_depend>checkerboard_detector</build_depend>
+  <build_depend>openni_launch</build_depend>
+  <build_depend>tf</build_depend>
+
+  <run_depend>checkerboard_detector</run_depend>
+  <run_depend>openni_launch</run_depend>
+  <run_depend>tf</run_depend>
+
+  <export>
+  </export>
+</package>
