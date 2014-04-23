@@ -62,7 +62,6 @@ JointStateListener::JointStateListener(const KDL::Tree& tree, const MimicMap& m)
   n_tilde.param(tf_prefix_key, tf_prefix_, std::string(""));
   ROS_INFO_STREAM_NAMED("constructor","Publishing at a frequency of " << publish_freq);
   publish_interval_ = ros::Duration(1.0/max(publish_freq,1.0));
-  ROS_INFO_STREAM_NAMED("constructor","Publishing at an interval of " << publish_interval_.toSec());
 
   // subscribe to joint state
   joint_state_sub_ = n.subscribe("joint_states", 1, &JointStateListener::callbackJointState, this);

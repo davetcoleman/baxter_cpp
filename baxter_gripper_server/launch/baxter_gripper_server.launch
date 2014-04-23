@@ -8,6 +8,6 @@
   </group>
 
   <!-- Publish the gripper joint states to /tf -->
-  <!--include file="$(find baxter_state_publisher)/launch/baxter_state_publisher.launch"/-->
+  <include file="$(find baxter_state_publisher)/launch/baxter_state_publisher.launch"/>
 
 </launch>

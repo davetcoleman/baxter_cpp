@@ -273,11 +273,6 @@ Visualization Manager:
             Show Axes: false
             Show Trail: false
             Value: true
-          screen_visual:
-            Alpha: 1
-            Show Axes: false
-            Show Trail: false
-            Value: true
           sonar_ring:
             Alpha: 1
             Show Axes: false
@@ -545,11 +540,6 @@ Visualization Manager:
             Show Trail: false
             Value: true
           screen:
-            Alpha: 1
-            Show Axes: false
-            Show Trail: false
-            Value: true
-          screen_visual:
             Alpha: 1
             Show Axes: false
             Show Trail: false
