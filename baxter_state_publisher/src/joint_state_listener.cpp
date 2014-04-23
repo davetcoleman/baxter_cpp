@@ -60,6 +60,7 @@ JointStateListener::JointStateListener(const KDL::Tree& tree, const MimicMap& m)
   std::string tf_prefix_key;
   n_tilde.searchParam("tf_prefix", tf_prefix_key);
   n_tilde.param(tf_prefix_key, tf_prefix_, std::string(""));
+  ROS_INFO_STREAM_NAMED("constructor","Publishing at a frequency of " << publish_freq);
   publish_interval_ = ros::Duration(1.0/max(publish_freq,1.0));
 
   // subscribe to joint state
@@ -86,15 +87,16 @@ void JointStateListener::callbackJointState(const JointStateConstPtr& state)
     ROS_ERROR("Robot state publisher received an invalid joint state vector");
     return;
   }
-  
   // CUSTOM BAXTER SECTION:
   // determine if this joint state is for the end effector only
   if (state->name.size() == 4 && state->name[0] == "right_gripper_l_finger_joint")
   {
     // This is the only message we want to publish TF for
+    ROS_DEBUG_STREAM_NAMED("listener","Accepting message of " << state->name.size() << " joints");
   }
   else
   {
+    ROS_DEBUG_STREAM_NAMED("listener","Rejecting joint state of " << state->name.size() << " joints");
     // Baxter already has a robot state publisher for this example
     return;
   }

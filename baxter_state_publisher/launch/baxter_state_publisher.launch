@@ -6,6 +6,7 @@
     <node name="baxter_state_publisher" pkg="baxter_state_publisher" type="baxter_state_publisher"
 	  respawn="false" output="screen">
       <remap from="/joint_states" to="/robot/joint_states" />
+      <param name="publish_frequency" value="50" />
     </node>
 
   </group>
