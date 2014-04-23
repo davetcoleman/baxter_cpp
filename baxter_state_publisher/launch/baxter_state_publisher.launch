@@ -1,14 +1,10 @@
 <launch>
 
-  <group ns="robot">
-
-    <!-- convert joint states to TF transforms -->
-    <node name="baxter_state_publisher" pkg="baxter_state_publisher" type="baxter_state_publisher"
-	  respawn="false" output="screen">
-      <remap from="/joint_states" to="/robot/joint_states" />
-      <param name="publish_frequency" value="50" />
-    </node>
-
-  </group>
+  <!-- convert joint states to TF transforms just for gripper -->
+  <node name="baxter_gripper_state_publisher" pkg="baxter_state_publisher" type="baxter_state_publisher"
+	respawn="false" output="screen">
+    <remap from="/joint_states" to="/robot/joint_states" />
+    <param name="publish_frequency" value="80" />
+  </node>
 
 </launch>

@@ -143,6 +143,7 @@ public:
     right_gripper.populateState(state);
     left_gripper.populateState(state);
 
+    ROS_INFO_STREAM_NAMED("temp","publishing joints \n" << state);
     joint_state_topic_.publish(state);
   }
 

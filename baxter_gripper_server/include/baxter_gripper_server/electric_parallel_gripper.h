@@ -41,9 +41,6 @@
 #include <actionlib/server/simple_action_server.h>
 
 // Messages
-//#include <std_msgs/Float32.h>
-//#include <std_msgs/Empty.h>
-//#include <std_msgs/Bool.h>
 #include <baxter_core_msgs/EndEffectorState.h>
 #include <baxter_core_msgs/EndEffectorCommand.h>
 #include <baxter_core_msgs/DigitalIOState.h>
@@ -78,7 +75,6 @@ protected:
 
   // Publishers
   ros::Publisher command_topic_;
-  ros::Publisher joint_state_topic_;
 
   // Subscribers
   ros::Subscriber gripper_state_sub_;
@@ -175,12 +171,6 @@ public:
       simulation_state->position = 0; // \todo
       simulation_state->force = 7; // base line value unloaded
       gripper_state_ = simulation_state;
-    }
-
-    // Gazebo publishes a joint state for the gripper, but Baxter does not do so in the right format
-    if( !in_simulation_ )
-    {
-      joint_state_topic_ = nh_.advertise<sensor_msgs::JointState>("/robot/joint_states",10);
     }
 
     // Calculate joint stroke and midpoint

@@ -89,6 +89,7 @@ namespace robot_state_publisher{
         tf::transformKDLToTF(seg->second.segment.pose(jnt->second), tf_transform);    
         tf_transform.frame_id_ = tf::resolve(tf_prefix, seg->second.root);
         tf_transform.child_frame_id_ = tf::resolve(tf_prefix, seg->second.tip);
+        ROS_INFO_STREAM_NAMED("temp","publishing tf from " << tf_transform.frame_id_ << " to " << tf_transform.child_frame_id_);
         tf_transforms.push_back(tf_transform);
       }
     }
@@ -109,6 +110,7 @@ namespace robot_state_publisher{
       tf::transformKDLToTF(seg->second.segment.pose(0), tf_transform);    
       tf_transform.frame_id_ = tf::resolve(tf_prefix, seg->second.root);
       tf_transform.child_frame_id_ = tf::resolve(tf_prefix, seg->second.tip);
+      ROS_INFO_STREAM_NAMED("temp","publishing tf from " << tf_transform.frame_id_ << " to " << tf_transform.child_frame_id_);
       tf_transforms.push_back(tf_transform);
     }
     tf_broadcaster_.sendTransform(tf_transforms);

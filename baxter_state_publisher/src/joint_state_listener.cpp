@@ -62,13 +62,14 @@ JointStateListener::JointStateListener(const KDL::Tree& tree, const MimicMap& m)
   n_tilde.param(tf_prefix_key, tf_prefix_, std::string(""));
   ROS_INFO_STREAM_NAMED("constructor","Publishing at a frequency of " << publish_freq);
   publish_interval_ = ros::Duration(1.0/max(publish_freq,1.0));
+  ROS_INFO_STREAM_NAMED("constructor","Publishing at an interval of " << publish_interval_.toSec());
 
   // subscribe to joint state
   joint_state_sub_ = n.subscribe("joint_states", 1, &JointStateListener::callbackJointState, this);
 
   // trigger to publish fixed joints
-  timer_ = n_tilde.createTimer(publish_interval_, &JointStateListener::callbackFixedJoint, this);
-
+  // DISABLED since Baxter PC already does this for us
+  //timer_ = n_tilde.createTimer(publish_interval_, &JointStateListener::callbackFixedJoint, this);
 };
 
 
@@ -114,7 +115,8 @@ void JointStateListener::callbackJointState(const JointStateConstPtr& state)
 
 
   // check if we need to publish
-  if (state->header.stamp >= last_published + publish_interval_){
+  if (state->header.stamp >= last_published + publish_interval_)
+  {
     // get joint positions from state message
     map<string, double> joint_positions;
     for (unsigned int i=0; i<state->name.size(); i++)
