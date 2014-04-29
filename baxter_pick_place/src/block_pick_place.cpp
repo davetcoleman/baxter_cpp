@@ -51,7 +51,7 @@
 #include <moveit_visual_tools/visual_tools.h> // simple tool for showing graspsp
 
 // Baxter specific properties
-#include <moveit_simple_grasps/grasp_data_loader.h>
+#include <moveit_simple_grasps/grasp_data.h>
 #include <baxter_pick_place/custom_environment5.h>
 
 namespace baxter_pick_place
@@ -74,7 +74,7 @@ public:
   moveit_visual_tools::VisualToolsPtr visual_tools_;
 
   // data for generating grasps
-  moveit_simple_grasps::RobotGraspData grasp_data_;
+  moveit_simple_grasps::GraspData grasp_data_;
 
   // our interface with MoveIt
   boost::scoped_ptr<move_group_interface::MoveGroup> move_group_;
@@ -105,11 +105,11 @@ public:
     move_group_->setPlanningTime(30.0);
 
     // Load grasp generator
-    if (!grasp_data_loader::loadRobotGraspData(nh, arm_, grasp_data_))
+    if (!grasp_data_.loadRobotGraspData(nh, arm_))
       ros::shutdown();
 
     // Load the Robot Viz Tools for publishing to rviz
-    visual_tools_.reset(new moveit_visual_tools::VisualTools( grasp_data_loader::base_link_));
+    visual_tools_.reset(new moveit_visual_tools::VisualTools( grasp_data_.base_link_));
     visual_tools_->setFloorToBaseHeight(-0.9);
     visual_tools_->setEEGroupName(grasp_data_.ee_group_);
     visual_tools_->setPlanningGroupName(planning_group_name_);
@@ -354,7 +354,7 @@ public:
 
     // Re-usable datastruct
     geometry_msgs::PoseStamped pose_stamped;
-    pose_stamped.header.frame_id = grasp_data_loader::base_link_;
+    pose_stamped.header.frame_id = grasp_data_.base_link_;
     pose_stamped.header.stamp = ros::Time::now();
 
     // Create 360 degrees of place location rotated around a center
