@@ -155,11 +155,29 @@ public:
    * \brief Moves the arm to a specified pose
    * \param pose - desired goal
    * \param group_name - which arm / planning group to use the pose with
+   * \param visual_tools - copy of tool for publishing visual objects
+   * \param planning_scene_diff - allows direct access to change the planning scene during planning
    * \return true if sucessful in planning and moving there
    */
   bool sendToPose(const geometry_msgs::PoseStamped& pose, const std::string &group_name,   
-    moveit_visual_tools::VisualToolsPtr visual_tools);
+    moveit_visual_tools::VisualToolsPtr visual_tools, const moveit_msgs::PlanningScene &planning_scene_diff);
 
+  bool sendToPose(const geometry_msgs::Pose& pose, const std::string &group_name,   
+    moveit_visual_tools::VisualToolsPtr visual_tools, const moveit_msgs::PlanningScene &planning_scene_diff);
+
+  /**
+   * \brief Get the current pose of the desired end effector specified in the visual_tools object
+   * \param visual_tools - copy of tool for publishing visual objects
+   * \return pose of end effector
+   */
+  geometry_msgs::Pose getCurrentPose(moveit_visual_tools::VisualToolsPtr visual_tools);
+
+  /**
+   * \brief Hard coded poses for baxter's end effectors
+   * \param side - left or right
+   * \return pose of ready position
+   */
+  geometry_msgs::Pose getReadyPose(const std::string &side);
 
 };
 

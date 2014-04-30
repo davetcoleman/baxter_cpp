@@ -448,4 +448,5 @@
     <disable_collisions link1="right_upper_elbow" link2="right_upper_shoulder" reason="User" />
     <disable_collisions link1="left_upper_elbow_visual" link2="left_upper_forearm" reason="User" />
     <disable_collisions link1="right_upper_elbow_visual" link2="right_upper_forearm" reason="User" />
+
 </robot>

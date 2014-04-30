@@ -46,6 +46,7 @@ BaxterUtilities::BaxterUtilities()
   : disabled_callback_called_(false),
     state_counter_(1)
 {
+  ROS_INFO_STREAM_NAMED("baxter_utilities","Loading Baxter utilities");
   ros::NodeHandle nh;
 
   // Preload Messages
@@ -56,6 +57,7 @@ BaxterUtilities::BaxterUtilities()
   // Advertise services
   pub_baxter_enable_ = nh.advertise<std_msgs::Bool>("/robot/set_super_enable",10);
   pub_baxter_reset_ = nh.advertise<std_msgs::Empty>("/robot/set_super_reset",10);
+  ROS_DEBUG_STREAM_NAMED("baxter_utilities","Publishing on topics /robot/set_super_enable and robot/set_super_reset");
 
   // ---------------------------------------------------------------------------------------------
   // Start the state subscriber
@@ -68,7 +70,7 @@ BaxterUtilities::BaxterUtilities()
                        1, &BaxterUtilities::leftShoulderCallback, this);
   sub_shoulder_right_ = nh.subscribe<baxter_core_msgs::DigitalIOState>("/robot/digital_io/right_shoulder_button/state",
                         1, &BaxterUtilities::rightShoulderCallback, this);
-
+  ROS_DEBUG_STREAM_NAMED("baxter_utilities","Subscribing to baxter_core_msgs");
 }
 
 void BaxterUtilities::setDisabledCallback(DisabledCallback callback)
@@ -330,6 +332,8 @@ bool BaxterUtilities::positionBaxterNeutral()
 
 bool BaxterUtilities::sendToPose(const std::string &pose_name)
 {
+  ROS_INFO_STREAM_NAMED("baxter_utilities","Sending to pose '" << pose_name << "'");
+
   // Check if move group has been loaded yet
   // We only load it here so that applications that don't need this aspect of baxter_utilities
   // don't have to load it every time.
@@ -348,8 +352,16 @@ bool BaxterUtilities::sendToPose(const std::string &pose_name)
   return result;
 }
 
+bool BaxterUtilities::sendToPose(const geometry_msgs::Pose& pose, const std::string &group_name,
+  moveit_visual_tools::VisualToolsPtr visual_tools, const moveit_msgs::PlanningScene &planning_scene_diff)
+{
+  geometry_msgs::PoseStamped pose_stamped;
+  pose_stamped.pose = pose;
+  sendToPose(pose_stamped, group_name, visual_tools, planning_scene_diff);
+}
+
 bool BaxterUtilities::sendToPose(const geometry_msgs::PoseStamped& pose, const std::string &group_name,
-  moveit_visual_tools::VisualToolsPtr visual_tools)
+  moveit_visual_tools::VisualToolsPtr visual_tools, const moveit_msgs::PlanningScene &planning_scene_diff)
 {
   geometry_msgs::PoseStamped goal_pose = pose; // make readable copy
 
@@ -369,6 +381,9 @@ bool BaxterUtilities::sendToPose(const geometry_msgs::PoseStamped& pose, const s
   goal.request.group_name = group_name;
   goal.request.num_planning_attempts = 1;
   goal.request.allowed_planning_time = 5.0;
+
+  // Hack to disable collisions with octomap
+  goal.planning_options.planning_scene_diff = planning_scene_diff;
 
   // -------------------------------------------------------------------------------------------
   // Create goal state
@@ -406,6 +421,7 @@ bool BaxterUtilities::sendToPose(const geometry_msgs::PoseStamped& pose, const s
   if (movegroup_action_->getState() == actionlib::SimpleClientGoalState::SUCCEEDED)
   {
     ROS_INFO_STREAM_NAMED("utilities","Plan successful!");
+    return true;
   }
   else
   {
@@ -414,6 +430,64 @@ bool BaxterUtilities::sendToPose(const geometry_msgs::PoseStamped& pose, const s
   }
 
   return true;
+}
+
+geometry_msgs::Pose BaxterUtilities::getCurrentPose(moveit_visual_tools::VisualToolsPtr visual_tools)
+{
+  ROS_INFO_STREAM_NAMED("baxter_utilities","Getting pose of end effector for " << visual_tools->getEEParentLink());
+
+  // Start listening to the joint states
+  visual_tools->getPlanningSceneMonitor()->startStateMonitor("/robot/joint_states", "/attached_collision_object");
+  ros::Duration(2.0).sleep();
+
+  robot_state::RobotState state = visual_tools->getPlanningSceneMonitor()->getPlanningScene()->getCurrentState();
+  state.updateLinkTransforms();
+  Eigen::Affine3d pose = state.getGlobalLinkTransform(visual_tools->getEEParentLink());
+      
+  geometry_msgs::Pose pose_msg = visual_tools->convertPose(pose);
+
+  ROS_INFO_STREAM_NAMED("baxter_utilities","pose is:");
+  std::cout << "pose_msg.position.x = " << pose_msg.position.x << ";\n";
+  std::cout << "pose_msg.position.y = " << pose_msg.position.y << ";\n";
+  std::cout << "pose_msg.position.z = " << pose_msg.position.z << ";\n";
+  std::cout << "pose_msg.orientation.x = " << pose_msg.orientation.x << ";\n";
+  std::cout << "pose_msg.orientation.y = " << pose_msg.orientation.y << ";\n";
+  std::cout << "pose_msg.orientation.z = " << pose_msg.orientation.z << ";\n";
+  std::cout << "pose_msg.orientation.w = " << pose_msg.orientation.w << ";\n";
+
+  // Feedback
+  visual_tools->publishArrow(pose_msg, moveit_visual_tools::RED, moveit_visual_tools::LARGE);
+
+  return pose_msg;
+}
+
+geometry_msgs::Pose BaxterUtilities::getReadyPose(const std::string &side)
+{
+  geometry_msgs::Pose pose_msg;
+
+  if (side == "left")
+  {
+    // Hard coded pose for left arm
+    pose_msg.position.x = 0.626408;
+    pose_msg.position.y = 0.81637;
+    pose_msg.position.z = 0.247539;
+    pose_msg.orientation.x = -0.381427;
+    pose_msg.orientation.y = 0.921769;
+    pose_msg.orientation.z = 0.0227843;
+    pose_msg.orientation.w = 0.0658544;
+  }
+  else
+  {
+    pose_msg.position.x = 0.613639;
+    pose_msg.position.y = -0.816773;
+    pose_msg.position.z = 0.243619;
+    pose_msg.orientation.x = 0.384237;
+    pose_msg.orientation.y = 0.922543;
+    pose_msg.orientation.z = -0.00470893;
+    pose_msg.orientation.w = 0.035402;
+  }
+
+  return pose_msg;
 }
 
 
