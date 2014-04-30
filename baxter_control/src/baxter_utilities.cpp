@@ -357,7 +357,7 @@ bool BaxterUtilities::sendToPose(const geometry_msgs::Pose& pose, const std::str
 {
   geometry_msgs::PoseStamped pose_stamped;
   pose_stamped.pose = pose;
-  sendToPose(pose_stamped, group_name, visual_tools, planning_scene_diff);
+  return sendToPose(pose_stamped, group_name, visual_tools, planning_scene_diff);
 }
 
 bool BaxterUtilities::sendToPose(const geometry_msgs::PoseStamped& pose, const std::string &group_name,
@@ -372,7 +372,7 @@ bool BaxterUtilities::sendToPose(const geometry_msgs::PoseStamped& pose, const s
     movegroup_action_.reset(new actionlib::SimpleActionClient
       <moveit_msgs::MoveGroupAction>("move_group", true));
     while(!movegroup_action_->waitForServer(ros::Duration(2.0)))
-      ROS_INFO_STREAM_NAMED("sendToPose","Waiting for the move_group action server");
+      ROS_WARN_STREAM_NAMED("sendToPose","Waiting for the move_group action server");
   }
 
   // -----------------------------------------------------------------------------------------------
