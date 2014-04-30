@@ -97,7 +97,7 @@ bool BaxterUtilities::communicationActive()
   // Check that the message timestamp is no older than 1 second
   if(ros::Time::now() > baxter_state_timestamp_ + ros::Duration(1.0))
   {
-    ROS_ERROR_STREAM_NAMED("utilities","Baxter state expired. State: \n" << *baxter_state_ );
+    ROS_ERROR_STREAM_NAMED("utilities","Baxter state expired.");
     return false;
   }
 
@@ -192,10 +192,10 @@ void BaxterUtilities::stateCallback(const baxter_core_msgs::AssemblyStateConstPt
   baxter_state_timestamp_ = ros::Time::now();
 
   // Check for errors every CHECK_FREQ refreshes to save computation
-  static const int CHECK_FREQ = 50;
+  static const int CHECK_FREQ = 25; //50;
   if( state_counter_ % CHECK_FREQ == 0 )
   {
-    if( isEnabled() ) // baxter is disabled
+    if( !isEnabled() ) // baxter is disabled
     {
       if (disabled_callback_called_ == false)
       {
@@ -369,6 +369,7 @@ bool BaxterUtilities::sendToPose(const geometry_msgs::PoseStamped& pose, const s
   // Connect to move_group action server
   if (!movegroup_action_)
   {
+    ROS_DEBUG_STREAM_NAMED("baxter_utilities","sendToPose - load move group action");
     movegroup_action_.reset(new actionlib::SimpleActionClient
       <moveit_msgs::MoveGroupAction>("move_group", true));
     while(!movegroup_action_->waitForServer(ros::Duration(2.0)))
@@ -390,6 +391,7 @@ bool BaxterUtilities::sendToPose(const geometry_msgs::PoseStamped& pose, const s
   goal_pose.header.frame_id = visual_tools->getBaseLink();
   double tolerance_position = 1e-3; // default: 1e-3... meters
   double tolerance_angle = 1e-2; // default 1e-2... radians
+
   moveit_msgs::Constraints goal_constraint0 = kinematic_constraints::constructGoalConstraints(
     visual_tools->getEEParentLink(), goal_pose, tolerance_position, tolerance_angle);
 
@@ -420,7 +422,7 @@ bool BaxterUtilities::sendToPose(const geometry_msgs::PoseStamped& pose, const s
   }
   if (movegroup_action_->getState() == actionlib::SimpleClientGoalState::SUCCEEDED)
   {
-    ROS_INFO_STREAM_NAMED("utilities","Plan successful!");
+    ROS_INFO_STREAM_NAMED("utilities","sendToPose() plan succeeded.");
     return true;
   }
   else

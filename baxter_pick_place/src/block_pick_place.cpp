@@ -115,7 +115,6 @@ public:
     visual_tools_->setPlanningGroupName(planning_group_name_);
 
     simple_grasps_.reset(new moveit_simple_grasps::SimpleGrasps(visual_tools_));
-    simple_grasps_->setAnimateGrasps(false);
 
     // Let everything load
     ros::Duration(1.0).sleep();

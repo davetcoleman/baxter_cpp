@@ -113,7 +113,6 @@ Every Baxter is factory calibrated for the mouting points of the arms because th
     ```   
 * Copy the following ``<origin>`` line to the corresponding location in ``baxter.urdf`` located in ``baxter_description/urdf/baxter.urdf``
 
-* Done.
 
 ## Bringup Baxter
 
@@ -121,7 +120,7 @@ Every Baxter is factory calibrated for the mouting points of the arms because th
 
  * Power on baxter
 
- * Ensure you have the correct ROS_MASTER_URI exported, this depends on your robot serial number:
+ * Ensure you have the correct ROS_MASTER_URI exported, this depends on your robot serial number. Mine is:
    ```
    export ROS_MASTER_URI=http://011305P0009.local:11311
    ```
