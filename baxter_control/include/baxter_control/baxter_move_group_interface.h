@@ -192,7 +192,10 @@ public:
       ROS_ERROR_STREAM_NAMED("baxter_move","Frame ID was not set for requested pose");
       return false;
     }
+    // Clear out any old targets
+    move_group_->clearPoseTargets();
 
+    // Create new target
     move_group_->setPoseTarget(pose, end_effector_name);
     move_group_->setNumPlanningAttempts(1); // TODO increase
     move_group_->setPlanningTime(20);
@@ -219,7 +222,7 @@ public:
    * \param visual_tools - copy of tool for publishing visual objects
    * \return pose of end effector
    */
-  geometry_msgs::Pose getCurrentPose(moveit_visual_tools::VisualToolsPtr visual_tools, 
+  geometry_msgs::Pose getCurrentPose(moveit_visual_tools::VisualToolsPtr visual_tools,
     const moveit_simple_grasps::GraspData& grasp_data)
   {
     ROS_INFO_STREAM_NAMED("baxter_utilities","Getting pose of end effector for " << grasp_data.ee_parent_link_);
@@ -231,13 +234,14 @@ public:
     geometry_msgs::Pose pose_msg = visual_tools->convertPose(pose);
 
     ROS_INFO_STREAM_NAMED("baxter_utilities","pose is:");
-    std::cout << "pose_msg.position.x = " << pose_msg.position.x << ";\n";
-    std::cout << "pose_msg.position.y = " << pose_msg.position.y << ";\n";
-    std::cout << "pose_msg.position.z = " << pose_msg.position.z << ";\n";
-    std::cout << "pose_msg.orientation.x = " << pose_msg.orientation.x << ";\n";
-    std::cout << "pose_msg.orientation.y = " << pose_msg.orientation.y << ";\n";
-    std::cout << "pose_msg.orientation.z = " << pose_msg.orientation.z << ";\n";
-    std::cout << "pose_msg.orientation.w = " << pose_msg.orientation.w << ";\n";
+    std::cout << "geometry_msgs::PoseStamped pose_msg;\n";
+    std::cout << "pose_msg.pose.position.x = " << pose_msg.position.x << ";\n";
+    std::cout << "pose_msg.pose.position.y = " << pose_msg.position.y << ";\n";
+    std::cout << "pose_msg.pose.position.z = " << pose_msg.position.z << ";\n";
+    std::cout << "pose_msg.pose.orientation.x = " << pose_msg.orientation.x << ";\n";
+    std::cout << "pose_msg.pose.orientation.y = " << pose_msg.orientation.y << ";\n";
+    std::cout << "pose_msg.pose.orientation.z = " << pose_msg.orientation.z << ";\n";
+    std::cout << "pose_msg.pose.orientation.w = " << pose_msg.orientation.w << ";\n";
 
     // Feedback
     visual_tools->publishArrow(pose_msg, moveit_visual_tools::RED, moveit_visual_tools::LARGE);
@@ -251,14 +255,14 @@ public:
    * \param
    * \return true on success
    */
-  bool moveStraight(Eigen::Vector3d approach_direction, double desired_approach_distance, 
+  bool moveStraight(Eigen::Vector3d approach_direction, double desired_approach_distance,
     const moveit_simple_grasps::GraspData& grasp_data,
     const std::string& planning_group_name, moveit_visual_tools::VisualToolsPtr visual_tools)
   {
     moveit_msgs::RobotTrajectory trajectory_msg; // the resulting path
 
     // Create the trajectory
-    if( !computeStraightLinePath(approach_direction, desired_approach_distance, trajectory_msg, grasp_data, 
+    if( !computeStraightLinePath(approach_direction, desired_approach_distance, trajectory_msg, grasp_data,
         planning_group_name, visual_tools) )
     {
       ROS_ERROR_STREAM_NAMED("verticle_test","Failed to generate straight line path");
@@ -274,10 +278,10 @@ public:
   }
 
   /**
-   * \brief 
+   * \brief
    * \param input - description
    * \param input - description
-   * \return 
+   * \return
    */
   bool executeTrajectory(const moveit_msgs::RobotTrajectory& trajectory_msg)
   {
@@ -296,7 +300,7 @@ public:
   }
 
   /**
-   * \brief 
+   * \brief
    * \param approach_direction - direction to move end effector straight
    * \param desired_approach_distance - distance the origin of a robot link needs to travel
    * \param trajectory_msg - resulting path
@@ -335,7 +339,7 @@ public:
     if( !joint_model_group->canSetStateFromIK( ik_link ) )
     {
       // Set kinematic solver
-      const std::pair<robot_model::JointModelGroup::KinematicsSolver, robot_model::JointModelGroup::KinematicsSolverMap>& 
+      const std::pair<robot_model::JointModelGroup::KinematicsSolver, robot_model::JointModelGroup::KinematicsSolverMap>&
         allocators = approach_state.getJointModelGroup(planning_group_name)->getGroupKinematics();
 
       if( !allocators.first)
@@ -384,7 +388,7 @@ public:
 
     robot_trajectory->getRobotTrajectoryMsg(trajectory_msg);
     visual_tools->publishTrajectoryPath(trajectory_msg, true);
-    
+
     // Perform iterative parabolic smoothing
     trajectory_processing::IterativeParabolicTimeParameterization iterative_smoother;
     iterative_smoother.computeTimeStamps( *robot_trajectory );
@@ -506,15 +510,23 @@ public:
       case moveit_msgs::MoveItErrorCodes::SUCCESS:
         ROS_INFO_STREAM_NAMED("baxter_move","Planning and execution succeeded");
         return true;
-        break;
-        //case moveit_msgs::MoveItErrorCodes::FAILURE:
+
+      case moveit_msgs::MoveItErrorCodes::INVALID_MOTION_PLAN:
+        ROS_ERROR_STREAM_NAMED("baxter_move","Failed because of invalid motion plan");
+        return false;
+
+        /* Template:
+           case moveit_msgs::MoveItErrorCodes::
+           ROS_ERROR_STREAM_NAMED("baxter_move","Failed because of ");
+           return false;
+        */
     }
 
-    ROS_ERROR_STREAM_NAMED("baxter_move","sendToPose() plan failed with code " << code.val);
+    ROS_ERROR_STREAM_NAMED("baxter_move","Planning and execution failed with code " << code.val);
     return false;
     /*
       int32 PLANNING_FAILED=-1
-      int32 INVALID_MOTION_PLAN=-2
+
       int32 MOTION_PLAN_INVALIDATED_BY_ENVIRONMENT_CHANGE=-3
       int32 CONTROL_FAILED=-4
       int32 UNABLE_TO_AQUIRE_SENSOR_DATA=-5
