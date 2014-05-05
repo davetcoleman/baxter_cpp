@@ -67,13 +67,6 @@ namespace baxter_control
 
 static const std::string BAXTER_STATE_TOPIC = "/robot/state";
 
-// Needed?
-static const std::string ROBOT_DESCRIPTION="robot_description";
-static const std::string PLANNING_GROUP_BOTH_NAME = "both_arms";
-static const std::string BASE_LINK = "base"; //"/base";
-static const std::string NEUTRAL_POSE_NAME = "both_neutral";
-
-
 class BaxterUtilities
 {
 public:
@@ -84,13 +77,6 @@ public:
   ros::Subscriber sub_baxter_state_;
   ros::Subscriber sub_shoulder_left_;
   ros::Subscriber sub_shoulder_right_;
-
-  // Action Servers and Clients
-  boost::shared_ptr<actionlib::SimpleActionClient<moveit_msgs::MoveGroupAction> > movegroup_action_;
-
-  // Interface with MoveIt
-  boost::scoped_ptr<move_group_interface::MoveGroup> move_group_both_;
-  boost::scoped_ptr<move_group_interface::MoveGroup> move_group_;
 
   // Remember the last baxter state and time
   baxter_core_msgs::AssemblyStateConstPtr baxter_state_;
@@ -107,7 +93,6 @@ public:
   // Optional function callback for when baxter is disabled
   typedef boost::function<void ()> DisabledCallback;
   DisabledCallback disabled_callback_; //   f1( boost::bind( &myclass::fun1, this ) );
-
   
   BaxterUtilities();
   
@@ -139,45 +124,6 @@ public:
   bool disableBaxter();
 
   bool resetBaxter();
-
-  bool positionBaxterReady();
-
-  bool positionBaxterNeutral();
-
-  /**
-   * \brief Send baxter to a named pose defined in the SRDF
-   * \param pose_name - name of pose in SRDF
-   * \return true if sucessful in planning and moving there
-   */
-  bool sendToPose(const std::string &pose_name);
-
-  /**
-   * \brief Moves the arm to a specified pose
-   * \param pose - desired goal
-   * \param group_name - which arm / planning group to use the pose with
-   * \param visual_tools - copy of tool for publishing visual objects
-   * \param planning_scene_diff - allows direct access to change the planning scene during planning
-   * \return true if sucessful in planning and moving there
-   */
-  bool sendToPose(const geometry_msgs::PoseStamped& pose, const std::string &group_name,   
-    moveit_visual_tools::VisualToolsPtr visual_tools, const moveit_msgs::PlanningScene &planning_scene_diff);
-
-  bool sendToPose(const geometry_msgs::Pose& pose, const std::string &group_name,   
-    moveit_visual_tools::VisualToolsPtr visual_tools, const moveit_msgs::PlanningScene &planning_scene_diff);
-
-  /**
-   * \brief Get the current pose of the desired end effector specified in the visual_tools object
-   * \param visual_tools - copy of tool for publishing visual objects
-   * \return pose of end effector
-   */
-  geometry_msgs::Pose getCurrentPose(moveit_visual_tools::VisualToolsPtr visual_tools);
-
-  /**
-   * \brief Hard coded poses for baxter's end effectors
-   * \param side - left or right
-   * \return pose of ready position
-   */
-  geometry_msgs::Pose getReadyPose(const std::string &side);
 
 };
 

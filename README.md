@@ -135,23 +135,6 @@ Every Baxter is factory calibrated for the mouting points of the arms because th
    roslaunch baxter_control baxter_hardware.launch
    ```
 
-### Gazebo Simulation 
-
-**Note:** since Baxter SDK 0.7.0 this has not been maintained
-
-This uses an actual physics engine from the [Gazebo Simulator](http://gazebosim.org/).
-
- * Ensure you have the correct ROS_MASTER_URI exported:
-   ```
-   export ROS_MASTER_URI=http://localhost:11311
-   ```
-
- * Start simulation with controllers:
-   ```
-   roslaunch baxter_gazebo baxter_gazebo.launch
-   ```
-   By default, an effort-based trajectory controller is started
-
 ### Rviz Visualization
 
 This only shows a virtual Baxter in [Rviz](http://www.ros.org/wiki/rviz) without any physics simulator. Instead it uses a ros_control hardware interface that simply loops back to itself. Good for testing MoveIt!.
@@ -233,12 +216,6 @@ Send Baxter to random poses using motion planning and obstacle avoidance of a ha
 roslaunch baxter_pick_place random_planning.launch
 ```
 
-Send the end effector up and down with a horizontal cartesian path (requires [baxter_experimental](https://github.com/davetcoleman/baxter_experimental) repository
-
-```
-roslaunch baxter_experimental verticle_approach_test.launch
-```
-
 ## Programmed Buttons
 
 ### End Effector Cuff
@@ -251,54 +228,22 @@ roslaunch baxter_experimental verticle_approach_test.launch
  * Left shoulder button: enable Baxter
  * Right shoulder button: disable Baxter
 
-## Helpful Aliases
+## Gazebo Simulation 
 
-When using Baxter, it is productive to have command shortcuts for diagnosing baxter. These are the ones I use:
+**Note:** since Baxter SDK 0.7.0 this has not been maintained
 
-### Turn on and off
+This uses an actual physics engine from the [Gazebo Simulator](http://gazebosim.org/).
 
-    alias be="rostopic pub -1 /robot/set_super_enable std_msgs/Bool True"
-    alias bd="rostopic pub -1 /robot/set_super_enable std_msgs/Bool False"
-    alias br="rostopic pub -1 /robot/set_super_reset std_msgs/Empty"
-    alias bs="rostopic echo -c /robot/state"
-    alias bsu="rosrun baxter_control sonar_enable.py --enable=0"
-    alias bsd="rosrun baxter_control sonar_enable.py --enable=1"
+ * Ensure you have the correct ROS_MASTER_URI exported:
+   ```
+   export ROS_MASTER_URI=http://localhost:11311
+   ```
 
-### Launch scripts
-
-    alias bhardware="roslaunch baxter_control baxter_hardware.launch"
-    alias bm="roslaunch baxter_moveit_config baxter_moveit.launch"
-    alias bpp="roslaunch baxter_pick_place block_pick_place.launch"
-
-### Calibrate/Tare
-
-    alias brtare="rosrun tools tare.py -t right"
-    alias bltare="rosrun tools tare.py -t left"
-    alias brcalibrate="rosrun tools calibrate_arm.py -c right"
-    alias blcalibrate="rosrun tools calibrate_arm.py -c left"
-
-### Gripper Control
-
-    alias brgripperstate="rostopic echo -c /robot/limb/right/accessory/gripper/state"
-    alias brgrippercal="rostopic pub -1 /robot/limb/right/accessory/gripper/command_calibrate std_msgs/Empty"
-    alias brgripperres="rostopic pub -1 /robot/limb/right/accessory/gripper/command_reset std_msgs/Bool true"
-    alias brgripperopen="rostopic pub -1 /robot/limb/right/accessory/gripper/command_release std_msgs/Empty"
-    alias brgripperclose="rostopic pub -1 /robot/limb/right/accessory/gripper/command_grip std_msgs/Float32 0"
-    alias blgripperstate="rostopic echo -c /robot/limb/left/accessory/gripper/state"
-    alias blgrippercal="rostopic pub -1 /robot/limb/left/accessory/gripper/command_calibrate std_msgs/Empty"
-    alias blgripperres="rostopic pub -1 /robot/limb/left/accessory/gripper/command_reset std_msgs/Bool true"
-    alias blgripperopen="rostopic pub -1 /robot/limb/left/accessory/gripper/command_release std_msgs/Empty"
-    alias blgripperclose="rostopic pub -1 /robot/limb/left/accessory/gripper/command_grip std_msgs/Float32 0"
-
-### View Cameras
-
-    alias brcamera="rosrun image_view image_view image:=/cameras/right_hand_camera/image"
-    alias blcamera="rosrun image_view image_view image:=/cameras/left_hand_camera/image"
-
-### Misc
-
-    alias blog="ftp 011305P0009.local"
-
+ * Start simulation with controllers:
+   ```
+   roslaunch baxter_gazebo baxter_gazebo.launch
+   ```
+   By default, an effort-based trajectory controller is started
 
 ## License
 

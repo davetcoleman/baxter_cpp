@@ -11,17 +11,17 @@
     <node name="face" pkg="baxter_scripts" type="xdisplay_image.py"
 	  args="--file=$(find baxter_moveit_config)/media/hal.jpg" />
 
-    <!-- Mute Baxter's sonars
-	 <node name="baxter_mute_sonar" pkg="baxter_scripts" type="sonar_enable.py"
-	 respawn="false" output="screen" args="-REMOVE-enable=0"/>
-    -->
+    <!-- Mute Baxter's sonars -->
+    <!-- BROKEN? node name="baxter_mute_sonar" pkg="baxter_scripts" type="sonar_enable.py"
+	  respawn="false" output="screen" args="-REMOVE-enable=0"/-->
 
     <!-- Face tracking using sonars -->
-    <node name="baxter_head_follow" pkg="baxter_scripts" type="baxter_head_follow"
-	  respawn="false" output="screen" args=""/>
+    <!--node name="baxter_head_follow" pkg="baxter_scripts" type="baxter_head_follow"
+	  respawn="false" output="screen" args=""/-->
 
-    <!-- Load gripper controller -->
-    <include file="$(find baxter_gripper_server)/launch/baxter_gripper_server.launch" />
   </group>
+
+  <!-- Load gripper controller -->
+  <include file="$(find baxter_gripper_server)/launch/baxter_gripper_server.launch" />
 
 </launch>

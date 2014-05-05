@@ -36,6 +36,8 @@
     <!-- Run fake state publisher -->
     <node name="assembly_state_publisher" pkg="baxter_control" type="baxter_assembly_state"  respawn="true" output="screen" />
 
+    <!-- Publish world frame -->
+    <node pkg="tf" type="static_transform_publisher" name="tf_publisher_world" args="0 0 0 0 0 0 /world /base 25" />
   </group>
 
   <!-- Load other configurations shared between all three Baxter run modes-->

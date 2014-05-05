@@ -84,12 +84,16 @@ ArmSimulatorInterface::ArmSimulatorInterface(const std::string &arm_name, double
     joint_velocity_[i] = 0.0;
     joint_effort_[i] = 0.0;
 
-    // Initial COmmands
+    // Initial Commands
     joint_position_command_[i] = joint_position_[i]; // set command to the gravity-neutral position
     joint_effort_command_[i] = 0.0;
     joint_velocity_command_[i] = 0.0;
   }
 
+  // Subscribe to the end effector commands
+  ee_command_sub_ = nh_.subscribe<baxter_core_msgs::EndEffectorCommand>("/robot/end_effector/" + arm_name_
+                    + "_gripper/command",
+                    1, &ArmSimulatorInterface::eeStateCallback, this);
 }
 
 ArmSimulatorInterface::~ArmSimulatorInterface()
@@ -163,12 +167,12 @@ void ArmSimulatorInterface::write(ros::Duration elapsed_time)
         joint_velocity_[i] += v_error_ * VELOCITY_STEP_FACTOR / loop_hz_;
 
         /*
-        if (arm_name_.compare("right") == 0 )
+          if (arm_name_.compare("right") == 0 )
           ROS_INFO_STREAM_NAMED("temp",
-            " Position " << joint_position_[i] <<
-            " Velocity " << joint_velocity_[i] <<
-            " Velocity Err " << v_error_ <<
-            " Effort " << joint_effort_[i]);
+          " Position " << joint_position_[i] <<
+          " Velocity " << joint_velocity_[i] <<
+          " Velocity Err " << v_error_ <<
+          " Effort " << joint_effort_[i]);
         */
 
         break;
@@ -185,5 +189,32 @@ void ArmSimulatorInterface::robotDisabledCallback()
   // not implemented for simulation
 }
 
+void ArmSimulatorInterface::eeStateCallback(const baxter_core_msgs::EndEffectorCommandConstPtr& msg)
+{
+  switch (*joint_mode_)
+  {
+    case hardware_interface::MODE_POSITION:
+    case hardware_interface::MODE_VELOCITY:
+
+      // arm_name_+"_gripper_l_finger_joint" = 7
+      // arm_name_+"_gripper_r_finger_joint" = 8
+
+      if (msg->command == "grip")
+      {
+        joint_position_[7] = -0.0125;
+        joint_position_[8] = 0.0125;
+      }
+      else
+      {
+        joint_position_[7] = 0.0095;
+        joint_position_[8] = -0.0095;
+      }
+
+      break;
+    case hardware_interface::MODE_EFFORT:
+      ROS_ERROR_STREAM_NAMED("eeStateCallback","Effort mode not implemented for ee");
+      break;
+  }
+}
 
 } // namespace

@@ -102,7 +102,7 @@ public:
     // Shutdown
 
     // Move to gravity neutral position
-    baxter_util_.positionBaxterNeutral();
+    // TODO baxter_util_.positionBaxterNeutral();
 
     // Disable servos
     baxter_util_.disableBaxter();

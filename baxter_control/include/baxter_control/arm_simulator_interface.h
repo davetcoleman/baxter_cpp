@@ -52,6 +52,7 @@
 
 // Baxter
 #include <baxter_core_msgs/JointCommand.h>
+#include <baxter_core_msgs/EndEffectorCommand.h>
 
 // Parent class
 #include <baxter_control/arm_interface.h>
@@ -68,6 +69,8 @@ private:
 
   double p_error_, v_error_, e_error_;
   double elapsed_time_sec;
+
+  ros::Subscriber ee_command_sub_;
 
 public:
 
@@ -117,6 +120,11 @@ public:
    */
   void robotDisabledCallback();
 
+  /**
+   * \brief Simulate end effector commands
+   * \param input - description
+   */
+  void eeStateCallback(const baxter_core_msgs::EndEffectorCommandConstPtr& msg);
 };
 
 } // namespace
