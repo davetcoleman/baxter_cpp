@@ -5,7 +5,7 @@ project(baxter_perception)
 ## if COMPONENTS list like find_package(catkin REQUIRED COMPONENTS xyz)
 ## is used, also find other catkin packages
 find_package(catkin REQUIRED COMPONENTS
-  checkerboard_detector
+  #checkerboard_detector
   openni_launch
   tf
 )
