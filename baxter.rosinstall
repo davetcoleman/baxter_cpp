@@ -5,3 +5,9 @@
 - git: {local-name: graph_msgs, uri: 'https://github.com/davetcoleman/graph_msgs.git', version: master}
 - git: {local-name: ros_controllers, uri: 'https://github.com/ros-controls/ros_controllers.git', version: velocity_position_controller}
 - git: {local-name: ros_control, uri: 'https://github.com/ros-controls/ros_control.git', version: joint_mode_interface}
+#- git: {local-name: checkerboard_detector, uri: 'https://github.com/davetcoleman/checkerboard_detector', version: master}
+
+# only for indigo:
+#https://github.com/ros-drivers/openni_launch.git
+#https://github.com/ros-drivers/openni_camera.git
+#https://github.com/ros-simulation/gazebo_ros_pkgs.git

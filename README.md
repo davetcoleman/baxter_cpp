@@ -3,9 +3,7 @@ baxter_cpp
 
 **Note:** this repository was renamed from "baxter" to "baxter_cpp" with SDK release v0.7.0 so as to not conflict with Rethink's new "baxter" repository
 
-**Note:** not currently in fully working condition - I'm playing with not using ros_control anymore
-
-A C++ version of the Baxter SDK that works along side the Rethink SDK. Currently contains a ros_control implementation of the Baxter controllers, Gazebo simulation, and pick and place MoveIt! code for Baxter. 
+A C++ version of the Baxter SDK that works along side the Rethink SDK. Currently contains a ros_control implementation of the Baxter controllers and pick and place MoveIt! code for Baxter, as well as other tools. 
 
 On going development continues in the development branch and contributors are strongly encouraged to send pull requests and use this code. The master branch of this repository is kept as stable as posible and is continuously integrated using [Travis](https://travis-ci.org/).
 
@@ -16,7 +14,7 @@ On going development continues in the development branch and contributors are st
  * Baxter pick and place with MoveIt!
    * Generate grasps for simple blocks on a table
    * Execute a pick and place routine
-   * Works on hardware, Gazebo and in an Rviz visualization
+   * Works on hardware and in an Rviz visualization
    * Other tools for testing trajectories
  * Baxter ros_control position, velocity, or torque trajectory controllers
    * Uses the ros_control [joint_trajectory_controller](https://github.com/ros-controls/ros_controllers/tree/hydro-devel/joint_trajectory_controller) instead of the python trajectory controller that comes with the SDK
@@ -24,8 +22,6 @@ On going development continues in the development branch and contributors are st
    * Displays in MoveIt!
  * Other stuff
    * Baxter's face follows obstacles using the sonars
-
-Additional experimental features are provided in [baxter_experimental](https://github.com/davetcoleman/baxter_experimental)
 
 ### Build Status
 
@@ -42,7 +38,7 @@ Additional experimental features are provided in [baxter_experimental](https://g
 
  * A Baxter with dual parallel electric grippers with SDK v0.7.0 installed
  * (Optional) Asus Xtion Pro Camera
- * [ROS Hydro](http://wiki.ros.org/ROS/Installation) on (suggested) Ubuntu 12.04
+ * [ROS Hydro](http://wiki.ros.org/ROS/Installation) on (suggested) Ubuntu 12.04, or ROS Indigo on Ubuntu 14.04 (under development)
  * Install wstool package
     ```
     sudo apt-get install python-wstool
