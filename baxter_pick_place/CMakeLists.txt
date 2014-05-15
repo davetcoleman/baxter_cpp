@@ -15,6 +15,7 @@ find_package(catkin REQUIRED COMPONENTS
   geometry_msgs
   baxter_control
   roscpp
+  cmake_modules
 )
 
 find_package(Eigen REQUIRED)

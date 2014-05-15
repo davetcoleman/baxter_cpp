@@ -1,15 +1,15 @@
 cmake_minimum_required(VERSION 2.8.3)
 project(baxter_ikfast_right_arm_plugin)
 
-find_package(Eigen REQUIRED)
-include_directories(SYSTEM ${EIGEN_INCLUDE_DIRS})
-
 find_package(catkin REQUIRED COMPONENTS
   moveit_core
   pluginlib
   roscpp
   tf_conversions
+  cmake_modules
 )
+
+find_package(Eigen REQUIRED)
 
 include_directories(${catkin_INCLUDE_DIRS})
 link_directories(${catkin_LIBRARY_DIRS})
