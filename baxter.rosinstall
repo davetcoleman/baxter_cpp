@@ -4,9 +4,10 @@
 - git: {local-name: ros_control, uri: 'https://github.com/ros-controls/ros_control.git', version: joint_mode_interface}
 - git: {local-name: moveit_simple_grasps, uri: 'https://github.com/davetcoleman/moveit_simple_grasps.git', version: hydro-devel}
 - git: {local-name: checkerboard_detector, uri: 'https://github.com/davetcoleman/checkerboard_detector', version: master}
+# Not required for debian systems:
+- git: {local-name: moveit_visual_tools, uri: 'https://github.com/davetcoleman/moveit_visual_tools.git', version: hydro-devel} 
+- git: {local-name: graph_msgs, uri: 'https://github.com/davetcoleman/graph_msgs.git', version: master}
 
 # only for indigo:
 #https://github.com/ros-drivers/openni_launch.git
 #https://github.com/ros-drivers/openni_camera.git
-#- git: {local-name: graph_msgs, uri: 'https://github.com/davetcoleman/graph_msgs.git', version: master}
-#- git: {local-name: moveit_visual_tools, uri: 'https://github.com/davetcoleman/moveit_visual_tools.git', version: hydro-devel}
