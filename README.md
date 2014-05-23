@@ -75,6 +75,8 @@ On going development continues in the development branch and contributors are st
 
     ```	    
     wstool update
+    sudo apt-get update 
+    sudo apt-get upgrade-dist
     source /opt/ros/hydro/setup.bash
     rosdep update
     ```
