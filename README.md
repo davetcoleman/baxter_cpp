@@ -60,21 +60,21 @@ On going development continues in the development branch and contributors are st
     wstool merge https://raw.github.com/RethinkRobotics/baxter/master/baxter_sdk.rosinstall
     ```
 
-* Install these baxter_cpp packages and update: (note, replaces Rethink's baxter_common with a version that has parallel electric end effectors modeled)
+* Install these baxter_cpp packages: (note, replaces Rethink's baxter_common with a version that has parallel electric end effectors modeled)
 
     ```
     wstool merge --merge-replace -y https://raw.github.com/davetcoleman/baxter_cpp/hydro-devel/baxter.rosinstall
-    wstool update
     ```
 
 * If you have access to the CU Boulder research code (private repo):
     ```
-    https://raw.githubusercontent.com/davetcoleman/baxter_cpp/hydro-devel/baxter_experimental.rosinstall
+    wstool merge https://raw.githubusercontent.com/davetcoleman/baxter_cpp/hydro-devel/baxter_experimental.rosinstall
     ```
 
-* Source ROS setup and update rosdep if you haven't already
+* Download, source ROS setup and update rosdep if you haven't already
 
     ```	    
+    wstool update
     source /opt/ros/hydro/setup.bash
     rosdep update
     ```
