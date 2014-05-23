@@ -3,7 +3,7 @@
 - git: {local-name: ros_controllers, uri: 'https://github.com/ros-controls/ros_controllers.git', version: velocity_position_controller}
 - git: {local-name: ros_control, uri: 'https://github.com/ros-controls/ros_control.git', version: joint_mode_interface}
 - git: {local-name: moveit_simple_grasps, uri: 'https://github.com/davetcoleman/moveit_simple_grasps.git', version: hydro-devel}
-#- git: {local-name: checkerboard_detector, uri: 'https://github.com/davetcoleman/checkerboard_detector', version: master}
+- git: {local-name: checkerboard_detector, uri: 'https://github.com/davetcoleman/checkerboard_detector', version: master}
 
 # only for indigo:
 #https://github.com/ros-drivers/openni_launch.git
