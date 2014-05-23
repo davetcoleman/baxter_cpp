@@ -67,6 +67,11 @@ On going development continues in the development branch and contributors are st
     wstool update
     ```
 
+* If you have access to the CU Boulder research code (private repo):
+    ```
+    wstool merge https://raw.github.com/davetcoleman/baxter_cpp/master/baxter_experimental.rosinstall
+    ```
+
 * Source ROS setup and update rosdep if you haven't already
 
     ```	    
