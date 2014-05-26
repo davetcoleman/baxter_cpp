@@ -1,2 +1,2 @@
-- git: {local-name: baxter_experimental, uri: 'https://github.com/davetcoleman/baxter_experimental.git', version: master}
+- git: {local-name: baxter_experimental, uri: 'git@github.com:davetcoleman/baxter_experimental.git', version: master}
 - git: {local-name: rosbag_record_cpp, uri: 'https://github.com/davetcoleman/rosbag_record_cpp', version: master}
