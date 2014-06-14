@@ -621,7 +621,7 @@ public:
   // position is a value from FINGER_JOINT_LOWER to FINGER_JOINT_UPPER (-0.0125 to 0.0095) 
   bool goToPosition(double position)
   {
-    ROS_INFO_STREAM_NAMED(arm_name_,"Closing " << arm_name_ << " end effector");
+    ROS_INFO_STREAM_NAMED(arm_name_,"Setting " << arm_name_ << " end effector to position " << position);
 
     // convert to 0-100.0 scale
     double converted = 100.0 * (position - FINGER_JOINT_LOWER) / (finger_joint_stroke_);
