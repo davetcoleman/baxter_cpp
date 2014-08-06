@@ -304,19 +304,19 @@ public:
     // Calibrate if needed
     if( !gripper_state_->calibrated )
     {
-      ROS_INFO_STREAM_NAMED(arm_name_,"Calibrating gripper");
+			ROS_INFO_STREAM_NAMED(arm_name_,"Calibrating gripper");
 
-      baxter_core_msgs::EndEffectorCommand command;
-      command.command = baxter_core_msgs::EndEffectorCommand::CMD_CALIBRATE;
-      command.id = 65538;
+			baxter_core_msgs::EndEffectorCommand command;
+			command.command = baxter_core_msgs::EndEffectorCommand::CMD_CALIBRATE;
+			command.id = 65538;
 
-	  // Send command several times to be safe
-	  for (std::size_t i = 0; i < GRIPPER_MSG_RESEND; ++i)
-	  {
-	    command_topic_.publish(command);
-	    ros::Duration(MSG_PULSE_SEC).sleep();
-	    ros::spinOnce();
-	  }
+			// Send command several times to be safe
+			for (std::size_t i = 0; i < GRIPPER_MSG_RESEND; ++i)
+			{
+				command_topic_.publish(command);
+				ros::Duration(MSG_PULSE_SEC).sleep();
+				ros::spinOnce();
+			}
    	}
   }
 
