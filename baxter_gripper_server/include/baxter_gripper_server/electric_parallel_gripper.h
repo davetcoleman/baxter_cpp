@@ -512,25 +512,6 @@ public:
       success = goToPosition(position);
     }
 
-    /*
-    // Open command
-    if(position > finger_joint_midpoint_)
-    {
-      // Error check gripper
-      if( hasError() )
-        success = false;
-      else
-        success = openGripper();
-    }
-    else // Close command
-    {
-      // Error check gripper
-      if( hasError() )
-        success = false;
-      else
-        success = closeGripper();
-    }*/
-
     // Report success
     action_result_.position = gripper_state_->position;
     action_result_.effort = gripper_state_->force;
@@ -579,7 +560,7 @@ public:
   {
     ROS_INFO_STREAM_NAMED(arm_name_,"Closing " << arm_name_ << " end effector");
 
-  baxter_core_msgs::EndEffectorCommand command;
+    baxter_core_msgs::EndEffectorCommand command;
     command.command = baxter_core_msgs::EndEffectorCommand::CMD_GO;
     command.args = "{\"position\": 0.0}";
     command.id = 65538;
@@ -587,7 +568,6 @@ public:
     for (std::size_t i = 0; i < GRIPPER_MSG_RESEND; ++i)
     {
       command_topic_.publish(command);
-
       ros::Duration(MSG_PULSE_SEC).sleep();
       ros::spinOnce();
     }
@@ -628,7 +608,7 @@ public:
     std::stringstream args;
     args << "{\"position\": " << converted << "}";
     
-  baxter_core_msgs::EndEffectorCommand command;
+    baxter_core_msgs::EndEffectorCommand command;
     command.command = baxter_core_msgs::EndEffectorCommand::CMD_GO;
     command.args = args.str();
     command.id = 65538;
