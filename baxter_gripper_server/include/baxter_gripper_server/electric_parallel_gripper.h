@@ -304,20 +304,20 @@ public:
     // Calibrate if needed
     if( !gripper_state_->calibrated )
     {
-			ROS_INFO_STREAM_NAMED(arm_name_,"Calibrating gripper");
+      ROS_INFO_STREAM_NAMED(arm_name_,"Calibrating gripper");
 
-			baxter_core_msgs::EndEffectorCommand command;
-			command.command = baxter_core_msgs::EndEffectorCommand::CMD_CALIBRATE;
-			command.id = 65538;
+      baxter_core_msgs::EndEffectorCommand command;
+      command.command = baxter_core_msgs::EndEffectorCommand::CMD_CALIBRATE;
+      command.id = 65538;
 
-			// Send command several times to be safe
-			for (std::size_t i = 0; i < GRIPPER_MSG_RESEND; ++i)
-			{
-				command_topic_.publish(command);
-				ros::Duration(MSG_PULSE_SEC).sleep();
-				ros::spinOnce();
-			}
-   	}
+      // Send command several times to be safe
+      for (std::size_t i = 0; i < GRIPPER_MSG_RESEND; ++i)
+      {
+        command_topic_.publish(command);
+        ros::Duration(MSG_PULSE_SEC).sleep();
+        ros::spinOnce();
+      }
+    }
   }
 
   void stateCallback(const baxter_core_msgs::EndEffectorStateConstPtr& msg)
@@ -505,11 +505,11 @@ public:
 
     if (hasError())
     {
-    	success = false;
+      success = false;
     }
     else
     {
-    	success = goToPosition(position);
+      success = goToPosition(position);
     }
 
     /*
@@ -579,7 +579,7 @@ public:
   {
     ROS_INFO_STREAM_NAMED(arm_name_,"Closing " << arm_name_ << " end effector");
 
-	baxter_core_msgs::EndEffectorCommand command;
+  baxter_core_msgs::EndEffectorCommand command;
     command.command = baxter_core_msgs::EndEffectorCommand::CMD_GO;
     command.args = "{\"position\": 0.0}";
     command.id = 65538;
@@ -628,7 +628,7 @@ public:
     std::stringstream args;
     args << "{\"position\": " << converted << "}";
     
-	baxter_core_msgs::EndEffectorCommand command;
+  baxter_core_msgs::EndEffectorCommand command;
     command.command = baxter_core_msgs::EndEffectorCommand::CMD_GO;
     command.args = args.str();
     command.id = 65538;
