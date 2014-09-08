@@ -61,7 +61,7 @@ static const double FINGER_JOINT_LOWER = -0.0125; //close
 static const double MSG_PULSE_SEC = 0.1;
 static const double WAIT_GRIPPER_CLOSE_SEC = 0.5;
 static const double WAIT_STATE_MSG_SEC = 1; // max time to wait for the gripper state to refresh
-static const double GRIPPER_MSG_RESEND = 2; // Number of times to re-send a msg to the end effects for assurance that it arrives
+static const double GRIPPER_MSG_RESEND = 100; // Number of times to re-send a msg to the end effects for assurance that it arrives
 
 class ElectricParallelGripper
 {
@@ -121,7 +121,7 @@ public:
     command_topic_ = nh_.advertise<baxter_core_msgs::EndEffectorCommand>("/robot/end_effector/" + arm_name_
                        + "_gripper/command",10);
 
-    command_msg_.id = 65664;
+    command_msg_.id = 65538;
     command_msg_.sender = "baxter_gripper_server";
 
     // Start the subscribers
@@ -306,11 +306,17 @@ public:
     {
       ROS_INFO_STREAM_NAMED(arm_name_,"Calibrating gripper");
 
-      command_msg_.command = baxter_core_msgs::EndEffectorCommand::CMD_CALIBRATE;
-      command_topic_.publish(command_msg_);
+      baxter_core_msgs::EndEffectorCommand command;
+      command.command = baxter_core_msgs::EndEffectorCommand::CMD_CALIBRATE;
+      command.id = 65538;
 
-      ros::spinOnce();
-      ros::Duration(0.05).sleep();
+      // Send command several times to be safe
+      for (std::size_t i = 0; i < GRIPPER_MSG_RESEND; ++i)
+      {
+        command_topic_.publish(command);
+        ros::Duration(MSG_PULSE_SEC).sleep();
+        ros::spinOnce();
+      }
     }
   }
 
@@ -497,22 +503,13 @@ public:
 
     //ROS_INFO_STREAM_NAMED(arm_name_,"Recieved goal for command position: " << position);
 
-    // Open command
-    if(position > finger_joint_midpoint_)
+    if (hasError())
     {
-      // Error check gripper
-      if( hasError() )
-        success = false;
-      else
-        success = openGripper();
+      success = false;
     }
-    else // Close command
+    else
     {
-      // Error check gripper
-      if( hasError() )
-        success = false;
-      else
-        success = closeGripper();
+      success = goToPosition(position);
     }
 
     // Report success
@@ -538,12 +535,15 @@ public:
   {
     ROS_INFO_STREAM_NAMED(arm_name_,"Opening " << arm_name_ << " end effector");
 
+    baxter_core_msgs::EndEffectorCommand command;
+    command.command = baxter_core_msgs::EndEffectorCommand::CMD_GO;
+    command.args = "{\"position\": 100.0}";
+    command.id = 65538;
+
     // Send command several times to be safe
     for (std::size_t i = 0; i < GRIPPER_MSG_RESEND; ++i)
     {
-
-      command_msg_.command = baxter_core_msgs::EndEffectorCommand::CMD_RELEASE;
-      command_topic_.publish(command_msg_);
+      command_topic_.publish(command);
 
       ros::Duration(MSG_PULSE_SEC).sleep();
       ros::spinOnce();
@@ -560,13 +560,14 @@ public:
   {
     ROS_INFO_STREAM_NAMED(arm_name_,"Closing " << arm_name_ << " end effector");
 
+    baxter_core_msgs::EndEffectorCommand command;
+    command.command = baxter_core_msgs::EndEffectorCommand::CMD_GO;
+    command.args = "{\"position\": 0.0}";
+    command.id = 65538;
     // Send command several times to be safe
     for (std::size_t i = 0; i < GRIPPER_MSG_RESEND; ++i)
     {
-
-      command_msg_.command = baxter_core_msgs::EndEffectorCommand::CMD_GRIP;
-      command_topic_.publish(command_msg_);
-
+      command_topic_.publish(command);
       ros::Duration(MSG_PULSE_SEC).sleep();
       ros::spinOnce();
     }
@@ -587,6 +588,56 @@ public:
       ROS_WARN_STREAM_NAMED(arm_name_,"No object detected in end effector");
       return false;
     }
+
+    // Error check gripper
+    if( hasError() )
+      return false;
+
+    return true;
+  }
+
+  // commands joints to go to specified position.
+  // position is a value from FINGER_JOINT_LOWER to FINGER_JOINT_UPPER (-0.0125 to 0.0095) 
+  bool goToPosition(double position)
+  {
+    ROS_INFO_STREAM_NAMED(arm_name_,"Setting " << arm_name_ << " end effector to position " << position);
+
+    // convert to 0-100.0 scale
+    double converted = 100.0 * (position - FINGER_JOINT_LOWER) / (finger_joint_stroke_);
+
+    std::stringstream args;
+    args << "{\"position\": " << converted << "}";
+    
+    baxter_core_msgs::EndEffectorCommand command;
+    command.command = baxter_core_msgs::EndEffectorCommand::CMD_GO;
+    command.args = args.str();
+    command.id = 65538;
+    // Send command several times to be safe
+    for (std::size_t i = 0; i < GRIPPER_MSG_RESEND; ++i)
+    {
+      command_topic_.publish(command);
+
+      ros::Duration(MSG_PULSE_SEC).sleep();
+      ros::spinOnce();
+    }
+
+    // Check that it actually grasped something
+    /*
+    int counter = 0;
+    while( !gripper_state_->gripping )
+    {
+      ros::Duration(MSG_PULSE_SEC).sleep();
+      ros::spinOnce();
+
+      if( counter > WAIT_GRIPPER_CLOSE_SEC / MSG_PULSE_SEC )
+        break;
+      counter++;
+    }
+    if( !gripper_state_->gripping && !in_simulation_)
+    {
+      ROS_WARN_STREAM_NAMED(arm_name_,"No object detected in end effector");
+      return false;
+    }*/
 
     // Error check gripper
     if( hasError() )
