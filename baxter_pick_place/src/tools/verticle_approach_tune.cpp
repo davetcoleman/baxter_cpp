@@ -264,8 +264,11 @@ public:
     goal_pose.header.frame_id = baxter_pick_place::BASE_LINK;
     double tolerance_pose = 1e-4; // default: 1e-3... meters
     double tolerance_angle = 1e-2; // default 1e-2... radians
-    moveit_msgs::Constraints goal_constraint0 = kinematic_constraints::constructGoalConstraints(
-      visual_tools_->getEEParentLink(), goal_pose, tolerance_pose, tolerance_angle);
+    ROS_ERROR_STREAM_NAMED("temp","Not implemented TODO next link");
+    moveit_msgs::Constraints goal_constraint0 = 
+      kinematic_constraints::constructGoalConstraints(
+                                                      "", // visual_tools_->getEEParentLink(), 
+                                                      goal_pose, tolerance_pose, tolerance_angle);
 
     //ROS_INFO_STREAM_NAMED("verticle_tune","Goal pose " << goal_pose);
 
@@ -329,7 +332,8 @@ public:
     // Settings for computeCartesianPath
 
     // End effector parent link
-    const std::string &ik_link = visual_tools_->getEEParentLink();
+    ROS_ERROR_STREAM_NAMED("temp","Not implemented TODO next link");
+    const std::string &ik_link = ""; //visual_tools_->getEEParentLink();
     const moveit::core::LinkModel *ik_link_model = approach_state.getLinkModel(ik_link);    
 
     // Joint model group
