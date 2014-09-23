@@ -70,10 +70,14 @@ On going development continues in the development branch and contributors are st
     wstool merge https://raw.githubusercontent.com/davetcoleman/baxter_cpp/indigo-devel/baxter_experimental.rosinstall
     ```
 
-* Download, source ROS setup and update rosdep if you haven't already
+* Download the Baxter packages:
 
     ```	    
     wstool update
+    ```
+
+* Setup ROS if you haven't already (you can probably skip this):
+    ```
     sudo apt-get update 
     sudo apt-get dist-upgrade
     source /opt/ros/indigo/setup.bash
