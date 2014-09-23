@@ -1,13 +1,11 @@
 baxter_cpp
 ======
 
-**Note:** this repository was renamed from "baxter" to "baxter_cpp" with SDK release v0.7.0 so as to not conflict with Rethink's new "baxter" repository
-
 A C++ version of the Baxter SDK that works along side the Rethink SDK. Currently contains a ros_control implementation of the Baxter controllers and pick and place MoveIt! code for Baxter, as well as other tools. 
 
 On going development continues in the development branch and contributors are strongly encouraged to send pull requests and use this code. The master branch of this repository is kept as stable as posible and is continuously integrated using [Travis](https://travis-ci.org/).
 
-<img align="right" src="https://raw.github.com/davetcoleman/baxter_cpp/hydro-devel/baxter_pick_place/resource/BaxterPickPlace.png" />
+<img align="right" src="https://raw.github.com/davetcoleman/baxter_cpp/indigo-devel/baxter_pick_place/resource/BaxterPickPlace.png" />
 
 ### Features
 
@@ -25,12 +23,13 @@ On going development continues in the development branch and contributors are st
 
 ### Build Status
 
-[![Build Status](https://travis-ci.org/davetcoleman/baxter_cpp.png?branch=hydro-devel)](https://travis-ci.org/davetcoleman/baxter_cpp)
+[![Build Status](https://travis-ci.org/davetcoleman/baxter_cpp.png?branch=indigo-devel)](https://travis-ci.org/davetcoleman/baxter_cpp)
 
 # Branches
-   
- * [hydro-devel](https://github.com/davetcoleman/baxter_cpp/tree/hydro-devel) - for current Baxter 0.7.0 SDK software on ROS Hydro. Stable.
- * [development](https://github.com/davetcoleman/baxter_cpp/tree/development) - latest hydro-devel work is commited here. Unstable.
+
+ * [indigo-devel](https://github.com/davetcoleman/baxter_cpp/tree/indigo-devel) - for current Baxter 1.0.0 SDK software on ROS Indigo. 
+ * [hydro-devel](https://github.com/davetcoleman/baxter_cpp/tree/hydro-devel) - for current Baxter 0.7.0 SDK software on ROS Hydro.
+ * [development](https://github.com/davetcoleman/baxter_cpp/tree/development) - latest indigo-devel work is commited here. Unstable.
  * [groovy-devel-sdk0.6.2](https://github.com/davetcoleman/baxter_cpp/tree/groovy-devel-sdk0.6.2) - for Baxter 0.6.2 SDK software on ROS Groovy. *NOT SUPPORTED*
  * [hydro-devel-sdk0.6.2](https://github.com/davetcoleman/baxter_cpp/tree/hydro-devel-sdk0.6.2) - for Baxter 0.6.2 SDK software on ROS Hydro. *NOT SUPPORTED*
 
@@ -38,7 +37,7 @@ On going development continues in the development branch and contributors are st
 
  * A Baxter with dual parallel electric grippers with SDK v0.7.0 installed
  * (Optional) Asus Xtion Pro Camera
- * [ROS Hydro](http://wiki.ros.org/ROS/Installation) on (suggested) Ubuntu 12.04, or ROS Indigo on Ubuntu 14.04 (under development)
+ * [ROS Indigo](http://wiki.ros.org/ROS/Installation) on (suggested) Ubuntu 12.04, or ROS Indigo on Ubuntu 14.04 (under development)
  * Install wstool package
     ```
     sudo apt-get install python-wstool
@@ -63,12 +62,12 @@ On going development continues in the development branch and contributors are st
 * Install these baxter_cpp packages: (note, replaces Rethink's baxter_common with a version that has parallel electric end effectors modeled)
 
     ```
-    wstool merge --merge-replace -y https://raw.github.com/davetcoleman/baxter_cpp/hydro-devel/baxter.rosinstall
+    wstool merge --merge-replace -y https://raw.github.com/davetcoleman/baxter_cpp/indigo-devel/baxter.rosinstall
     ```
 
 * If you have access to the CU Boulder research code (private repo):
     ```
-    wstool merge https://raw.githubusercontent.com/davetcoleman/baxter_cpp/hydro-devel/baxter_experimental.rosinstall
+    wstool merge https://raw.githubusercontent.com/davetcoleman/baxter_cpp/indigo-devel/baxter_experimental.rosinstall
     ```
 
 * Download, source ROS setup and update rosdep if you haven't already
@@ -77,7 +76,7 @@ On going development continues in the development branch and contributors are st
     wstool update
     sudo apt-get update 
     sudo apt-get upgrade-dist
-    source /opt/ros/hydro/setup.bash
+    source /opt/ros/indigo/setup.bash
     rosdep update
     ```
 
@@ -85,7 +84,7 @@ On going development continues in the development branch and contributors are st
 
     ```
     cd ..
-    rosdep install --from-paths . --ignore-src --rosdistro hydro -y
+    rosdep install --from-paths . --ignore-src --rosdistro indigo -y
     catkin_make
     ```
 
