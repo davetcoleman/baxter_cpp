@@ -28,7 +28,7 @@ On going development continues in the development branch and contributors are st
 # Branches
 
  * [indigo-devel](https://github.com/davetcoleman/baxter_cpp/tree/indigo-devel) - for current Baxter 1.0.0 SDK software on ROS Indigo. 
- * [hydro-devel](https://github.com/davetcoleman/baxter_cpp/tree/hydro-devel) - for current Baxter 0.7.0 SDK software on ROS Hydro.
+ * [hydro-devel](https://github.com/davetcoleman/baxter_cpp/tree/hydro-devel) - for Baxter 0.7.0 SDK software on ROS Hydro.
  * [development](https://github.com/davetcoleman/baxter_cpp/tree/development) - latest indigo-devel work is commited here. Unstable.
  * [groovy-devel-sdk0.6.2](https://github.com/davetcoleman/baxter_cpp/tree/groovy-devel-sdk0.6.2) - for Baxter 0.6.2 SDK software on ROS Groovy. *NOT SUPPORTED*
  * [hydro-devel-sdk0.6.2](https://github.com/davetcoleman/baxter_cpp/tree/hydro-devel-sdk0.6.2) - for Baxter 0.6.2 SDK software on ROS Hydro. *NOT SUPPORTED*
@@ -56,7 +56,7 @@ On going development continues in the development branch and contributors are st
 * Install Rethink's Baxter SDK as documented below, if you have not already. These instructions can also be found at [Installing the Research SDK](https://github.com/RethinkRobotics/sdk-docs/wiki/Installing-the-Research-SDK)
 
     ```
-    wstool merge https://raw.github.com/RethinkRobotics/baxter/master/baxter_sdk.rosinstall
+    wstool merge https://raw.githubusercontent.com/RethinkRobotics/baxter/master/baxter_sdk.rosinstall
     ```
 
 * Install these baxter_cpp packages: (note, replaces Rethink's baxter_common with a version that has parallel electric end effectors modeled)
@@ -65,7 +65,7 @@ On going development continues in the development branch and contributors are st
     wstool merge --merge-replace -y https://raw.github.com/davetcoleman/baxter_cpp/indigo-devel/baxter.rosinstall
     ```
 
-* If you have access to the CU Boulder research code (private repo):
+* Optional: CU Boulder research code (internal private repo - ignore if you aren't sure):
     ```
     wstool merge https://raw.githubusercontent.com/davetcoleman/baxter_cpp/indigo-devel/baxter_experimental.rosinstall
     ```
