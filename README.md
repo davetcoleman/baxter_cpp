@@ -35,9 +35,9 @@ On going development continues in the development branch and contributors are st
 
 ## Prerequisites
 
- * A Baxter with dual parallel electric grippers with SDK v0.7.0 installed
+ * A Baxter with dual parallel electric grippers with SDK v1.0.0 installed
  * (Optional) Asus Xtion Pro Camera
- * [ROS Indigo](http://wiki.ros.org/ROS/Installation) on (suggested) Ubuntu 12.04, or ROS Indigo on Ubuntu 14.04 (under development)
+ * [ROS Indigo](http://wiki.ros.org/ROS/Installation) on (suggested) Ubuntu 14.04
  * Install wstool package
     ```
     sudo apt-get install python-wstool
@@ -75,7 +75,7 @@ On going development continues in the development branch and contributors are st
     ```	    
     wstool update
     sudo apt-get update 
-    sudo apt-get upgrade-dist
+    sudo apt-get dist-upgrade
     source /opt/ros/indigo/setup.bash
     rosdep update
     ```
