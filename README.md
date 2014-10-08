@@ -53,19 +53,22 @@ On going development continues in the development branch and contributors are st
     wstool init .
     ```
 
-* Install Rethink's Baxter SDK as documented below, if you have not already. These instructions can also be found at [Installing the Research SDK](https://github.com/RethinkRobotics/sdk-docs/wiki/Installing-the-Research-SDK)
+* Install Rethink's Baxter SDK as documented below, if you have not already.
+    *Note*: These instructions can also be found at [Installing the Research SDK](https://github.com/RethinkRobotics/sdk-docs/wiki/Installing-the-Research-SDK)
 
     ```
     wstool merge https://raw.githubusercontent.com/RethinkRobotics/baxter/master/baxter_sdk.rosinstall
     ```
 
-* Install these baxter_cpp packages: (note, replaces Rethink's baxter_common with a version that has parallel electric end effectors modeled)
+* Install these baxter_cpp packages:
+    *Note*: replaces Rethink's baxter_common with a version that has parallel electric end effectors modeled
 
     ```
     wstool merge --merge-replace -y https://raw.github.com/davetcoleman/baxter_cpp/indigo-devel/baxter.rosinstall
     ```
 
-* Optional: CU Boulder research code (internal private repo - ignore if you aren't sure):
+* Optional: Only if you have access to the CU Boulder's private research code (you probably don't):
+
     ```
     wstool merge https://raw.githubusercontent.com/davetcoleman/baxter_cpp/indigo-devel/baxter_experimental.rosinstall
     ```
