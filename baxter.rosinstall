@@ -1,4 +1,4 @@
-- git: {local-name: baxter_cpp, uri: 'https://github.com/davetcoleman/baxter_cpp.git', version: hydro-devel}
+- git: {local-name: baxter_cpp, uri: 'https://github.com/davetcoleman/baxter_cpp.git', version: indigo-devel}
 - git: {local-name: baxter_common, uri: 'https://github.com/davetcoleman/baxter_common.git', version: master}
 - git: {local-name: ros_controllers, uri: 'https://github.com/ros-controls/ros_controllers.git', version: velocity_position_controller}
 - git: {local-name: ros_control, uri: 'https://github.com/ros-controls/ros_control.git', version: joint_mode_interface}
