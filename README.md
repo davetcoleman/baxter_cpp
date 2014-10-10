@@ -258,7 +258,10 @@ This uses an actual physics engine from the [Gazebo Simulator](http://gazebosim.
 
 BSD (New BSD License)
 
-## Develop and Contribute
+## Contributors
 
-Please do! See [Contribute](https://github.com/davetcoleman/baxter_cpp/blob/master/CONTRIBUTING.md) page.
+@brawner
+@jon-weisz 
+
+Please help - see [Contribute](https://github.com/davetcoleman/baxter_cpp/blob/master/CONTRIBUTING.md) page.
 
