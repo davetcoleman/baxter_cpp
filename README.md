@@ -110,7 +110,7 @@ Every Baxter is factory calibrated for the mouting points of the arms because th
 * Start up your Baxter without launching any ROS nodes on your dev machine
 * While connected to Baxter, run the command:
     ```
-    rosparam dump my.baxter.urdf /robot_description
+    rosparam get -p /robot_description | tail -n +2 > my.baxter.urdf
     ```   
 * Within ``my.baxter.urdf`` find the lines that say:
     ```   
