@@ -5,4 +5,4 @@ moveit_setup_assistant_config:
   SRDF:
     relative_path: config/baxter.srdf
   CONFIG:
-    generated_timestamp: 1398283969
+    generated_timestamp: 1412961345
