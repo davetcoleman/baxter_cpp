@@ -36,7 +36,7 @@ import roslib
 roslib.load_manifest('baxter_scripts')
 import rospy
 
-import cv
+import cv2
 import cv_bridge
 
 import sensor_msgs.msg
@@ -48,9 +48,10 @@ def send_image(path):
 
     @param path - path to the image file to load and send
     """
-    img = cv.LoadImage(path)
-    msg = cv_bridge.CvBridge().cv_to_imgmsg(img, encoding="bgr8")
-    pub = rospy.Publisher('/robot/xdisplay', sensor_msgs.msg.Image, latch=True)
+
+    img = cv2.imread(path)
+    msg = cv_bridge.CvBridge().cv2_to_imgmsg(img, encoding="bgr8")
+    pub = rospy.Publisher('/robot/xdisplay', sensor_msgs.msg.Image, latch=True, queue_size=1)
     pub.publish(msg)
     # Even with the latch, we seem to need to wait a bit before exiting to
     # make sure that the message got sent.  Using a service may be a better
