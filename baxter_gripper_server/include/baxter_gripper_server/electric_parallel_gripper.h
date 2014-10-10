@@ -34,6 +34,7 @@
 
 /* Author: Dave Coleman
    Desc:   Models an electric parallel gripper
+   Documentation: http://sdk.rethinkrobotics.com/wiki/API_Reference#grippers
 */
 
 // ROS
