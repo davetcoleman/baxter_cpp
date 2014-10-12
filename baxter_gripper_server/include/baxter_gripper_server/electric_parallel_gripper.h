@@ -309,7 +309,7 @@ public:
 
       baxter_core_msgs::EndEffectorCommand command;
       command.command = baxter_core_msgs::EndEffectorCommand::CMD_CALIBRATE;
-      command.id = 65538;
+      command.id = 65664; //65538;
 
       // Send command several times to be safe
       for (std::size_t i = 0; i < GRIPPER_MSG_RESEND; ++i)
