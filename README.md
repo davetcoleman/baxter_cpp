@@ -79,6 +79,10 @@ On going development continues in the development branch and contributors are st
     wstool update
     ```
 
+* Temp hacks:
+
+    Install posedetection_msgs package from within https://github.com/jsk-ros-pkg/jsk_common.git. I do not advice you install of of jsk_common though. The progress of fixinging this can be tracked [here](https://github.com/jsk-ros-pkg/jsk_common/issues/555)
+
 * Setup ROS if you haven't already (you can probably skip this):
     ```
     sudo apt-get update 
