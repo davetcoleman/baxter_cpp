@@ -35,7 +35,7 @@ controller_list:
       - right_w2
   - name: fake_left_hand_controller
     joints:
-      - left_gripper_l_finger_joint
+      []
   - name: fake_right_hand_controller
     joints:
-      - right_gripper_l_finger_joint
+      []
