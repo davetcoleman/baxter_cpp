@@ -81,24 +81,24 @@ void BaxterUtilities::setDisabledCallback(DisabledCallback callback)
 bool BaxterUtilities::communicationActive()
 {
   int count = 0;
-  while( ros::ok() && baxter_state_timestamp_.toSec() == 0 )
+  double expire_duration = 1.0;
+
+  // Check that the message exists and the timestamp is no older than 1 second
+  while( ros::ok() && (ros::Time::now() < baxter_state_timestamp_ + ros::Duration(expire_duration)))
   {
     if( count > 40 ) // 40 is an arbitrary number for when to assume no state is being published
     {
-      ROS_WARN_STREAM_NAMED("utilities","No state message has been recieved on topic "
-        << BAXTER_STATE_TOPIC);
+      if (baxter_state_timestamp_.toSec() == 0)
+        ROS_ERROR_STREAM_NAMED("utilities","No state message has been recieved on topic "
+                               << BAXTER_STATE_TOPIC);
+      else
+        ROS_ERROR_STREAM_NAMED("utilities","Baxter state expired beyond timeout of " << expire_duration << " seconds. Diff: " 
+                               << ros::Time::now() - baxter_state_timestamp_ << " sec");        
       return false;
     }
 
     ++count;
     ros::Duration(0.05).sleep();
-  }
-
-  // Check that the message timestamp is no older than 1 second
-  if(ros::Time::now() > baxter_state_timestamp_ + ros::Duration(1.0))
-  {
-    ROS_ERROR_STREAM_NAMED("utilities","Baxter state expired.");
-    return false;
   }
 
   return true;
@@ -245,7 +245,7 @@ bool BaxterUtilities::enableBaxter()
   // Wait for state msg to be recieved
   if( !communicationActive() )
     return false;
-
+  
   // Reset Baxter
   if( !resetBaxter() )
     return false;
