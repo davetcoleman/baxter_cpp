@@ -497,4 +497,6 @@
     <disable_collisions link1="screen" link2="sonar_ring" reason="Never" />
     <disable_collisions link1="screen" link2="torso" reason="Never" />
     <disable_collisions link1="sonar_ring" link2="torso" reason="Adjacent" />
+    <disable_collisions link1="left_upper_elbow" link2="left_upper_shoulder" reason="User" />
+    <disable_collisions link1="right_upper_elbow" link2="right_upper_shoulder" reason="User" />
 </robot>

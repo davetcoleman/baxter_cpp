@@ -21,29 +21,26 @@ On going development continues in the development branch and contributors are st
  * Other stuff
    * Baxter's face follows obstacles using the sonars
 
-### Build Status
-
-[![Build Status](https://travis-ci.org/davetcoleman/baxter_cpp.png?branch=indigo-devel)](https://travis-ci.org/davetcoleman/baxter_cpp)
-
 # Branches
 
  * [indigo-devel](https://github.com/davetcoleman/baxter_cpp/tree/indigo-devel) - for current Baxter 1.0.0 SDK software on ROS Indigo. 
  * [hydro-devel](https://github.com/davetcoleman/baxter_cpp/tree/hydro-devel) - for Baxter 0.7.0 SDK software on ROS Hydro.
- * [development](https://github.com/davetcoleman/baxter_cpp/tree/development) - latest indigo-devel work is commited here. Unstable.
- * [groovy-devel-sdk0.6.2](https://github.com/davetcoleman/baxter_cpp/tree/groovy-devel-sdk0.6.2) - for Baxter 0.6.2 SDK software on ROS Groovy. *NOT SUPPORTED*
  * [hydro-devel-sdk0.6.2](https://github.com/davetcoleman/baxter_cpp/tree/hydro-devel-sdk0.6.2) - for Baxter 0.6.2 SDK software on ROS Hydro. *NOT SUPPORTED*
+ * [groovy-devel-sdk0.6.2](https://github.com/davetcoleman/baxter_cpp/tree/groovy-devel-sdk0.6.2) - for Baxter 0.6.2 SDK software on ROS Groovy. *NOT SUPPORTED*
 
 ## Prerequisites
 
  * A Baxter with dual parallel electric grippers with SDK v1.0.0 installed
  * (Optional) Asus Xtion Pro Camera
- * [ROS Indigo](http://wiki.ros.org/ROS/Installation) on (suggested) Ubuntu 14.04
- * Install wstool package
+ * [ROS Indigo](http://wiki.ros.org/ROS/Installation) on Ubuntu 14.04
+    
+## Baxter Installation
+
+* Install wstool package
+
     ```
     sudo apt-get install python-wstool
     ```
-    
-## Baxter Installation
 
 * Create a catkin workspace if you don't already have one (we recommend a separate one for Baxter) 
 
@@ -237,22 +234,6 @@ roslaunch baxter_pick_place random_planning.launch
  * Left shoulder button: enable Baxter
  * Right shoulder button: disable Baxter
 
-## Gazebo Simulation 
-
-**Note:** since Baxter SDK 0.7.0 this has not been maintained
-
-This uses an actual physics engine from the [Gazebo Simulator](http://gazebosim.org/).
-
- * Ensure you have the correct ROS_MASTER_URI exported:
-   ```
-   export ROS_MASTER_URI=http://localhost:11311
-   ```
-
- * Start simulation with controllers:
-   ```
-   roslaunch baxter_gazebo baxter_gazebo.launch
-   ```
-   By default, an effort-based trajectory controller is started
 
 ## License
 
@@ -260,8 +241,9 @@ BSD (New BSD License)
 
 ## Contributors
 
-@brawner
-@jon-weisz 
+- @davetcoleman
+- @brawner
+- @jon-weisz 
 
 Please help - see [Contribute](https://github.com/davetcoleman/baxter_cpp/blob/master/CONTRIBUTING.md) page.
 
