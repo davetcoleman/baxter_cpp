@@ -84,7 +84,7 @@ bool BaxterUtilities::communicationActive()
   double expire_duration = 1.0;
 
   // Check that the message exists and the timestamp is no older than 1 second
-  while( ros::ok() && (ros::Time::now() < baxter_state_timestamp_ + ros::Duration(expire_duration)))
+  while( ros::ok() && (ros::Time::now() > baxter_state_timestamp_ + ros::Duration(expire_duration)))
   {
     if( count > 40 ) // 40 is an arbitrary number for when to assume no state is being published
     {
@@ -98,7 +98,9 @@ bool BaxterUtilities::communicationActive()
     }
 
     ++count;
-    ros::Duration(0.05).sleep();
+    //ROS_DEBUG_STREAM_NAMED("utilities","Waiting to not be expired " << ros::Time::now() - baxter_state_timestamp_);
+    ros::Duration(0.01).sleep();
+    ros::spinOnce();
   }
 
   return true;
