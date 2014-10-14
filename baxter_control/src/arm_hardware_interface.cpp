@@ -125,7 +125,7 @@ bool ArmHardwareInterface::init(
 
   // Start publishers
   pub_joint_command_ = nh_.advertise<baxter_core_msgs::JointCommand>("/robot/limb/"+arm_name_+
-                       "/joint_command",10);
+                       "/joint_command",1);
 
   pub_trajectory_command_ = nh_.advertise<trajectory_msgs::JointTrajectory>("/robot/"+arm_name_+
                             "_trajectory_controller/command",10);
