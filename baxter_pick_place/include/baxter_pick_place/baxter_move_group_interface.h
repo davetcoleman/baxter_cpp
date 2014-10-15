@@ -52,8 +52,10 @@
 #include <moveit/trajectory_processing/iterative_time_parameterization.h>
 #include <moveit/plan_execution/plan_execution.h>
 #include <moveit/trajectory_processing/trajectory_tools.h> // for plan_execution
+#include <moveit_msgs/MoveGroupGoal.h>
+#include <moveit/kinematic_constraints/utils.h>
 
-namespace baxter_control
+namespace baxter_pick_place
 {
 
 static const std::string ROBOT_DESCRIPTION="robot_description";
@@ -90,6 +92,7 @@ public:
     planning_scene_monitor_->startStateMonitor(JOINT_STATE_TOPIC);
 
     // We manually set the options to save on URDF loading time
+    // We also set the move_group to operate on a paritcular planning group
     moveit::planning_interface::MoveGroup::Options opts(planning_group, ROBOT_DESCRIPTION);
     opts.robot_model_ = planning_scene_monitor_->getRobotModel();
 
@@ -164,7 +167,7 @@ public:
    */
   bool sendToPose(const std::string &pose_name)
   {
-    ROS_INFO_STREAM_NAMED("baxter_utilities","Sending to pose '" << pose_name << "'");
+    ROS_INFO_STREAM_NAMED("baxter_move_group_interface","Sending to pose '" << pose_name << "'");
 
     move_group_->setNamedTarget(pose_name);
     move_group_->setPlanningTime(15);
@@ -184,8 +187,18 @@ public:
    * \param planning_scene_diff - allows direct access to change the planning scene during planning
    * \return true if sucessful in planning and moving there
    */
-  bool sendToPose(const geometry_msgs::PoseStamped& pose, const std::string &end_effector_name,
-    moveit_visual_tools::VisualToolsPtr visual_tools, const moveit_msgs::PlanningScene &planning_scene_diff)
+  bool sendToPose(const geometry_msgs::Pose& pose, moveit_visual_tools::VisualToolsPtr visual_tools, 
+                  const moveit_msgs::PlanningScene &planning_scene_diff)                  
+  {
+    geometry_msgs::PoseStamped pose_stamped;
+    pose_stamped.pose = pose;
+    pose_stamped.header.frame_id = planning_scene_monitor_->getPlanningScene()->getCurrentState().getRobotModel()->getModelFrame();
+
+    sendToPose(pose_stamped, visual_tools, planning_scene_diff);
+  }
+
+  bool sendToPose(const geometry_msgs::PoseStamped& pose, 
+                  moveit_visual_tools::VisualToolsPtr visual_tools, const moveit_msgs::PlanningScene &planning_scene_diff)
   {
     // Make sure frame_id was set
     if (pose.header.frame_id.empty())
@@ -197,8 +210,8 @@ public:
     move_group_->clearPoseTargets();
 
     // Create new target
-    move_group_->setPoseTarget(pose, end_effector_name);
-    move_group_->setNumPlanningAttempts(1); // TODO increase
+    move_group_->setPoseTarget(pose);
+    move_group_->setNumPlanningAttempts(4);
     move_group_->setPlanningTime(20);
     move_group_->setGoalPositionTolerance(1e-3); // meters
     move_group_->setGoalOrientationTolerance(1e-2); // radians
@@ -207,16 +220,81 @@ public:
     //goal.planning_options.planning_scene_diff = planning_scene_diff; // TODO re-enable?
 
     // Visualize goals in rviz
-    //visual_tools->publishArrow(goal_pose.pose, moveit_visual_tools::GREEN);
-    //visual_tools->publishEEMarkers(goal_pose.pose, moveit_visual_tools::GREEN);
+    visual_tools->publishArrow(pose.pose, moveit_visual_tools::GREEN);
 
     // Plan
+    std::cout << "sending " << std::endl;
     moveit::planning_interface::MoveItErrorCode code = move_group_->move();
+    std::cout << "sending finished" << std::endl;
     ros::spinOnce();
     ros::Duration(0.5).sleep();
 
     return convertResult(code);
   }
+
+  /*
+  // Moves the arm to a specified pose
+  bool sendPoseCommand(const geometry_msgs::Pose& pose, const std::string& planning_group_name, const std::string& base_link,
+                       moveit_visual_tools::VisualToolsPtr visual_tools)
+  {
+    // -----------------------------------------------------------------------------------------------
+    // Make a stamped version of the pose
+    geometry_msgs::PoseStamped goal_pose;
+    goal_pose.pose = pose;
+
+    // -----------------------------------------------------------------------------------------------
+    // Create move_group goal
+    moveit_msgs::MoveGroupGoal goal;
+    goal.request.group_name = planning_group_name;
+    goal.request.num_planning_attempts = 1;
+    goal.request.allowed_planning_time = 5.0;
+
+    // -------------------------------------------------------------------------------------------
+    // Create goal state
+    goal_pose.header.frame_id = base_link;
+    double tolerance_position = 1e-3; // default: 1e-3... meters
+    double tolerance_angle = 1e-2; // default 1e-2... radians
+    moveit_msgs::Constraints goal_constraint0 = kinematic_constraints::constructGoalConstraints(
+      grasp_data_.ee_parent_link_, goal_pose, tolerance_position, tolerance_angle);
+
+    //ROS_INFO_STREAM_NAMED("verticle_test","Goal pose " << goal_pose);
+
+    // Create offset constraint
+    goal_constraint0.position_constraints[0].target_point_offset.x = 0.0;
+    goal_constraint0.position_constraints[0].target_point_offset.y = 0.0;
+    goal_constraint0.position_constraints[0].target_point_offset.z = 0.0;
+
+    // Add offset constraint
+    goal.request.goal_constraints.resize(1);
+    goal.request.goal_constraints[0] = goal_constraint0;
+
+    // -------------------------------------------------------------------------------------------
+    // Visualize goals in rviz
+    visual_tools->publishArrow(goal_pose.pose, moveit_visual_tools::GREEN);
+    visual_tools->publishEEMarkers(goal_pose.pose, moveit_visual_tools::GREEN);
+
+    // -------------------------------------------------------------------------------------------
+    // Plan
+    movegroup_action_->sendGoal(goal);
+
+    if(!movegroup_action_->waitForResult(ros::Duration(20.0)))
+    {
+      ROS_INFO_STREAM_NAMED("verticle_test","Did not finish in time.");
+      return false;
+    }
+    if (movegroup_action_->getState() == actionlib::SimpleClientGoalState::SUCCEEDED)
+    {
+      ROS_INFO_STREAM_NAMED("verticle_test","Plan successful!");
+    }
+    else
+    {
+      ROS_ERROR_STREAM_NAMED("verticle_test","move_group failed: " << movegroup_action_->getState().toString() << ": " << movegroup_action_->getState().getText());
+      return false;
+    }
+
+    return true;
+  }
+  */
 
   /**
    * \brief Get the current pose of the desired end effector specified in the visual_tools object
@@ -226,7 +304,7 @@ public:
   geometry_msgs::Pose getCurrentPose(moveit_visual_tools::VisualToolsPtr visual_tools,
     const moveit_simple_grasps::GraspData& grasp_data)
   {
-    ROS_INFO_STREAM_NAMED("baxter_utilities","Getting pose of end effector for " << grasp_data.ee_parent_link_);
+    ROS_INFO_STREAM_NAMED("baxter_move_group_interface","Getting pose of end effector for " << grasp_data.ee_parent_link_);
 
     robot_state::RobotState state = planning_scene_monitor_->getPlanningScene()->getCurrentState();
     state.updateLinkTransforms();
@@ -234,7 +312,7 @@ public:
 
     geometry_msgs::Pose pose_msg = visual_tools->convertPose(pose);
 
-    ROS_INFO_STREAM_NAMED("baxter_utilities","pose is:");
+    ROS_INFO_STREAM_NAMED("baxter_move_group_interface","pose is:");
     std::cout << "geometry_msgs::PoseStamped pose_msg;\n";
     std::cout << "pose_msg.pose.position.x = " << pose_msg.position.x << ";\n";
     std::cout << "pose_msg.pose.position.y = " << pose_msg.position.y << ";\n";
@@ -450,6 +528,7 @@ public:
 
     return true;
   }
+
 
   /**
    * \brief Hard coded poses for baxter's end effectors
