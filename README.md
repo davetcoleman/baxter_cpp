@@ -14,12 +14,9 @@ On going development continues in the development branch and contributors are st
    * Execute a pick and place routine
    * Works on hardware and in an Rviz visualization
    * Other tools for testing trajectories
- * Baxter ros_control position, velocity, or torque trajectory controllers
-   * Uses the ros_control [joint_trajectory_controller](https://github.com/ros-controls/ros_controllers/tree/hydro-devel/joint_trajectory_controller) instead of the python trajectory controller that comes with the SDK
+ * Baxter ros_control integration on Baxter's PC using [baxter_ssh](http://github.com/davetcoleman/baxter_ssh)
  * Integrated Asus Xtion Pro depth sensor (Kinect sensor)
    * Displays in MoveIt!
- * Other stuff
-   * Baxter's face follows obstacles using the sonars
 
 # Branches
 
@@ -64,6 +61,10 @@ On going development continues in the development branch and contributors are st
     wstool merge --merge-replace -y https://raw.github.com/davetcoleman/baxter_cpp/indigo-devel/baxter.rosinstall
     ```
 
+* Install ros_control on Baxter using SSH
+
+    See README on [baxter_ssh](http://github.com/davetcoleman/baxter_ssh)
+	
 * Optional: Only if you have access to the CU Boulder's private research code (you probably don't):
 
     ```
@@ -92,7 +93,6 @@ On going development continues in the development branch and contributors are st
     catkin_make
     ```
 
-    Note: You may need to run this command multiple times if there is a message dependency issue. Please report these bugs in the issue tracker.
 
 * Add Baxter setup.bash to your .bashrc (recommended)
 
@@ -124,8 +124,6 @@ Every Baxter is factory calibrated for the mouting points of the arms because th
 
 ### Hardware
 
- * Power on baxter
-
  * Ensure you have the correct ROS_MASTER_URI exported, this depends on your robot serial number. Mine is:
    ```
    export ROS_MASTER_URI=http://011305P0009.local:11311
@@ -136,10 +134,9 @@ Every Baxter is factory calibrated for the mouting points of the arms because th
    export ROS_HOSTNAME=128.138.244.72  # REPLACE WITH YOUR COMPUTER'S IP ADDRESS
    ```
 
- * Bringup ros_control controllers - starts a position-based trajectory controller. See [Hardware Control Modes](#hardware-control-modes) for other control modes
-   ```
-   roslaunch baxter_control baxter_hardware.launch
-   ```
+ * Bringup ros_control controllers on Baxter
+
+   Follow instructions on [baxter_ssh](http://github.com/davetcoleman/baxter_ssh)
 
 ### Rviz Visualization
 
