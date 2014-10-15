@@ -47,6 +47,7 @@
 #include <moveit/planning_scene_monitor/planning_scene_monitor.h>
 #include <moveit/move_group_interface/move_group.h>
 #include <moveit_simple_grasps/grasp_data.h>
+#include <moveit_visual_tools/visual_tools.h>
 #include <moveit/robot_state/robot_state.h>
 #include <moveit/trajectory_processing/iterative_time_parameterization.h>
 #include <moveit/plan_execution/plan_execution.h>
