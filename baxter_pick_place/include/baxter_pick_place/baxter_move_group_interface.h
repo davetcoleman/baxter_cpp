@@ -224,7 +224,8 @@ public:
 
     // Plan
     std::cout << "sending " << std::endl;
-    moveit::planning_interface::MoveItErrorCode code = move_group_->move();
+    ROS_ERROR_STREAM_NAMED("baxter_move_group_interface","waiting for move to finsih is disabled");
+    moveit::planning_interface::MoveItErrorCode code = move_group_->asyncMove();
     std::cout << "sending finished" << std::endl;
     ros::spinOnce();
     ros::Duration(0.5).sleep();
