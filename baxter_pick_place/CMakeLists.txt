@@ -25,6 +25,8 @@ catkin_package(
   INCLUDE_DIRS include
   CATKIN_DEPENDS 
     moveit_simple_grasps
+  LIBRARIES 
+    baxter_move_group_interface
 )
 
 # Enable gdb to show line numbers
@@ -37,13 +39,16 @@ set(CMAKE_BUILD_TYPE Debug)
 
 include_directories(include ${catkin_INCLUDE_DIRS} ${Boost_INCLUDE_DIRS})
 
+add_library(baxter_move_group_interface src/baxter_move_group_interface.cpp)
+target_link_libraries(baxter_move_group_interface ${catkin_LIBRARIES} ${Boost_LIBRARIES})
+
 # Main executable
 add_executable(block_pick_place src/block_pick_place.cpp)
 target_link_libraries(block_pick_place ${catkin_LIBRARIES} ${Boost_LIBRARIES})
 
 # Demos
 add_executable(random_planning src/demos/random_planning.cpp)
-target_link_libraries(random_planning ${catkin_LIBRARIES} ${Boost_LIBRARIES})
+target_link_libraries(random_planning baxter_move_group_interface ${catkin_LIBRARIES} ${Boost_LIBRARIES})
 
 # Tools
 add_executable(get_joint_values src/tools/get_joint_values.cpp)

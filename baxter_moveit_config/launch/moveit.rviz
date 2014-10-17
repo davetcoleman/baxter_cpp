@@ -12,7 +12,7 @@ Panels:
         - /MotionPlanning1/Planning Request1
         - /MotionPlanning1/Planned Path1
       Splitter Ratio: 0.544529
-    Tree Height: 473
+    Tree Height: 471
   - Class: rviz/Help
     Name: Help
   - Class: rviz/Views
@@ -72,6 +72,11 @@ Visualization Manager:
             Show Axes: false
             Show Trail: false
             Value: true
+          display:
+            Alpha: 1
+            Show Axes: false
+            Show Trail: false
+            Value: true
           dummyhead1:
             Alpha: 1
             Show Axes: false
@@ -98,6 +103,11 @@ Visualization Manager:
             Show Axes: false
             Show Trail: false
             Value: true
+          left_gripper_base:
+            Alpha: 1
+            Show Axes: false
+            Show Trail: false
+            Value: true
           left_gripper_l_finger:
             Alpha: 1
             Show Axes: false
@@ -109,6 +119,11 @@ Visualization Manager:
             Show Trail: false
             Value: true
           left_hand:
+            Alpha: 1
+            Show Axes: false
+            Show Trail: false
+            Value: true
+          left_hand_accelerometer:
             Alpha: 1
             Show Axes: false
             Show Trail: false
@@ -194,6 +209,11 @@ Visualization Manager:
             Show Axes: false
             Show Trail: false
             Value: true
+          right_gripper_base:
+            Alpha: 1
+            Show Axes: false
+            Show Trail: false
+            Value: true
           right_gripper_l_finger:
             Alpha: 1
             Show Axes: false
@@ -208,6 +228,12 @@ Visualization Manager:
             Alpha: 1
             Show Axes: false
             Show Trail: false
+            Value: true
+          right_hand_accelerometer:
+            Alpha: 1
+            Show Axes: false
+            Show Trail: false
+            Value: true
           right_hand_camera:
             Alpha: 1
             Show Axes: false
@@ -276,11 +302,6 @@ Visualization Manager:
             Show Axes: false
             Show Trail: false
             Value: true
-          screen_visual:
-            Alpha: 1
-            Show Axes: false
-            Show Trail: false
-            Value: true
           sonar_ring:
             Alpha: 1
             Show Axes: false
@@ -311,8 +332,8 @@ Visualization Manager:
         Goal State Color: 250; 128; 0
         Interactive Marker Size: 0.3
         Joint Violation Color: 255; 0; 255
-        Planning Group: left_arm
-        Query Goal State: true
+        Planning Group: right_arm
+        Query Goal State: false
         Query Start State: false
         Show Workspace: false
         Start State Alpha: 1
@@ -348,6 +369,11 @@ Visualization Manager:
             Show Axes: false
             Show Trail: false
             Value: true
+          display:
+            Alpha: 1
+            Show Axes: false
+            Show Trail: false
+            Value: true
           dummyhead1:
             Alpha: 1
             Show Axes: false
@@ -374,6 +400,11 @@ Visualization Manager:
             Show Axes: false
             Show Trail: false
             Value: true
+          left_gripper_base:
+            Alpha: 1
+            Show Axes: false
+            Show Trail: false
+            Value: true
           left_gripper_l_finger:
             Alpha: 1
             Show Axes: false
@@ -385,6 +416,11 @@ Visualization Manager:
             Show Trail: false
             Value: true
           left_hand:
+            Alpha: 1
+            Show Axes: false
+            Show Trail: false
+            Value: true
+          left_hand_accelerometer:
             Alpha: 1
             Show Axes: false
             Show Trail: false
@@ -470,6 +506,11 @@ Visualization Manager:
             Show Axes: false
             Show Trail: false
             Value: true
+          right_gripper_base:
+            Alpha: 1
+            Show Axes: false
+            Show Trail: false
+            Value: true
           right_gripper_l_finger:
             Alpha: 1
             Show Axes: false
@@ -484,6 +525,12 @@ Visualization Manager:
             Alpha: 1
             Show Axes: false
             Show Trail: false
+            Value: true
+          right_hand_accelerometer:
+            Alpha: 1
+            Show Axes: false
+            Show Trail: false
+            Value: true
           right_hand_camera:
             Alpha: 1
             Show Axes: false
@@ -552,11 +599,6 @@ Visualization Manager:
             Show Axes: false
             Show Trail: false
             Value: true
-          screen_visual:
-            Alpha: 1
-            Show Axes: false
-            Show Trail: false
-            Value: true
           sonar_ring:
             Alpha: 1
             Show Axes: false
@@ -568,7 +610,7 @@ Visualization Manager:
             Show Trail: false
             Value: true
         Robot Alpha: 1
-        Show Robot Collision: false
+        Show Robot Collision: true
         Show Robot Visual: true
       Value: true
     - Class: rviz/Marker
@@ -650,20 +692,20 @@ Visualization Manager:
         Swap Stereo Eyes: false
         Value: false
       Focal Point:
-        X: 1.74682
-        Y: -0.0928864
+        X: 0.229855
+        Y: 0.021929
         Z: -2.14687e-06
       Name: Current View
       Near Clip Distance: 0.01
-      Pitch: 0.0397966
+      Pitch: 0.489796
       Target Frame: base_link
       Value: XYOrbit (rviz)
-      Yaw: 6.09317
+      Yaw: 5.58816
     Saved: ~
 Window Geometry:
   Displays:
     collapsed: false
-  Height: 1052
+  Height: 1048
   Help:
     collapsed: false
   Hide Left Dock: false
@@ -672,9 +714,9 @@ Window Geometry:
     collapsed: false
   Motion Planning:
     collapsed: false
-  QMainWindow State: 000000ff00000000fd0000000100000000000002b1000003bdfc0200000009fb0000000a0049006d00610067006500000000410000010d0000001600fffffffb0000000a0049006d0061006700650000000041000002090000001600fffffffb0000000a0049006d00610067006500000001700000015c0000001600fffffffb000000100044006900730070006c00610079007301000000410000021a000000dd00fffffffb0000001e004d006f00740069006f006e00200050006c0061006e006e0069006e006701000002610000019d0000018a00fffffffb0000000800480065006c00700000000342000000bb0000007600fffffffb0000000a005600690065007700730000000145000000cb000000b000fffffffb0000000c00430061006d00650072006100000002ff000001610000000000000000fb0000000c00430061006d006500720061000000038f000000160000000000000000000004c9000003bd00000001000000020000000100000002fc0000000100000002000000010000000a0054006f006f006c00730100000000ffffffff0000000000000000
+  QMainWindow State: 000000ff00000000fd0000000100000000000002b1000003b9fc0200000009fb0000000a0049006d00610067006500000000410000010d0000001600fffffffb0000000a0049006d0061006700650000000041000002090000001600fffffffb0000000a0049006d00610067006500000001700000015c0000001600fffffffb000000100044006900730070006c006100790073010000004100000218000000dd00fffffffb0000001e004d006f00740069006f006e00200050006c0061006e006e0069006e0067010000025f0000019b0000018a00fffffffb0000000800480065006c00700000000342000000bb0000007600fffffffb0000000a005600690065007700730000000145000000cb000000b000fffffffb0000000c00430061006d00650072006100000002ff000001610000000000000000fb0000000c00430061006d006500720061000000038f000000160000000000000000000004c1000003b900000001000000020000000100000002fc0000000100000002000000010000000a0054006f006f006c00730100000000ffffffff0000000000000000
   Views:
     collapsed: false
-  Width: 1920
-  X: 1909
+  Width: 1912
+  X: 1913
   Y: -7
