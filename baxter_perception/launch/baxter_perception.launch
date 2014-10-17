@@ -1,6 +1,10 @@
 <launch>
-  <include file="$(find baxter_perception)/launch/objectdetection_tf_publisher.launch" />
 
+  <group ns="/checkerdetector">
+    <node pkg="checkerboard_detector" type="objectdetection_tf_publisher.py" name="objectdetection_tf_publisher" output="screen"/>
+  </group>
+
+  <!-- I prefer to launch this manually so its easy to tune -->
   <!--include file="$(find baxter_perception)/launch/object_to_world_pub.launch" /-->
   
   <include file="$(find openni_launch)/launch/openni.launch" >

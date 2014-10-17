@@ -610,7 +610,7 @@ Visualization Manager:
             Show Trail: false
             Value: true
         Robot Alpha: 1
-        Show Robot Collision: true
+        Show Robot Collision: false
         Show Robot Visual: true
       Value: true
     - Class: rviz/Marker
@@ -685,7 +685,7 @@ Visualization Manager:
   Views:
     Current:
       Class: rviz/XYOrbit
-      Distance: 1.39384
+      Distance: 2.19323
       Enable Stereo Rendering:
         Stereo Eye Separation: 0.06
         Stereo Focal Distance: 1
@@ -697,10 +697,10 @@ Visualization Manager:
         Z: -2.14687e-06
       Name: Current View
       Near Clip Distance: 0.01
-      Pitch: 0.489796
+      Pitch: 0.449796
       Target Frame: base_link
       Value: XYOrbit (rviz)
-      Yaw: 5.58816
+      Yaw: 6.21816
     Saved: ~
 Window Geometry:
   Displays:
