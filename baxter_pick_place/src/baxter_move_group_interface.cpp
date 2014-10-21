@@ -142,7 +142,7 @@ bool BaxterMoveGroupInterface::sendToPose(const std::string &pose_name)
   return result;
 }
 
-bool BaxterMoveGroupInterface::sendToPose(const geometry_msgs::Pose& pose, moveit_visual_tools::VisualToolsPtr visual_tools,
+bool BaxterMoveGroupInterface::sendToPose(const geometry_msgs::Pose& pose, moveit_visual_tools::MoveItVisualToolsPtr visual_tools,
                                           const moveit_msgs::PlanningScene &planning_scene_diff)
 {
   geometry_msgs::PoseStamped pose_stamped;
@@ -153,7 +153,7 @@ bool BaxterMoveGroupInterface::sendToPose(const geometry_msgs::Pose& pose, movei
 }
 
 bool BaxterMoveGroupInterface::sendToPose(const geometry_msgs::PoseStamped& pose,
-                                          moveit_visual_tools::VisualToolsPtr visual_tools, const moveit_msgs::PlanningScene &planning_scene_diff)
+                                          moveit_visual_tools::MoveItVisualToolsPtr visual_tools, const moveit_msgs::PlanningScene &planning_scene_diff)
 {
   // Make sure frame_id was set
   if (pose.header.frame_id.empty())
@@ -175,7 +175,7 @@ bool BaxterMoveGroupInterface::sendToPose(const geometry_msgs::PoseStamped& pose
   //goal.planning_options.planning_scene_diff = planning_scene_diff; // TODO re-enable?
 
   // Visualize goals in rviz
-  visual_tools->publishArrow(pose.pose, moveit_visual_tools::GREEN);
+  visual_tools->publishArrow(pose.pose, rviz_visual_tools::GREEN);
 
   // Plan
   std::cout << "sending " << std::endl;
@@ -191,7 +191,7 @@ bool BaxterMoveGroupInterface::sendToPose(const geometry_msgs::PoseStamped& pose
 /*
 // Moves the arm to a specified pose
 bool BaxterMoveGroupInterface::sendPoseCommand(const geometry_msgs::Pose& pose, const std::string& planning_group_name, const std::string& base_link,
-moveit_visual_tools::VisualToolsPtr visual_tools)
+moveit_visual_tools::MoveItVisualToolsPtr visual_tools)
 {
 // -----------------------------------------------------------------------------------------------
 // Make a stamped version of the pose
@@ -226,8 +226,8 @@ goal.request.goal_constraints[0] = goal_constraint0;
 
 // -------------------------------------------------------------------------------------------
 // Visualize goals in rviz
-visual_tools->publishArrow(goal_pose.pose, moveit_visual_tools::GREEN);
-visual_tools->publishEEMarkers(goal_pose.pose, moveit_visual_tools::GREEN);
+visual_tools->publishArrow(goal_pose.pose, rviz_visual_tools::GREEN);
+visual_tools->publishEEMarkers(goal_pose.pose, rviz_visual_tools::GREEN);
 
 // -------------------------------------------------------------------------------------------
 // Plan
@@ -252,7 +252,7 @@ return true;
 }
 */
 
-geometry_msgs::Pose BaxterMoveGroupInterface::getCurrentPose(moveit_visual_tools::VisualToolsPtr visual_tools,
+geometry_msgs::Pose BaxterMoveGroupInterface::getCurrentPose(moveit_visual_tools::MoveItVisualToolsPtr visual_tools,
                                                              const moveit_simple_grasps::GraspData& grasp_data)
 {
   ROS_INFO_STREAM_NAMED("baxter_move","Getting pose of end effector for " << grasp_data.ee_parent_link_);
@@ -274,14 +274,14 @@ geometry_msgs::Pose BaxterMoveGroupInterface::getCurrentPose(moveit_visual_tools
   std::cout << "pose_msg.pose.orientation.w = " << pose_msg.orientation.w << ";\n";
 
   // Feedback
-  visual_tools->publishArrow(pose_msg, moveit_visual_tools::RED, moveit_visual_tools::LARGE);
+  visual_tools->publishArrow(pose_msg, rviz_visual_tools::RED, rviz_visual_tools::LARGE);
 
   return pose_msg;
 }
 
 bool BaxterMoveGroupInterface::moveStraight(Eigen::Vector3d approach_direction, double desired_approach_distance,
                                             const moveit_simple_grasps::GraspData& grasp_data,
-                                            const std::string& planning_group_name, moveit_visual_tools::VisualToolsPtr visual_tools)
+                                            const std::string& planning_group_name, moveit_visual_tools::MoveItVisualToolsPtr visual_tools)
 {
   moveit_msgs::RobotTrajectory trajectory_msg; // the resulting path
 
@@ -319,7 +319,7 @@ bool BaxterMoveGroupInterface::executeTrajectory(const moveit_msgs::RobotTraject
 
 bool BaxterMoveGroupInterface::computeStraightLinePath( Eigen::Vector3d approach_direction, double desired_approach_distance,
                                                         moveit_msgs::RobotTrajectory& trajectory_msg, const moveit_simple_grasps::GraspData& grasp_data,
-                                                        const std::string& planning_group_name, moveit_visual_tools::VisualToolsPtr visual_tools)
+                                                        const std::string& planning_group_name, moveit_visual_tools::MoveItVisualToolsPtr visual_tools)
 {
   // Get planning scene
   planning_scene_monitor::LockedPlanningSceneRO ls(planning_scene_monitor_);

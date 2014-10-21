@@ -47,7 +47,7 @@
 #include <moveit/planning_scene_monitor/planning_scene_monitor.h>
 #include <moveit/move_group_interface/move_group.h>
 #include <moveit_simple_grasps/grasp_data.h>
-#include <moveit_visual_tools/visual_tools.h>
+#include <moveit_visual_tools/moveit_visual_tools.h>
 #include <moveit/robot_state/robot_state.h>
 #include <moveit/trajectory_processing/iterative_time_parameterization.h>
 #include <moveit/plan_execution/plan_execution.h>
@@ -107,18 +107,18 @@ public:
    * \param planning_scene_diff - allows direct access to change the planning scene during planning
    * \return true if sucessful in planning and moving there
    */
-  bool sendToPose(const geometry_msgs::Pose& pose, moveit_visual_tools::VisualToolsPtr visual_tools,
+  bool sendToPose(const geometry_msgs::Pose& pose, moveit_visual_tools::MoveItVisualToolsPtr visual_tools,
                   const moveit_msgs::PlanningScene &planning_scene_diff);
 
   bool sendToPose(const geometry_msgs::PoseStamped& pose,
-                  moveit_visual_tools::VisualToolsPtr visual_tools, const moveit_msgs::PlanningScene &planning_scene_diff);  
+                  moveit_visual_tools::MoveItVisualToolsPtr visual_tools, const moveit_msgs::PlanningScene &planning_scene_diff);  
 
   /**
    * \brief Get the current pose of the desired end effector specified in the visual_tools object
    * \param visual_tools - copy of tool for publishing visual objects
    * \return pose of end effector
    */
-  geometry_msgs::Pose getCurrentPose(moveit_visual_tools::VisualToolsPtr visual_tools,
+  geometry_msgs::Pose getCurrentPose(moveit_visual_tools::MoveItVisualToolsPtr visual_tools,
                                      const moveit_simple_grasps::GraspData& grasp_data);
 
   /**
@@ -129,7 +129,7 @@ public:
    */
   bool moveStraight(Eigen::Vector3d approach_direction, double desired_approach_distance,
                     const moveit_simple_grasps::GraspData& grasp_data,
-                    const std::string& planning_group_name, moveit_visual_tools::VisualToolsPtr visual_tools);
+                    const std::string& planning_group_name, moveit_visual_tools::MoveItVisualToolsPtr visual_tools);
 
   /**
    * \brief
@@ -148,7 +148,7 @@ public:
    */
   bool computeStraightLinePath( Eigen::Vector3d approach_direction, double desired_approach_distance,
                                 moveit_msgs::RobotTrajectory& trajectory_msg, const moveit_simple_grasps::GraspData& grasp_data,
-                                const std::string& planning_group_name, moveit_visual_tools::VisualToolsPtr visual_tools);
+                                const std::string& planning_group_name, moveit_visual_tools::MoveItVisualToolsPtr visual_tools);
 
   /**
    * \brief Execute planned trajectory

@@ -49,7 +49,7 @@
 #include <baxter_pick_place/custom_environment2.h>
 
 // Visualization
-#include <moveit_visual_tools/visual_tools.h> // simple tool for showing graspsp
+#include <moveit_visual_tools/moveit_visual_tools.h> // simple tool for showing graspsp
 
 #include <std_msgs/Bool.h>
 #include <baxter_core_msgs/HeadPanCommand.h>
@@ -66,7 +66,7 @@ class RandomPlanning
 public:
 
   // class for publishing stuff to rviz
-  moveit_visual_tools::VisualToolsPtr visual_tools_;
+  moveit_visual_tools::MoveItVisualToolsPtr visual_tools_;
 
   // baxter helper
   baxter_control::BaxterUtilities baxter_util_;
@@ -95,7 +95,7 @@ public:
 
     // ---------------------------------------------------------------------------------------------
     // Load the Robot Viz Tools for publishing to rviz
-    visual_tools_.reset(new moveit_visual_tools::VisualTools(grasp_data_.base_link_));
+    visual_tools_.reset(new moveit_visual_tools::MoveItVisualTools(grasp_data_.base_link_));
     visual_tools_->setFloorToBaseHeight(-0.9);
 
     // ---------------------------------------------------------------------------------------------
