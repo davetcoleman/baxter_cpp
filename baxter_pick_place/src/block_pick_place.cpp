@@ -105,7 +105,7 @@ public:
     move_group_->setPlanningTime(30.0);
 
     // Load grasp generator
-    if (!grasp_data_.loadRobotGraspData(nh, arm_))
+    if (!grasp_data_.loadRobotGraspData(nh, arm_+"_hand"))
       ros::shutdown();
 
     // Load the Robot Viz Tools for publishing to rviz
