@@ -3,7 +3,7 @@ default_robot_scale: 1.0
 default_object_padding: 0.0
 default_attached_padding: 0.0
 default_robot_link_padding: {   
-  "left_hand"                : &hand_padding 0.001,
+  "left_hand"                : &hand_padding 0.1,
   "left_hand_camera"         : 0.001,
   "left_hand_camera_axis"    : 0.001,
   "left_hand_range"          : 0.001,

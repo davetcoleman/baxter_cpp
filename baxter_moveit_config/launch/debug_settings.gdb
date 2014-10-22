@@ -5,5 +5,5 @@ set breakpoint pending on
 #break robot_model.cpp:445
 #break robot_model.cpp:456
 #break move_group.cpp:604
-break pointcloud_octomap_updater.cpp:102
+#break pointcloud_octomap_updater.cpp:102
 #break shape_mask.cpp:120
