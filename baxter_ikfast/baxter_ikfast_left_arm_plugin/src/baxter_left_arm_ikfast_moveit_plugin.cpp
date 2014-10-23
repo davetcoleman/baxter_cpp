@@ -689,6 +689,7 @@ bool IKFastKinematicsPlugin::searchPositionIK(const geometry_msgs::Pose &ik_pose
   ROS_DEBUG_STREAM_NAMED("ikfast","searchPositionIK");
 
   /// search_mode is currently fixed during code generation
+  //SEARCH_MODE search_mode = OPTIMIZE_FREE_JOINT;
   SEARCH_MODE search_mode = OPTIMIZE_MAX_JOINT;
 
   // Check if there are no redundant joints
@@ -795,6 +796,7 @@ bool IKFastKinematicsPlugin::searchPositionIK(const geometry_msgs::Pose &ik_pose
   std::vector<double> best_solution;
   int nattempts = 0, nvalid = 0;
 
+  int best_solution_order_id = -1;
   while(true)
   {
     IkSolutionList<IkReal> solutions;
@@ -849,10 +851,31 @@ bool IKFastKinematicsPlugin::searchPositionIK(const geometry_msgs::Pose &ik_pose
                 if (d > costs)
                   costs = d;
               }
+
               if (costs < best_costs || best_costs == -1.0)
               {
+                //std::cout << "saving solution with cost: " << costs << " and diff " <<  best_costs - costs << std::endl;
+
+                // Check if we have convereged close enough
+                if (best_costs - costs < 0.01 && best_costs - costs > 0)
+                {
+                  //std::cout << "LOW COST - best_solution_order_id " << best_solution_order_id << " of nvalid " << nvalid << std::endl;
+                  error_code.val = error_code.SUCCESS;
+                  return true;
+                }
+
                 best_costs = costs;
                 best_solution = solution;
+                best_solution_order_id = nvalid;
+              }
+
+              static const int MAX_ITERATIONS = 20;
+              if (best_costs != -1.0 && nvalid > MAX_ITERATIONS)
+              {
+                //std::cout << "MAX IT - best_solution_order_id " << best_solution_order_id << " of nvalid " << nvalid << std::endl;
+                solution = best_solution;
+                error_code.val = error_code.SUCCESS;
+                return true;
               }
             }
             else
@@ -863,6 +886,7 @@ bool IKFastKinematicsPlugin::searchPositionIK(const geometry_msgs::Pose &ik_pose
       }
     }
 
+  
     if(!getCount(counter, num_positive_increments, -num_negative_increments))
     {
       // Everything searched
@@ -873,6 +897,9 @@ bool IKFastKinematicsPlugin::searchPositionIK(const geometry_msgs::Pose &ik_pose
     vfree[0] = initial_guess+search_discretization_*counter;
     //ROS_DEBUG_STREAM_NAMED("ikfast","Attempt " << counter << " with 0th free joint having value " << vfree[0]);
   }
+
+  std::cout << "NO SOL - best_solution_order_id " << best_solution_order_id << " of nvalid " << nvalid << std::endl;
+
 
   ROS_DEBUG_STREAM_NAMED("ikfast", "Valid solutions: " << nvalid << "/" << nattempts);
 
