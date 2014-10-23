@@ -10,6 +10,7 @@
     <!--CHAINS: When a chain is specified, all the links along the chain (including endpoints) are included in the group. Additionally, all the joints that are parents to included links are also included. This means that joints along the chain and the parent joint of the base link are included in the group-->
     <!--SUBGROUPS: Groups can also be formed by referencing to already defined group names-->
     <group name="left_arm">
+        <link name="left_hand" />
         <joint name="left_s0" />
         <joint name="left_s1" />
         <joint name="left_e0" />
@@ -19,6 +20,7 @@
         <joint name="left_w2" />
     </group>
     <group name="right_arm">
+        <link name="right_hand" />
         <joint name="right_s0" />
         <joint name="right_s1" />
         <joint name="right_e0" />
@@ -32,14 +34,12 @@
         <group name="left_arm" />
     </group>
     <group name="left_hand">
-        <link name="left_hand" />
         <link name="left_gripper" />
         <link name="left_gripper_base" />
         <link name="left_gripper_l_finger" />
         <link name="left_gripper_r_finger" />
     </group>
     <group name="right_hand">
-        <link name="right_hand" />
         <link name="right_gripper" />
         <link name="right_gripper_base" />
         <link name="right_gripper_l_finger" />
@@ -115,8 +115,8 @@
         <joint name="right_w2" value="-0.18868" />
     </group_state>
     <!--END EFFECTOR: Purpose: Represent information about an end effector.-->
-    <end_effector name="left_hand_eef" parent_link="left_wrist" group="left_hand" parent_group="left_arm" />
-    <end_effector name="right_hand_eef" parent_link="right_wrist" group="right_hand" parent_group="right_arm" />
+    <end_effector name="left_hand_eef" parent_link="left_hand" group="left_hand" parent_group="left_arm" />
+    <end_effector name="right_hand_eef" parent_link="right_hand" group="right_hand" parent_group="right_arm" />
     <!--VIRTUAL JOINT: Purpose: this element defines a virtual joint between a robot link and an external frame of reference (considered fixed with respect to the robot)-->
     <virtual_joint name="vjoint" type="fixed" parent_frame="vjoint_frame" child_link="base" />
     <!--DISABLE COLLISIONS: By default it is assumed that any link of the robot could potentially come into collision with any other link in the robot. This tag disables collision checking between a specified pair of links. -->
@@ -497,14 +497,10 @@
     <disable_collisions link1="screen" link2="sonar_ring" reason="Never" />
     <disable_collisions link1="screen" link2="torso" reason="Never" />
     <disable_collisions link1="sonar_ring" link2="torso" reason="Adjacent" />
-
     <disable_collisions link1="left_upper_elbow" link2="left_upper_shoulder" reason="User" />
     <disable_collisions link1="right_upper_elbow" link2="right_upper_shoulder" reason="User" />
-
     <disable_collisions link1="left_upper_forearm" link2="left_upper_elbow_visual" reason="User" />
     <disable_collisions link1="right_upper_forearm" link2="right_upper_elbow_visual" reason="User" />
-
     <disable_collisions link1="left_upper_forearm_visual" link2="left_wrist" reason="User" />
-    <disable_collisions link1="right_upper_forearm_visual" link2="right_wrist" reason="User" />    
-
+    <disable_collisions link1="right_upper_forearm_visual" link2="right_wrist" reason="User" />
 </robot>
