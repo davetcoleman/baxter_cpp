@@ -1,4 +1,4 @@
-default_robot_padding: 0.08  # aka offset
+default_robot_padding: 0.06  # aka offset
 default_robot_scale: 1.0
 default_object_padding: 0.0
 default_attached_padding: 0.0
@@ -10,6 +10,7 @@ default_robot_link_padding: {
   "left_hand_camera_axis"    : *hand_padding,
   "left_hand_range"          : *hand_padding,
   "left_gripper"             : *hand_padding,
+  "left_gripper_base"        : *hand_padding,
   "left_gripper_l_finger"    : *hand_padding,
   "left_gripper_r_finger"    : *hand_padding,
 
@@ -18,6 +19,7 @@ default_robot_link_padding: {
   "right_hand_camera_axis"   : *hand_padding,
   "right_hand_range"         : *hand_padding,
   "right_gripper"            : *hand_padding,
+  "right_gripper_base"       : *hand_padding,
   "right_gripper_l_finger"   : *hand_padding,
   "right_gripper_r_finger"   : *hand_padding}
 

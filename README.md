@@ -58,7 +58,7 @@ On going development continues in the development branch and contributors are st
     *Note*: replaces Rethink's baxter_common with a version that has parallel electric end effectors modeled
 
     ```
-    wstool merge --merge-replace -y https://raw.github.com/davetcoleman/baxter_cpp/indigo-devel/baxter.rosinstall
+    wstool merge --merge-replace -y https://raw.github.com/davetcoleman/baxter_cpp/indigo-devel/baxter_cpp/baxter.rosinstall
     ```
 
 * Install ros_control on Baxter using SSH
