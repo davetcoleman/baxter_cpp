@@ -1,5 +1,7 @@
 <launch>
 
+  <param name="/camera/driver/data_skip" value="2" />
+
   <group ns="/checkerdetector">
     <node pkg="checkerboard_detector" type="objectdetection_tf_publisher.py" name="objectdetection_tf_publisher" output="screen"/>
   </group>

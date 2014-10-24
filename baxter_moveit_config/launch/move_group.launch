@@ -33,7 +33,7 @@
   </include>
 
   <!-- Sensors Functionality -->
-  <include ns="move_group" file="$(find baxter_moveit_config)/launch/sensor_manager.launch.xml" if="$(arg allow_trajectory_execution)">
+  <include ns="move_group" file="$(find baxter_moveit_config)/launch/sensor_manager.launch.xml">
     <arg name="moveit_sensor_manager" value="baxter" /> 
   </include>
 
