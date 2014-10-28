@@ -173,7 +173,7 @@ Picks small blocks located on a table in front of Baxter and places them to Baxt
 
 ## Hardware Control Modes
 
-    Follow instructions on [README of baxter_ssh](http://github.com/davetcoleman/baxter_ssh) repo
+Follow instructions on [README of baxter_ssh](http://github.com/davetcoleman/baxter_ssh) repo
 	
 ## Test Programs
 
