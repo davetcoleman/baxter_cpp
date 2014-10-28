@@ -1,20 +1,23 @@
 baxter_cpp
 ======
 
-A C++ version of the Baxter SDK that works along side the Rethink SDK. Currently contains a ros_control implementation of the Baxter controllers and pick and place MoveIt! code for Baxter, as well as other tools.
+A C++ version of the Baxter SDK that works along side the Rethink SDK. Is inteded to be used with a ros_control implementation of the Baxter controllers that is run *on* the robot (via SSH).
 
-On going development continues in the development branch and contributors are strongly encouraged to send pull requests and use this code. The master branch of this repository is kept as stable as posible and is continuously integrated using [Travis](https://travis-ci.org/).
+Contains pick and place MoveIt! code for Baxter, as well as some other tools.
+
+On going development continues in the ``development`` branch and contributors are strongly encouraged to send pull requests and use this code. Seriously, please help me improve this code. Attempts are made to keep the ``indigo-devel`` branch stable, but at the end of the day I am an open source graduate student contributor ;-)
 
 <img align="right" src="https://raw.github.com/davetcoleman/baxter_cpp/indigo-devel/baxter_pick_place/resource/BaxterPickPlace.png" />
 
 ### Features
 
+ * Actuated fingers using a custom robot state publisher and URDF
+ * Baxter ros_control integration on Baxter's internal PC using [baxter_ssh](http://github.com/davetcoleman/baxter_ssh)
  * Baxter pick and place with MoveIt!
-   * Generate grasps for simple blocks on a table
+   * Generate grasps for blocks on a table
    * Execute a pick and place routine
    * Works on hardware and in an Rviz visualization
    * Other tools for testing trajectories
- * Baxter ros_control integration on Baxter's PC using [baxter_ssh](http://github.com/davetcoleman/baxter_ssh)
  * Integrated Asus Xtion Pro depth sensor (Kinect sensor)
    * Displays in MoveIt!
 
@@ -71,10 +74,6 @@ On going development continues in the development branch and contributors are st
     wstool update
     ```
 
-* Temp hacks:
-
-    Install posedetection_msgs package from within https://github.com/jsk-ros-pkg/jsk_common.git. I do not advice you install of of jsk_common though. The progress of fixinging this can be tracked [here](https://github.com/jsk-ros-pkg/jsk_common/issues/555)
-
 * Setup ROS if you haven't already (you can probably skip this):
     ```
     sudo apt-get update
@@ -90,7 +89,6 @@ On going development continues in the development branch and contributors are st
     rosdep install --from-paths . --ignore-src --rosdistro indigo -y
     catkin_make
     ```
-
 
 * Add Baxter setup.bash to your .bashrc (recommended)
 
@@ -171,13 +169,21 @@ Works with simulation, hardware or visualization:
 
 Picks small blocks located on a table in front of Baxter and places them to Baxter's left. Assumes perfect perception (doesn't have perception) as defined in custom_environment.h.
 
-```
-roslaunch baxter_pick_place block_pick_place.launch
-```
+    roslaunch baxter_pick_place block_pick_place.launch
 
 ## Hardware Control Modes
 
-This Baxter repository uses [ros_control](http://wiki.ros.org/ros_control) to send trajectories to Baxter via the joint_trajectory_controller. Trajectories can be executed on Baxter in either position mode or velocity mode. You can easily switch between the two - both are loaded at startup but position is started by default:
+This Baxter repository uses [ros_control](http://wiki.ros.org/ros_control) to send trajectories to Baxter via the joint_trajectory_controller. Trajectories can be executed on Baxter in either position mode or velocity mode. The default is velocity mode (and is best tested).
+
+ * Velocity Control
+   ```
+   rosservice call /robot/controller_manager/switch_controller "{start_controllers: ['velocity_joint_mode_controller','left_velocity_trajectory_controller','right_velocity_trajectory_controller'], stop_controllers: ['position_joint_mode_controller','left_position_trajectory_controller','right_position_trajectory_controller'], strictness: 2}"
+   ```
+   Plot *position* error of velocity-based trajectory controller
+   ```
+   roslaunch baxter_control joint_velocity_left_trajectory_controller.launch
+   roslaunch baxter_control joint_velocity_right_trajectory_controller.launch
+   ```
 
  * Position Control
 
@@ -193,16 +199,6 @@ This Baxter repository uses [ros_control](http://wiki.ros.org/ros_control) to se
    ```
    roslaunch baxter_control joint_position_left_trajectory_controller.launch
    roslaunch baxter_control joint_position_right_trajectory_controller.launch
-   ```
-
- * Velocity Control
-   ```
-   rosservice call /robot/controller_manager/switch_controller "{start_controllers: ['velocity_joint_mode_controller','left_velocity_trajectory_controller','right_velocity_trajectory_controller'], stop_controllers: ['position_joint_mode_controller','left_position_trajectory_controller','right_position_trajectory_controller'], strictness: 2}"
-   ```
-   Plot *position* error of velocity-based trajectory controller
-   ```
-   roslaunch baxter_control joint_velocity_left_trajectory_controller.launch
-   roslaunch baxter_control joint_velocity_right_trajectory_controller.launch
    ```
 
  * Torque Control
