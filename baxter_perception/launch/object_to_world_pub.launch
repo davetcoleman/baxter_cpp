@@ -1,5 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
 <launch>
   <!--node pkg="tf" type="static_transform_publisher" name="tf_publisher_base_to_checkerboard" args="0.01  0.47  0.040     0.0          1.55   1.57 /object /world 100" /-->
-     <node pkg="tf" type="static_transform_publisher" name="tf_publisher_base_to_checkerboard" args="0.01  0.47  0.180     0.0          1.55   1.57 /object /world 100" />
-  <!--                                                                 positive direction:          left   up    forward   x-roll-left  z-roll      -->
+     <node pkg="tf" type="static_transform_publisher" name="tf_publisher_base_to_checkerboard" args="0.045  0.47  0.18      0.0          1.55   1.57 /object /world 100" />
+  <!--                                                                 positive direction:           left  up    forward   x-roll-left  z-roll      -->
 </launch>

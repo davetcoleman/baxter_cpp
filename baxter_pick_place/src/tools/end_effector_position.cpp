@@ -42,7 +42,7 @@
 // MoveIt!
 #include <moveit/move_group_interface/move_group.h>
 
-#include <moveit_visual_tools/visual_tools.h> // simple tool for showing grasps
+#include <moveit_visual_tools/moveit_visual_tools.h> // simple tool for showing grasps
 
 #include <geometry_msgs/PoseStamped.h>
 
@@ -66,7 +66,7 @@ class EndEffectorPosition
 {
 public:
 
-  moveit_visual_tools::VisualToolsPtr visual_tools_;
+  moveit_visual_tools::MoveItVisualToolsPtr visual_tools_;
 
   // our interface with MoveIt
   boost::scoped_ptr<move_group_interface::MoveGroup> group_;

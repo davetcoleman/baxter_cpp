@@ -1,0 +1,1 @@
+rosrun moveit_ikfast create_ikfast_moveit_plugin.py baxter left_arm baxter_ikfast_left_arm_plugin /home/dave/ros/ws_baxter/src/baxter_cpp/baxter_ikfast/baxter_ikfast_left_arm_plugin/src/baxter_left_arm_ikfast_solver.cpp
