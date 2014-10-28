@@ -48,7 +48,7 @@
 
 // Grasp generation
 #include <moveit_simple_grasps/simple_grasps.h>
-#include <moveit_visual_tools/moveit_visual_tools.h> // simple tool for showing graspsp
+#include <moveit_visual_tools/moveit_visual_tools.h> // simple tool for showing grasps
 
 // Baxter specific properties
 #include <moveit_simple_grasps/grasp_data.h>

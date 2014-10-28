@@ -2,3 +2,5 @@
 - git: {local-name: baxter_common, uri: 'https://github.com/davetcoleman/baxter_common.git', version: cu_robot_sdkv1_fingers}
 - git: {local-name: checkerboard_detector, uri: 'https://github.com/davetcoleman/checkerboard_detector.git', version: master}
 - git: {local-name: baxter_examples, uri: 'https://github.com/davetcoleman/baxter_examples.git', version: ros_control_trajectory}
+- git: {local-name: baxter_examples, uri: 'https://github.com/davetcoleman/moveit_visual_tools.git', version: indigo-devel}
+- git: {local-name: baxter_examples, uri: 'https://github.com/davetcoleman/rviz_visual_tools.git', version: indigo-devel}
