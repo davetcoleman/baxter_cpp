@@ -64,9 +64,9 @@ On going development continues in the ``development`` branch and contributors ar
     wstool merge --merge-replace -y https://raw.github.com/davetcoleman/baxter_cpp/indigo-devel/baxter_cpp/baxter.rosinstall
     ```
 
-* Install ros_control on Baxter using SSH
+* Install ros_control and other low-level components internall on Baxter using the new SSH access:
 
-    See README on [baxter_ssh](http://github.com/davetcoleman/baxter_ssh)
+    Follow instructions on [README of baxter_ssh](http://github.com/davetcoleman/baxter_ssh) repo
 
 * Download the Baxter packages:
 
@@ -173,38 +173,8 @@ Picks small blocks located on a table in front of Baxter and places them to Baxt
 
 ## Hardware Control Modes
 
-This Baxter repository uses [ros_control](http://wiki.ros.org/ros_control) to send trajectories to Baxter via the joint_trajectory_controller. Trajectories can be executed on Baxter in either position mode or velocity mode. The default is velocity mode (and is best tested).
-
- * Velocity Control
-   ```
-   rosservice call /robot/controller_manager/switch_controller "{start_controllers: ['velocity_joint_mode_controller','left_velocity_trajectory_controller','right_velocity_trajectory_controller'], stop_controllers: ['position_joint_mode_controller','left_position_trajectory_controller','right_position_trajectory_controller'], strictness: 2}"
-   ```
-   Plot *position* error of velocity-based trajectory controller
-   ```
-   roslaunch baxter_control joint_velocity_left_trajectory_controller.launch
-   roslaunch baxter_control joint_velocity_right_trajectory_controller.launch
-   ```
-
- * Position Control
-
-   Load the position controllers (not loaded by default)
-   ```
-   rosrun controller_manager spawner --stopped position_joint_mode_controller left_position_trajectory_controller right_position_trajectory_controller --namespace /robot &
-   ```
-   Start the position controllers and stop the velocity controllers
-   ```
-   rosservice call /robot/controller_manager/switch_controller "{start_controllers: ['position_joint_mode_controller','left_position_trajectory_controller','right_position_trajectory_controller'], stop_controllers: ['velocity_joint_mode_controller','left_velocity_trajectory_controller','right_velocity_trajectory_controller'], strictness: 2}"
-   ```
-   Plot position error of position-based trajectory controller
-   ```
-   roslaunch baxter_control joint_position_left_trajectory_controller.launch
-   roslaunch baxter_control joint_position_right_trajectory_controller.launch
-   ```
-
- * Torque Control
-
-   TODO
-
+    Follow instructions on [README of baxter_ssh](http://github.com/davetcoleman/baxter_ssh) repo
+	
 ## Test Programs
 
 Send Baxter to random poses using motion planning and obstacle avoidance of a hard-coded planning scene
@@ -214,6 +184,8 @@ roslaunch baxter_pick_place random_planning.launch
 ```
 
 ## Programmed Buttons
+
+*Duplicated from [README of baxter_ssh](http://github.com/davetcoleman/baxter_ssh)*
 
 ### End Effector Cuff
 
