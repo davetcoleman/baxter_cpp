@@ -1,7 +1,7 @@
 /*********************************************************************
  * Software License Agreement (BSD License)
  *
- *  Copyright (c) 2013, CU Boulder
+ *  Copyright (c) 2014, CU Boulder
  *  All rights reserved.
  *
  *  Redistribution and use in source and binary forms, with or without
@@ -68,6 +68,9 @@ class SimplePickPlace
 {
 public:
 
+  // A shared node handle
+  ros::NodeHandle nh_;
+
   // grasp generator
   moveit_simple_grasps::SimpleGraspsPtr simple_grasps_;
 
@@ -91,21 +94,22 @@ public:
   int auto_reset_sec_;
   int pick_place_count_; // tracks how many pick_places have run 
 
+
   SimplePickPlace()
-    : auto_reset_(false),
+    : nh_("~"),
+      auto_reset_(false),
       auto_reset_sec_(4),
       arm_("right"),
       planning_group_name_(arm_+"_arm"),
       pick_place_count_(0)
   {
-    ros::NodeHandle nh;
 
     // Create MoveGroup for one of the planning groups
     move_group_.reset(new move_group_interface::MoveGroup(planning_group_name_));
     move_group_->setPlanningTime(30.0);
 
     // Load grasp generator
-    if (!grasp_data_.loadRobotGraspData(nh, arm_+"_hand"))
+    if (!grasp_data_.loadRobotGraspData(nh_, arm_+"_hand"))
       ros::shutdown();
 
     // Load the Robot Viz Tools for publishing to rviz

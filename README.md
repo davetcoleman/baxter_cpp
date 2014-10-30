@@ -149,6 +149,12 @@ This only shows a virtual Baxter in [Rviz](http://www.ros.org/wiki/rviz) without
    ```
    **Note:** you will not see anything when you launch this, only the ``/robot/joint_states`` topic starts being published. Proceed to the MoveIt! section, below.
 
+## Gazebo Simulation
+
+This is still in beta. First install the baxter_gazebo stuff. I haven't documented this yet.
+
+   roslaunch baxter_gazebo baxter_world.launch
+
 ## Start MoveIt!
 
 Works with simulation, hardware or visualization:
