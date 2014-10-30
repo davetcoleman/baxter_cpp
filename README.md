@@ -1,4 +1,4 @@
-baxter_cpp
+Baxter_cpp
 ======
 
 A C++ version of the Baxter SDK that works along side the Rethink SDK. Is inteded to be used with a ros_control implementation of the Baxter controllers that is run *on* the robot (via SSH).
