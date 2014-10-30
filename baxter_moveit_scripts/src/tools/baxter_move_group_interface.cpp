@@ -36,7 +36,7 @@
  * \author  Dave Coleman
  */
 
-#include <baxter_pick_place/baxter_move_group_interface.h>
+#include <baxter_moveit_scripts/baxter_move_group_interface.h>
 
 namespace baxter_pick_place
 {

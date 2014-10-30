@@ -42,11 +42,11 @@
 
 // Baxter Utilities
 #include <baxter_control/baxter_utilities.h>
-#include <baxter_pick_place/baxter_move_group_interface.h>
+#include <baxter_moveit_scripts/baxter_move_group_interface.h>
 #include <moveit_simple_grasps/grasp_data.h>
 
 // Custom
-#include <baxter_pick_place/custom_environment2.h>
+//#include <baxter_pick_place/custom_environment2.h>
 
 // Visualization
 #include <moveit_visual_tools/moveit_visual_tools.h> // simple tool for showing graspsp
@@ -61,7 +61,7 @@ namespace baxter_pick_place
 //static const std::string PLANNING_GROUP = "right_arm";
 static const std::string PLANNING_GROUP = "both_arms";
 
-class RandomPlanning
+class SendRandom
 {
 public:
 
@@ -83,7 +83,7 @@ public:
 
   ros::NodeHandle nh_;
 
-  RandomPlanning()
+  SendRandom()
     : allow_head_movements_(false),
       nh_("~")
   {
@@ -119,7 +119,7 @@ public:
     }
 
     // Create the walls and tables
-    createEnvironment(visual_tools_);
+    //createEnvironment(visual_tools_);
 
     // Wait for everything to be ready
     ros::Duration(1.0).sleep();
@@ -205,7 +205,7 @@ int main(int argc, char **argv)
   spinner.start();
 
   // Start the pick place node
-  baxter_pick_place::RandomPlanning();
+  baxter_pick_place::SendRandom();
 
   ros::shutdown();
 

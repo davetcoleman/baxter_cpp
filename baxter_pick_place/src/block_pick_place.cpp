@@ -94,9 +94,12 @@ public:
   int auto_reset_sec_;
   int pick_place_count_; // tracks how many pick_places have run 
 
+  // Show more visual and console output, with general slower run time.
+  bool verbose_;
 
-  SimplePickPlace()
+  SimplePickPlace(bool verbose)
     : nh_("~"),
+      verbose_(verbose),
       auto_reset_(false),
       auto_reset_sec_(4),
       arm_("right"),
@@ -112,11 +115,22 @@ public:
     if (!grasp_data_.loadRobotGraspData(nh_, arm_+"_hand"))
       ros::shutdown();
 
+    // Temp modifications
+    ROS_WARN_STREAM_NAMED("temp","temp modifications, move this maybe");
+    {
+      grasp_data_.grasp_depth_ = 0.0;
+      //grasp_data_.approach_retreat_min_dist_ =
+      //  grasp_data_.approach_retreat_desired_dist_; // = 0.6;
+      std::cout << "grasp_data_.approach_retreat_desired_dist_ " << grasp_data_.approach_retreat_desired_dist_ << std::endl;
+    }
+
     // Load the Robot Viz Tools for publishing to rviz
     visual_tools_.reset(new moveit_visual_tools::MoveItVisualTools( grasp_data_.base_link_));
     visual_tools_->setFloorToBaseHeight(-0.9);
     visual_tools_->loadEEMarker(grasp_data_.ee_group_, planning_group_name_);
+    visual_tools_->deleteAllMarkers();
 
+    // Load Grasp generator
     simple_grasps_.reset(new moveit_simple_grasps::SimpleGrasps(visual_tools_));
 
     // Let everything load
@@ -147,8 +161,8 @@ public:
 
     // Create start block positions (hard coded)
     std::vector<MetaBlock> blocks;
-    double block_y = 0.2;
-    double block_x = 0.54;
+    double block_y = 0.4;
+    double block_x = 0.64;
     // Flip the side of the table the blocks are on depending on which arm we are using
     if( arm_.compare("right") == 0 )
       block_y *= -1;
@@ -160,7 +174,7 @@ public:
     for (std::size_t i = 0; i < blocks.size(); ++i)
     {
       blocks[i].goal_pose = blocks[i].start_pose;
-      blocks[i].goal_pose.position.y += 0.2;
+      blocks[i].goal_pose.position.y += 0.1;
     }
 
     // Show grasp visualizations or not
@@ -198,7 +212,11 @@ public:
             ROS_INFO_STREAM_NAMED("pick_place","Picking '" << blocks[block_id].name << "'");
 
             // Visualize the block we are about to pick
-            visual_tools_->publishBlock( blocks[block_id].start_pose, rviz_visual_tools::BLUE, BLOCK_SIZE);
+            if (verbose_)
+            {
+              visual_tools_->deleteAllMarkers();
+              visual_tools_->publishBlock( blocks[block_id].start_pose, rviz_visual_tools::BLUE, BLOCK_SIZE);
+            }
 
             if( !pick(blocks[block_id].start_pose, blocks[block_id].name) )
             {
@@ -206,7 +224,7 @@ public:
 
               // Ask user if we should try again
               if( !promptUser() )
-                exit(0);
+                return false;
 
               // Retry
               resetBlock(blocks[block_id]);
@@ -224,7 +242,11 @@ public:
             ROS_INFO_STREAM_NAMED("pick_place","Placing '" << blocks[block_id].name << "'");
 
             // Publish goal block location
-            visual_tools_->publishBlock( blocks[block_id].goal_pose, rviz_visual_tools::BLUE, BLOCK_SIZE);
+            if (verbose_)
+            {
+              visual_tools_->deleteAllMarkers();
+              visual_tools_->publishBlock( blocks[block_id].goal_pose, rviz_visual_tools::BLUE, BLOCK_SIZE);
+            }
 
             if( !place(blocks[block_id].goal_pose, blocks[block_id].name) )
             {
@@ -245,7 +267,7 @@ public:
 
               // Ask user if we should try again
               if( !promptUser() )
-                exit(0);
+                return false;
             }
             else
             {
@@ -322,6 +344,12 @@ public:
 
     // Pick grasp
     simple_grasps_->generateBlockGrasps( block_pose, grasp_data_, grasps );
+    if (verbose_)
+    {
+      double speed = 0.012;
+      visual_tools_->publishGrasps( grasps, grasp_data_.ee_parent_link_, speed);
+      visual_tools_->deleteAllMarkers();
+    }
 
     // Prevent collision with table
     move_group_->setSupportSurfaceName(SUPPORT_SURFACE3_NAME);
@@ -376,7 +404,8 @@ public:
 
       place_loc.place_pose = pose_stamped;
 
-      visual_tools_->publishBlock( place_loc.place_pose.pose, rviz_visual_tools::BLUE, BLOCK_SIZE);
+      if (verbose_)
+        visual_tools_->publishBlock( place_loc.place_pose.pose, rviz_visual_tools::BLUE, BLOCK_SIZE);
 
       // Approach
       moveit_msgs::GripperTranslation pre_place_approach;
@@ -446,9 +475,24 @@ int main(int argc, char **argv)
   ros::AsyncSpinner spinner(1);
   spinner.start();
 
-  // Start the pick place node
-  baxter_pick_place::SimplePickPlace();
+  // Check for verbose flag
+  bool verbose = false;
+  if (argc > 1)
+  {
+    for (std::size_t i = 0; i < argc; ++i)
+    {
+      if (strcmp(argv[i], "--verbose") == 0)
+      {
+        ROS_INFO_STREAM_NAMED("main","Running in VERBOSE mode (slower)");
+        verbose = true;
+      }
+    }
+  }
 
+  // Start the pick place node
+  baxter_pick_place::SimplePickPlace server(verbose);
+
+  ROS_INFO_STREAM_NAMED("main", "Shutting down.");
   ros::shutdown();
 
   return 0;

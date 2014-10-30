@@ -1,0 +1,43 @@
+<?xml version="1.0"?>
+<package>
+  <name>baxter_moveit_scripts</name>
+  <version>0.0.1</version>
+  <description>The baxter_moveit_scripts package</description>
+
+  <maintainer email="davetcoleman@gmail.com">Dave Coleman</maintainer>
+
+  <license>BSD</license>
+
+  <url type="website">https://github.com/davetcoleman/baxter_moveit_scripts</url>
+  <url type="butracker">https://github.com/davetcoleman/baxter_moveit_scripts/issues</url>
+  <url type="repository">https://github.com/davetcoleman/baxter_moveit_scripts/</url>
+
+  <author email="davetcoleman@gmail.com">Dave Coleman</author>
+
+  <buildtool_depend>catkin</buildtool_depend>
+
+  <build_depend>moveit_core</build_depend>
+  <build_depend>moveit_ros_planning</build_depend>
+  <build_depend>moveit_ros_planning_interface</build_depend>
+  <build_depend>moveit_simple_grasps</build_depend>
+  <build_depend>moveit_visual_tools</build_depend>
+  <build_depend>baxter_core_msgs</build_depend>
+  <build_depend>geometry_msgs</build_depend>
+  <build_depend>baxter_control</build_depend>
+  <build_depend>roscpp</build_depend>
+  <build_depend>cmake_modules</build_depend>
+
+  <run_depend>moveit_core</run_depend>
+  <run_depend>moveit_ros</run_depend>
+  <run_depend>moveit_ros_visualization</run_depend>
+  <run_depend>moveit_ros_planning</run_depend>
+  <run_depend>moveit_ros_planning_interface</run_depend>
+  <run_depend>moveit_planners</run_depend>
+  <run_depend>moveit_planners_ompl</run_depend>
+  <run_depend>moveit_plugins</run_depend>
+  <run_depend>moveit_simple_controller_manager</run_depend>
+  <run_depend>moveit_simple_grasps</run_depend>
+
+  <export>
+  </export>
+</package>
