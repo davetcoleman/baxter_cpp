@@ -118,7 +118,7 @@
     <end_effector name="left_hand_eef" parent_link="left_hand" group="left_hand" parent_group="left_arm" />
     <end_effector name="right_hand_eef" parent_link="right_hand" group="right_hand" parent_group="right_arm" />
     <!--VIRTUAL JOINT: Purpose: this element defines a virtual joint between a robot link and an external frame of reference (considered fixed with respect to the robot)-->
-    <virtual_joint name="vjoint" type="fixed" parent_frame="vjoint_frame" child_link="base" />
+    <virtual_joint name="virtual_joint" type="floating" parent_frame="world" child_link="base" />
     <!--DISABLE COLLISIONS: By default it is assumed that any link of the robot could potentially come into collision with any other link in the robot. This tag disables collision checking between a specified pair of links. -->
     <disable_collisions link1="collision_head_link_1" link2="collision_head_link_2" reason="Adjacent" />
     <disable_collisions link1="collision_head_link_1" link2="display" reason="Default" />

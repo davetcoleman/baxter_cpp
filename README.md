@@ -21,13 +21,6 @@ On going development continues in the ``development`` branch and contributors ar
  * Integrated Asus Xtion Pro depth sensor (Kinect sensor)
    * Displays in MoveIt!
 
-# Branches
-
- * [indigo-devel](https://github.com/davetcoleman/baxter_cpp/tree/indigo-devel) - for current Baxter 1.0.0 SDK software on ROS Indigo.
- * [hydro-devel](https://github.com/davetcoleman/baxter_cpp/tree/hydro-devel) - for Baxter 0.7.0 SDK software on ROS Hydro.
- * [hydro-devel-sdk0.6.2](https://github.com/davetcoleman/baxter_cpp/tree/hydro-devel-sdk0.6.2) - for Baxter 0.6.2 SDK software on ROS Hydro. *NOT SUPPORTED*
- * [groovy-devel-sdk0.6.2](https://github.com/davetcoleman/baxter_cpp/tree/groovy-devel-sdk0.6.2) - for Baxter 0.6.2 SDK software on ROS Groovy. *NOT SUPPORTED*
-
 ## Prerequisites
 
  * A Baxter with dual parallel electric grippers with SDK v1.0.0 installed
