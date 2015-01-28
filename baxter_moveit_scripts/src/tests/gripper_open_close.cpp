@@ -72,13 +72,13 @@ public:
 
   ros::NodeHandle nh_;
 
-  GripperOpenClose(const std::string& hand)
+  GripperOpenClose(const std::string& arm_name)
     : nh_("~")
   {
 
     // ---------------------------------------------------------------------------------------------
     // Load grasp data specific to our robot
-    if (!grasp_data_.loadRobotGraspData(nh_, hand + "_hand"))
+    if (!grasp_data_.loadRobotGraspData(nh_, arm_name + "_hand"))
       ros::shutdown();
 
     // ---------------------------------------------------------------------------------------------
@@ -92,7 +92,7 @@ public:
 
     // ---------------------------------------------------------------------------------------------
     // Load the action client
-    static const std::string ACTION_TOPIC = "/robot/baxter_"+hand+"_gripper_action/gripper_action";
+    static const std::string ACTION_TOPIC = "/robot/baxter_"+arm_name+"_gripper_action/gripper_action";
     actionlib::SimpleActionClient<control_msgs::GripperCommandAction> action_client(ACTION_TOPIC, true);
     ROS_INFO("Waiting for action server to start.");
     action_client.waitForServer(); //will wait for infinite time
@@ -142,10 +142,22 @@ int main(int argc, char **argv)
   ros::AsyncSpinner spinner(1);
   spinner.start();
 
+  std::string arm_name = "right";
+  
+  if( std::string(argv[1]).compare("--arm") == 0 )
+  {
+    ROS_INFO_STREAM_NAMED("gripper_open_close","Testing arm " << arm_name);
+    arm_name = argv[2];
+  }
+
   // Start the pick place node
-  baxter_moveit_scripts::GripperOpenClose("right");
+  if (arm_name == "right") // super weird bug
+    baxter_moveit_scripts::GripperOpenClose("right");
+  else
+    baxter_moveit_scripts::GripperOpenClose("left");
 
   ros::shutdown();
 
   return 0;
 }
+
