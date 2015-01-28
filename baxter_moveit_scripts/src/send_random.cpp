@@ -46,7 +46,7 @@
 #include <moveit_simple_grasps/grasp_data.h>
 
 // Custom
-//#include <baxter_pick_place/custom_environment2.h>
+//#include <baxter_moveit_scripts/custom_environment2.h>
 
 // Visualization
 #include <moveit_visual_tools/moveit_visual_tools.h> // simple tool for showing graspsp
@@ -55,7 +55,7 @@
 #include <baxter_core_msgs/HeadPanCommand.h>
 
 
-namespace baxter_pick_place
+namespace baxter_moveit_scripts
 {
 
 //static const std::string PLANNING_GROUP = "right_arm";
@@ -70,7 +70,7 @@ public:
 
   // baxter helper
   baxter_control::BaxterUtilities baxter_util_;
-  baxter_pick_place::BaxterMoveGroupInterfacePtr baxter_move_;
+  baxter_moveit_scripts::BaxterMoveGroupInterfacePtr baxter_move_;
 
   ros::Publisher head_nod_topic_;
   ros::Publisher head_turn_topic_;
@@ -100,7 +100,7 @@ public:
 
     // ---------------------------------------------------------------------------------------------
     // Load the move_group_inteface
-    baxter_move_.reset(new baxter_pick_place::BaxterMoveGroupInterface(PLANNING_GROUP));
+    baxter_move_.reset(new baxter_moveit_scripts::BaxterMoveGroupInterface(PLANNING_GROUP));
 
     // --------------------------------------------------------------------------------------------------------
     // Add objects to scene
@@ -205,7 +205,7 @@ int main(int argc, char **argv)
   spinner.start();
 
   // Start the pick place node
-  baxter_pick_place::SendRandom();
+  baxter_moveit_scripts::SendRandom();
 
   ros::shutdown();
 

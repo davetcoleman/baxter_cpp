@@ -37,20 +37,22 @@ include_directories(include ${catkin_INCLUDE_DIRS} ${Boost_INCLUDE_DIRS})
 add_library(baxter_move_group_interface src/tools/baxter_move_group_interface.cpp)
 target_link_libraries(baxter_move_group_interface ${catkin_LIBRARIES} ${Boost_LIBRARIES})
 
-# Demos
+# Demos ------------------------------
 add_executable(send_random src/send_random.cpp)
 target_link_libraries(send_random baxter_move_group_interface ${catkin_LIBRARIES} ${Boost_LIBRARIES})
 
-# Tools
+# Tools ------------------------------
 add_executable(get_joint_values src/tools/get_joint_values.cpp)
 target_link_libraries(get_joint_values ${catkin_LIBRARIES} ${Boost_LIBRARIES})
 
-# Test
-#add_executable(moveit_simple_grasps_test src/tests/moveit_simple_grasps_test.cpp)
-#target_link_libraries(moveit_simple_grasps_test ${catkin_LIBRARIES} ${Boost_LIBRARIES})
-
-
 add_executable(end_effector_position src/tools/end_effector_position.cpp)
 target_link_libraries(end_effector_position ${catkin_LIBRARIES} ${Boost_LIBRARIES}) 
+
+# Test -------------------------------
+add_executable(gripper_open_close src/tests/gripper_open_close.cpp)
+target_link_libraries(gripper_open_close ${catkin_LIBRARIES} ${Boost_LIBRARIES})
+
+#add_executable(moveit_simple_grasps_test src/tests/moveit_simple_grasps_test.cpp)
+#target_link_libraries(moveit_simple_grasps_test ${catkin_LIBRARIES} ${Boost_LIBRARIES})
 
 

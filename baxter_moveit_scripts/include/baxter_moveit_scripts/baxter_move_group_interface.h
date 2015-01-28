@@ -55,7 +55,7 @@
 #include <moveit_msgs/MoveGroupGoal.h>
 #include <moveit/kinematic_constraints/utils.h>
 
-namespace baxter_pick_place
+namespace baxter_moveit_scripts
 {
 
 static const std::string ROBOT_DESCRIPTION="robot_description";

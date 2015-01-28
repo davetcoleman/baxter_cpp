@@ -38,7 +38,7 @@
 
 #include <baxter_moveit_scripts/baxter_move_group_interface.h>
 
-namespace baxter_pick_place
+namespace baxter_moveit_scripts
 {
 
 BaxterMoveGroupInterface::BaxterMoveGroupInterface(const std::string planning_group,

@@ -63,16 +63,16 @@
 #include <moveit_simple_grasps/visual_tools.h>
 
 // Baxter specific properties
-#include <baxter_pick_place/grasp_data_loader.h>
-#include <baxter_pick_place/custom_environment2.h>
+#include <baxter_moveit_scripts/grasp_data_loader.h>
+#include <baxter_moveit_scripts/custom_environment2.h>
 
 // Tuning the PID Controller
-#include <baxter_pick_place/pid_tune.h>
+#include <baxter_moveit_scripts/pid_tune.h>
 
 // Baxter Utilities
 #include <baxter_control/baxter_utilities.h>
 
-namespace baxter_pick_place
+namespace baxter_moveit_scripts
 {
 
 // Class
@@ -138,7 +138,7 @@ public:
 
     // ---------------------------------------------------------------------------------------------
     // Load the Robot Viz Tools for publishing to Rviz
-    visual_tools_.reset(new moveit_simple_grasps::VisualTools(baxter_pick_place::BASE_LINK));
+    visual_tools_.reset(new moveit_simple_grasps::VisualTools(baxter_moveit_scripts::BASE_LINK));
     visual_tools_->setLifetime(120.0);
     visual_tools_->setMuted(false);
     visual_tools_->setGraspPoseToEEFPose(grasp_data_.grasp_pose_to_eef_pose_);
@@ -261,7 +261,7 @@ public:
 
     // -------------------------------------------------------------------------------------------
     // Create goal state
-    goal_pose.header.frame_id = baxter_pick_place::BASE_LINK;
+    goal_pose.header.frame_id = baxter_moveit_scripts::BASE_LINK;
     double tolerance_pose = 1e-4; // default: 1e-3... meters
     double tolerance_angle = 1e-2; // default 1e-2... radians
     ROS_ERROR_STREAM_NAMED("temp","Not implemented TODO next link");
@@ -580,7 +580,7 @@ int main(int argc, char** argv)
   ros::AsyncSpinner spinner(4);
   spinner.start();
 
-  baxter_pick_place::VerticleApproachTune tester;
+  baxter_moveit_scripts::VerticleApproachTune tester;
 
   ROS_INFO_STREAM_NAMED("verticle_tune","Shutting down.");
 

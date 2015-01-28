@@ -42,7 +42,7 @@
 // MoveIt!
 #include <moveit/move_group_interface/move_group.h>
 
-namespace baxter_pick_place
+namespace baxter_moveit_scripts
 {
 
 static const std::string ROBOT_DESCRIPTION="robot_description";
@@ -99,7 +99,7 @@ int main(int argc, char **argv)
   spinner.start();
 
   // Start the pick place node
-  baxter_pick_place::GetJointValues();
+  baxter_moveit_scripts::GetJointValues();
 
   ros::shutdown();
 

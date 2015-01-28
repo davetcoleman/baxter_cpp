@@ -46,10 +46,10 @@
 #include <moveit_simple_grasps/simple_grasps.h>
 
 // Baxter specific properties
-#include <baxter_pick_place/grasp_data_loader.h>
-#include <baxter_pick_place/custom_environment2.h>
+#include <baxter_moveit_scripts/grasp_data_loader.h>
+#include <baxter_moveit_scripts/custom_environment2.h>
 
-namespace baxter_pick_place
+namespace baxter_moveit_scripts
 {
 
 class GraspGeneratorTest
@@ -81,11 +81,11 @@ public:
   {
     // ---------------------------------------------------------------------------------------------
     // Load grasp data specific to our robot
-    grasp_data_ = baxter_pick_place::loadRobotGraspData(arm_, BLOCK_SIZE); // Load robot specific data
+    grasp_data_ = baxter_moveit_scripts::loadRobotGraspData(arm_, BLOCK_SIZE); // Load robot specific data
 
     // ---------------------------------------------------------------------------------------------
     // Load the Robot Viz Tools for publishing to Rviz
-    visual_tools_.reset(new moveit_simple_grasps::VisualTools(baxter_pick_place::BASE_LINK));
+    visual_tools_.reset(new moveit_simple_grasps::VisualTools(baxter_moveit_scripts::BASE_LINK));
     visual_tools_->setLifetime(120.0);
     visual_tools_->setMuted(false);
     visual_tools_->setEEGroupName(grasp_data_.ee_group_);
@@ -202,7 +202,7 @@ int main(int argc, char *argv[])
   start_time = ros::Time::now();
 
   // Run Tests
-  baxter_pick_place::GraspGeneratorTest tester(num_tests);
+  baxter_moveit_scripts::GraspGeneratorTest tester(num_tests);
 
   // Benchmark time
   double duration = (ros::Time::now() - start_time).toNSec() * 1e-6;

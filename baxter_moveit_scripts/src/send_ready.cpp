@@ -42,7 +42,7 @@
 
 // Baxter Utilities
 #include <baxter_control/baxter_utilities.h>
-#include <baxter_pick_place/baxter_move_group_interface.h>
+#include <baxter_moveit_scripts/baxter_move_group_interface.h>
 
 namespace baxter_experimental
 {
@@ -56,7 +56,7 @@ private:
 
   // baxter helper
   baxter_control::BaxterUtilities baxter_util_;
-  baxter_pick_place::BaxterMoveGroupInterfacePtr baxter_move_;
+  baxter_moveit_scripts::BaxterMoveGroupInterfacePtr baxter_move_;
 
   // settings
   bool verbose_; // for debugging
@@ -77,7 +77,7 @@ public:
       if (planning_group == "both_arms")
       {
         // Load baxter move group interface helper    
-        baxter_move_.reset(new baxter_pick_place::BaxterMoveGroupInterface("both_arms"));
+        baxter_move_.reset(new baxter_moveit_scripts::BaxterMoveGroupInterface("both_arms"));
 
         // Send
         baxter_move_->sendToPose("both_neutral");
@@ -85,7 +85,7 @@ public:
       else if (planning_group == "left_arm")
       {
         // Load baxter move group interface helper    
-        baxter_move_.reset(new baxter_pick_place::BaxterMoveGroupInterface("left_arm"));
+        baxter_move_.reset(new baxter_moveit_scripts::BaxterMoveGroupInterface("left_arm"));
 
         // Send
         baxter_move_->sendToPose("left_neutral");
@@ -93,7 +93,7 @@ public:
       else if (planning_group == "right_arm")
       {
         // Load baxter move group interface helper    
-        baxter_move_.reset(new baxter_pick_place::BaxterMoveGroupInterface("right_arm"));
+        baxter_move_.reset(new baxter_moveit_scripts::BaxterMoveGroupInterface("right_arm"));
 
         // Send
         baxter_move_->sendToPose("right_neutral");
@@ -136,7 +136,7 @@ int main(int argc, char **argv)
     {
       if (strcmp(argv[i], "-h") == 0)
       {
-        std::cout << "Usage: rosrun baxter_pick_place send_ready --planning_group [both_arms,left_arm,right_arm] --verbose" << std::endl;
+        std::cout << "Usage: rosrun baxter_moveit_scripts send_ready --planning_group [both_arms,left_arm,right_arm] --verbose" << std::endl;
         return 0;
       }
 

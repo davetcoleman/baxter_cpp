@@ -46,7 +46,7 @@
 // Boost
 #include <boost/function.hpp>
 
-namespace baxter_pick_place
+namespace baxter_moveit_scripts
 {
 
 typedef boost::function<bool()> PerturbJointFn;

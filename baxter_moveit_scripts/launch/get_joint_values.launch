@@ -5,7 +5,7 @@
   <arg     if="$(arg debug)" name="launch_prefix" value="gdb --ex run --args" />
 
   <!-- Launch node -->
-  <node name="get_joint_values" launch-prefix="$(arg launch_prefix)" pkg="baxter_pick_place" 
+  <node name="get_joint_values" launch-prefix="$(arg launch_prefix)" pkg="baxter_moveit_scripts" 
 	type="get_joint_values" output="screen">
     <remap from="/joint_states" to="/robot/joint_states" />
   </node>

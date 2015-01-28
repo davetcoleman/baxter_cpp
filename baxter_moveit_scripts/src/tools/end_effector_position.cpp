@@ -49,7 +49,7 @@
 // Baxter Utilities
 #include <baxter_control/baxter_utilities.h>
 
-namespace baxter_pick_place
+namespace baxter_moveit_scripts
 {
 
 static const std::string ROBOT_DESCRIPTION="robot_description";
@@ -121,7 +121,7 @@ int main(int argc, char **argv)
   spinner.start();
 
   // Start the pick place node
-  baxter_pick_place::EndEffectorPosition();
+  baxter_moveit_scripts::EndEffectorPosition();
 
   ros::shutdown();
   
