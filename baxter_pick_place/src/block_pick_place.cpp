@@ -127,7 +127,6 @@ public:
     // Load the Robot Viz Tools for publishing to rviz
     visual_tools_.reset(new moveit_visual_tools::MoveItVisualTools( grasp_data_.base_link_));
     visual_tools_->setFloorToBaseHeight(-0.9);
-    visual_tools_->loadEEMarker(grasp_data_.ee_group_, planning_group_name_);
     visual_tools_->deleteAllMarkers();
 
     // Load Grasp generator
@@ -347,7 +346,10 @@ public:
     if (verbose_)
     {
       double speed = 0.012;
-      visual_tools_->publishGrasps( grasps, grasp_data_.ee_parent_link_, speed);
+      const moveit::core::JointModelGroup* ee_jmg 
+        = visual_tools_->getSharedRobotState()->getRobotModel()->getJointModelGroup(grasp_data_.ee_group_);
+
+      visual_tools_->publishGrasps( grasps, ee_jmg, speed);
       visual_tools_->deleteAllMarkers();
     }
 
