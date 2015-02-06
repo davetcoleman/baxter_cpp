@@ -9,7 +9,7 @@ find_package(catkin REQUIRED COMPONENTS
   moveit_ros_planning 
   moveit_ros_planning_interface 
   moveit_visual_tools
-  moveit_simple_grasps
+  moveit_grasps
   #baxter_core_msgs
   #std_msgs
   #geometry_msgs

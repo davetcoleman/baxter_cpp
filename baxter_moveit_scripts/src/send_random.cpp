@@ -43,7 +43,7 @@
 // Baxter Utilities
 #include <baxter_control/baxter_utilities.h>
 #include <baxter_moveit_scripts/baxter_move_group_interface.h>
-#include <moveit_simple_grasps/grasp_data.h>
+#include <moveit_grasps/grasp_data.h>
 
 // Custom
 //#include <baxter_moveit_scripts/custom_environment2.h>
@@ -76,7 +76,7 @@ public:
   ros::Publisher head_turn_topic_;
 
   // robot-specific data for generating grasps
-  moveit_simple_grasps::GraspData grasp_data_;
+  moveit_grasps::GraspData grasp_data_;
 
   // allow head to move?
   bool allow_head_movements_;
@@ -87,16 +87,16 @@ public:
     : allow_head_movements_(false),
       nh_("~")
   {
+    // ---------------------------------------------------------------------------------------------
+    // Load the Robot Viz Tools for publishing to rviz
+    ROS_ERROR_STREAM_NAMED("temp","Warning: i hacked the base link to be hard coded string, is likely wrong");
+    visual_tools_.reset(new moveit_visual_tools::MoveItVisualTools("base_link"));
+    visual_tools_->setFloorToBaseHeight(-0.9);
 
     // ---------------------------------------------------------------------------------------------
     // Load grasp data specific to our robot
-    if (!grasp_data_.loadRobotGraspData(nh_, "left_hand"))
+    if (!grasp_data_.loadRobotGraspData(nh_, "left_hand", visual_tools_->getRobotModel()))
       ros::shutdown();
-
-    // ---------------------------------------------------------------------------------------------
-    // Load the Robot Viz Tools for publishing to rviz
-    visual_tools_.reset(new moveit_visual_tools::MoveItVisualTools(grasp_data_.base_link_));
-    visual_tools_->setFloorToBaseHeight(-0.9);
 
     // ---------------------------------------------------------------------------------------------
     // Load the move_group_inteface

@@ -18,7 +18,7 @@
   <build_depend>moveit_core</build_depend>
   <build_depend>moveit_ros_planning</build_depend>
   <build_depend>moveit_ros_planning_interface</build_depend>
-  <build_depend>moveit_simple_grasps</build_depend>
+  <build_depend>moveit_grasps</build_depend>
   <build_depend>moveit_visual_tools</build_depend>
   <build_depend>baxter_core_msgs</build_depend>
   <build_depend>geometry_msgs</build_depend>
@@ -35,7 +35,7 @@
   <run_depend>moveit_ompl</run_depend>
   <run_depend>moveit_plugins</run_depend>
   <run_depend>moveit_simple_controller_manager</run_depend>
-  <run_depend>moveit_simple_grasps</run_depend>
+  <run_depend>moveit_grasps</run_depend>
 
   <export>
   </export>

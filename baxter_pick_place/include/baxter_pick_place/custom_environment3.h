@@ -36,7 +36,7 @@
    Desc:   My office with Baxter having no left arm workspace but full right arm workspace
 */
 
-#include <moveit_simple_grasps/visual_tools.h> // simple tool for showing grasps
+#include <moveit_grasps/visual_tools.h> // simple tool for showing grasps
 
 #ifndef BAXTER_PICK_PLACE__CUSTOM_ENVIRONMENT_
 #define BAXTER_PICK_PLACE__CUSTOM_ENVIRONMENT_
@@ -63,7 +63,7 @@ static const double TABLE_Y = -TABLE_WIDTH/2;
 // block dimensions
 static const double BLOCK_SIZE = 0.04;
 
-void createEnvironment(moveit_simple_grasps::VisualToolsPtr visual_tools_)
+void createEnvironment(moveit_grasps::VisualToolsPtr visual_tools_)
 {
   visual_tools_->cleanupCO(SUPPORT_SURFACE1_NAME);
   visual_tools_->cleanupCO(SUPPORT_SURFACE2_NAME);

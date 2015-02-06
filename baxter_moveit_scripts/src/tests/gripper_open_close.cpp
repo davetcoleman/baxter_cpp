@@ -41,7 +41,7 @@
 
 // Baxter Utilities
 #include <baxter_control/baxter_utilities.h>
-#include <moveit_simple_grasps/grasp_data.h>
+#include <moveit_grasps/grasp_data.h>
 
 // Visualization
 #include <moveit_visual_tools/moveit_visual_tools.h> // simple tool for showing graspsp
@@ -68,23 +68,23 @@ public:
   baxter_control::BaxterUtilities baxter_util_;
 
   // robot-specific data for generating grasps
-  moveit_simple_grasps::GraspData grasp_data_;
+  moveit_grasps::GraspData grasp_data_;
 
   ros::NodeHandle nh_;
 
   GripperOpenClose(const std::string& arm_name)
     : nh_("~")
   {
+    // ---------------------------------------------------------------------------------------------
+    // Load the Robot Viz Tools for publishing to rviz
+    ROS_ERROR_STREAM_NAMED("temp","Warning: i hacked the base link to be hard coded string, is likely wrong");
+    visual_tools_.reset(new moveit_visual_tools::MoveItVisualTools("base_link"));
+    visual_tools_->setFloorToBaseHeight(-0.9);
 
     // ---------------------------------------------------------------------------------------------
     // Load grasp data specific to our robot
-    if (!grasp_data_.loadRobotGraspData(nh_, arm_name + "_hand"))
+    if (!grasp_data_.loadRobotGraspData(nh_, arm_name + "_hand", visual_tools_->getRobotModel()))
       ros::shutdown();
-
-    // ---------------------------------------------------------------------------------------------
-    // Load the Robot Viz Tools for publishing to rviz
-    visual_tools_.reset(new moveit_visual_tools::MoveItVisualTools(grasp_data_.base_link_));
-    visual_tools_->setFloorToBaseHeight(-0.9);
 
     // Enable baxter
     if( !baxter_util_.enableBaxter() )

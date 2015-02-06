@@ -43,7 +43,7 @@
 #include <Eigen/Geometry>
 
 // Grasp generation
-#include <moveit_simple_grasps/simple_grasps.h>
+#include <moveit_grasps/simple_grasps.h>
 
 // Baxter specific properties
 #include <baxter_moveit_scripts/grasp_data_loader.h>
@@ -59,13 +59,13 @@ private:
   ros::NodeHandle nh_;
 
   // Grasp generator
-  moveit_simple_grasps::VisualToolsPtr simple_grasps_;
+  moveit_grasps::VisualToolsPtr simple_grasps_;
 
   // class for publishing stuff to rviz
-  moveit_simple_grasps::VisualToolsPtr visual_tools_;
+  moveit_grasps::VisualToolsPtr visual_tools_;
 
   // robot-specific data for generating grasps
-  moveit_simple_grasps::RobotGraspData grasp_data_;
+  moveit_grasps::RobotGraspData grasp_data_;
 
   // which baxter arm are we using
   std::string arm_;
@@ -85,7 +85,7 @@ public:
 
     // ---------------------------------------------------------------------------------------------
     // Load the Robot Viz Tools for publishing to Rviz
-    visual_tools_.reset(new moveit_simple_grasps::VisualTools(baxter_moveit_scripts::BASE_LINK));
+    visual_tools_.reset(new moveit_grasps::VisualTools(baxter_moveit_scripts::BASE_LINK));
     visual_tools_->setLifetime(120.0);
     visual_tools_->setMuted(false);
     visual_tools_->setEEGroupName(grasp_data_.ee_group_);
@@ -93,7 +93,7 @@ public:
 
     // ---------------------------------------------------------------------------------------------
     // Load grasp generator
-    simple_grasps_.reset( new moveit_simple_grasps::VisualTools(visual_tools_) );
+    simple_grasps_.reset( new moveit_grasps::VisualTools(visual_tools_) );
 
     // ---------------------------------------------------------------------------------------------
     // Generate grasps for a bunch of random blocks

@@ -101,7 +101,7 @@ bool BaxterMoveGroupInterface::positionBaxterRandom(const std::string& planning_
   return result;
 }
 
-bool BaxterMoveGroupInterface::openEE(bool open, const moveit_simple_grasps::GraspData& grasp_data)
+bool BaxterMoveGroupInterface::openEE(bool open, const moveit_grasps::GraspData& grasp_data)
 {
   planning_scene_monitor::LockedPlanningSceneRO ls(planning_scene_monitor_);
   robot_state::RobotState current_state = ls->getCurrentState();
@@ -253,13 +253,13 @@ return true;
 */
 
 geometry_msgs::Pose BaxterMoveGroupInterface::getCurrentPose(moveit_visual_tools::MoveItVisualToolsPtr visual_tools,
-                                                             const moveit_simple_grasps::GraspData& grasp_data)
+                                                             const moveit_grasps::GraspData& grasp_data)
 {
-  ROS_INFO_STREAM_NAMED("baxter_move","Getting pose of end effector for " << grasp_data.ee_parent_link_);
+  ROS_INFO_STREAM_NAMED("baxter_move","Getting pose of end effector for " << grasp_data.parent_link_name_);
 
   robot_state::RobotState state = planning_scene_monitor_->getPlanningScene()->getCurrentState();
   state.updateLinkTransforms();
-  Eigen::Affine3d pose = state.getGlobalLinkTransform(grasp_data.ee_parent_link_);
+  Eigen::Affine3d pose = state.getGlobalLinkTransform(grasp_data.parent_link_name_);
 
   geometry_msgs::Pose pose_msg = visual_tools->convertPose(pose);
 
@@ -280,7 +280,7 @@ geometry_msgs::Pose BaxterMoveGroupInterface::getCurrentPose(moveit_visual_tools
 }
 
 bool BaxterMoveGroupInterface::moveStraight(Eigen::Vector3d approach_direction, double desired_approach_distance,
-                                            const moveit_simple_grasps::GraspData& grasp_data,
+                                            const moveit_grasps::GraspData& grasp_data,
                                             const std::string& planning_group_name, moveit_visual_tools::MoveItVisualToolsPtr visual_tools)
 {
   moveit_msgs::RobotTrajectory trajectory_msg; // the resulting path
@@ -318,7 +318,7 @@ bool BaxterMoveGroupInterface::executeTrajectory(const moveit_msgs::RobotTraject
 }
 
 bool BaxterMoveGroupInterface::computeStraightLinePath( Eigen::Vector3d approach_direction, double desired_approach_distance,
-                                                        moveit_msgs::RobotTrajectory& trajectory_msg, const moveit_simple_grasps::GraspData& grasp_data,
+                                                        moveit_msgs::RobotTrajectory& trajectory_msg, const moveit_grasps::GraspData& grasp_data,
                                                         const std::string& planning_group_name, moveit_visual_tools::MoveItVisualToolsPtr visual_tools)
 {
   // Get planning scene
@@ -333,7 +333,7 @@ bool BaxterMoveGroupInterface::computeStraightLinePath( Eigen::Vector3d approach
   // Settings for computeCartesianPath
 
   // End effector parent link
-  const std::string &ik_link = grasp_data.ee_parent_link_;
+  const std::string &ik_link = grasp_data.parent_link_name_;
   const moveit::core::LinkModel *ik_link_model = approach_state.getLinkModel(ik_link);
 
   // Joint model group

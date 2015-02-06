@@ -46,7 +46,7 @@
 // MoveIt!
 #include <moveit/planning_scene_monitor/planning_scene_monitor.h>
 #include <moveit/move_group_interface/move_group.h>
-#include <moveit_simple_grasps/grasp_data.h>
+#include <moveit_grasps/grasp_data.h>
 #include <moveit_visual_tools/moveit_visual_tools.h>
 #include <moveit/robot_state/robot_state.h>
 #include <moveit/trajectory_processing/iterative_time_parameterization.h>
@@ -90,7 +90,7 @@ public:
    * \param bool if it should be open or closed
    * \return true on success
    */
-  bool openEE(bool open, const moveit_simple_grasps::GraspData& grasp_data);
+  bool openEE(bool open, const moveit_grasps::GraspData& grasp_data);
 
   /**
    * \brief Send baxter to a named pose defined in the SRDF
@@ -119,7 +119,7 @@ public:
    * \return pose of end effector
    */
   geometry_msgs::Pose getCurrentPose(moveit_visual_tools::MoveItVisualToolsPtr visual_tools,
-                                     const moveit_simple_grasps::GraspData& grasp_data);
+                                     const moveit_grasps::GraspData& grasp_data);
 
   /**
    * \brief Move baxter in particular direction
@@ -128,7 +128,7 @@ public:
    * \return true on success
    */
   bool moveStraight(Eigen::Vector3d approach_direction, double desired_approach_distance,
-                    const moveit_simple_grasps::GraspData& grasp_data,
+                    const moveit_grasps::GraspData& grasp_data,
                     const std::string& planning_group_name, moveit_visual_tools::MoveItVisualToolsPtr visual_tools);
 
   /**
@@ -147,7 +147,7 @@ public:
    * \return true on success
    */
   bool computeStraightLinePath( Eigen::Vector3d approach_direction, double desired_approach_distance,
-                                moveit_msgs::RobotTrajectory& trajectory_msg, const moveit_simple_grasps::GraspData& grasp_data,
+                                moveit_msgs::RobotTrajectory& trajectory_msg, const moveit_grasps::GraspData& grasp_data,
                                 const std::string& planning_group_name, moveit_visual_tools::MoveItVisualToolsPtr visual_tools);
 
   /**

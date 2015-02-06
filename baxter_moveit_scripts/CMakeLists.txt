@@ -9,7 +9,7 @@ find_package(catkin REQUIRED COMPONENTS
   moveit_ros_planning 
   moveit_ros_planning_interface 
   moveit_visual_tools
-  moveit_simple_grasps
+  moveit_grasps
   baxter_core_msgs
   std_msgs
   geometry_msgs
@@ -52,7 +52,7 @@ target_link_libraries(end_effector_position ${catkin_LIBRARIES} ${Boost_LIBRARIE
 add_executable(gripper_open_close src/tests/gripper_open_close.cpp)
 target_link_libraries(gripper_open_close ${catkin_LIBRARIES} ${Boost_LIBRARIES})
 
-#add_executable(moveit_simple_grasps_test src/tests/moveit_simple_grasps_test.cpp)
-#target_link_libraries(moveit_simple_grasps_test ${catkin_LIBRARIES} ${Boost_LIBRARIES})
+#add_executable(moveit_grasps_test src/tests/moveit_grasps_test.cpp)
+#target_link_libraries(moveit_grasps_test ${catkin_LIBRARIES} ${Boost_LIBRARIES})
 
 

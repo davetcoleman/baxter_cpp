@@ -47,11 +47,11 @@
 #include <baxter_control/baxter_utilities.h>
 
 // Grasp generation
-#include <moveit_simple_grasps/simple_grasps.h>
+#include <moveit_grasps/grasps.h>
 #include <moveit_visual_tools/moveit_visual_tools.h> // simple tool for showing grasps
 
 // Baxter specific properties
-#include <moveit_simple_grasps/grasp_data.h>
+#include <moveit_grasps/grasp_data.h>
 #include <baxter_pick_place/custom_environment5.h>
 
 namespace baxter_pick_place
@@ -72,12 +72,12 @@ public:
   ros::NodeHandle nh_;
 
   // grasp generator
-  moveit_simple_grasps::SimpleGraspsPtr simple_grasps_;
+  moveit_grasps::GraspsPtr simple_grasps_;
 
   moveit_visual_tools::MoveItVisualToolsPtr visual_tools_;
 
   // data for generating grasps
-  moveit_simple_grasps::GraspData grasp_data_;
+  moveit_grasps::GraspData grasp_data_;
 
   // our interface with MoveIt
   boost::scoped_ptr<move_group_interface::MoveGroup> move_group_;
@@ -111,26 +111,25 @@ public:
     move_group_.reset(new move_group_interface::MoveGroup(planning_group_name_));
     move_group_->setPlanningTime(30.0);
 
+    // Load the Robot Viz Tools for publishing to rviz
+    ROS_ERROR_STREAM_NAMED("temp","Warning: i hacked the base link to be hard coded string, is likely wrong");
+    visual_tools_.reset(new moveit_visual_tools::MoveItVisualTools( "base_link" ));
+    visual_tools_->setFloorToBaseHeight(-0.9);
+    visual_tools_->deleteAllMarkers();
+
     // Load grasp generator
-    if (!grasp_data_.loadRobotGraspData(nh_, arm_+"_hand"))
+    if (!grasp_data_.loadRobotGraspData(nh_, arm_+"_hand", visual_tools_->getRobotModel()))
       ros::shutdown();
 
     // Temp modifications
     ROS_WARN_STREAM_NAMED("temp","temp modifications, move this maybe");
     {
       grasp_data_.grasp_depth_ = 0.0;
-      //grasp_data_.approach_retreat_min_dist_ =
-      //  grasp_data_.approach_retreat_desired_dist_; // = 0.6;
-      std::cout << "grasp_data_.approach_retreat_desired_dist_ " << grasp_data_.approach_retreat_desired_dist_ << std::endl;
+      std::cout << "grasp_data_.finger_to_palm_depth_ + 0.1 " << grasp_data_.finger_to_palm_depth_ + 0.1 << std::endl;
     }
 
-    // Load the Robot Viz Tools for publishing to rviz
-    visual_tools_.reset(new moveit_visual_tools::MoveItVisualTools( grasp_data_.base_link_));
-    visual_tools_->setFloorToBaseHeight(-0.9);
-    visual_tools_->deleteAllMarkers();
-
     // Load Grasp generator
-    simple_grasps_.reset(new moveit_simple_grasps::SimpleGrasps(visual_tools_));
+    simple_grasps_.reset(new moveit_grasps::Grasps(visual_tools_));
 
     // Let everything load
     ros::Duration(1.0).sleep();
@@ -342,12 +341,12 @@ public:
     std::vector<moveit_msgs::Grasp> grasps;
 
     // Pick grasp
-    simple_grasps_->generateBlockGrasps( block_pose, grasp_data_, grasps );
+    simple_grasps_->generateBlockGrasps( visual_tools_->convertPose(block_pose), grasp_data_, grasps );
     if (verbose_)
     {
       double speed = 0.012;
       const moveit::core::JointModelGroup* ee_jmg 
-        = visual_tools_->getSharedRobotState()->getRobotModel()->getJointModelGroup(grasp_data_.ee_group_);
+        = visual_tools_->getRobotModel()->getJointModelGroup(grasp_data_.ee_group_);
 
       visual_tools_->publishGrasps( grasps, ee_jmg, speed);
       visual_tools_->deleteAllMarkers();
@@ -412,8 +411,8 @@ public:
       // Approach
       moveit_msgs::GripperTranslation pre_place_approach;
       pre_place_approach.direction.header.stamp = ros::Time::now();
-      pre_place_approach.desired_distance = grasp_data_.approach_retreat_desired_dist_; // The distance the origin of a robot link needs to travel
-      pre_place_approach.min_distance = grasp_data_.approach_retreat_min_dist_; // half of the desired? Untested.
+      pre_place_approach.desired_distance = grasp_data_.finger_to_palm_depth_ + 0.1; // The distance the origin of a robot link needs to travel
+      pre_place_approach.min_distance = grasp_data_.finger_to_palm_depth_; // half of the desired? Untested.
       pre_place_approach.direction.header.frame_id = grasp_data_.base_link_;
       pre_place_approach.direction.vector.x = 0;
       pre_place_approach.direction.vector.y = 0;
@@ -423,8 +422,8 @@ public:
       // Retreat
       moveit_msgs::GripperTranslation post_place_retreat;
       post_place_retreat.direction.header.stamp = ros::Time::now();
-      post_place_retreat.desired_distance = grasp_data_.approach_retreat_desired_dist_; // The distance the origin of a robot link needs to travel
-      post_place_retreat.min_distance = grasp_data_.approach_retreat_min_dist_; // half of the desired? Untested.
+      post_place_retreat.desired_distance = grasp_data_.finger_to_palm_depth_ + 0.1; // The distance the origin of a robot link needs to travel
+      post_place_retreat.min_distance = grasp_data_.finger_to_palm_depth_; // half of the desired? Untested.
       post_place_retreat.direction.header.frame_id = grasp_data_.base_link_;
       post_place_retreat.direction.vector.x = 0;
       post_place_retreat.direction.vector.y = 0;

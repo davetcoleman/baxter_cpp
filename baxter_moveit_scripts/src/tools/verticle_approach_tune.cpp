@@ -60,7 +60,7 @@
 #include <moveit/trajectory_processing/iterative_time_parameterization.h>
 
 // Visualization
-#include <moveit_simple_grasps/visual_tools.h>
+#include <moveit_grasps/visual_tools.h>
 
 // Baxter specific properties
 #include <baxter_moveit_scripts/grasp_data_loader.h>
@@ -93,10 +93,10 @@ private:
   boost::shared_ptr<plan_execution::PlanExecution> plan_execution_;
 
   // class for publishing stuff to rviz
-  moveit_simple_grasps::VisualToolsPtr visual_tools_;
+  moveit_grasps::VisualToolsPtr visual_tools_;
 
   // data for generating grasps
-  moveit_simple_grasps::RobotGraspData grasp_data_;
+  moveit_grasps::RobotGraspData grasp_data_;
 
   // baxter helper
   baxter_control::BaxterUtilities baxter_util_;
@@ -138,7 +138,7 @@ public:
 
     // ---------------------------------------------------------------------------------------------
     // Load the Robot Viz Tools for publishing to Rviz
-    visual_tools_.reset(new moveit_simple_grasps::VisualTools(baxter_moveit_scripts::BASE_LINK));
+    visual_tools_.reset(new moveit_grasps::VisualTools(baxter_moveit_scripts::BASE_LINK));
     visual_tools_->setLifetime(120.0);
     visual_tools_->setMuted(false);
     visual_tools_->setGraspPoseToEEFPose(grasp_data_.grasp_pose_to_eef_pose_);
@@ -283,9 +283,9 @@ public:
 
     // -------------------------------------------------------------------------------------------
     // Visualize goals in rviz
-    visual_tools_->publishArrow(goal_pose.pose, moveit_simple_grasps::GREEN);
+    visual_tools_->publishArrow(goal_pose.pose, moveit_grasps::GREEN);
 
-    visual_tools_->publishEEMarkers(goal_pose.pose, moveit_simple_grasps::GREEN);
+    visual_tools_->publishEEMarkers(goal_pose.pose, moveit_grasps::GREEN);
 
     // -------------------------------------------------------------------------------------------
     // Plan
