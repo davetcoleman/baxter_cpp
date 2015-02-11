@@ -2,7 +2,7 @@
  *
  * Software License Agreement (BSD License)
  *
- * Copyright (c) 2013, Dave Coleman, CU Boulder; Jeremy Zoss, SwRI; David Butterworth, KAIST; Mathias Lüdtke, Fraunhofer IPA
+ * Copyright (c) 2015, Dave Coleman, CU Boulder; Jeremy Zoss, SwRI; David Butterworth, KAIST; Mathias Lüdtke, Fraunhofer IPA
  * All rights reserved.
  *
  *  Redistribution and use in source and binary forms, with or without
@@ -52,4 +52,4 @@ namespace ikfast_kinematics_plugin
 } // end namespace
 
 // MoveIt! plugin code for IKFast
-#include "ikfast61_moveit_plugin_template.cpp"
+#include <moveit_ikfast/ikfast61_moveit_plugin_template.cpp>

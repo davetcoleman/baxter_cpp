@@ -3,6 +3,7 @@ project(baxter_ikfast_right_arm_plugin)
 
 find_package(catkin REQUIRED COMPONENTS
   moveit_core
+  moveit_ikfast
   pluginlib
   roscpp
   tf_conversions
@@ -14,6 +15,7 @@ catkin_package(
   LIBRARIES
   CATKIN_DEPENDS
     moveit_core
+    moveit_ikfast
     pluginlib
     roscpp
     tf_conversions
