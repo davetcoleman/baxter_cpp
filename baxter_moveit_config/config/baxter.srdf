@@ -11,6 +11,7 @@
     <!--SUBGROUPS: Groups can also be formed by referencing to already defined group names-->
     <group name="left_arm">
         <link name="left_hand" />
+        <link name="left_gripper" />
         <joint name="left_s0" />
         <joint name="left_s1" />
         <joint name="left_e0" />
@@ -21,6 +22,7 @@
     </group>
     <group name="right_arm">
         <link name="right_hand" />
+        <link name="right_gripper" />
         <joint name="right_s0" />
         <joint name="right_s1" />
         <joint name="right_e0" />
@@ -34,13 +36,13 @@
         <group name="left_arm" />
     </group>
     <group name="left_hand">
-        <link name="left_gripper" />
+        <!--link name="left_gripper" /-->
         <link name="left_gripper_base" />
         <link name="left_gripper_l_finger" />
         <link name="left_gripper_r_finger" />
     </group>
     <group name="right_hand">
-        <link name="right_gripper" />
+        <!--link name="right_gripper" /-->
         <link name="right_gripper_base" />
         <link name="right_gripper_l_finger" />
         <link name="right_gripper_r_finger" />
@@ -115,8 +117,8 @@
         <joint name="right_w2" value="-0.18868" />
     </group_state>
     <!--END EFFECTOR: Purpose: Represent information about an end effector.-->
-    <end_effector name="left_hand_eef" parent_link="left_hand" group="left_hand" parent_group="left_arm" />
-    <end_effector name="right_hand_eef" parent_link="right_hand" group="right_hand" parent_group="right_arm" />
+    <end_effector name="left_hand_eef" parent_link="left_gripper" group="left_hand" parent_group="left_arm" />
+    <end_effector name="right_hand_eef" parent_link="right_gripper" group="right_hand" parent_group="right_arm" />
     <!--VIRTUAL JOINT: Purpose: this element defines a virtual joint between a robot link and an external frame of reference (considered fixed with respect to the robot)-->
     <virtual_joint name="virtual_joint" type="floating" parent_frame="world" child_link="base" />
     <!--PASSIVE JOINT: Purpose: this element is used to mark joints that are not actuated-->
