@@ -52,4 +52,4 @@ namespace ikfast_kinematics_plugin
 } // end namespace
 
 // MoveIt! plugin code for IKFast
-#include <moveit_ikfast/ikfast61_moveit_plugin_template.cpp>
+#include <ikfast_kinematics_plugin/ikfast61_moveit_plugin_template.cpp>

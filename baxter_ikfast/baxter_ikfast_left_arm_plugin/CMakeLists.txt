@@ -5,7 +5,7 @@ add_compile_options(-std=c++11)
 
 find_package(catkin REQUIRED COMPONENTS
   moveit_core
-  moveit_ikfast
+  moveit_kinematics
   pluginlib
   roscpp
   tf_conversions
@@ -24,7 +24,7 @@ catkin_package(
     pluginlib
     roscpp
     tf_conversions
-    moveit_ikfast
+    moveit_kinematics
 )
 
 include_directories(SYSTEM

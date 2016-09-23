@@ -31,6 +31,24 @@
         <joint name="right_w1" />
         <joint name="right_w2" />
     </group>
+    <group name="right_3dof">
+        <joint name="right_w0" />
+        <joint name="right_w1" />
+        <joint name="right_w2" />
+    </group>
+    <group name="right_4dof">
+        <joint name="right_e1" />
+        <joint name="right_w0" />
+        <joint name="right_w1" />
+        <joint name="right_w2" />
+    </group>
+    <group name="right_5dof">
+        <joint name="right_e0" />
+        <joint name="right_e1" />
+        <joint name="right_w0" />
+        <joint name="right_w1" />
+        <joint name="right_w2" />
+    </group>
     <group name="both_arms">
         <group name="right_arm" />
         <group name="left_arm" />
