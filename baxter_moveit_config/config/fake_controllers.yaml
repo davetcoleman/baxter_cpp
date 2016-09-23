@@ -17,6 +17,24 @@ controller_list:
       - right_w0
       - right_w1
       - right_w2
+  - name: fake_right_3dof_controller
+    joints:
+      - right_w0
+      - right_w1
+      - right_w2
+  - name: fake_right_4dof_controller
+    joints:
+      - right_e1
+      - right_w0
+      - right_w1
+      - right_w2
+  - name: fake_right_5dof_controller
+    joints:
+      - right_e0
+      - right_e1
+      - right_w0
+      - right_w1
+      - right_w2
   - name: fake_both_arms_controller
     joints:
       - left_s0

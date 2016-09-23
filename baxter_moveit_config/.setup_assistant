@@ -5,4 +5,6 @@ moveit_setup_assistant_config:
   SRDF:
     relative_path: config/baxter.srdf
   CONFIG:
-    generated_timestamp: 1414053206
+    author_name: Dave Coleman
+    author_email: dave@dav.ee
+    generated_timestamp: 1474662801
