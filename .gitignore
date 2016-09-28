@@ -39,5 +39,3 @@ baxter_interface/cfg/cpp
 # Images
 *.png
 *.jpg
-
-CATKIN_IGNORE
