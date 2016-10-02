@@ -448,6 +448,7 @@
     <disable_collisions link1="right_upper_shoulder" link2="sonar_ring" reason="Never" />
     <disable_collisions link1="right_upper_shoulder" link2="torso" reason="Adjacent" />
     <disable_collisions link1="right_upper_forearm_visual" link2="right_wrist" reason="Never" />
+    <disable_collisions link1="left_upper_forearm_visual" link2="left_wrist" reason="Never" />
     <disable_collisions link1="screen" link2="sonar_ring" reason="Never" />
     <disable_collisions link1="screen" link2="torso" reason="Never" />
     <disable_collisions link1="sonar_ring" link2="torso" reason="Adjacent" />
