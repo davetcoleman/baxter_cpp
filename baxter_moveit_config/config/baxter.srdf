@@ -31,6 +31,22 @@
         <joint name="right_w1" />
         <joint name="right_w2" />
     </group>
+    <group name="left_arm_minus_one">
+        <joint name="left_s0" />
+        <joint name="left_s1" />
+        <joint name="left_e0" />
+        <joint name="left_e1" />
+        <joint name="left_w0" />
+        <joint name="left_w1" />
+    </group>
+    <group name="right_arm_minus_one">
+        <joint name="right_s0" />
+        <joint name="right_s1" />
+        <joint name="right_e0" />
+        <joint name="right_e1" />
+        <joint name="right_w0" />
+        <joint name="right_w1" />
+    </group>
     <group name="right_3dof">
         <joint name="right_w0" />
         <joint name="right_w1" />
@@ -52,6 +68,10 @@
     <group name="both_arms">
         <group name="right_arm" />
         <group name="left_arm" />
+    </group>
+    <group name="both_arms_minus_one">
+        <group name="right_arm_minus_one" />
+        <group name="left_arm_minus_one" />
     </group>
     <group name="left_hand">
         <link name="left_gripper_base" />
