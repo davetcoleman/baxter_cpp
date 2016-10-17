@@ -323,6 +323,7 @@
     <disable_collisions link1="left_lower_shoulder" link2="right_upper_shoulder" reason="Never" />
     <disable_collisions link1="left_lower_shoulder" link2="screen" reason="Never" />
     <disable_collisions link1="left_lower_shoulder" link2="sonar_ring" reason="Never" />
+    <disable_collisions link1="left_lower_shoulder" link2="torso" reason="User" />
     <disable_collisions link1="left_upper_elbow" link2="left_upper_elbow_visual" reason="Default" />
     <disable_collisions link1="left_upper_elbow" link2="left_upper_forearm" reason="Never" />
     <disable_collisions link1="left_upper_elbow" link2="left_upper_forearm_visual" reason="Never" />
@@ -354,6 +355,7 @@
     <disable_collisions link1="left_upper_shoulder" link2="screen" reason="Never" />
     <disable_collisions link1="left_upper_shoulder" link2="sonar_ring" reason="Never" />
     <disable_collisions link1="left_upper_shoulder" link2="torso" reason="Adjacent" />
+    <disable_collisions link1="left_upper_shoulder" link2="left_upper_elbow_visual" reason="Adjacent" />
     <disable_collisions link1="pedestal" link2="right_lower_elbow" reason="Never" />
     <disable_collisions link1="pedestal" link2="right_lower_shoulder" reason="Never" />
     <disable_collisions link1="pedestal" link2="right_upper_elbow" reason="Never" />
@@ -453,6 +455,7 @@
     <disable_collisions link1="right_lower_shoulder" link2="right_upper_shoulder" reason="Adjacent" />
     <disable_collisions link1="right_lower_shoulder" link2="screen" reason="Never" />
     <disable_collisions link1="right_lower_shoulder" link2="sonar_ring" reason="Never" />
+    <disable_collisions link1="right_lower_shoulder" link2="torso" reason="User" />
     <disable_collisions link1="right_upper_elbow" link2="right_upper_elbow_visual" reason="Default" />
     <disable_collisions link1="right_upper_elbow" link2="right_upper_forearm" reason="Never" />
     <disable_collisions link1="right_upper_elbow" link2="right_upper_forearm_visual" reason="Never" />
@@ -467,6 +470,7 @@
     <disable_collisions link1="right_upper_shoulder" link2="screen" reason="Never" />
     <disable_collisions link1="right_upper_shoulder" link2="sonar_ring" reason="Never" />
     <disable_collisions link1="right_upper_shoulder" link2="torso" reason="Adjacent" />
+    <disable_collisions link1="right_upper_shoulder" link2="right_upper_elbow_visual" reason="Adjacent" />
     <disable_collisions link1="right_upper_forearm_visual" link2="right_wrist" reason="Never" />
     <disable_collisions link1="left_upper_forearm_visual" link2="left_wrist" reason="Never" />
     <disable_collisions link1="screen" link2="sonar_ring" reason="Never" />
