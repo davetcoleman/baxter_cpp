@@ -27,15 +27,15 @@ controller_list:
       - left_w0
       - left_w1
       - left_w2
-  - name: /robot/baxter_right_gripper_action
-    action_ns: gripper_action
-    type: GripperCommand
-    default: true
-    joints:
-      - right_gripper_l_finger_joint
-  - name: /robot/baxter_left_gripper_action
-    action_ns: gripper_action
-    type: GripperCommand
-    default: true
-    joints:
-      - left_gripper_l_finger_joint
+  # - name: /robot/baxter_right_gripper_action
+  #   action_ns: gripper_action
+  #   type: GripperCommand
+  #   default: true
+  #   joints:
+  #     - right_gripper_l_finger_joint
+  # - name: /robot/baxter_left_gripper_action
+  #   action_ns: gripper_action
+  #   type: GripperCommand
+  #   default: true
+  #   joints:
+  #     - left_gripper_l_finger_joint
