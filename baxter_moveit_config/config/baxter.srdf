@@ -342,6 +342,7 @@
     <disable_collisions link1="left_upper_elbow_visual" link2="right_upper_elbow" reason="Never" />
     <disable_collisions link1="left_upper_elbow_visual" link2="right_upper_shoulder" reason="Never" />
     <disable_collisions link1="left_upper_elbow_visual" link2="sonar_ring" reason="Never" />
+    <disable_collisions link1="left_upper_elbow_visual" link2="left_upper_forearm_visual" reason="User" />    \
     <disable_collisions link1="left_upper_forearm" link2="left_upper_forearm_visual" reason="Default" />
     <disable_collisions link1="left_upper_forearm" link2="left_wrist" reason="Never" />
     <disable_collisions link1="left_upper_forearm" link2="right_upper_shoulder" reason="Never" />
@@ -472,6 +473,7 @@
     <disable_collisions link1="right_upper_shoulder" link2="torso" reason="Adjacent" />
     <disable_collisions link1="right_upper_shoulder" link2="right_upper_elbow_visual" reason="Adjacent" />
     <disable_collisions link1="right_upper_forearm_visual" link2="right_wrist" reason="Never" />
+    <disable_collisions link1="right_upper_elbow_visual" link2="right_upper_forearm_visual" reason="User" />    \
     <disable_collisions link1="left_upper_forearm_visual" link2="left_wrist" reason="Never" />
     <disable_collisions link1="screen" link2="sonar_ring" reason="Never" />
     <disable_collisions link1="screen" link2="torso" reason="Never" />
