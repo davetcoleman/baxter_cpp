@@ -123,14 +123,14 @@
     <group_state name="both_ready" group="both_arms">
         <joint name="left_e0" value="0" />
         <joint name="left_e1" value="0.75" />
-        <joint name="left_s0" value="1" />
+        <joint name="left_s0" value="-0.4" />
         <joint name="left_s1" value="-0.55" />
         <joint name="left_w0" value="0" />
         <joint name="left_w1" value="1.26" />
         <joint name="left_w2" value="0" />
         <joint name="right_e0" value="0" />
         <joint name="right_e1" value="0.75" />
-        <joint name="right_s0" value="-1" />
+        <joint name="right_s0" value="0.4" />
         <joint name="right_s1" value="-0.55" />
         <joint name="right_w0" value="0" />
         <joint name="right_w1" value="1.26" />
