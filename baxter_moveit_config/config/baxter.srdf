@@ -478,4 +478,6 @@
     <disable_collisions link1="screen" link2="sonar_ring" reason="Never" />
     <disable_collisions link1="screen" link2="torso" reason="Never" />
     <disable_collisions link1="sonar_ring" link2="torso" reason="Adjacent" />
+    <disable_collisions link1="right_gripper_l_finger" link2="right_gripper_r_finger" reason="User" />
+    <disable_collisions link1="left_gripper_l_finger" link2="left_gripper_r_finger" reason="User" />
 </robot>
