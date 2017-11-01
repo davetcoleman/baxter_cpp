@@ -19,7 +19,6 @@
   <run_depend>baxter_control</run_depend>
   <run_depend>baxter_moveit_config</run_depend>
   <run_depend>baxter_gripper_server</run_depend>
-  <run_depend>baxter_pick_place</run_depend>
 
   <export>
     <metapackage/>
