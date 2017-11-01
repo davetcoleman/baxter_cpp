@@ -16,9 +16,7 @@
 
   <buildtool_depend>catkin</buildtool_depend>
 
-  <run_depend>baxter_control</run_depend>
   <run_depend>baxter_moveit_config</run_depend>
-  <run_depend>baxter_gripper_server</run_depend>
 
   <export>
     <metapackage/>
