@@ -11,9 +11,9 @@
   </include>
 
   <!-- Start Benchmark GUI -->
-  <node name="$(anon moveit_benchmark_gui)" pkg="moveit_ros_benchmarks_gui" type="moveit_benchmark_gui" launch-prefix="$(arg launch_prefix)" 
-	respawn="false" output="screen">
-    <rosparam command="load" file="$(find baxter_moveit_config)/config/kinematics.yaml"/>
-  </node>
+  <!-- <node name="$(anon moveit_benchmark_gui)" pkg="moveit_ros_benchmarks_gui" type="moveit_benchmark_gui" launch-prefix="$(arg launch_prefix)"  -->
+	<!-- respawn="false" output="screen"> -->
+    <!-- <rosparam command="load" file="$(find baxter_moveit_config)/config/kinematics.yaml"/> -->
+  <!-- </node> -->
 
 </launch>

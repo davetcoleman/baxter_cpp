@@ -5,34 +5,26 @@ add_compile_options(-std=c++11)
 
 find_package(catkin REQUIRED COMPONENTS
   moveit_core
-  moveit_kinematics
+  pluginlib
+  roscpp
+  tf_conversions
+  cmake_modules
+)
+
+find_package(Eigen3 REQUIRED)
+
+catkin_package(
+  LIBRARIES
+  DEPENDS
+  moveit_core
   pluginlib
   roscpp
   tf_conversions
 )
 
-find_package(Eigen3 REQUIRED)
-include_directories(SYSTEM ${EIGEN_INCLUDE_DIRS})
-
-include_directories(${catkin_INCLUDE_DIRS})
-link_directories(${catkin_LIBRARY_DIRS})
-
-catkin_package(
-  LIBRARIES
-  CATKIN_DEPENDS
-    moveit_core
-    moveit_kinematics
-    pluginlib
-    roscpp
-    tf_conversions
-)
-
-include_directories(SYSTEM
-  ${EIGEN3_INCLUDE_DIRS}
-)
-
 include_directories(
   include
+  ${EIGEN3_INCLUDE_DIRS}
   ${catkin_INCLUDE_DIRS}
 )
 
@@ -44,6 +36,7 @@ add_library(${IKFAST_LIBRARY_NAME} src/baxter_right_arm_ikfast_moveit_plugin.cpp
 target_link_libraries(${IKFAST_LIBRARY_NAME} ${catkin_LIBRARIES} ${Boost_LIBRARIES} ${LAPACK_LIBRARIES})
 
 install(TARGETS ${IKFAST_LIBRARY_NAME} LIBRARY DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION})
+install(DIRECTORY include/ DESTINATION include)
 
 install(
   FILES

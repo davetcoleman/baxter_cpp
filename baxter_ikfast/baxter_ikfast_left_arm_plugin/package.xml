@@ -1,28 +1,31 @@
 <?xml version='1.0' encoding='ASCII'?>
 <package>
   <name>baxter_ikfast_left_arm_plugin</name>
-  <version>0.3.0</version>
+  <version>1.1.0</version>
   <description>The baxter_ikfast_left_arm_plugin package</description>
+
   <maintainer email="rsdk.support@rethinkrobotics.com">
     Rethink Robotics Inc.
   </maintainer>
   <license>BSD</license>
-  <url type="website">http://www.rethinkrobotics.com</url>
+  <url type="website">http://www.rethinkrobotics.com/sdk</url>
   <url type="repository">
-    https://github.com/RethinkRobotics/sdk-examples
+    https://github.com/ros-planning/moveit_robots
   </url>
   <url type="bugtracker">
-    https://github.com/RethinkRobotics/sdk-examples/issues
+    https://github.com/RethinkRobotics/baxter/issues
   </url>
   <author>Rethink Robotics Inc.</author>
+
   <buildtool_depend>catkin</buildtool_depend>
+
   <export>
     <moveit_core plugin="${prefix}/baxter_left_arm_moveit_ikfast_plugin_description.xml"/>
   </export>
+
+  <build_depend>liblapack-dev</build_depend>
   <build_depend>moveit_core</build_depend>
   <run_depend>moveit_core</run_depend>
-  <build_depend>moveit_kinematics</build_depend>
-  <run_depend>moveit_kinematics</run_depend>
   <build_depend>pluginlib</build_depend>
   <run_depend>pluginlib</run_depend>
   <build_depend>roscpp</build_depend>
@@ -30,6 +33,5 @@
   <build_depend>tf_conversions</build_depend>
   <run_depend>tf_conversions</run_depend>
   <build_depend>cmake_modules</build_depend>
-  <build_depend>liblapack-dev</build_depend>
-  <run_depend>liblapack-dev</run_depend>
+  <run_depend>cmake_modules</run_depend>
 </package>
